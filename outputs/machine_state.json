@@ -1,0 +1,50 @@
+{
+  "time_utc": "2026-10-07T10:00:58.424747+00:00",
+  "interface": "can0",
+  "motor_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "host_id": 253,
+  "model": "rs-06",
+  "param": "0x7019",
+  "read_only": true,
+  "enables_motors": false,
+  "sends_motion": false,
+  "writes_params": false,
+  "note": "通过 robstride_get_param_f32 读取；get_state() 反馈路径在本机不工作。",
+  "samples": [
+    {
+      "t": 118938.403,
+      "values": {
+        "1": {
+          "value": 0.09612945467233658
+        },
+        "2": {
+          "value": -0.003408855991438031
+        },
+        "3": {
+          "value": 0.0040906271897256374
+        },
+        "4": {
+          "value": 0.004256797023117542
+        },
+        "5": {
+          "value": 0.020133500918745995
+        },
+        "6": {
+          "value": -3.0599849224090576
+        },
+        "7": {
+          "value": -0.06948933750391006
+        }
+      }
+    }
+  ],
+  "result": "ok"
+}

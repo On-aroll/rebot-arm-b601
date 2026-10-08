@@ -1,0 +1,49 @@
+[
+  {
+    "time_utc": "2026-10-07T09:47:39.563934+00:00",
+    "interface": "can0",
+    "probe_id": "0x7FE",
+    "count_target": 200,
+    "interval_ms": 2.0,
+    "label": "机械臂已连接",
+    "frames_sent": 22,
+    "elapsed_s": 0.048,
+    "rate_hz": 458.5,
+    "error": {
+      "errno": 105,
+      "message": "[Errno 105] No buffer space available",
+      "at_frame": 23
+    },
+    "verdict": "no_ack_suspected"
+  },
+  {
+    "time_utc": "2026-10-07T09:56:48.296589+00:00",
+    "interface": "can0",
+    "probe_id": "0x7FE",
+    "count_target": 200,
+    "interval_ms": 2.0,
+    "label": "A-线已掉-未连接",
+    "frames_sent": 22,
+    "elapsed_s": 0.0462,
+    "rate_hz": 476.4,
+    "error": {
+      "errno": 105,
+      "message": "[Errno 105] No buffer space available",
+      "at_frame": 23
+    },
+    "verdict": "no_ack_suspected"
+  },
+  {
+    "time_utc": "2026-10-07T09:59:21.461499+00:00",
+    "interface": "can0",
+    "probe_id": "0x7FE",
+    "count_target": 200,
+    "interval_ms": 2.0,
+    "label": "B-线已接好",
+    "frames_sent": 200,
+    "elapsed_s": 0.4285,
+    "rate_hz": 466.7,
+    "error": null,
+    "verdict": "ack_ok"
+  }
+]

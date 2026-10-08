@@ -1,0 +1,61 @@
+{
+  "time_utc": "2026-10-07T08:24:48.598796+00:00",
+  "interface": "can0",
+  "model": "rs-06",
+  "host_id": 253,
+  "target_ids": [
+    1
+  ],
+  "transmits": true,
+  "enables_motors": false,
+  "sends_motion": false,
+  "disables_motors": false,
+  "bitrate": 1000000,
+  "bus_before": {
+    "state": "ERROR-ACTIVE",
+    "tx_packets": 0,
+    "tx_errors": 0,
+    "rx_packets": 0,
+    "rx_dropped": 0,
+    "berr_tx": 0,
+    "berr_rx": 0,
+    "bus_error": 0,
+    "bus_off": 0,
+    "error_passive": 0
+  },
+  "bus_after": {
+    "state": "ERROR-ACTIVE",
+    "tx_packets": 3,
+    "tx_errors": 0,
+    "rx_packets": 0,
+    "rx_dropped": 0,
+    "berr_tx": 0,
+    "berr_rx": 0,
+    "bus_error": 0,
+    "bus_off": 0,
+    "error_passive": 0
+  },
+  "bus_delta": {
+    "tx_packets": 3,
+    "tx_errors": 0,
+    "rx_packets": 0,
+    "rx_dropped": 0,
+    "berr_tx": 0,
+    "berr_rx": 0,
+    "bus_error": 0,
+    "bus_off": 0,
+    "error_passive": 0
+  },
+  "frames_sent": 3,
+  "acked": true,
+  "results": [
+    {
+      "motor_id": 1,
+      "responded": false,
+      "error": "CallError: robstride_ping failed: ping 1 timed out"
+    }
+  ],
+  "responded_count": 0,
+  "responded_ids": [],
+  "result": "no_response"
+}

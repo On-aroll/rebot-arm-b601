@@ -1,0 +1,15 @@
+{
+  "time_utc": "2026-10-07T09:46:39.941975+00:00",
+  "interface": "can0",
+  "motor_id": 1,
+  "model": "rs-06",
+  "host_id": 253,
+  "hold_kp": 0.0,
+  "hold_kd": 0.0,
+  "nudge_deg": 0.0,
+  "disables_motors": false,
+  "sets_zero": false,
+  "writes_params": false,
+  "frames_attempted": 17,
+  "result": "sent"
+}

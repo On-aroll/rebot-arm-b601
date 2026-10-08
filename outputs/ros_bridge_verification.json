@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "actual_samples": 191,
+  "target_samples": 191,
+  "actual_http_max_error_rad": 4.97227851204503e-08,
+  "actual_target_max_difference_rad": 0.011197562712789877,
+  "tf_tcp_error_m": 1.565147261305476e-08,
+  "stale_feedback_rejected": true,
+  "disconnect_reported": true,
+  "same_physics_source": true,
+  "hardware_connected": false
+}

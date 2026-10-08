@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "job_id": "d8b00d104a774dcdacd1cbe364083bc6",
+  "status": "succeeded",
+  "actual_trace_points": 2352,
+  "actual_path_length_m": 1.9613568681455156,
+  "completed_steps": 6,
+  "backend": "mujoco"
+}

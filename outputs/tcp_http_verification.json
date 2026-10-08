@@ -1,0 +1,8 @@
+{
+  "success": true,
+  "preview_without_motion": true,
+  "preview_keeps_targets": true,
+  "user_target_position_mode": true,
+  "hold_failure_explained": true,
+  "invalid_mode_rejected": true
+}

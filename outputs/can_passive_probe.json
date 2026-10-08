@@ -1,0 +1,114 @@
+{
+  "time_utc": "2026-10-07T11:39:30.154234+00:00",
+  "interface": "can0",
+  "mode": "passive_listen_only",
+  "transmit_calls": 0,
+  "feedback_verified": false,
+  "interface_before": {
+    "ifindex": 13,
+    "ifname": "can0",
+    "flags": [
+      "NOARP",
+      "UP",
+      "LOWER_UP",
+      "ECHO"
+    ],
+    "mtu": 16,
+    "qdisc": "pfifo_fast",
+    "operstate": "UP",
+    "linkmode": "DEFAULT",
+    "group": "default",
+    "txqlen": 10,
+    "link_type": "can",
+    "promiscuity": 0,
+    "allmulti": 0,
+    "min_mtu": 16,
+    "max_mtu": 16,
+    "linkinfo": {
+      "info_kind": "can",
+      "info_data": {
+        "ctrlmode_supported": [
+          "LOOPBACK",
+          "LISTEN-ONLY",
+          "TRIPLE-SAMPLING",
+          "ONE-SHOT",
+          "CC-LEN8-DLC"
+        ],
+        "state": "ERROR-ACTIVE",
+        "berr_counter": {
+          "tx": 0,
+          "rx": 0
+        },
+        "restart_ms": 0,
+        "bittiming": {
+          "bitrate": 1000000,
+          "sample_point": "0.750",
+          "tq": 125,
+          "prop_seg": 2,
+          "phase_seg1": 3,
+          "phase_seg2": 2,
+          "sjw": 1,
+          "brp": 1
+        },
+        "bittiming_const": {
+          "name": "pcan_usb",
+          "tseg1": {
+            "min": 1,
+            "max": 16
+          },
+          "tseg2": {
+            "min": 1,
+            "max": 8
+          },
+          "sjw": {
+            "min": 1,
+            "max": 4
+          },
+          "brp": {
+            "min": 1,
+            "max": 64
+          },
+          "brp_inc": 1
+        },
+        "clock": 8000000
+      },
+      "info_xstats": {
+        "restarts": 0,
+        "bus_error": 0,
+        "arbitration_lost": 0,
+        "error_warning": 0,
+        "error_passive": 0,
+        "bus_off": 0
+      }
+    },
+    "num_tx_queues": 1,
+    "num_rx_queues": 1,
+    "gso_max_size": 65536,
+    "gso_max_segs": 65535,
+    "tso_max_size": 65536,
+    "tso_max_segs": 65535,
+    "gro_max_size": 65536,
+    "parentbus": "usb",
+    "parentdev": "3-9:1.0",
+    "stats64": {
+      "rx": {
+        "bytes": 77552,
+        "packets": 9694,
+        "errors": 0,
+        "dropped": 0,
+        "over_errors": 0,
+        "multicast": 0
+      },
+      "tx": {
+        "bytes": 81536,
+        "packets": 10192,
+        "errors": 0,
+        "dropped": 0,
+        "carrier_errors": 0,
+        "collisions": 0
+      }
+    }
+  },
+  "result": "blocked",
+  "error": "未确认启用 LISTEN-ONLY 模式，拒绝打开监听"
+}

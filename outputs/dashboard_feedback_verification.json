@@ -1,0 +1,8 @@
+{
+  "success": true,
+  "duration_s": 25,
+  "concurrent_readers": 3,
+  "requests": 611,
+  "max_latency_s": 0.056815447998815216,
+  "mean_latency_s": 0.007067623239094597
+}

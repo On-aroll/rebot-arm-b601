@@ -1,0 +1,19 @@
+{
+  "observation_seconds": 25,
+  "changes": [
+    {
+      "time_utc": "2026-10-07T07:40:19.347271+00:00",
+      "devices": [
+        {
+          "path": "3-3",
+          "id": "1a86:8098",
+          "product": "USB Hub"
+        }
+      ],
+      "can_interfaces": []
+    }
+  ],
+  "kernel_log": "Oct 07 15:35:13 bonvoyage-x15xs22 kernel: peak_usb 3-3.4:1.0 can0: setting BTR0=0x00 BTR1=0x14\nOct 07 15:35:13 bonvoyage-x15xs22 kernel: peak_usb 3-3.4:1.0 can0: sending cmd f=0x1 n=0x2 failure: -32\nOct 07 15:35:13 bonvoyage-x15xs22 kernel: peak_usb 3-3.4:1.0 can0: couldn't set bitrate (err -32)\nOct 07 15:37:56 bonvoyage-x15xs22 kernel: usb 3-3: USB disconnect, device number 12\nOct 07 15:37:56 bonvoyage-x15xs22 kernel: usb 3-3.4: USB disconnect, device number 13\nOct 07 15:37:56 bonvoyage-x15xs22 kernel: peak_usb 3-3.4:1.0: can0 removed\nOct 07 15:37:57 bonvoyage-x15xs22 kernel: usb 3-3: new high-speed USB device number 14 using xhci_hcd\nOct 07 15:37:57 bonvoyage-x15xs22 kernel: usb 3-3: New USB device found, idVendor=1a86, idProduct=8098, bcdDevice=13.70\nOct 07 15:37:57 bonvoyage-x15xs22 kernel: usb 3-3: New USB device strings: Mfr=0, Product=2, SerialNumber=0\nOct 07 15:37:57 bonvoyage-x15xs22 kernel: usb 3-3: Product: USB Hub\nOct 07 15:37:59 bonvoyage-x15xs22 kernel: usb 3-3.2: new full-speed USB device number 15 using xhci_hcd\nOct 07 15:37:59 bonvoyage-x15xs22 kernel: usb 3-3.2: New USB device found, idVendor=0c72, idProduct=000c, bcdDevice=54.ff\nOct 07 15:37:59 bonvoyage-x15xs22 kernel: usb 3-3.2: New USB device strings: Mfr=10, Product=4, SerialNumber=0\nOct 07 15:37:59 bonvoyage-x15xs22 kernel: usb 3-3.2: Product: XCAN-USB\nOct 07 15:37:59 bonvoyage-x15xs22 kernel: usb 3-3.2: Manufacturer:                         \nOct 07 15:37:59 bonvoyage-x15xs22 kernel: peak_usb 3-3.2:1.0: PEAK-System PCAN-USB adapter hwrev 84 serial FFFFFFFF (1 channel)\nOct 07 15:37:59 bonvoyage-x15xs22 kernel: peak_usb 3-3.2:1.0 can0: attached to PCAN-USB channel 0 (device 0x000000FF)\nOct 07 15:38:02 bonvoyage-x15xs22 kernel: usb 3-3.2: USB disconnect, device number 15\nOct 07 15:38:02 bonvoyage-x15xs22 kernel: peak_usb 3-3.2:1.0: can0 removed\nOct 07 15:38:02 bonvoyage-x15xs22 kernel: hub 3-3:1.0: hub_ext_port_status failed (err = -71)\nOct 07 15:38:02 bonvoyage-x15xs22 kernel: usb 3-3-port2: connect-debounce failed",
+  "adapter_commands_sent": false,
+  "motor_commands_sent": false
+}

@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "source": "Live browser: checkTCP then applyTCP",
+  "mode": "position",
+  "target_xyz_mm": [
+    200,
+    150,
+    200
+  ],
+  "actual_xyz_mm": [
+    200.00000305265672,
+    149.99962836695045,
+    200.0006189401359
+  ],
+  "actual_error_mm": 0.0007219469052883519,
+  "manual_motion": false
+}

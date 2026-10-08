@@ -1,0 +1,60 @@
+{
+  "python": "3.10.22",
+  "mujoco": "3.15.0",
+  "pinocchio": "3.9.0",
+  "fk_samples": 100,
+  "fk_max_position_m": 2.7095175916633463e-06,
+  "fk_max_rotation_rad": 1.5723651889823438e-05,
+  "ik_samples": 20,
+  "ik_max_position_m": 4.509168576020876e-07,
+  "simulated_seconds": 60.00000000002736,
+  "wall_seconds": 2.6025415659996725,
+  "realtime_factor": 23.05438682857431,
+  "joint_max_tracking_error_deg": 0.9014372112417556,
+  "max_contacts": 0,
+  "warning_counts": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "mass_mjcf_kg": 6.00850457182895,
+  "joint_sign_mapping": [
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1
+  ],
+  "limits_canonical_rad": [
+    [
+      -2.6179938779914944,
+      2.6179938779914944
+    ],
+    [
+      -0.0,
+      3.14
+    ],
+    [
+      -0.0,
+      3.14
+    ],
+    [
+      -1.57,
+      1.57
+    ],
+    [
+      -1.57,
+      1.57
+    ],
+    [
+      -3.14,
+      3.14
+    ]
+  ],
+  "note": "Kinematic agreement only; URDF/MJCF inertias differ. Simulated bias compensation enabled."
+}

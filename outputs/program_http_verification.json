@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "exclusive_writer": true,
+  "pause_resume": true,
+  "cancel": true,
+  "history_lookup": true,
+  "invalid_program_rejected": true,
+  "interrupted_job_recovery": true
+}

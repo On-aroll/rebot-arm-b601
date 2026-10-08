@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "display_unset": true,
+  "backend": "egl",
+  "frames": 28,
+  "width": 320,
+  "height": 240,
+  "encoding": "rgb8",
+  "observed_hz": 8.487848073965898,
+  "changed_object_image_mean_difference": 1.317521701388889,
+  "camera_info_received": 27
+}

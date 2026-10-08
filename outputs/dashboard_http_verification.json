@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "static_assets": true,
+  "fresh_simulation_feedback": true,
+  "camera_zoom": true,
+  "invalid_camera_rejected": true,
+  "manual_motion_status": true,
+  "invalid_speed_rejected": true,
+  "manual_hold": true
+}

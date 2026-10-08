@@ -1,0 +1,39 @@
+{
+  "note": "第三方依赖仓库及其锁定版本。本仓库不内置这些内容，用 scripts/setup_external.sh 按此处的 commit 重建，保证仿真与实机行为可复现。",
+  "captured_at": "2026-10-08",
+  "repositories": [
+    {
+      "path": "external/motorbridge-studio",
+      "upstream": "https://github.com/motorbridge/motorbridge-studio.git",
+      "base_commit": "23b6e62ab8173faee3928c827cca3b7f42ba2128",
+      "branch": "main",
+      "tracked_here": true,
+      "why": "本项目的主界面。控制台、七个电机模块、网关总控都是在这个 fork 上改出来的，源码随本仓库提交；node_modules 与 dist 不提交。"
+    },
+    {
+      "path": "external/reBotArm_control_py",
+      "upstream": "https://github.com/Seeed-Projects/reBotArm_control_py.git",
+      "base_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+      "branch": "main",
+      "tracked_here": false,
+      "why": "官方 Python 控制库。提供 RS 机械臂 URDF（urdf/RS/urdf/ReBot_Arm_RS.urdf）、solve_ik 与 config/rebotarm_rs.yaml 电机映射。"
+    },
+    {
+      "path": "external/mujoco_menagerie",
+      "upstream": "https://github.com/google-deepmind/mujoco_menagerie.git",
+      "base_commit": "f054586a8e90465d49ee5be15335c4a0c7f57caf",
+      "branch": "main",
+      "tracked_here": false,
+      "sparse_paths": ["seeed_rebot_devarm"],
+      "why": "仿真模型来源，scripts/rebot_core.py 的 SCENE 指向 seeed_rebot_devarm/scene.xml。只拉这一个子目录。"
+    },
+    {
+      "path": "external/reBotArmController_ROS2",
+      "upstream": "https://github.com/Seeed-Projects/reBotArmController_ROS2.git",
+      "base_commit": "7506dc0fc5c2a7787dcb974d89d13f9f49d16d61",
+      "branch": null,
+      "tracked_here": false,
+      "why": "官方 ROS 2 接入与 real_to_sim 约定参考。本机当初是用 GitHub trees API 按 commit 下载的，没有 .git。"
+    }
+  ]
+}

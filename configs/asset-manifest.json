@@ -1,0 +1,49 @@
+{
+  "repositories": {
+    "reBotArm_control_py": {
+      "remote": "https://github.com/Seeed-Projects/reBotArm_control_py.git",
+      "commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+      "dirty": false
+    },
+    "mujoco_menagerie": {
+      "remote": "https://github.com/google-deepmind/mujoco_menagerie.git",
+      "commit": "f054586a8e90465d49ee5be15335c4a0c7f57caf",
+      "dirty": false
+    },
+    "reBotArmController_ROS2": {
+      "remote": "https://github.com/Seeed-Projects/reBotArmController_ROS2.git",
+      "commit": "7506dc0fc5c2a7787dcb974d89d13f9f49d16d61",
+      "fetched": true,
+      "fetch_method": "jsdelivr-cdn-per-file",
+      "fetch_note": "非 git clone。文件清单取自 GitHub API git/trees/<sha>（206 个 blob，truncated=false）；文件内容经 cdn.jsdelivr.net/gh/<repo>@<sha>/<path> 逐文件取回，共 106.9 MB / 68 s / 1603 KB/s。原因：本机代理把 github 与 codeload 限速到 20-40 KB/s，且 codeload 忽略 Range 头（恒返 200），分段追加会写成拼接的垃圾文件。",
+      "verification": "unverified-against-github",
+      "verification_note": "jsDelivr 是第三方 CDN。本机无法连回 github 逐文件校验（限速/502），因此内容来源按 CDN 记录，未宣称已与 GitHub 原文核对。github 可达时应重跑校验。",
+      "license": null,
+      "upstream_pushed_at": "2026-09-30T06:55:52Z",
+      "note": "上游未声明许可证（license=None）。含 src/rebotarm_bringup/description/{RS,DM}/urdf、rebotarm_moveit_config、rebotarm_mujoco_rs、fake_rs_driver.py。"
+    }
+  },
+  "python": "3.10.22",
+  "environment": "/home/bonvoyage/.local/share/robotics/envs/rebot-sim",
+  "canonical_coordinates": "Seeed control URDF RS",
+  "mujoco_arm_sign": [
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1
+  ],
+  "gripper": "left and right slide joint share one travel target 0..0.05 m; not hardware motor angle",
+  "end_frame": "gripper_end",
+  "missing_urdf_meshes": [],
+  "device_id_user_provided": "20250907852512190405",
+  "hardware_connection_used": false,
+  "files": {
+    "external/reBotArm_control_py/urdf/RS/urdf/ReBot_Arm_RS.urdf": "3838ca8f9d586be22a89b33c7cbdd4abd43d4a92a2de377b294eef4c5bd7654d",
+    "external/mujoco_menagerie/seeed_rebot_devarm/seeed_rebot_devarm.xml": "5c132b0390d8eb81e6956bee4ccd97785af6fd067922e04dac259fd10ae18f17",
+    "configs/requirements-lock.txt": "2689ff5ef4ae37c84ba139c90960920f06009b1ab3426d1af99e1af9ff3f4c58",
+    "external/reBotArmController_ROS2/src/rebotarm_bringup/description/RS/urdf/ReBot_Arm_RS.urdf": "978568c1b73310ec134b8f2285295f46d0c32c904d397bd097e3bcc81507b77b",
+    "external/reBotArmController_ROS2/src/rebotarm_mujoco_rs/models/rs_grasp_scene.xml": "77564f76215a0aee78bb93397b19ef09851e5df72db96cbc1024f94d8614668b"
+  }
+}

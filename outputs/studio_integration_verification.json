@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "studio_assets": true,
+  "identical_rs_model": true,
+  "traversal_rejected": true,
+  "coherent_feedback": true,
+  "tiny_sim_overshoot_handled": true,
+  "large_violation_rejected": true,
+  "raw_feedback_preserved": true,
+  "hardware_motion": false
+}

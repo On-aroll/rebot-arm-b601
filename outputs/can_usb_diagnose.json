@@ -1,0 +1,255 @@
+{
+  "time_utc": "2026-10-07T08:04:29.587432+00:00",
+  "interface": {
+    "ifindex": 9,
+    "ifname": "can0",
+    "flags": [
+      "NOARP",
+      "UP",
+      "LOWER_UP",
+      "ECHO"
+    ],
+    "mtu": 16,
+    "qdisc": "pfifo_fast",
+    "operstate": "UP",
+    "linkmode": "DEFAULT",
+    "group": "default",
+    "txqlen": 10,
+    "link_type": "can",
+    "promiscuity": 0,
+    "allmulti": 0,
+    "min_mtu": 16,
+    "max_mtu": 16,
+    "linkinfo": {
+      "info_kind": "can",
+      "info_data": {
+        "ctrlmode": [
+          "LISTEN-ONLY"
+        ],
+        "ctrlmode_supported": [
+          "LOOPBACK",
+          "LISTEN-ONLY",
+          "TRIPLE-SAMPLING",
+          "ONE-SHOT",
+          "CC-LEN8-DLC"
+        ],
+        "state": "ERROR-ACTIVE",
+        "berr_counter": {
+          "tx": 0,
+          "rx": 0
+        },
+        "restart_ms": 0,
+        "bittiming": {
+          "bitrate": 1000000,
+          "sample_point": "0.750",
+          "tq": 125,
+          "prop_seg": 2,
+          "phase_seg1": 3,
+          "phase_seg2": 2,
+          "sjw": 1,
+          "brp": 1
+        },
+        "bittiming_const": {
+          "name": "pcan_usb",
+          "tseg1": {
+            "min": 1,
+            "max": 16
+          },
+          "tseg2": {
+            "min": 1,
+            "max": 8
+          },
+          "sjw": {
+            "min": 1,
+            "max": 4
+          },
+          "brp": {
+            "min": 1,
+            "max": 64
+          },
+          "brp_inc": 1
+        },
+        "clock": 8000000
+      },
+      "info_xstats": {
+        "restarts": 0,
+        "bus_error": 0,
+        "arbitration_lost": 0,
+        "error_warning": 0,
+        "error_passive": 0,
+        "bus_off": 0
+      }
+    },
+    "num_tx_queues": 1,
+    "num_rx_queues": 1,
+    "gso_max_size": 65536,
+    "gso_max_segs": 65535,
+    "tso_max_size": 65536,
+    "tso_max_segs": 65535,
+    "gro_max_size": 65536,
+    "parentbus": "usb",
+    "parentdev": "3-9:1.0",
+    "stats64": {
+      "rx": {
+        "bytes": 0,
+        "packets": 0,
+        "errors": 0,
+        "dropped": 0,
+        "over_errors": 0,
+        "multicast": 0
+      },
+      "tx": {
+        "bytes": 0,
+        "packets": 0,
+        "errors": 0,
+        "dropped": 0,
+        "carrier_errors": 0,
+        "collisions": 0
+      }
+    }
+  },
+  "transmit_calls": 0,
+  "sudo_required": false,
+  "usb_devices": [
+    {
+      "sysfs_name": "3-10",
+      "vid_pid": "8087:0033",
+      "known_as": "",
+      "is_can_adapter": false,
+      "is_hub": false,
+      "manufacturer": "",
+      "product": "",
+      "serial": "",
+      "bcdDevice": "0000",
+      "speed_mbps": "12",
+      "driver": "usb",
+      "is_hub_downstream": false
+    },
+    {
+      "sysfs_name": "3-5",
+      "vid_pid": "046d:c548",
+      "known_as": "",
+      "is_can_adapter": false,
+      "is_hub": false,
+      "manufacturer": "Logitech",
+      "product": "USB Receiver",
+      "serial": "",
+      "bcdDevice": "0503",
+      "speed_mbps": "12",
+      "driver": "usb",
+      "is_hub_downstream": false
+    },
+    {
+      "sysfs_name": "3-8",
+      "vid_pid": "04f2:b729",
+      "known_as": "",
+      "is_can_adapter": false,
+      "is_hub": false,
+      "manufacturer": "CHICONY",
+      "product": "Chicony USB2.0 Camera",
+      "serial": "200901010001",
+      "bcdDevice": "2739",
+      "speed_mbps": "480",
+      "driver": "usb",
+      "is_hub_downstream": false
+    },
+    {
+      "sysfs_name": "3-9",
+      "vid_pid": "0c72:000c",
+      "known_as": "PEAK / XCAN-USB（克隆冒用）",
+      "is_can_adapter": true,
+      "is_hub": false,
+      "manufacturer": "",
+      "product": "XCAN-USB",
+      "serial": "",
+      "bcdDevice": "54ff",
+      "speed_mbps": "12",
+      "driver": "usb",
+      "is_hub_downstream": false
+    },
+    {
+      "sysfs_name": "usb1",
+      "vid_pid": "1d6b:0002",
+      "known_as": "",
+      "is_can_adapter": false,
+      "is_hub": false,
+      "manufacturer": "Linux 7.0.0-34-generic xhci-hcd",
+      "product": "xHCI Host Controller",
+      "serial": "0000:00:0d.0",
+      "bcdDevice": "0700",
+      "speed_mbps": "480",
+      "driver": "usb",
+      "is_hub_downstream": false
+    },
+    {
+      "sysfs_name": "usb2",
+      "vid_pid": "1d6b:0003",
+      "known_as": "",
+      "is_can_adapter": false,
+      "is_hub": false,
+      "manufacturer": "Linux 7.0.0-34-generic xhci-hcd",
+      "product": "xHCI Host Controller",
+      "serial": "0000:00:0d.0",
+      "bcdDevice": "0700",
+      "speed_mbps": "20000",
+      "driver": "usb",
+      "is_hub_downstream": false
+    },
+    {
+      "sysfs_name": "usb3",
+      "vid_pid": "1d6b:0002",
+      "known_as": "",
+      "is_can_adapter": false,
+      "is_hub": false,
+      "manufacturer": "Linux 7.0.0-34-generic xhci-hcd",
+      "product": "xHCI Host Controller",
+      "serial": "0000:00:14.0",
+      "bcdDevice": "0700",
+      "speed_mbps": "480",
+      "driver": "usb",
+      "is_hub_downstream": false
+    },
+    {
+      "sysfs_name": "usb4",
+      "vid_pid": "1d6b:0003",
+      "known_as": "",
+      "is_can_adapter": false,
+      "is_hub": false,
+      "manufacturer": "Linux 7.0.0-34-generic xhci-hcd",
+      "product": "xHCI Host Controller",
+      "serial": "0000:00:14.0",
+      "bcdDevice": "0700",
+      "speed_mbps": "10000",
+      "driver": "usb",
+      "is_hub_downstream": false
+    }
+  ],
+  "can_devices_found": [
+    "0c72:000c"
+  ],
+  "hubs_online": [],
+  "kernel_log_readable": true,
+  "kernel_lines_scanned": 84,
+  "usb_error_counts": {
+    "new_device": 9,
+    "can_link": 4,
+    "disconnect": 5
+  },
+  "usb_error_examples": {
+    "new_device": "10月 07 15:58:23 bonvoyage-x15xs22 kernel: usb 3-3: new high-speed USB device number 18 using xhci_hcd",
+    "can_link": "10月 07 15:58:25 bonvoyage-x15xs22 kernel: peak_usb 3-3.4:1.0 can0: attached to PCAN-USB channel 0 (device 0x000000FF)",
+    "disconnect": "10月 07 15:59:02 bonvoyage-x15xs22 kernel: usb 3-8: USB disconnect, device number 11"
+  },
+  "level": "无数据",
+  "verdict": "USB 层未见错误，但总线上没有收到任何帧",
+  "reasons": [
+    "适配器：XCAN-USB  路径 3-9  （直连）  12 Mbps  驱动 usb",
+    "身份线索（不足单独定性，但值得记录）：设备串为 'XCAN-USB'，而 VID/PID 0c72:000c 对应 PEAK PCAN-USB",
+    "can0 状态 UP  控制器 ERROR-ACTIVE  波特率 1000000",
+    "总线错误计数 tx=0 rx=0  bus_error=0  bus_off=0",
+    "收包 0  发包 0  接收丢弃 0",
+    "USB 层看起来正常了，可以开始查 CAN 侧。",
+    "依次确认：适配器与机械臂是否共地、CAN_H/CAN_L 是否接反、两端终端电阻（通常各 120Ω，合计约 60Ω）、波特率是否与电机一致。",
+    "注意：只监听模式不会主动请求，电机在未收到读取请求时可能完全不回话，「零帧」不等于「断线」。"
+  ]
+}

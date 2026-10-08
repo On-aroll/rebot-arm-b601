@@ -1,0 +1,18 @@
+{
+  "time_utc": "2026-10-07T08:35:43.045133+00:00",
+  "interface": "can0",
+  "test_id": "0x7FF",
+  "transmits": true,
+  "state": "ERROR-ACTIVE",
+  "ctrlmode": [
+    "LOOPBACK"
+  ],
+  "up": true,
+  "bitrate": 1000000,
+  "loopback_frame": {
+    "id": "0x7FF",
+    "dlc": 4,
+    "data": "deadbeef"
+  },
+  "result": "loopback_ok"
+}

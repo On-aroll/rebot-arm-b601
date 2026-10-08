@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "name": "抓取并放置",
+  "steps": [
+    {
+      "op": "assert_object",
+      "name": "确认物体起点",
+      "object": "block",
+      "xyz": [
+        0.25,
+        0.0,
+        0.05
+      ],
+      "tolerance_m": 0.012
+    },
+    {
+      "op": "gripper",
+      "name": "张开夹爪",
+      "finger_m": 0.032,
+      "seconds": 1,
+      "completion": "position"
+    },
+    {
+      "op": "move_tcp",
+      "name": "接近物体",
+      "xyz": [
+        0.25,
+        0.0,
+        0.14
+      ],
+      "orientation": "down",
+      "seconds": 3
+    },
+    {
+      "op": "move_tcp",
+      "name": "下降抓取",
+      "xyz": [
+        0.25,
+        0.0,
+        0.04
+      ],
+      "orientation": "down",
+      "seconds": 3
+    },
+    {
+      "op": "gripper",
+      "name": "闭合夹爪",
+      "finger_m": 0.016,
+      "seconds": 2,
+      "completion": "contact"
+    },
+    {
+      "op": "move_tcp",
+      "name": "抬升",
+      "xyz": [
+        0.25,
+        0.0,
+        0.14
+      ],
+      "orientation": "down",
+      "seconds": 3
+    },
+    {
+      "op": "wait",
+      "name": "保持抓取",
+      "seconds": 1
+    },
+    {
+      "op": "assert_object",
+      "name": "检查物体已抬起",
+      "object": "block",
+      "xyz": [
+        0.25,
+        0.0,
+        0.15000000000000002
+      ],
+      "tolerance_m": 0.025
+    },
+    {
+      "op": "move_tcp",
+      "name": "搬运",
+      "xyz": [
+        0.25,
+        0.065,
+        0.14
+      ],
+      "orientation": "down",
+      "seconds": 3
+    },
+    {
+      "op": "move_tcp",
+      "name": "下降放置",
+      "xyz": [
+        0.25,
+        0.065,
+        0.04
+      ],
+      "orientation": "down",
+      "seconds": 3
+    },
+    {
+      "op": "gripper",
+      "name": "释放物体",
+      "finger_m": 0.032,
+      "seconds": 2,
+      "completion": "position"
+    },
+    {
+      "op": "move_tcp",
+      "name": "撤离",
+      "xyz": [
+        0.25,
+        0.065,
+        0.14
+      ],
+      "orientation": "down",
+      "seconds": 3
+    },
+    {
+      "op": "assert_object",
+      "name": "检查放置结果",
+      "object": "block",
+      "xyz": [
+        0.25,
+        0.065,
+        0.05
+      ],
+      "tolerance_m": 0.012
+    }
+  ]
+}

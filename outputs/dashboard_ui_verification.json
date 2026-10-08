@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-07",
+  "method": "Live in-app browser interactions against local MuJoCo service",
+  "joint_jog_1_degree": true,
+  "empty_joint_target_rejected": true,
+  "preset_pick_place": {
+    "job_id": "273c2d494c87471db4b8521d73a925f2",
+    "status": "succeeded",
+    "steps": 13,
+    "pause_resume": true
+  },
+  "edited_json_submission": true,
+  "edited_json_cancel": true,
+  "hardware_connect_disabled": true,
+  "feedback_loss": {
+    "method": "Idle server SIGSTOP for 18 seconds with automatic SIGCONT",
+    "stale_overlay": true,
+    "motion_controls_disabled": true,
+    "reconnected": true
+  },
+  "console_errors_after_reload": [],
+  "one_stroke_writing": {
+    "id": "9d20f49cc28e4fd1b2ea0bd6f615c875",
+    "status": "succeeded",
+    "step_count": 6,
+    "trace_points": 2352,
+    "trace_length_m": 1.9613568681454476
+  },
+  "page_reload_preserves_running_job": true,
+  "viewport_932px_no_horizontal_overflow": true,
+  "tcp_read_current_mm_and_ik_submit": true,
+  "one_stroke_after_feedback_fix": {
+    "id": "efa2bf2d13c340eba006b840df9476dc",
+    "status": "succeeded",
+    "step_count": 6,
+    "trace_points": 2352,
+    "trace_length_m": 1.9613568681455156
+  }
+}

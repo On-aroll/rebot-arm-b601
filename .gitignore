@@ -1,0 +1,48 @@
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# ── 第三方仓库：只留我们改过的 fork 源码，其余按 configs/external-manifest.json 重建 ──
+external/*
+!external/motorbridge-studio/
+external/motorbridge-studio/node_modules/
+external/motorbridge-studio/dist/
+external/motorbridge-studio/.git/
+external/motorbridge-studio/.vite/
+external/motorbridge-studio/coverage/
+
+# ── 运行产物：日志、进程号、任务落盘 ──────────────────────────────────────
+outputs/*.log
+outputs/*.pid
+outputs/*.jsonl
+outputs/*.tmp
+outputs/machine_live.json
+outputs/jobs/
+outputs/writing-tests/
+outputs/program-tests/
+
+# ── 大体积演示产物（视频与图片，单文件常达数 MB）────────────────────────
+outputs/*.mp4
+outputs/*.png
+outputs/*.jpg
+outputs/*.ppm
+refs/
+
+# ── 本机环境与缓存，不属于项目内容 ───────────────────────────────────────
+downloads/
+.ros/
+.Trash-0/
+.workbuddy-ai/
+.qoder_*
+.DS_Store
+Thumbs.db
+
+# ── 本地覆盖与凭据：绝不入库 ─────────────────────────────────────────────
+.env
+*.local
+*.token
+*.pem
+*.key

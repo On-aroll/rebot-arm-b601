@@ -1,0 +1,6 @@
+{
+  "success": true,
+  "pause_resume_progress_preserved": true,
+  "cancel_stops_recording": true,
+  "invalid_path_cases_rejected": 4
+}

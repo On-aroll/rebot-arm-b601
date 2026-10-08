@@ -1,0 +1,6 @@
+{
+  "success": true,
+  "method": "Browser UI observation with a controlled 10-second simulator process pause",
+  "disconnected_message_observed": true,
+  "reconnected_message_observed": true
+}

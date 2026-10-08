@@ -1,0 +1,22 @@
+{
+  "time_utc": "2026-10-07T09:18:57.705365+00:00",
+  "interface": "can0",
+  "probe_id": "0x7FE",
+  "seconds": 30.0,
+  "before": {
+    "state": "ERROR-ACTIVE",
+    "ctrlmode": null,
+    "bitrate": 1000000,
+    "tx_packets": 123,
+    "rx_packets": 0
+  },
+  "after": {
+    "state": "ERROR-ACTIVE",
+    "ctrlmode": null,
+    "bitrate": 1000000,
+    "tx_packets": 128,
+    "rx_packets": 0
+  },
+  "frames_sent": 26,
+  "tx_delta": 5
+}

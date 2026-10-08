@@ -1,0 +1,199 @@
+{
+  "time_utc": "2026-10-07T07:44:27.466452+00:00",
+  "new_hub": "05e3:0610 Genesys Logic",
+  "adapter_product": "XCAN-USB",
+  "before": [
+    {
+      "ifindex": 7,
+      "ifname": "can0",
+      "flags": [
+        "NOARP",
+        "ECHO"
+      ],
+      "mtu": 16,
+      "qdisc": "noop",
+      "operstate": "DOWN",
+      "linkmode": "DEFAULT",
+      "group": "default",
+      "txqlen": 10,
+      "link_type": "can",
+      "promiscuity": 0,
+      "allmulti": 0,
+      "min_mtu": 16,
+      "max_mtu": 16,
+      "linkinfo": {
+        "info_kind": "can",
+        "info_data": {
+          "ctrlmode_supported": [
+            "LOOPBACK",
+            "LISTEN-ONLY",
+            "TRIPLE-SAMPLING",
+            "ONE-SHOT",
+            "CC-LEN8-DLC"
+          ],
+          "state": "STOPPED",
+          "berr_counter": {
+            "tx": 0,
+            "rx": 0
+          },
+          "restart_ms": 0,
+          "bittiming_const": {
+            "name": "pcan_usb",
+            "tseg1": {
+              "min": 1,
+              "max": 16
+            },
+            "tseg2": {
+              "min": 1,
+              "max": 8
+            },
+            "sjw": {
+              "min": 1,
+              "max": 4
+            },
+            "brp": {
+              "min": 1,
+              "max": 64
+            },
+            "brp_inc": 1
+          },
+          "clock": 8000000
+        },
+        "info_xstats": {
+          "restarts": 0,
+          "bus_error": 0,
+          "arbitration_lost": 0,
+          "error_warning": 0,
+          "error_passive": 0,
+          "bus_off": 0
+        }
+      },
+      "num_tx_queues": 1,
+      "num_rx_queues": 1,
+      "gso_max_size": 65536,
+      "gso_max_segs": 65535,
+      "tso_max_size": 65536,
+      "tso_max_segs": 65535,
+      "gro_max_size": 65536,
+      "parentbus": "usb",
+      "parentdev": "3-3.4:1.0",
+      "stats64": {
+        "rx": {
+          "bytes": 0,
+          "packets": 0,
+          "errors": 0,
+          "dropped": 0,
+          "over_errors": 0,
+          "multicast": 0
+        },
+        "tx": {
+          "bytes": 0,
+          "packets": 0,
+          "errors": 0,
+          "dropped": 0,
+          "carrier_errors": 0,
+          "collisions": 0
+        }
+      }
+    }
+  ],
+  "after": [
+    {
+      "ifindex": 7,
+      "ifname": "can0",
+      "flags": [
+        "NOARP",
+        "ECHO"
+      ],
+      "mtu": 16,
+      "qdisc": "noop",
+      "operstate": "DOWN",
+      "linkmode": "DEFAULT",
+      "group": "default",
+      "txqlen": 10,
+      "link_type": "can",
+      "promiscuity": 0,
+      "allmulti": 0,
+      "min_mtu": 16,
+      "max_mtu": 16,
+      "linkinfo": {
+        "info_kind": "can",
+        "info_data": {
+          "ctrlmode_supported": [
+            "LOOPBACK",
+            "LISTEN-ONLY",
+            "TRIPLE-SAMPLING",
+            "ONE-SHOT",
+            "CC-LEN8-DLC"
+          ],
+          "state": "STOPPED",
+          "berr_counter": {
+            "tx": 0,
+            "rx": 0
+          },
+          "restart_ms": 0,
+          "bittiming_const": {
+            "name": "pcan_usb",
+            "tseg1": {
+              "min": 1,
+              "max": 16
+            },
+            "tseg2": {
+              "min": 1,
+              "max": 8
+            },
+            "sjw": {
+              "min": 1,
+              "max": 4
+            },
+            "brp": {
+              "min": 1,
+              "max": 64
+            },
+            "brp_inc": 1
+          },
+          "clock": 8000000
+        },
+        "info_xstats": {
+          "restarts": 0,
+          "bus_error": 0,
+          "arbitration_lost": 0,
+          "error_warning": 0,
+          "error_passive": 0,
+          "bus_off": 0
+        }
+      },
+      "num_tx_queues": 1,
+      "num_rx_queues": 1,
+      "gso_max_size": 65536,
+      "gso_max_segs": 65535,
+      "tso_max_size": 65536,
+      "tso_max_segs": 65535,
+      "gro_max_size": 65536,
+      "parentbus": "usb",
+      "parentdev": "3-3.4:1.0",
+      "stats64": {
+        "rx": {
+          "bytes": 0,
+          "packets": 0,
+          "errors": 0,
+          "dropped": 0,
+          "over_errors": 0,
+          "multicast": 0
+        },
+        "tx": {
+          "bytes": 0,
+          "packets": 0,
+          "errors": 0,
+          "dropped": 0,
+          "carrier_errors": 0,
+          "collisions": 0
+        }
+      }
+    }
+  ],
+  "observation_seconds": 10,
+  "kernel_log_since_new_hub": "Oct 07 15:42:32 bonvoyage-x15xs22 kernel: usb 3-3: new high-speed USB device number 16 using xhci_hcd\nOct 07 15:42:32 bonvoyage-x15xs22 kernel: usb 3-3: New USB device found, idVendor=05e3, idProduct=0610, bcdDevice=64.00\nOct 07 15:42:32 bonvoyage-x15xs22 kernel: usb 3-3: New USB device strings: Mfr=1, Product=2, SerialNumber=0\nOct 07 15:42:32 bonvoyage-x15xs22 kernel: usb 3-3: Product: USB2.1 Hub\nOct 07 15:42:32 bonvoyage-x15xs22 kernel: usb 3-3: Manufacturer: GenesysLogic\nOct 07 15:42:32 bonvoyage-x15xs22 kernel: hub 3-3:1.0: USB hub found\nOct 07 15:42:32 bonvoyage-x15xs22 kernel: hub 3-3:1.0: 4 ports detected\nOct 07 15:42:34 bonvoyage-x15xs22 kernel: usb 3-3.4: new full-speed USB device number 17 using xhci_hcd\nOct 07 15:42:34 bonvoyage-x15xs22 kernel: usb 3-3.4: New USB device found, idVendor=0c72, idProduct=000c, bcdDevice=54.ff\nOct 07 15:42:34 bonvoyage-x15xs22 kernel: usb 3-3.4: New USB device strings: Mfr=10, Product=4, SerialNumber=0\nOct 07 15:42:34 bonvoyage-x15xs22 kernel: usb 3-3.4: Product: XCAN-USB\nOct 07 15:42:34 bonvoyage-x15xs22 kernel: usb 3-3.4: Manufacturer:                         \nOct 07 15:42:34 bonvoyage-x15xs22 kernel: peak_usb 3-3.4:1.0: PEAK-System PCAN-USB adapter hwrev 84 serial FFFFFFFF (1 channel)\nOct 07 15:42:34 bonvoyage-x15xs22 kernel: peak_usb 3-3.4:1.0 can0: attached to PCAN-USB channel 0 (device 0x000000FF)",
+  "interface_start_test": "pending administrator sudo authentication",
+  "motor_commands_sent": false
+}

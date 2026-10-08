@@ -1,0 +1,207 @@
+/* 虚实联调控制台 —— 由原「书写任务」工作台改名扩展而来。 */
+.consoleWorkspace { margin-top: 16px; }
+.consoleHeading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; }
+.consoleEyebrow { color: #52749b; font-size: 12px; letter-spacing: .09em; }
+.consoleHeading h2 { margin: 8px 0; font-size: 28px; }
+.consoleHeading h2 small { font-size: 14px; font-weight: 400; color: #66809b; margin-left: 12px; }
+.consoleHeading p { margin: 0; font-size: 13px; color: #61758c; }
+.consoleBadges { display: flex; gap: 8px; flex-wrap: wrap; }
+.consoleBadges .badge { white-space: nowrap; }
+
+.consoleAlert { margin-top: 12px; padding: 12px 18px; background: #fff2df; color: #8b511d; border: 1px solid #f4d3a0; border-radius: 10px; }
+.consoleStatus { margin-top: 12px; padding: 12px 18px; background: #f1f6fd; color: #3f5c78; border: 1px solid #d8e5f4; border-radius: 10px; font-size: 12px; line-height: 1.7; }
+.consoleStatus strong { display: block; font-size: 13px; margin-bottom: 2px; }
+.consoleStatus span { color: #61788f; }
+
+/* 三维视图通栏置顶 */
+.consoleStage { overflow: hidden; padding: 0; margin-top: 16px; }
+.consoleSceneToolbar { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid #dbe5ee; }
+.consoleSceneToolbar button { margin-left: 6px; }
+.consoleViewport { position: relative; height: 520px; min-height: 360px; background: linear-gradient(140deg, #eff5ff, #fff); }
+.consoleViewport .armUrdfHost { height: 100% !important; min-height: 100% !important; }
+.consoleViewport > div:first-child { height: 100%; }
+.consoleSceneCaption { position: absolute; top: 18px; left: 20px; pointer-events: none; color: #294e73; font-weight: 600; line-height: 1.8; }
+.consoleSceneCaption small { font-weight: 400; color: #8193a6; }
+.consoleLegend { padding: 13px 16px; display: flex; gap: 18px; flex-wrap: wrap; font-size: 12px; border-top: 1px solid #dbe5ee; }
+.consoleLegend label { display: flex; align-items: center; gap: 6px; }
+.consoleLegend input { width: auto; }
+.consoleLegend i { width: 18px; height: 3px; display: inline-block; }
+.consoleLegend .plan { background: #528df3; }
+.consoleLegend .actual { background: #ef6948; }
+
+/* 网关与总控 */
+.consoleGateway { margin-top: 16px; padding: 14px 18px; display: grid; gap: 10px; }
+.gwRow { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.gwRow label { font-size: 11px; color: #7c8fa0; display: flex; flex-direction: column; gap: 3px; }
+.gwUrl { flex: 1; min-width: 220px; }
+.gwUrl input { min-height: 34px; font-family: ui-monospace, monospace; font-size: 12px; }
+.gwState { font-size: 12px; color: #3f5c78; padding-bottom: 8px; }
+.gwCheck { flex-direction: row !important; align-items: center; gap: 6px !important; font-size: 12px !important; color: #38536e !important; padding-bottom: 6px; }
+.gwCheck input { width: auto; }
+.gwSpd input { width: 84px; min-height: 34px; }
+.gwSpd small { font-size: 10px; color: #93a4b5; }
+.gwWarn { margin: 0; font-size: 11px; color: #8b511d; background: #fff6e8; border: 1px solid #f2ddba; border-radius: 8px; padding: 8px 12px; line-height: 1.7; }
+.gwLog { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-size: 11px; font-family: ui-monospace, monospace; color: #5d7085; max-height: 130px; overflow: auto; }
+.gwLog li.ok { color: #2f7d52; }
+.gwLog li.err { color: #b4441c; }
+.gwLog li.drill { color: #3f6fa8; }
+.gwLog li.warn { color: #8b511d; }
+.armSwitch { display: flex; gap: 8px; }
+.armSwitch button { min-height: 38px; padding: 0 16px; }
+.armSwitch button.danger { background: #b4441c; border-color: #b4441c; color: #fff; }
+.consoleEmergency { display: flex; gap: 8px; margin-top: 10px; }
+.consoleEmergency button.danger { background: #b4441c; border-color: #b4441c; color: #fff; font-weight: 600; min-height: 38px; padding: 0 18px; }
+
+/* 七个电机模块 */
+.consoleModulesHead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 22px 2px 10px; flex-wrap: wrap; }
+.consoleModulesHead h3 { margin: 0; font-size: 16px; color: #244363; }
+.consoleModulesHead h3 small { font-weight: 400; color: #7a8a9b; font-size: 12px; margin-left: 8px; }
+.consoleModulesHead span { font-size: 12px; color: #61758c; }
+.consoleModules { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px; }
+.motorModule { background: rgba(255, 255, 255, .78); border: 1px solid #dbe5ee; border-radius: 12px; padding: 13px 14px; }
+.motorModule.bad { border-color: #f0c9b6; }
+.motorModule.armed { border-color: #e6c9a8; box-shadow: 0 0 0 1px #f2ddbd inset; }
+.motorReadout strong.yes { color: #2f7d52; }
+.motorResult { margin: 8px 0 0; font-size: 11px; padding: 5px 8px; border-radius: 6px; background: #f2f6fb; color: #3f5c78; }
+.motorResult.ok { background: #eaf7ef; color: #2f7d52; }
+.motorResult.err { background: #fdeee8; color: #b4441c; }
+.motorResult.refused { background: #fff6e8; color: #8b511d; }
+.motorResult.drill { background: #eef4fd; color: #3f6fa8; }
+.motorModule header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.motorModule header strong { font-size: 14px; color: #244363; }
+.motorModule header small { color: #7a8a9b; font-size: 11px; }
+.motorTag { font-size: 11px; color: #3f6fa8; background: #e8f0fb; border-radius: 5px; padding: 2px 6px; }
+.motorDot { width: 8px; height: 8px; border-radius: 50%; background: #c3d2e2; margin-left: auto; }
+.motorDot.online { background: #35a86a; }
+.motorDot.connecting { background: #e0a63c; }
+.motorDot.offline, .motorDot.disabled { background: #c3d2e2; }
+.motorReadout { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; color: #7c8fa0; margin-bottom: 10px; }
+.motorReadout strong { display: block; font-size: 15px; color: #244363; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.motorReadout .multiTurn { flex-basis: 100%; color: #9a7b48; font-size: 11px; }
+.motorError { color: #b4441c; font-size: 11px; margin: 0 0 8px; }
+.motorFields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+.motorFields label { font-size: 10px; color: #7c8fa0; display: grid; gap: 3px; }
+.motorFields input, .motorFields select { min-height: 30px; font-size: 12px; padding: 3px 6px; }
+.motorFields .dim { opacity: .45; }
+.motorSlider { margin-top: 9px; }
+.motorSlider input { width: 100%; }
+.motorSlider small { color: #93a4b5; font-size: 10px; }
+.motorActions { display: flex; gap: 5px; margin-top: 10px; }
+.motorActions button { flex: 1; padding: 7px 2px; font-size: 12px; }
+.motorHint { margin: 8px 0 0; font-size: 10px; color: #8695a4; line-height: 1.6; }
+
+/* 四张并排卡 */
+.consoleRow4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.consoleCard { padding: 17px; }
+.consoleCard h3 { font-size: 15px; margin: 0 0 10px; }
+.consoleCard h3 small { color: #7a8a9b; font-weight: 400; }
+.consoleCard p { font-size: 12px; line-height: 1.7; color: #657b92; }
+.consoleRow { display: flex; gap: 8px; align-items: center; }
+.consoleRow select { flex: 1; min-height: 36px; }
+.consoleStart { width: 100%; min-height: 42px; margin: 9px 0; }
+.consoleActions { display: flex; gap: 6px; margin-bottom: 9px; }
+.consoleActions button { flex: 1; padding: 8px 4px; }
+.consoleCard progress { width: 100%; height: 7px; accent-color: #387bea; }
+.consoleStats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+.consoleStats span { font-size: 11px; color: #7c8fa0; }
+.consoleStats strong { display: block; color: #244363; font-size: 17px; margin-top: 4px; font-weight: 600; }
+.consoleTcp { display: flex; gap: 12px; }
+.consoleTcp span { flex: 1; color: #7c8fa0; font-size: 11px; }
+.consoleTcp strong { display: block; color: #244363; font-size: 19px; margin-top: 5px; }
+.consoleJoints { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+.consoleJoints span { font-size: 11px; color: #7c8fa0; }
+.consoleJoints strong { display: block; font-size: 13px; color: #38536e; margin-top: 3px; }
+.consoleMessage { padding: 8px; background: #edf4fd; border-radius: 6px; }
+.consoleScope { color: #8695a4 !important; font-size: 11px !important; }
+
+/* 虚实逐轴对比 */
+.compareTable { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+.compareTable th { text-align: right; font-weight: 500; color: #7c8fa0; font-size: 11px; padding: 0 0 6px; }
+.compareTable th:first-child, .compareTable td:first-child { text-align: left; }
+.compareTable td { text-align: right; padding: 4px 0; border-top: 1px solid #e6eef7; color: #244363; font-variant-numeric: tabular-nums; }
+.compareTable td.delta.warn { color: #b4441c; font-weight: 600; }
+.compareTable td.off { color: #97a6b5; }
+
+/* 下方三区：参数与限速 / 手柄 / 接入边界 */
+.consoleGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+.consoleGrid .consoleCard { display: flex; flex-direction: column; gap: 4px; }
+.paramTable { width: 100%; border-collapse: collapse; font-size: 12px; }
+.paramTable th { text-align: left; font-weight: 500; font-size: 11px; color: #7c8fa0; padding-bottom: 6px; }
+.paramTable td { padding: 5px 0; border-top: 1px solid #e6eef7; color: #38536e; }
+.paramTable td.code, .paramTable .code { font-family: ui-monospace, monospace; color: #5d7085; font-size: 11px; }
+.paramTable td.gap { color: #a2b0be; }
+.paramTable td.warn { color: #b4441c; font-weight: 600; }
+.paramTable td.ok { color: #2f7d52; }
+.consoleNote { font-size: 11px; color: #8695a4; line-height: 1.7; }
+.consoleCmd { display: inline-block; margin: 2px 4px; padding: 2px 6px; background: #f2f6fb; border-radius: 5px; font-family: ui-monospace, monospace; font-size: 11px; color: #3f5c78; word-break: break-all; }
+
+.padState { display: flex; gap: 8px; align-items: center; font-size: 12px; margin-bottom: 8px; }
+.padAxes { display: grid; gap: 6px; margin: 6px 0 10px; }
+.padAxis { display: grid; grid-template-columns: 34px 1fr 48px; gap: 8px; align-items: center; font-size: 11px; color: #7c8fa0; }
+.padAxis b { font-weight: 400; text-align: right; font-variant-numeric: tabular-nums; color: #38536e; }
+.padBar { position: relative; height: 6px; background: #e8eff7; border-radius: 3px; }
+.padBar i { position: absolute; top: 0; height: 6px; background: #528df3; border-radius: 3px; }
+.padBar::after { content: ''; position: absolute; left: 50%; top: -2px; width: 1px; height: 10px; background: #c3d2e2; }
+.padButtons { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.padButtons span { min-width: 22px; text-align: center; font-size: 10px; padding: 3px 4px; border-radius: 5px; background: #eef3f9; color: #93a4b5; }
+.padButtons span.on { background: #387bea; color: #fff; }
+
+@media (max-width: 1500px) {
+  .consoleRow4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 1100px) {
+  .consoleGrid { grid-template-columns: 1fr; }
+  .consoleViewport { height: 440px; }
+}
+@media (max-width: 760px) {
+  .consoleHeading { align-items: start; flex-direction: column; }
+  .consoleRow4 { grid-template-columns: 1fr; }
+  .consoleModules { grid-template-columns: 1fr; }
+  .consoleViewport { height: 360px; }
+  .consoleHeading h2 small { display: block; margin: 8px 0 0; }
+  .consoleSceneToolbar { flex-wrap: wrap; }
+}
+
+/* Per-axis configuration; joint goals belong to the task planner. */
+.motorPower { background:#f2f6fc; padding:10px; border-radius:8px; margin:12px 0; }
+.motorPower > strong, .motorPower > small { display:block; font-size:11px; line-height:1.7; }
+.motorPower > small { color:#7b8fa2; }
+.motorSettingRows { display:grid; gap:12px; }
+.motorSettingRow { display:grid; gap:4px; border-top:1px solid #e6eef7; padding-top:10px; }
+.motorSettingRow > label { font-size:12px; font-weight:600; color:#365574; }
+.motorSettingRow > small, .motorSettingRead { font-size:10px; color:#8094a7; }
+.motorSettingEdit { display:flex; gap:7px; }.motorSettingEdit input { width:0; flex:1; min-width:0; }.motorSettingEdit button { flex:0 0 56px; }
+.motorAdvanced { margin-top:14px; border-top:1px solid #e6eef7; padding-top:10px; }
+.motorAdvanced summary { cursor:pointer; font-size:12px; color:#617c98; }.motorAdvanced label { display:block; font-size:11px; margin:10px 0 5px; }.motorAdvanced select { width:100%; margin-bottom:8px; }
+
+/* 笛卡尔目标输入保留与电机配置独立，预览不会下发。 */
+.cartesianPanel { margin-top: 16px; padding: 20px; }
+.cartesianHeading { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.cartesianHeading h3 { margin: 0 0 8px; color: #244363; }
+.cartesianHeading h3 small { font-size: 12px; font-weight: normal; color: #61758c; }
+.cartesianHeading p { font-size: 12px; color: #61758c; margin: 0; line-height: 1.7; }
+.cartesianInputs { display: grid; grid-template-columns: repeat(3, minmax(80px, 1fr)) minmax(200px, 2fr) minmax(140px, 1fr); gap: 12px; margin: 16px 0; }
+.cartesianInputs label { display: grid; gap: 6px; font-size: 12px; color: #3f5c78; }
+.cartesianInputs input, .cartesianInputs select { width: 100%; min-height: 38px; }
+.pointPlanSummary { display: flex; gap: 20px; flex-wrap: wrap; font-size: 12px; padding: 12px; background: #f0f6ff; border-radius: 8px; }
+.pointPlanSummary strong { margin-left: 8px; color: #244363; }
+.pointPlanSummary .consoleJoints { width: 100%; }
+.pointHardwareReason { font-size: 12px; line-height: 1.7; color: #8b511d; padding: 10px 12px; border: 1px solid #efd5b3; background: #fff6e8; border-radius: 8px; }
+@media (max-width: 850px) { .cartesianInputs { grid-template-columns: repeat(3, minmax(0, 1fr)); } .cartesianInputs label:nth-child(4) { grid-column: span 2; } }
+@media (max-width: 500px) { .cartesianInputs { grid-template-columns: 1fr; } .cartesianInputs label:nth-child(4) { grid-column: auto; } }
+
+.hardwareMapping { margin-top: 16px; padding: 20px; }
+.hardwareMapping h3 { margin: 0 0 10px; color: #244363; }
+.hardwareMapping h3 small { font-size: 12px; font-weight: normal; color: #61758c; }
+.hardwareMapping p { font-size: 12px; line-height: 1.7; }
+.mappingTableScroll { overflow-x: auto; margin: 12px 0; }
+.mappingTableScroll table { min-width: 740px; }
+.mappingTableScroll input[type="number"] { width: 95px; }
+.mappingTableScroll label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.mappingTableScroll input[type="checkbox"] { width: auto; }
+.mappingTableScroll small { display: block; font-size: 11px; }
+.mappingBad, .mappingIssues { color: #ad4226; }
+.mappingIssues { font-size: 12px; line-height: 1.8; }
+.hardwareMapping button[aria-pressed="true"] { color: #fff; background: #275b91; }
+
+.hardwarePoseLoading { display: flex; flex-direction: column; justify-content: center; align-items: center; color: #3f5c78; gap: 8px; }

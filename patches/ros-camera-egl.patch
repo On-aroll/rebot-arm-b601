@@ -1,0 +1,54 @@
+--- a/src/rebotarm_mujoco_rs/rebotarm_mujoco_rs/scene_camera.py
++++ b/src/rebotarm_mujoco_rs/rebotarm_mujoco_rs/scene_camera.py
+@@ -1,9 +1,15 @@
+ from __future__ import annotations
+ 
+ import json
++import os
+ import math
+ from pathlib import Path
+ import threading
++
++# Off-screen backend must be selected before importing MuJoCo/PyOpenGL.
++os.environ.setdefault("MUJOCO_GL", "egl")
++if os.environ["MUJOCO_GL"] == "egl":
++    os.environ.setdefault("PYOPENGL_PLATFORM", "egl")
+ 
+ import mujoco
+ import numpy as np
+@@ -100,7 +106,7 @@
+         self.create_subscription(
+             String, self.object_states_topic, self._objects_callback, 10
+         )
+-        self.create_timer(1.0 / publish_hz, self._render)
++        self._render_timer = self.create_timer(1.0 / publish_hz, self._render)
+         self.get_logger().info(
+             "RS overhead camera ready: "
+             f"camera={self.camera_name}, image={self.image_topic}, "
+@@ -185,6 +191,8 @@
+             if not self._renderer_error_reported:
+                 self.get_logger().error(f"RS overhead camera rendering failed: {exc}")
+                 self._renderer_error_reported = True
++            # Never retry a partially initialized GL context every timer tick.
++            self._render_timer.cancel()
+             return
+ 
+         stamp = self.get_clock().now().to_msg()
+--- a/src/rebotarm_mujoco_rs/launch/mujoco_rs.launch.py
++++ b/src/rebotarm_mujoco_rs/launch/mujoco_rs.launch.py
+@@ -18,6 +18,7 @@
+             DeclareLaunchArgument("smoothing_alpha", default_value="1.0"),
+             DeclareLaunchArgument("stale_timeout", default_value="1.0"),
+             DeclareLaunchArgument("use_viewer", default_value="false"),
++            DeclareLaunchArgument("camera_gl", default_value="egl"),
+             DeclareLaunchArgument("gripper_kp", default_value="300.0"),
+             DeclareLaunchArgument("gripper_kd", default_value="120.0"),
+             DeclareLaunchArgument("gripper_tau_limit", default_value="150.0"),
+@@ -74,6 +75,7 @@
+             Node(
+                 package="rebotarm_mujoco_rs",
+                 executable="rs_scene_camera",
++                additional_env={"MUJOCO_GL": LaunchConfiguration("camera_gl")},
+                 name="rebotarm_rs_scene_camera",
+                 output="screen",
+                 condition=IfCondition(LaunchConfiguration("enable_task_tools")),
