@@ -1,94 +1,78 @@
 import React from 'react';
-import { MOTOR_SETTINGS, settingPayload, positionSpeedState, positionMotionRefusal } from '../lib/motorSettings';
+import { MOTOR_SETTINGS } from '../lib/motorSettings';
 
-const MODES = { pos: '位置 PP 模式（程序规划位置）', mit: 'MIT 模式（高级调试）', vel: '速度模式（高级调试）' };
+const EMPTY_FIELDS = Object.freeze({});
+const modeLabel = mode => ({ 0: 'MIT', 1: 'PP', 2: '速度', 3: '电流', 5: 'CSP' }[mode] || '未知');
+const valueText = value => value == null ? '未确认' : String(value);
 
-export function MotorModuleCard({ id, label, motor, status, gateway, plannedDeg }) {
-  const [draft, setDraft] = React.useState({});
-  const [mode, setMode] = React.useState('pos');
-  const [result, setResult] = React.useState(null);
-  const [pending, setPending] = React.useState(false);
-  const [lastCommand, setLastCommand] = React.useState('未发送');
-  const busyRef = React.useRef(false);
+export function MotorModuleCard({ id, label, motor, status, plannedDeg, expanded = false, onToggle, config }) {
   const reading = motor || {};
-  const fresh = Number.isFinite(reading.updatedAt) && Date.now() - reading.updatedAt < 10000;
-  const lockReason = status !== 'online' ? '网关未连接'
-    : !gateway.armed ? '总开关关闭：可编辑草稿，尚不能下发'
-      : !fresh ? '本轴反馈过期，等待重新读取' : '';
-  const writable = !lockReason && !pending;
-  const speedState = positionSpeedState(reading);
-  const enabledReason = writable ? positionMotionRefusal(reading, gateway.maxSpd) : '';
-
-  async function run(op, payload) {
-    if (busyRef.current) return;
-    busyRef.current = true; setPending(true);
-    setResult({ text: '处理中…', level: 'info' });
-    try {
-      const ret = await gateway.write(id, op, payload);
-      if (ret.ok) {
-        // A dry run and a gateway acknowledgement never prove physical enable state.
-        if (!ret.dryRun && ['enable', 'disable', 'ensure_mode'].includes(op)) {
-          setLastCommand(`${op === 'enable' ? '使能' : op === 'disable' ? '去使能' : '切模式'}指令已发送`);
-        }
-        setResult({ text: ret.dryRun ? '演练校验通过，未向电机写入'
-          : ret.verified ? '已写入，回读一致' : '指令已发送；真实使能状态仍需确认', level: ret.dryRun ? 'drill' : 'ok' });
-        if (!ret.dryRun) gateway.refresh();
-      } else setResult({ text: ret.error || '操作失败', level: 'err' });
-    } catch (error) { setResult({ text: error.message, level: 'err' }); }
-    finally { busyRef.current = false; setPending(false); }
+  const [draft, setDraft] = React.useState({});
+  const [dirty, setDirty] = React.useState(false);
+  const [review, setReview] = React.useState(null);
+  const [confirmed, setConfirmed] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [history, setHistory] = React.useState(false);
+  const saved = config?.state?.drafts?.[id];
+  const approved = config?.state?.approved?.[id];
+  const fields = config?.fields || EMPTY_FIELDS;
+  React.useEffect(() => {
+    if (!dirty) setDraft(Object.fromEntries(Object.keys(fields).map(key => [key, saved?.fields?.[key]?.value ?? ''])));
+  }, [saved, fields, dirty]);
+  React.useEffect(() => { setReview(null); setConfirmed(false); }, [config?.state?.revision]);
+  const fresh = status === 'online' && Number.isFinite(reading.positionUpdatedAt) && Date.now() - reading.positionUpdatedAt < 3000;
+  const latest = config?.state?.snapshots?.filter(s => s.axis_id === id).at(-1);
+  async function run(body) {
+    try { return await config.action(body); }
+    catch (e) { setMessage(e.message); return null; }
   }
-
-  function applySetting(field) {
-    try { run('robstride_write_param', settingPayload(field.key, draft[field.key])); }
-    catch (error) { setResult({ text: error.message, level: 'err' }); }
+  async function save() {
+    const parsed = Object.fromEntries(Object.entries(fields).map(([key, spec]) => [key, { unit: spec.unit, value: draft[key] === '' || draft[key] == null ? null : Number(draft[key]) }]));
+    if (Object.values(parsed).some(f => f.value != null && !Number.isFinite(f.value))) { setMessage('请输入有限数值'); return; }
+    const result = await run({ action: 'draft', axis_id: id, fields: parsed });
+    if (result) { setDirty(false); setMessage('草稿已保存到本地服务；没有写入电机'); }
   }
-
-  function switchMode() {
-    if (!window.confirm(`切换 ID ${id} 的运行模式会自动去使能，机械臂可能失去保持力。确认切换？`)) return;
-    run('ensure_mode', { mode, timeout_ms: 2000 });
+  async function inspect() {
+    const result = await run({ action: 'review', axis_id: id });
+    if (result) { setReview(result); setConfirmed(false); }
   }
-
-  return (
-    <section aria-label={`ID ${id} 电机设置`} className={`motorModule ${gateway.armed ? 'armed' : ''}`}>
-      <header><span className="motorTag">ID {id}</span><strong>{label}</strong>
-        <small>{reading.model || '—'}</small><span className={`motorDot ${status}`} /></header>
-      <div className="motorReadout">
-        <span>实际角度<strong>{reading.mechPosWrapped == null ? '—' : `${reading.mechPosWrapped.toFixed(2)}°`}</strong></span>
-        <span>程序目标 · 仿真<strong>{Number.isFinite(plannedDeg) ? `${plannedDeg.toFixed(2)}°` : '—'}</strong></span>
-      </div>
-      <p className="motorHint">位置由任务轨迹和逆运动学计算，本模块不填写目标位置。</p>
-      <div className="motorPower">
-        <strong>使能状态：未知</strong>
-        <small>当前模式：{speedState.label} · {speedState.register || reading.paramErrors?.runMode || '位置限速检查不适用'}</small><small>{status === 'online' ? lastCommand : '网关未连接'}</small>
-        <div className="motorActions">
-          <button disabled={!writable || Boolean(enabledReason)} title={lockReason || enabledReason || '允许本轴输出力矩'} onClick={() => run('enable', {})}>使能（出力）</button>
-          <button disabled={!writable} title={lockReason || '释放保持力；不会切断供电'} onClick={() => run('disable', {})}>去使能（释放力）</button>
-        </div>
-        <small>使能控制是否出力，不是电源开关；去使能可能使机械臂下垂。</small>
-      </div>
-      <div className="motorSettingRows">
-        {MOTOR_SETTINGS.map((field) => <div className="motorSettingRow" key={field.key}>
-          <label htmlFor={`motor-${id}-${field.key}`}>{field.label} {field.unit && <small>({field.unit})</small>}</label>
-          <span className="motorSettingRead">当前：{reading[field.key] == null ? '未读到' : reading[field.key].toFixed(3)}</span>
-          <div className="motorSettingEdit">
-            <input id={`motor-${id}-${field.key}`} type="number" step={field.step} min="0" placeholder="输入新值" value={draft[field.key] ?? ''}
-              onChange={(event) => setDraft((prev) => ({ ...prev, [field.key]: event.target.value }))} />
-            <button disabled={!writable || !draft[field.key]?.trim()} title={lockReason || '仅写此参数，不发送目标位置'} onClick={() => applySetting(field)}>应用</button>
-          </div>
-          <small>{reading.paramErrors?.[field.key] || field.hint}</small>
-        </div>)}
-      </div>
-      <details className="motorAdvanced"><summary>高级：运行模式</summary>
-        <label htmlFor={`motor-${id}-mode`}>下次切换模式</label>
-        <select id={`motor-${id}-mode`} value={mode} onChange={(event) => setMode(event.target.value)}>
-          {Object.entries(MODES).map(([value, text]) => <option key={value} value={value}>{text}</option>)}
-        </select>
-        <button disabled={!writable} onClick={switchMode}>应用模式</button>
-        <p className="motorHint">上方显示当前读取到的模式；此处选择的是待切换模式。MIT 的 kp/kd/前馈力矩由未来执行器配置；位置模式使用上方 loc_kp。单轴位置调试保留在「机械臂模式」。</p>
-      </details>
-      <p className="motorHint">{lockReason || (gateway.drill ? '演练模式：只校验，不写入电机' : '实发模式：应用后会写入本轴参数')}{enabledReason && `。${enabledReason}`}</p>
-      {reading.error && <p className="motorError">{reading.error}</p>}
-      {result && <p role="status" className={`motorResult ${result.level}`}>{result.text}</p>}
-    </section>
-  );
+  async function approve() {
+    const result = await run({ action: 'approve', review_token: review.review_token, confirm: 'software-only' });
+    if (result) { setReview(null); setMessage('已批准软件配置；物理身份、动态映射与真实执行仍未验收'); }
+  }
+  return <section className="motorModule compactMotor" aria-label={`J${id} 电机模块`}>
+    <button className="motorSummary" aria-expanded={expanded} aria-controls={`motor-details-${id}`} onClick={onToggle}>
+      <strong>{label}</strong><span>{reading.model || (id <= 3 ? 'rs-06' : 'rs-00')}</span>
+      <span>{Number.isFinite(reading.mechPosDeg) ? `${reading.mechPosDeg.toFixed(2)}°` : '角度未知'}</span>
+      <span>{modeLabel(reading.runMode)}{id === 7 ? ' · 夹爪待核实' : ''}</span>
+      <span>{fresh ? '反馈新鲜' : reading.positionUpdatedAt ? '反馈过期' : '未读取'}</span>
+      <span>{approved ? `软件批准 v${approved.version}` : '配置待确认'}</span><span>{expanded ? '收起 −' : '展开 +'}</span>
+    </button>
+    {expanded && <div className="motorDetails" id={`motor-details-${id}`}>
+      <details><summary>配置核对与阻断原因</summary><ul>{config?.preparation?.find(row => row.axis_id === id)?.reasons.map(reason => <li key={reason}>{reason}</li>) || <li>配置或设备快照尚不可用；实机锁定</li>}</ul><p>设备模式与 MIT 路线可比较；逐帧 MIT 增益和轨迹约束没有对应设备寄存器读回，不能拿 PP/CSP 数值证明一致。</p></details>
+      <h4>只读测量</h4><p>真实出力状态未知。原始多圈角不归一化；模式：{modeLabel(reading.runMode)}。仿真目标：{Number.isFinite(plannedDeg) ? `${plannedDeg.toFixed(2)}°` : '未知'}。</p>
+      <p>位置采集：{reading.positionUpdatedAt ? new Date(reading.positionUpdatedAt).toLocaleString() : '未读取'}。归档快照：{latest ? `${latest.source} · ${new Date(latest.measured_at * 1000).toLocaleString()}` : '尚未采集'}。设备身份未核验。</p>
+      <h4>{id <= 6 ? 'MIT 每帧控制量与软件轨迹约束' : '夹爪独立配置草稿（模式与机构待核实）'}</h4>
+      <p>下列增益来自人工软件配置，不是设备寄存器读回。PP/CSP 限速与 loc_kp 不能证明 MIT 已限速，也不会自动作为 MIT Kp。范围仅检查数值形式，机械允许范围待验收。</p>
+      <div className="motorTableScroll"><table className="profileTable"><thead><tr><th>参数 / 单位</th><th>设备读数</th><th>已批准软件值</th><th>编辑草稿</th></tr></thead><tbody>
+        {Object.entries(fields).map(([key, spec]) => <tr key={key}><td><label htmlFor={`draft-${id}-${key}`}>{spec.label}</label><small>{key} · {spec.unit}</small></td>
+          <td>不可据此读回</td><td>{valueText(approved?.fields?.[key]?.value)}</td><td><input id={`draft-${id}-${key}`} type="number" step="any" value={draft[key] ?? ''} placeholder="未确认" onChange={e => { setDraft(v => ({ ...v, [key]: e.target.value })); setDirty(true); setReview(null); setConfirmed(false); }} /></td></tr>)}
+      </tbody></table></div>
+      <p>批准时间：{approved ? new Date(approved.approved_at * 1000).toLocaleString() : '未批准'}；仅软件人工确认，未现场验证。映射草稿的批准不会自动替换显示映射。</p>
+      <div className="motorActions"><button disabled={!config?.state || config.busy} onClick={save}>保存草稿</button>
+        <button disabled={!saved || dirty || config?.busy} onClick={inspect}>审核变更</button>
+        <button onClick={() => setHistory(v => !v)}>查看变更记录</button>
+        <button disabled title="本批次没有真实驱动通道">应用到真实电机（待验收）</button></div>
+      {review && <section className="reviewBox" aria-label="软件配置审核"><p>{review.warning}</p>
+        <ul>{review.changes.map(c => <li key={c.field}>{fields[c.field]?.label}：{valueText(c.before.value)} → {valueText(c.after.value)} {c.after.unit}</li>)}</ul>
+        <label><input type="checkbox" checked={confirmed} onChange={e => setConfirmed(e.target.checked)} />我逐项核对了差异，仅批准本地软件配置，不授权电机动作</label>
+        <button disabled={!confirmed || config.busy} onClick={approve}>确认本次软件批准</button></section>}
+      {history && <ul aria-label="本轴变更记录">{(config?.state?.events || []).filter(e => e.axis_id === id).map(e => <li key={e.revision}>v{e.revision} · {new Date(e.at * 1000).toLocaleString()} · {e.action}{e.outcome ? ` · Mock ${e.outcome}` : ''}</li>)}</ul>}
+      <details><summary>其他模式设备参数（只读 / 高级）</summary>{MOTOR_SETTINGS.map(field => <p key={field.key}>
+        {field.label}：{reading[field.key] == null ? '未知' : reading[field.key]} {field.unit} · {reading.runMode === 0 ? '当前 MIT 不作为有效运动限制' : '适用模式见说明'}<br />
+        <small>{field.hint} · 采集：{reading.fieldTimes?.[field.key] ? new Date(reading.fieldTimes[field.key]).toLocaleString() : '未知'}{reading.paramErrors?.[field.key] && ` · ${reading.paramErrors[field.key]}`}</small>
+      </p>)}</details>
+      {reading.error && <p role="alert">{reading.error}</p>}{message && <p role="status">{message}</p>}
+    </div>}
+  </section>;
 }

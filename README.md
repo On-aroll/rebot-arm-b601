@@ -36,3 +36,27 @@ bash scripts/restart_sim.sh
 source /opt/ros/jazzy/setup.bash
 ROS_DOMAIN_ID=42 ros2 launch "$PWD/scripts/same_sim_ros.launch.py"
 ```
+
+
+## 批次 A：MIT 控制台与另一台电脑启动
+
+最新边界与验收见 [批次 A 交接](docs/批次A交接_2026-10-08.md)。刷新页面不连接 CAN，真实执行始终 LOCKED。批准软件配置不会写入电机。七轴从摘要展开查看草稿和历史。
+
+推荐 Ubuntu/Kubuntu 24.04、Python 3.12、Node 22.12+ 和 npm，系统需可用 EGL/OpenGL（无显示器也需 Mesa/EGL）。完整网页源码位于 `external/motorbridge-studio`，不是在线官网的 iframe；本地仿真后端必须运行，GitHub Pages 单独托管不能执行 Python 仿真。
+
+```bash
+git clone https://github.com/On-aroll/rebot-arm-b601.git
+cd rebot-arm-b601
+python3 scripts/setup_external.py
+python3 -m venv .venv-sim
+.venv-sim/bin/python -m pip install -r configs/requirements-lock.txt
+cd external/motorbridge-studio
+npm ci
+VITE_BASE_PATH=/studio/ npm run build
+cd ../..
+REBOT_PYTHON="$PWD/.venv-sim/bin/python" scripts/restart_sim.sh
+```
+
+打开 `http://127.0.0.1:8765/zh/studio/console`。系统缺少 venv、EGL 或 Node 时先安装相应系统依赖；此流程不安装 CAN 驱动、不启动实机网关。也可把 Python 环境放在 `~/.local/share/robotics/envs/rebot-sim`，供多个项目使用；不要覆盖原环境。
+
+依赖按仓库清单锁定；新电脑可重建源码与模型。本轮已在当前 Linux 环境构建和仿真验证，未声称在全新 Windows/macOS 或空白电脑安装验收。私有配置在 `outputs/private_config`，不随 Git 克隆，默认所有 MIT 数值未确认。

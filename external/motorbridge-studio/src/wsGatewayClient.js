@@ -1,5 +1,6 @@
 export class WsGatewayClient {
-  constructor({ onEvent, onState, onParams, onOpen, onClose, onError, onMessage }) {
+  constructor({ readOnly = false, onEvent, onState, onParams, onOpen, onClose, onError, onMessage }) {
+    this.readOnly = readOnly;
     this.ws = null;
     this.pendingByReqId = new Map();
     this.nextReqId = 1;
@@ -27,6 +28,8 @@ export class WsGatewayClient {
   }
 
   connect(url) {
+    // Legacy studio drivers are quarantined in this offline batch.
+    if (!this.readOnly) { this.onError?.(new Error("LOCKED：旧实机控制入口已隔离，请使用控制台只读连接")); return; }
     this.disconnect();
     this.ws = new WebSocket(url);
 
@@ -109,6 +112,10 @@ export class WsGatewayClient {
   }
 
   send(op, payload = {}, timeoutMs = 8000, { onProgress } = {}) {
+    // Validate the final op; payload must not override protocol routing fields.
+    if (!this.readOnly || !['set_target', 'robstride_read_param', 'close_bus'].includes(op) || Object.hasOwn(payload, 'op') || Object.hasOwn(payload, 'req_id')) {
+      return Promise.reject(new Error('LOCKED：当前仅允许显式授权后的只读查询'));
+    }
     return new Promise((resolve, reject) => {
       if (!this.isConnected()) {
         reject(new Error('ws not connected'));

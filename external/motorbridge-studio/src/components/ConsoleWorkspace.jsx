@@ -5,7 +5,7 @@ import { loadMapping, mapHardwareFeedback } from '../lib/hardwareMapping';
 import { CartesianPointPanel } from './CartesianPointPanel';
 import { MotorModuleCard } from './MotorModuleCard';
 import { useMotorGateway, MACHINE_IDS, MACHINE_MODELS } from '../hooks/useMotorGateway';
-import { positionSpeedState, positionMotionRefusal } from '../lib/motorSettings';
+import { useSoftwareConfig } from '../hooks/useSoftwareConfig';
 import { feedbackJoints, feedbackProblem, toStudioPoint } from '../lib/workspaceFeedback';
 import '../styles/console-workspace.css';
 
@@ -22,41 +22,8 @@ const TASKS = {
 const AXES = [
   { id: 1, label: 'J1 底座' }, { id: 2, label: 'J2 大臂' }, { id: 3, label: 'J3 小臂' },
   { id: 4, label: 'J4 腕转' }, { id: 5, label: 'J5 腕俯' }, { id: 6, label: 'J6 末端' },
-  { id: 7, label: '夹爪' },
+  { id: 7, label: 'J7 夹爪' },
 ];
-
-/**
- * 长按 1.5 秒才能打开的总开关。
- * 目的很单纯：不让一次误点就让七个电机同时有力矩。
- */
-function ArmSwitch({ armed, onArm, onDisarm, online }) {
-  const [progress, setProgress] = React.useState(0);
-  const timerRef = React.useRef(null);
-  const stop = React.useCallback(() => {
-    clearInterval(timerRef.current);
-    timerRef.current = null;
-    setProgress(0);
-  }, []);
-  const start = () => {
-    if (armed || !online) return;
-    const began = Date.now();
-    timerRef.current = setInterval(() => {
-      const ratio = Math.min(1, (Date.now() - began) / 1500);
-      setProgress(ratio);
-      if (ratio >= 1) { stop(); onArm(); }
-    }, 50);
-  };
-  React.useEffect(() => () => clearInterval(timerRef.current), []);
-  return (
-    <div className="armSwitch">
-      <button className={armed ? 'danger' : ''} disabled={!online || armed}
-        onPointerDown={start} onPointerUp={stop} onPointerLeave={stop} onPointerCancel={stop}>
-        {armed ? '总开关：已打开' : (progress ? `按住不放 ${Math.round(progress * 100)}%` : '长按 1.5 秒打开总开关')}
-      </button>
-      {armed && <button onClick={onDisarm}>立即关闭</button>}
-    </div>
-  );
-}
 
 async function api(path, body) {
   const response = await fetch(path, {
@@ -129,13 +96,52 @@ export function ConsoleWorkspace() {
   const [message, setMessage] = React.useState('');
   const [busy, setBusy] = React.useState(false);
   const [task, setTask] = React.useState('writing');
-  const [cameraView, setCameraView] = React.useState(requestedHardwareView ? 'overview' : 'writing');
+  const [cameraView, setCameraView] = React.useState('overview');
   const [resetViewSeq, setResetViewSeq] = React.useState(0);
-  const [ghost, setGhost] = React.useState(!requestedHardwareView);
+  const [ghost, setGhost] = React.useState(false);
   const [showPlan, setShowPlan] = React.useState(true);
   const [showTrail, setShowTrail] = React.useState(true);
   const [now, setNow] = React.useState(Date.now());
   const commandBusy = React.useRef(false);
+  const config = useSoftwareConfig();
+  const [expandedAxis, setExpandedAxis] = React.useState(() => {
+    try { const id = Number(localStorage.getItem('b601-console-expanded-axis')); return id >= 1 && id <= 7 ? id : null; } catch { return null; }
+  });
+  function toggleAxis(id) {
+    const next = expandedAxis === id ? null : id; setExpandedAxis(next);
+    try { localStorage.setItem('b601-console-expanded-axis', String(next || '')); } catch { /* display preference only */ }
+  }
+  async function exportConfig() {
+    try {
+      const result = await config.action({ action: 'export' });
+      const url = URL.createObjectURL(new Blob([JSON.stringify(result.backup, null, 2)], { type: 'application/json' }));
+      const link = window.document.createElement('a'); link.href = url; link.download = 'b601-software-config.json'; link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) { setMessage(e.message); }
+  }
+  async function importConfig(event) {
+    const file = event.target.files?.[0]; if (!file) return;
+    try {
+      if (file.size > 60000) throw new Error('备份超过 60 KB，请使用本地历史恢复流程');
+      await config.action({ action: 'import', backup: JSON.parse(await file.text()) });
+      setMessage('备份已导入草稿；批准记录未替换，请逐轴审核');
+    } catch (e) { setMessage(e.message); }
+    event.target.value = '';
+  }
+  async function archiveSnapshot(id) {
+    const motor = gateway.motors[id]; if (!motor) return;
+    const units = { mechPosRad:'rad', runMode:'enum', limitSpd:'rad/s', limitPpSpd:'rad/s', locKp:'firmware', limitCur:'A' };
+    const fields = Object.fromEntries(Object.entries(units).map(([key, unit]) => {
+      const ok = Number.isFinite(motor[key]) && Number.isFinite(motor.fieldTimes?.[key]);
+      return [key, { unit, value: ok ? motor[key] : null, measured_at: ok ? motor.fieldTimes[key] / 1000 : null, status: ok ? 'ok' : 'unknown' }];
+    }));
+    try {
+      await config.action({ action:'snapshot', snapshot:{ schema_version:1, axis_id:id, model:motor.model,
+        source:'authorized-browser-read', measured_at:motor.updatedAt / 1000, control_mode:motor.runMode ?? null,
+        review_status:'collected', identity_status:'unverified', device_id:null, fields } });
+      setMessage(`J${id} 现有读数已归档；没有发起额外查询，也未批准配置`);
+    } catch (e) { setMessage(e.message); }
+  }
   const gamepad = useGamepad();
   const gateway = useMotorGateway({ intervalMs: 2500 });
 
@@ -241,8 +247,8 @@ export function ConsoleWorkspace() {
     <section className="consoleWorkspace" aria-label="虚实联调控制台">
       <div className="consoleHeading card glass">
         <div><span className="consoleEyebrow">reBot B601-RS · 虚实联调控制台</span>
-          <h2>控制台 <small>使能 · 限速 · 任务执行 · 手柄遥操作</small></h2>
-          <p>电机模块负责使能与参数；任务程序自动计算各关节目标。目前自动任务执行于仿真，实机同步执行尚未接入。</p></div>
+          <h2>虚实工作台 <small>MIT 路线 · 软件配置保护</small></h2>
+          <p>XYZ 与动作程序由仿真求解。静态姿态已人工确认；逐轴动态映射、TCP 与实机执行仍待验收。</p></div>
         <div className="consoleBadges">
           <span className={`badge ${problem ? 'err' : 'ok'}`}>{problem ? '仿真反馈异常' : '仿真在线'}</span>
           <span className={`badge ${gatewayOnline ? 'ok' : (gateway.status === 'offline' ? 'err' : '')}`}>
@@ -250,62 +256,13 @@ export function ConsoleWorkspace() {
           </span>
           <span className={`badge ${gateway.armed ? 'err' : ''}`}>{gateway.armed ? (gateway.drill ? '总开关开 · 演练' : '总开关开 · 实发') : '实机只读'}</span>
         </div>
-        {gatewayOnline && (
-          <div className="consoleEmergency">
-            <button className="danger" onClick={() => gateway.stopAll()}>急停（对七轴发 stop）</button>
-          </div>
-        )}
+        <button disabled title="本批次不发送 CAN stop；物理停止能力待现场验收">软件停止（非物理急停）</button>
       </div>
+      <div className="consoleStatus" role="status"><strong>LOCKED · 演练 ON · 总控 OFF · 真实出力状态未知</strong><span>{config.reason || 'MIT 独立执行器及停止/失联策略尚未验收；后端拒绝真实执行'}</span></div>
+      {config.error && <div className="consoleAlert" role="alert">{config.error}；仿真仍可用，配置不可自动恢复默认值。</div>}
       {problem && <div className="consoleAlert" role="alert">{problem}。画面保留最后一次仿真反馈。</div>}
-      {!gatewayOnline && <div className="consoleStatus" role="status">
-        <strong>{gateway.error || `网关${GATEWAY_STATUS[gateway.status] || gateway.status}`}</strong>
-        <span>七个电机模块将没有实机读数，也无法下发。可在下方「网关与总控」里重连。</span>
-      </div>}
-
-      <div className="card glass consoleGateway">
-        <div className="gwRow">
-          <label className="gwUrl">网关地址
-            <input value={gateway.endpoint} onChange={(e) => gateway.setEndpoint(e.target.value)}
-              disabled={gatewayOnline || gateway.status === 'connecting'} placeholder="ws://127.0.0.1:9002" />
-          </label>
-          <button disabled={gateway.status === 'connecting'} onClick={() => gateway.connect()}>
-            {gatewayOnline ? '重连' : '连接'}</button>
-          <button disabled={gateway.status === 'disconnected'} onClick={() => gateway.disconnect()}>断开</button>
-          <span className="gwState">
-            {GATEWAY_STATUS[gateway.status] || gateway.status}
-            {gatewayOnline && ` · 每轮 ${gateway.cycleMs} ms · ${(gateway.updatedAt ? formatAge((now - gateway.updatedAt) / 1000) : '等待读取')}`}
-          </span>
-        </div>
-        <div className="gwRow">
-          <ArmSwitch armed={gateway.armed} onArm={gateway.arm} onDisarm={gateway.disarm} online={gatewayOnline} />
-          <label className="gwCheck">
-            <input type="checkbox" checked={gateway.drill} onChange={(e) => gateway.setDrill(e.target.checked)} />
-            演练模式（走完全部校验但不发帧）
-          </label>
-          <label className="gwSpd">限速阈值
-            <input type="number" step="0.05" min="0.05" max="2" value={gateway.maxSpd}
-              onChange={(e) => gateway.setMaxSpd(Number(e.target.value) || 0.05)} />
-            <small>rad/s，超过就不让使能也不让动</small>
-          </label>
-        </div>
-        <p className="gwWarn">
-          打开总开关只会让按钮可点；真正下发还要过限速兵与限位检查。
-          急停不受总开关与演练模式限制，连着就能用。它不是硬件急停链，断电仍需现场处理。
-        </p>
-        {gateway.log.length > 0 && <ul className="gwLog">
-          {gateway.log.slice(-6).reverse().map((entry) => (
-            <li key={entry.t} className={entry.level}>{new Date(entry.t).toLocaleTimeString()} {entry.text}</li>
-          ))}
-        </ul>}
-      </div>
-
-      <HardwareMappingPanel profile={mapping} onChange={setMapping} mapped={mapped} source={displaySource}
-        onSource={(source) => { setDisplaySource(source); setCameraView('overview'); setGhost(false); }} />
-
-      <CartesianPointPanel state={state} locked={locked} active={active} moving={moving} now={now}
-        onPreview={(plan) => { setPointPlan(plan); if (plan) { setDisplaySource('simulation'); setCameraView('overview'); setShowPlan(true); setGhost(false); } }} onBusy={(value) => { commandBusy.current = value; setBusy(value); }}
-        onExecuted={() => { setDisplaySource('simulation'); setCameraView('overview'); setGhost(false); setShowPlan(true); }} />
-
+      <div className="consolePrimary"><div className="consoleModelColumn">
+        <div className="consoleSources"><button aria-pressed={displaySource === 'simulation'} onClick={() => setDisplaySource('simulation')}>MuJoCo 仿真（预测）</button><button aria-pressed={displaySource === 'hardware'} onClick={() => setDisplaySource('hardware')}>实机反馈（只读）</button></div>
       {displaySource === 'hardware' && (!mapped.complete || !mapped.withinLimits) && <div className="consoleAlert" role="alert">
         {!mapped.complete ? '实机反馈不完整或已过期，三维画面停止更新。' : '存在超出模型限位的读数，画面按映射结果原样展示，没有裁剪；当前姿态不允许用于实机规划。'}
       </div>}
@@ -331,17 +288,24 @@ export function ConsoleWorkspace() {
         </div>
       </div>
 
+      </div><div className="consolePointColumn">
+      <CartesianPointPanel state={state} locked={locked} active={active} moving={moving} now={now}
+        onPreview={(plan) => { setPointPlan(plan); if (plan) { setDisplaySource('simulation'); setCameraView('overview'); setShowPlan(true); setGhost(false); } }} onBusy={(value) => { commandBusy.current = value; setBusy(value); }}
+        onExecuted={() => { setDisplaySource('simulation'); setCameraView('overview'); setGhost(false); setShowPlan(true); }} />
+
+      </div></div>
       <div className="consoleModulesHead">
-        <h3>电机使能与参数 <small>逐轴配置；位置由任务程序自动计算</small></h3>
+        <h3>七轴概览 <small>展开单轴查看读数、草稿与审核记录</small></h3>
         <span>实机读数来源：{realSource}
           {gateway.cycleMs ? ` · 每轮 ${gateway.cycleMs} ms` : ''}</span>
       </div>
       <div className="consoleModules">
         {AXES.map((axis) => <MotorModuleCard key={axis.id} id={axis.id} label={axis.label}
           motor={gateway.motors?.[axis.id]} status={gateway.status}
-          plannedDeg={axis.id <= 6 ? state?.target_deg?.[axis.id - 1] : null} gateway={gateway} />)}
+          plannedDeg={axis.id <= 6 ? state?.target_deg?.[axis.id - 1] : null} config={config} expanded={expandedAxis === axis.id} onToggle={() => toggleAxis(axis.id)} />)}
       </div>
 
+      <details className="consoleAdvanced card glass"><summary>已有仿真任务 · 写字 / 抓取 / 状态与导出</summary>
       <div className="consoleRow4">
         <section className="card glass consoleCard"><h3>任务执行 <small>仿真</small></h3>
           <div className="consoleRow"><select value={task} disabled={active || locked} onChange={(e) => setTask(e.target.value)}>
@@ -370,7 +334,7 @@ export function ConsoleWorkspace() {
           <button disabled={!state?.trace_xyz?.length} onClick={download}>导出轨迹与执行记录</button>
         </section>
 
-        <section className="card glass consoleCard"><h3>虚实逐轴对比 <small>度</small></h3>
+        <section className="card glass consoleCard"><h3>独立状态差值 <small>度 · 非轨迹跟踪误差</small></h3>
           <table className="compareTable"><thead><tr><th>轴</th><th>实机换算</th><th>仿真</th><th>差值</th></tr></thead><tbody>
             {AXES.slice(0, 6).map((axis, i) => {
               const real = realDeg[i];
@@ -392,24 +356,31 @@ export function ConsoleWorkspace() {
         </section>
       </div>
 
-      <div className="consoleGrid">
-        <section className="card glass consoleCard"><h3>速度上限概览 <small>逐轴设置见上方</small></h3>
-          <table className="paramTable"><thead><tr><th>轴</th><th>当前模式速度上限</th><th>评估</th></tr></thead><tbody>
-            {MACHINE_IDS.map((id) => {
-              const motor = gateway.motors?.[id];
-              const speedState = positionSpeedState(motor);
-              const value = speedState.value;
-              const reason = positionMotionRefusal(motor, gateway.maxSpd);
-              return <tr key={id}><td>{id === 7 ? '夹爪' : `J${id}`} <span className="code">{MACHINE_MODELS[id]}</span></td>
-                <td>{speedState.label} · {value == null ? '—' : `${value.toFixed(3)} rad/s`}</td>
-                <td className={reason ? 'warn' : 'ok'}>{reason || '对应模式的限速检查通过'}</td></tr>;
-            })}
-          </tbody></table>
-          <p className="consoleNote">首次实机动作建议压到 0.3 rad/s（约 17°/s）以下再谈放开。
-            逐轴的「写限速」在电机模块里，需要先打开总开关。</p>
-          <p className="consoleScope">请在对应电机卡片输入速度上限并点击「应用」。修改参数不会发送目标位置。</p>
-        </section>
+      </details>
+      <details className="card glass consoleAdvanced"><summary>高级调试 · 关节映射、软件备份与只读网关</summary>
+        <details><summary>关节映射（首次验收/高级调试）</summary>
+          <HardwareMappingPanel profile={mapping} onChange={setMapping} mapped={mapped} source={displaySource}
+            onSource={(source) => { setDisplaySource(source); setCameraView('overview'); setGhost(false); }} />
+          <p>显示映射仍保留原浏览器记录；软件批准配置独立保存，不会自动覆盖映射，也不把静态确认升级为动态验收。</p>
+        </details>
+        <h4>软件配置保护</h4><p>版本 {config.state?.revision ?? '未知'} · 设备身份未核验 · 真实控制始终锁定。导出不含设备序列号或快照；导入仅恢复草稿。</p>
+        <div className="motorActions"><button disabled={config.busy} onClick={config.reload}>刷新软件配置</button><button disabled={!config.state || config.busy} onClick={exportConfig}>导出软件备份</button>
+          <label>导入为草稿 <input type="file" accept="application/json,.json" disabled={!config.state || config.busy} onChange={importConfig} /></label></div>
+        <h4>只读网关（会发送参数查询帧）</h4><div className="gwRow"><label className="gwUrl">网关地址<input value={gateway.endpoint} onChange={e => gateway.setEndpoint(e.target.value)} disabled={gatewayOnline} /></label>
+          <button disabled={gateway.status === 'connecting' || gatewayOnline} onClick={() => {
+            if (window.confirm('此操作会连接 can0，对 J1–J7 发送 set_target 和 0x7019/0x7005/0x7017/0x701e/0x7018/0x7024 参数查询；不会写参数或使能。仅在已获得本次现场只读授权后继续。')) gateway.connect();
+          }}>授权并连接只读查询</button><button disabled={gateway.status === 'disconnected'} onClick={gateway.disconnect}>断开只读查询</button></div>
+        <p>每轮反馈仅用于监视，不能作为 MIT 伺服时钟。刷新或重连不恢复出力权限，停止查询不代表电机停止。</p>
+        <div className="motorActions">{MACHINE_IDS.map(id => <button key={id} disabled={!gateway.motors[id]?.updatedAt || !config.state || config.busy} onClick={() => archiveSnapshot(id)}>归档 J{id} 现有读数</button>)}</div>
+        {gateway.log.length > 0 && <ul className="gwLog">
+          {gateway.log.slice(-6).reverse().map((entry) => (
+            <li key={entry.t} className={entry.level}>{new Date(entry.t).toLocaleTimeString()} {entry.text}</li>
+          ))}
+        </ul>}
+      </details>
 
+      <details className="consoleAdvanced card glass"><summary>手柄输入监视（只读）与接入边界</summary>
+      <div className="consoleGrid">
         <section className="card glass consoleCard"><h3>手柄遥操作 <small>未接入</small></h3>
           <div className="padState"><span className={`badge ${gamepad.pads.length ? 'ok' : ''}`}>{gamepad.pads.length ? '已检测到手柄' : '未检测到手柄'}</span>
             <small className="consoleScope">{gamepad.pads[0]?.id || '按任意键唤醒手柄后自动识别'}</small></div>
@@ -426,21 +397,9 @@ export function ConsoleWorkspace() {
             缺的是执行层与手柄映射：摇杆 → 末端 XYZ 增量 → 自动求各关节运动。</p>
         </section>
 
-        <section className="card glass consoleCard"><h3>接入边界 <small>必读</small></h3>
-          <p className="consoleNote">
-            <strong>写入要过三道闸，都在 <code className="consoleCmd">useMotorGateway.js</code> 里强制：</strong>
-            总开关（长按 1.5 秒）→ 演练开关 → 模式限速检查（PP 用 vel_max，CSP 用 limit_spd）
-            与限位/单次位移检查（单次上限 15°）。<br />
-            允许的写 op 仅：enable、disable、stop、ensure_mode、pos_vel、mit、vel、
-            robstride_write_param。<strong>set_id、写零位、clear_error 不在白名单里。</strong><br />
-            使能状态：<strong>读不到</strong>。RS 固件的 get_state 与流式帧在本机失效，
-            模块只记录最近一次下发指令，不将网关应答或演练结果当作真实使能状态。<br />
-            给未使能的电机发运动帧是<strong>静默无操作</strong>（总线返回 ok、固件忽略），
-            所以顺序必须是先使能再下发。<br />
-            红线：下发任何实机运动指令前必须确认正方向、零位、限位，且现场有人能断电。
-          </p>
-        </section>
+        <section className="card glass consoleCard"><h3>接入边界</h3><p>J1–J6 保留 MIT，夹爪单独核实。软件批准不授予实机权限；本地服务没有 CAN 执行实现。旧控制页的设备通路已隔离。</p><p>MIT 的 Kp、Kd、前馈及轨迹速度/加速度/jerk 须独立验证；PP/CSP 寄存器不提供 MIT 限速证明。现场动态映射、TCP、出力和停止行为未验收。</p></section>
       </div>
+      </details>
     </section>
   );
 }

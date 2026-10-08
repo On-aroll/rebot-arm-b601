@@ -84,7 +84,7 @@ checks['sim_feedback_coherent'] = True
 report = dict(base=BASE, success=True, checks=checks,
               hardware_motion=False, hardware_writes=False,
               note='只读 HTTP 验收：不含实机指令，也不写电机参数。')
-out = ROOT / 'outputs/studio_routing_verification.json'
+out = Path(os.environ.get('REBOT_OUTPUT_DIR', str(ROOT/'outputs'))) / 'studio_routing_verification.json'
 out.parent.mkdir(exist_ok=True)
 out.write_text(json.dumps(report, ensure_ascii=False, indent=2))
 print(json.dumps(report, ensure_ascii=False))

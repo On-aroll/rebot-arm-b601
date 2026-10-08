@@ -5,7 +5,7 @@ import uuid
 import numpy as np
 
 
-HARDWARE_REASON = '实机同步尚未开放：需要逐轴确认方向和零位，并完成六轴轨迹下发与停止/失联验收。'
+HARDWARE_REASON = '实机同步尚未开放：需要逐轴确认方向和零位，并完成MIT 独立执行器与停止/失联验收。'
 
 
 def point_capabilities():
@@ -14,7 +14,8 @@ def point_capabilities():
 
 
 class PointPlanner:
-    def __init__(self, robot, clock=time.monotonic):
+    def __init__(self, robot, clock=time.monotonic, configuration=lambda: "simulation-v1"):
+        self.configuration = configuration
         self.robot = robot
         self.clock = clock
         self.plans = {}
@@ -35,6 +36,7 @@ class PointPlanner:
         if mode not in ('position', 'hold'):
             raise ValueError('请选择自动调整朝向或保持当前朝向')
         r = self.robot
+        configuration = self.configuration()
         start = r.motion_start()
         target = r.ik(xyz / 1000, seed=start, position_only=mode == 'position')
         if np.any(target < r.lower) or np.any(target > r.upper):
@@ -48,7 +50,10 @@ class PointPlanner:
         while len(self.plans) >= 8:
             del self.plans[next(iter(self.plans))]
         plan_id = uuid.uuid4().hex
+        if configuration != self.configuration():
+            raise ValueError('配置版本已改变，请重新计算目标点')
         self.plans[plan_id] = dict(start=start.copy(), target=target.copy(),
+                                  configuration=configuration, task_version=1,
                                   finger=float(r.finger_target), expires=now + 60, seconds=seconds)
         actual_xyz = r.fk(target).translation.copy()
         path = [r.fk(start * (1-t) + target*t).translation.tolist() for t in np.linspace(0, 1, 61)]
@@ -67,6 +72,8 @@ class PointPlanner:
         if not isinstance(key, str) or key not in self.plans:
             raise ValueError('预览不存在，请重新计算目标点')
         plan = self.plans.pop(key)
+        if plan['configuration'] != self.configuration() or plan['task_version'] != 1:
+            raise ValueError('配置或任务版本已改变，请重新计算目标点')
         if self.clock() >= plan['expires']:
             raise ValueError('预览已过期，请重新计算目标点')
         r = self.robot

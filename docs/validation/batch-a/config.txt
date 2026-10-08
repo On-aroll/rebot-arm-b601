@@ -1,0 +1,14 @@
+test_atomic_failure_preserves_approved (__main__.Protection.test_atomic_failure_preserves_approved) ... ok
+test_corruption_missing_head_incompatible (__main__.Protection.test_corruption_missing_head_incompatible) ... ok
+test_explicit_software_recovery_preserves_corrupt_head (__main__.Protection.test_explicit_software_recovery_preserves_corrupt_head) ... ok
+test_import_and_mock_do_not_promote_or_replace_approval (__main__.Protection.test_import_and_mock_do_not_promote_or_replace_approval) ... ok
+test_invalid_fields_units_nan_types (__main__.Protection.test_invalid_fields_units_nan_types) ... ok
+test_local_api_auth_origin_replay_and_direct_hardware (__main__.Protection.test_local_api_auth_origin_replay_and_direct_hardware) ... ok
+test_read_failure_snapshot_keeps_unknown_and_never_unlocks (__main__.Protection.test_read_failure_snapshot_keeps_unknown_and_never_unlocks) ... ok
+test_restart_separation_and_nulls (__main__.Protection.test_restart_separation_and_nulls) ... ok
+test_review_conflict_replay_expiry_and_session (__main__.Protection.test_review_conflict_replay_expiry_and_session) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.029s
+
+OK

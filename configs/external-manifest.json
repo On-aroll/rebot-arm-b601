@@ -1,5 +1,5 @@
 {
-  "note": "第三方依赖仓库及其锁定版本。本仓库不内置这些内容，用 scripts/setup_external.sh 按此处的 commit 重建，保证仿真与实机行为可复现。",
+  "note": "第三方依赖仓库及其锁定版本。本仓库不内置这些内容，用 scripts/setup_external.py 按此处的 commit 重建，保证仿真与实机行为可复现。",
   "captured_at": "2026-10-08",
   "repositories": [
     {

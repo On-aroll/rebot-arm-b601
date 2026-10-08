@@ -91,7 +91,7 @@ export function CartesianPointPanel({ state, locked, active, moving, now, onPrev
         onChange={e => { setOrientation(e.target.value); invalidate(); }}>
         <option value="position">自动调整朝向（只指定位置）</option><option value="hold">保持当前朝向</option>
       </select></label>
-      <label htmlFor="point-speed">关节速度上限（rad/s）<input id="point-speed" type="number" min="0.05" max="0.30" step="0.05" value={speed} disabled={occupied}
+      <label htmlFor="point-speed">仿真关节速度（rad/s）<input id="point-speed" type="number" min="0.05" max="0.30" step="0.05" value={speed} disabled={occupied}
         onChange={e => { setSpeed(e.target.value); invalidate(); }} /></label>
     </div>
     <div className="consoleActions">
@@ -110,6 +110,6 @@ export function CartesianPointPanel({ state, locked, active, moving, now, onPrev
     {plan && !jobId && (expired || changed) && <p role="alert">{expired ? '预览已超过 60 秒' : '仿真起点已经变化'}，请重新计算。</p>}
     <p role="status" className="consoleMessage">{ownJob?.status === 'succeeded' ? `仿真任务完成，当前末端误差 ${actualError?.toFixed(2) ?? '—'} mm。实机未下发。`
       : ownJob?.status === 'failed' ? `到点失败：${ownJob.error}` : message}</p>
-    <p className="pointHardwareReason">{hardwareReason} 参数调节与逐轴使能仍在下方保留。</p>
+    <p className="pointHardwareReason">{hardwareReason} 下方可保存和审核软件参数；本批次不提供真实使能或参数写入。</p>
   </section>;
 }

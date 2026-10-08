@@ -15,8 +15,8 @@ export function HardwareMappingPanel({ profile, onChange, mapped, source, onSour
       setMessage(`映射已保存到本浏览器，已人工核对 ${confirmed}/6 轴；不会因此开放实机运动。`);
     } catch (error) { setMessage(`保存失败：${error.message}`); }
   }
-  return <section className="card glass hardwareMapping" aria-label="实机与模型对应">
-    <h3>实机与模型对应 <small>设备 {profile.deviceId}</small></h3>
+  return <section className="card glass hardwareMapping" aria-label="关节映射（首次验收/高级调试）">
+    <h3>关节映射（首次验收/高级调试） <small>设备 {profile.deviceId}</small></h3>
     <p>选择「实机姿态」后，三维模型跟随电机反馈显示。方向与零位修正只改变软件换算，不向电机写入零位、位置或使能。</p>
     <div className="consoleActions">
       <button aria-pressed={source === 'simulation'} onClick={() => onSource('simulation')}>显示仿真姿态</button>

@@ -46,3 +46,8 @@ Thumbs.db
 *.token
 *.pem
 *.key
+
+# Private software profiles, snapshots, approvals and backups
+outputs/private_config/
+outputs/instances/
+.venv-sim/

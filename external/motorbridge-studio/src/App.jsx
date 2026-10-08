@@ -42,7 +42,7 @@ export default function App() {
 
   return (
     <MotorStudioProvider value={studio}>
-      <div className="app shell">
+      <div className={`app shell ${page === 'console' ? 'consoleApp' : ''}`}>
         <BrandWatermark />
         {/* 控制台自带网关连接与状态徽章，这里再显示一个"未连接"只会误导。 */}
         <HeaderBar simulationWorkspace={page === 'console'} hideGatewayBadge={page === 'console'} />

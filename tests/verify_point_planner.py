@@ -61,3 +61,10 @@ with tempfile.TemporaryDirectory() as folder:
     error = float(np.linalg.norm(r.fk(r.q).translation * 1000 - body['xyz_mm']))
     assert error < 2, error
     print(f'PASS: preview read-only; invalid/expired/drift/replay/hardware rejected; actual arrival error {error:.4f} mm')
+
+version = ["v1"]
+p = PointPlanner(r, configuration=lambda: version[0])
+plan = p.preview(body)
+version[0] = "v2"
+rejected(lambda: p.take({'plan_id': plan['plan_id']}), '版本已改变')
+print('PASS: configuration change invalidates point plan')

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Local RS simulation dashboard, verification and reproducible demonstrations."""
+import os
 import argparse, json, time, threading, io, csv, subprocess, hashlib, platform, uuid, mimetypes
 from urllib.parse import unquote, urlsplit
 from pathlib import Path
@@ -10,8 +11,9 @@ import pinocchio as pin
 from PIL import Image
 from rebot_core import Robot, ROOT, URDF, SCENE, HOME
 from rebot_point import PointPlanner, point_capabilities
+from rebot_config import ConfigStore, ConfigAPI
 
-OUT=ROOT/'outputs'
+OUT=Path(os.environ.get('REBOT_OUTPUT_DIR', str(ROOT/'outputs')))
 STUDIO_LOCALES=('en','zh','es')
 # Client-side routes that must survive a hard reload. /studio/writing stays as a
 # compatibility alias for the renamed 虚实联调控制台.
@@ -138,7 +140,8 @@ def serve(port,host='127.0.0.1'):
     from grasp_demo import build_scene
     from rebot_program import ProgramRunner, pick_place_steps, compile_program
     from rebot_writing import writing_program, CENTER
-    r=Robot(build_scene()); runner=ProgramRunner(r); point_planner=PointPlanner(r)
+    config_store=ConfigStore(OUT/'private_config'); config_api=ConfigAPI(config_store, port)
+    r=Robot(build_scene()); runner=ProgramRunner(r, output_dir=OUT/'jobs'); point_planner=PointPlanner(r, configuration=config_store.fingerprint)
     writing_document=writing_program();writing_compiled=compile_program(writing_document,r)
     r.m.vis.quality.offsamples=0
     lock=threading.RLock(); stop=threading.Event()
@@ -257,6 +260,8 @@ def serve(port,host='127.0.0.1'):
                 if not 0<n<65536:raise ValueError('Invalid payload length')
                 body=json.loads(self.rfile.read(n))
                 if not isinstance(body,dict): raise ValueError('Expected JSON object')
+                if self.path.startswith('/config/'):
+                    return self.send(config_api.request('POST', self.path, self.headers, self.client_address[0], body))
                 if self.path not in ('/program','/command'): raise ValueError('Unknown endpoint')
                 action='program' if self.path=='/program' else body['action']
                 with lock:
@@ -271,6 +276,8 @@ def serve(port,host='127.0.0.1'):
                         document=point_planner.take(body)
                         job=runner.submit(document)
                         return self.send(dict(ok=True,job=job),status=202)
+                    if action not in ('camera','camera_writing','camera_robot','ik_check'):
+                        point_planner.plans.clear()
                     if action not in ('camera','camera_writing','camera_robot','program_pause','program_resume','program_cancel','pause','program','grasp_demo','print_demo','ik_check'):
                         state['playing']=False
                     if action=='camera':
@@ -319,7 +326,7 @@ def serve(port,host='127.0.0.1'):
                         r.reset();state['motion']=None;state['playing']=action.split('_')[0];state['play_start']=r.d.time
                     else:raise ValueError('Unknown action')
                 self.send(dict(ok=True))
-            except (ValueError,KeyError,TypeError) as e:self.send(dict(error=str(e)),status=400)
+            except (ValueError,KeyError,TypeError,OSError) as e:self.send(dict(error=str(e)),status=400)
     worker=threading.Thread(target=animate,daemon=True);worker.start()
     server=ThreadingHTTPServer((host,port),Handler)
     print(f'RS 仿真控制台：http://127.0.0.1:{port}',flush=True)

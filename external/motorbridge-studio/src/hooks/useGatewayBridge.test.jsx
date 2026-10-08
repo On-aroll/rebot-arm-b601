@@ -61,118 +61,23 @@ afterEach(() => {
   FakeWebSocket.instances = [];
 });
 
-describe('useGatewayBridge token auth', () => {
-  it('connects without query token when disabled', () => {
+describe('legacy gateway quarantine', () => {
+  it.each([false, true])('cannot connect a legacy driver even with token auth %s', enabled => {
     vi.stubGlobal('WebSocket', FakeWebSocket);
-
-    render(
-      <I18nProvider>
-        <Harness />
-      </I18nProvider>
-    );
-
+    const { rerender } = render(<I18nProvider><Harness wsTokenEnabled={enabled} wsToken="secret-token" /></I18nProvider>);
     fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
-    expect(FakeWebSocket.instances[0].url).toBe('ws://example.com:9002');
-  });
-
-  it('appends query token when enabled', () => {
-    vi.stubGlobal('WebSocket', FakeWebSocket);
-
-    render(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="secret-token" />
-      </I18nProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
-    expect(FakeWebSocket.instances[0].url).toBe(
-      'ws://example.com:9002/?motorbridge_ws_token=secret-token'
-    );
-  });
-
-  it('does not create a websocket when token auth is enabled without a token', () => {
-    vi.stubGlobal('WebSocket', FakeWebSocket);
-
-    render(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="" />
-      </I18nProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
     expect(FakeWebSocket.instances).toHaveLength(0);
-    expect(screen.getByTestId('status').textContent).toBe('ws: disconnected');
+    rerender(<I18nProvider><Harness wsTokenEnabled={enabled} wsToken="updated-token" /></I18nProvider>);
+    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Disconnect' }));
+    expect(FakeWebSocket.instances).toHaveLength(0);
   });
-
-
-  it('reconnects with the updated token when connect is clicked again', () => {
-    vi.stubGlobal('WebSocket', FakeWebSocket);
-
-    const { rerender } = render(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="secret-token" />
-      </I18nProvider>
-    );
-
+  it('cannot recover a connection through mount or timer retry', async () => {
+    vi.useFakeTimers(); vi.stubGlobal('WebSocket', FakeWebSocket);
+    const { unmount } = render(<I18nProvider><Harness /></I18nProvider>);
     fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
-    act(() => {
-      FakeWebSocket.instances[0].emitOpen();
-    });
-
-    rerender(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="next-token" />
-      </I18nProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
-    expect(FakeWebSocket.instances).toHaveLength(2);
-    expect(FakeWebSocket.instances[1].url).toBe(
-      'ws://example.com:9002/?motorbridge_ws_token=next-token'
-    );
-  });
-
-  it('uses the latest token during auto reconnect', async () => {
-    vi.useFakeTimers();
-    vi.stubGlobal('WebSocket', FakeWebSocket);
-
-    const { rerender } = render(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="secret-token" />
-      </I18nProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
-    act(() => {
-      FakeWebSocket.instances[0].emitOpen();
-    });
-
-    rerender(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="next-token" />
-      </I18nProvider>
-    );
-
-    act(() => {
-      FakeWebSocket.instances[0].onclose?.();
-    });
-
-    await act(async () => {
-      vi.runOnlyPendingTimers();
-      await Promise.resolve();
-    });
-
-    expect(FakeWebSocket.instances).toHaveLength(2);
-    expect(FakeWebSocket.instances[1].url).toBe(
-      'ws://example.com:9002/?motorbridge_ws_token=next-token'
-    );
-
-    vi.useRealTimers();
+    await act(async () => { vi.advanceTimersByTime(60000); });
+    unmount(); render(<I18nProvider><Harness /></I18nProvider>);
+    expect(FakeWebSocket.instances).toHaveLength(0);
   });
 });

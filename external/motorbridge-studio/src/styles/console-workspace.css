@@ -205,3 +205,82 @@
 .hardwareMapping button[aria-pressed="true"] { color: #fff; background: #275b91; }
 
 .hardwarePoseLoading { display: flex; flex-direction: column; justify-content: center; align-items: center; color: #3f5c78; gap: 8px; }
+
+/* Batch A: daily operation first, configuration details on demand. */
+.consoleWorkspace { min-width:0; }
+.consoleWorkspace * { box-sizing:border-box; }
+.consoleWorkspace .consoleHeading { padding:12px 16px; flex-wrap:wrap; }
+.consoleWorkspace .consoleHeading h2 { font-size:22px; margin:4px 0; }
+.consoleWorkspace .consoleHeading p { max-width:760px; }
+.consolePrimary { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(350px,1fr); gap:14px; margin-top:12px; align-items:start; }
+.consolePrimary > div { min-width:0; }
+.consolePrimary .consoleStage, .consolePrimary .cartesianPanel { margin-top:0; }
+.consolePrimary .consoleViewport { height:350px; min-height:280px; }
+.consolePrimary .consoleViewport > div { max-width:100%; }
+.consoleSources { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+.consoleSources button[aria-pressed=true] { border-color:#338477; background:#e0f1eb; color:#175c51; }
+.consoleWorkspace .consoleModules { display:flex; flex-direction:column; gap:6px; }
+.consoleWorkspace .compactMotor { padding:0; min-width:0; }
+.motorSummary { display:grid; grid-template-columns:100px 70px 110px 1fr 100px 140px 65px; align-items:center; gap:8px; width:100%; text-align:left; padding:10px 14px; border:0; background:transparent; font-size:12px; }
+.motorSummary:hover { background:#edf4f7; }
+.motorSummary strong { font-size:14px; }
+.motorDetails { padding:12px 18px 18px; border-top:1px solid #dde6ed; font-size:13px; }
+.motorDetails p { line-height:1.7; }
+.motorTableScroll { max-width:100%; overflow-x:auto; }
+.profileTable { width:100%; border-collapse:collapse; min-width:540px; }
+.profileTable td, .profileTable th { padding:8px; text-align:left; border-bottom:1px solid #dde6ed; }
+.profileTable td small { display:block; color:#667889; }
+.profileTable input { width:130px; max-width:100%; }
+.reviewBox { margin:12px 0; padding:14px; background:#fff6e9; border:1px solid #e4c691; border-radius:8px; }
+.reviewBox label { display:block; margin:12px 0; }
+.consoleAdvanced { margin-top:12px; padding:12px 16px; min-width:0; }
+.consoleAdvanced > summary { cursor:pointer; font-weight:600; padding:4px 0; }
+.consoleAdvanced input[type=file] { width:210px; max-width:100%; }
+.consoleAdvanced .motorActions { flex-wrap:wrap; }
+.consolePrimary .pointPlanDetails { max-height:130px; overflow:auto; }
+@media (max-width:1000px) {
+ .motorSummary { grid-template-columns:95px 65px 95px 1fr; }
+ .consolePrimary { grid-template-columns:minmax(0,1fr) minmax(310px,1fr); }
+}
+@media (max-width:720px) {
+ .consolePrimary { grid-template-columns:minmax(0,1fr); }
+ .consolePrimary .consoleViewport { height:300px; }
+ .motorSummary { grid-template-columns:1fr 1fr; gap:7px; }
+ .consoleWorkspace .consoleHeading { padding:12px; }
+ .consoleWorkspace .consoleRow4, .consoleWorkspace .consoleGrid { grid-template-columns:minmax(0,1fr); }
+ .consoleWorkspace input, .consoleWorkspace select { max-width:100%; min-width:0; }
+ .consoleWorkspace .gwRow { flex-wrap:wrap; }
+ .consoleWorkspace .consoleModulesHead { flex-wrap:wrap; }
+ .consoleWorkspace .consoleBadges { max-width:100%; }
+ .consoleWorkspace p, .consoleWorkspace small, .consoleWorkspace span { overflow-wrap:anywhere; }
+}
+
+.consolePrimary .cartesianInputs { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:12px 0; }
+.consolePrimary .cartesianInputs label:nth-child(4) { grid-column:span 2; }
+.consolePrimary .cartesianPanel { padding:14px; }
+.consolePrimary .cartesianInputs input, .consolePrimary .cartesianInputs select { width:100%; }
+@media(max-width:390px) { .consolePrimary .cartesianInputs label:nth-child(4) { grid-column:span 3; } }
+
+.consoleApp { padding:12px; gap:8px; }
+.consoleApp .hero { align-items:center; }
+.consoleApp .heroLogoWrap { width:34px; height:34px; }
+.consoleApp .heroTitleBlock { padding:3px 8px 3px 0; }
+.consoleApp .hero h1 { font-size:21px; margin:0; }
+.consoleApp > section.card { padding:6px 10px; }
+.consoleApp .compactToolbar { margin:0; }
+.consoleApp .consoleWorkspace { margin-top:0; }
+.consoleApp .consoleStatus { padding:7px 12px; margin-top:8px; }
+.consoleApp .consoleStatus strong { display:inline; margin-right:12px; }
+.consoleApp .consoleHeading { gap:8px; padding:9px 12px; }
+.consoleApp .consoleEyebrow { display:none; }
+.consoleApp .consoleHeading h2 { font-size:19px; }
+.consoleApp .consolePrimary { margin-top:8px; }
+.consoleApp .consoleStage { padding:0; }
+.consoleApp .consoleSceneToolbar { padding:6px 10px; }
+.consoleApp .consoleLegend { padding:8px 10px; }
+.consoleApp .cartesianPanel { padding:12px; }
+.consoleApp .cartesianHeading h3 { margin:0; }
+.consoleApp .cartesianPanel p { margin:8px 0; }
+.consoleApp .cartesianPanel .consoleMessage { padding:7px; }
+.consoleApp .cartesianPanel .pointHardwareReason { padding:7px; }
+@media(max-width:720px) { .consoleApp .hero { flex-wrap:wrap; } .consoleApp .consoleActions { flex-wrap:wrap; } .consoleApp .consoleActions button { flex:1 1 40%; } }
