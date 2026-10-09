@@ -39,6 +39,27 @@ class Protection(unittest.TestCase):
         self.assertEqual(state['execution_state'], 'LOCKED')
         self.assertEqual((Path(self.tmp.name)/'machine_profile.json').stat().st_mode & 0o777, 0o600)
 
+    def test_provenance_software_approval_is_not_physical_backup(self):
+        initial=self.store.status()['provenance']
+        self.assertEqual(initial['device_parameters']['status'],'not-collected')
+        self.draft(); self.approve()
+        snapshot=dict(schema_version=1,axis_id=1,model='rs-06',source='mock',measured_at=1,control_mode=0,review_status='collected',identity_status='unverified',device_id=None,
+          fields={k:dict(value=None,unit=u,measured_at=None,status='error') for k,u in DEVICE_UNITS.items()})
+        self.act('snapshot',snapshot=snapshot)
+        p=self.store.status()['provenance']
+        self.assertEqual(p['device_parameters']['snapshot_count'],0)
+        self.assertEqual(p['device_parameters']['source_counts']['mock'],1)
+        self.assertEqual(p['approved_profile']['status'],'software-approved')
+        self.assertFalse(p['approved_profile']['applied_to_device'])
+        self.assertFalse(p['mit_runtime']['full_backup_verified'])
+        snapshot['source']='historical-file'; self.act('snapshot',snapshot=snapshot)
+        p=self.store.status()['provenance']
+        self.assertEqual(p['device_parameters']['snapshot_count'],1)
+        self.assertEqual(p['device_parameters']['source_counts']['historical-file'],1)
+        self.assertFalse(p['device_parameters']['full_backup_verified'])
+        self.assertFalse(p['device_parameters']['identity_verified'])
+        self.assertEqual(p['mit_runtime']['status'],'unknown-not-backed-up')
+
     def test_invalid_fields_units_nan_types(self):
         for value in (float('nan'),float('inf'),True,'12',-1):
             with self.assertRaises(ValueError): self.draft(value)

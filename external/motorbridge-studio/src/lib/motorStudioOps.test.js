@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
+  refreshMotorStateOp,
+  checkOnlineOnceOp,
   invalidControlFields,
   mapParamStreamToHit,
   mapResponseToHit,
@@ -130,4 +132,39 @@ describe('motor studio ops', () => {
       })
     ).toBe(false);
   });
+});
+
+
+describe('read-only RobStride refresh',()=>{
+  const hit={vendor:'robstride',model:'rs-06',esc_id:1,mst_id:253,pos:99,vel:8,online:false};
+  const args=sendCmd=>({h:hit,vendors:{},setTargetFor:vi.fn(),sendCmd,setHits:vi.fn(),pushLog:vi.fn()});
+  it('uses only parameter queries and preserves raw multi-turn positions',async()=>{
+    const values={0x7019:-7.2,0x701a:.1,0x701b:0,0x701c:24,0x7005:0};
+    const send=vi.fn(async(op,p)=>({ok:true,data:{value:values[p.param_id]}}));
+    const next=await refreshMotorStateOp(args(send));
+    expect(next.pos).toBe(-7.2);expect(next.vel).toBe(0);expect(next.run_mode).toBe(0);expect(next.online).toBe(true);
+    expect(send.mock.calls.map(([op])=>op)).toEqual(Array(5).fill('robstride_read_param'));
+  });
+  it.each([null,undefined,NaN,Infinity,'',false])('missing/invalid position %s is never a fresh zero or old value',async value=>{
+    const send=vi.fn(async()=>({ok:true,data:{value}}));
+    const next=await refreshMotorStateOp(args(send));
+    expect(Number.isNaN(next.pos)).toBe(true);expect(next.online).toBe(false);
+    expect(await checkOnlineOnceOp(args(send))).toBe(false);
+  });
+  it('missing optional reads do not revive historical velocity/mode',async()=>{
+    const send=vi.fn(async(op,p)=>({ok:true,data:{value:p.param_id===0x7019?.2:null}}));
+    const next=await refreshMotorStateOp(args(send));expect(next.pos).toBe(.2);
+    expect(Number.isNaN(next.vel)).toBe(true);expect(Number.isNaN(next.run_mode)).toBe(true);
+    expect(await checkOnlineOnceOp(args(send))).toBe(true);
+  });
+});
+
+
+it('legacy DM diagnostic refresh uses only explicit register reads; does not invent position',async()=>{
+  const sendCmd=vi.fn(async()=>({ok:true,data:{value:2}}));
+  const args={h:{vendor:'damiao',model:'dm4310',esc_id:1,mst_id:17,pos:99},vendors:{},setTargetFor:vi.fn(),sendCmd,setHits:vi.fn(),pushLog:vi.fn()};
+  const next=await refreshMotorStateOp(args);
+  expect(next.online).toBe(true);expect(Number.isNaN(next.pos)).toBe(true);
+  expect(sendCmd.mock.calls.every(([op])=>['get_register_f32','get_register_u32'].includes(op))).toBe(true);
+  expect(await checkOnlineOnceOp(args)).toBe(true);
 });

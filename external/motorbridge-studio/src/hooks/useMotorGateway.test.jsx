@@ -14,15 +14,17 @@ it('refresh, mount, arm, drill toggle and stop cannot create sockets or writes',
   expect(result.current.armed).toBe(false); expect(result.current.drill).toBe(true);
   unmount(); renderHook(()=>useMotorGateway()); expect(Socket).not.toHaveBeenCalled();
 });
-it('quarantines all legacy clients and denies final-op overrides', async () => {
-  const Socket=vi.fn(); vi.stubGlobal('WebSocket',Socket);
-  const legacy=new WsGatewayClient({onError:vi.fn()}); legacy.connect('ws://127.0.0.1:9002');
-  expect(Socket).not.toHaveBeenCalled();
-  const readonly=new WsGatewayClient({readOnly:true}); readonly.ws={send:vi.fn(),readyState:1};
-  for (const op of ['enable','disable','stop','ensure_mode','mit','pos_vel','vel','robstride_write_param','set_zero','set_active_report']) {
-    await expect(readonly.send(op,{})).rejects.toThrow('LOCKED');
+it('all clients reject writes and protocol overrides, regardless of constructor flags', async () => {
+  vi.stubGlobal('WebSocket', {OPEN:1});
+  for (const options of [{}, {readOnly:true}, {readOnly:false}]) {
+    const client=new WsGatewayClient(options); client.readOnly=false;
+    client.ws={send:vi.fn(),readyState:1};
+    for (const op of ['enable','disable','stop','ensure_mode','mit','pos_vel','vel','robstride_write_param','set_zero','set_zero_position','set_active_report','state_stream','param_stream','scan','verify','state_once','store','set_id','unknown']) {
+      await expect(client.send(op,{})).rejects.toThrow('LOCKED');
+    }
+    for (const payload of [{op:'mit'},{req_id:1},{toJSON:()=>({op:'mit'})},null,[]]) {
+      await expect(client.send('close_bus',payload)).rejects.toThrow('LOCKED');
+    }
+    expect(client.ws.send).not.toHaveBeenCalled();
   }
-  await expect(readonly.send('close_bus',{op:'mit'})).rejects.toThrow('LOCKED');
-  await expect(readonly.send('close_bus',{req_id:1})).rejects.toThrow('LOCKED');
-  expect(readonly.ws.send).not.toHaveBeenCalled();
 });

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { WsGatewayClient } from '../wsGatewayClient';
 import { useI18n } from '../i18n';
 import { normalizeGatewayCapabilities, WS_V1_FALLBACK_CAPABILITIES } from '../lib/wsCapabilities';
@@ -21,9 +21,6 @@ export function useGatewayBridge({
   const [gatewayCapabilities, setGatewayCapabilities] = useState(WS_V1_FALLBACK_CAPABILITIES);
   const [capabilitiesSource, setCapabilitiesSource] = useState('fallback');
   const clientRef = useRef(null);
-  const reconnectTimerRef = useRef(null);
-  const reconnectAttemptRef = useRef(0);
-  const shouldAutoReconnectRef = useRef(false);
   const connectingRef = useRef(false);
   const lastConnectUrlRef = useRef('');
   const connectConfigRef = useRef({ wsUrl, wsTokenEnabled, wsToken });
@@ -32,20 +29,6 @@ export function useGatewayBridge({
   connectConfigRef.current = { wsUrl, wsTokenEnabled, wsToken };
   onGatewayStateRef.current = onGatewayState;
   onGatewayParamsRef.current = onGatewayParams;
-
-  const clearReconnectTimer = () => {
-    if (reconnectTimerRef.current) {
-      clearTimeout(reconnectTimerRef.current);
-      reconnectTimerRef.current = null;
-    }
-  };
-
-  const reconnectDelayMs = (attempt) => {
-    const base = 600;
-    const max = 5000;
-    const exp = Math.min(max, base * 2 ** Math.max(0, attempt));
-    return exp + Math.floor(Math.random() * 300);
-  };
 
   const buildWsConnectUrl = () => {
     const {
@@ -141,8 +124,6 @@ export function useGatewayBridge({
           }
         },
         onOpen: () => {
-          clearReconnectTimer();
-          reconnectAttemptRef.current = 0;
           connectingRef.current = false;
           setConnected(true);
           setConnText(t('conn_connected'));
@@ -171,23 +152,7 @@ export function useGatewayBridge({
           setConnected(false);
           setConnText(t('conn_disconnected'));
           pushLog(t('log_disconnected'), 'err');
-          if (!shouldAutoReconnectRef.current) return;
-
-          clearReconnectTimer();
-          const attempt = reconnectAttemptRef.current + 1;
-          reconnectAttemptRef.current = attempt;
-          const delay = reconnectDelayMs(attempt - 1);
-          setConnText(t('conn_reconnecting_in', { sec: Math.ceil(delay / 1000) }));
-          pushLog(t('log_reconnect_attempt', { n: attempt, ms: delay }), 'info');
-
-          reconnectTimerRef.current = setTimeout(() => {
-            reconnectTimerRef.current = null;
-            try {
-              connectNow(clientRef.current, t('conn_reconnecting_n', { n: attempt }), true);
-            } catch (e) {
-              pushLog(t('log_reconnect_start_failed', { err: e.message || e }), 'err');
-            }
-          }, delay);
+          // Reconnection requires an explicit click; never replay target/setup.
         },
         onError: () => {
           connectingRef.current = false;
@@ -204,12 +169,9 @@ export function useGatewayBridge({
   };
 
   const connectWs = () => {
-    shouldAutoReconnectRef.current = true;
-    clearReconnectTimer();
     try {
       connectNow(ensureClient());
     } catch {
-      shouldAutoReconnectRef.current = false;
       connectingRef.current = false;
       setConnected(false);
       setConnText(t('conn_disconnected'));
@@ -217,9 +179,6 @@ export function useGatewayBridge({
   };
 
   const disconnectWs = () => {
-    shouldAutoReconnectRef.current = false;
-    reconnectAttemptRef.current = 0;
-    clearReconnectTimer();
     connectingRef.current = false;
     lastConnectUrlRef.current = '';
     setConnected(false);
@@ -250,40 +209,14 @@ export function useGatewayBridge({
       10000
     );
     if (!ret.ok) throw new Error(ret.error || 'set_target failed');
-    if (!enableStreams) return;
-    if (String(vendor) === 'robstride') {
-      try {
-        await sendCmd(
-          'robstride_write_param',
-          { param_id: 0x7026, type: 'u16', value: 3, timeout_ms: 500 },
-          3000
-        );
-      } catch (e) {
-        pushLog(`robstride report period setup failed: ${e.message || e}`, 'err');
-      }
-      try {
-        await sendCmd('set_active_report', { enabled: true }, 3000);
-      } catch (e) {
-        pushLog(`robstride active report enable failed: ${e.message || e}`, 'err');
-      }
-    }
-    try {
-      await sendCmd('state_stream', { enabled: true }, 3000);
-    } catch (e) {
-      pushLog(`state stream enable failed: ${e.message || e}`, 'err');
-    }
-    if (String(vendor) === 'robstride' || String(vendor) === 'damiao') {
-      try {
-        const paramStreamConfig =
-          String(vendor) === 'robstride'
-            ? { enabled: true, profile: 'realtime', interval_ms: 100, timeout_ms: 80 }
-            : { enabled: true, profile: 'realtime', interval_ms: 500, timeout_ms: 80 };
-        await sendCmd('param_stream', paramStreamConfig, 3000);
-      } catch (e) {
-        pushLog(`param stream enable failed: ${e.message || e}`, 'err');
-      }
-    }
+    // Selection changes connection routing only. Never write 0x7026, enable active
+    // reports, or start streams implicitly. Refresh uses explicit register reads.
+    if (enableStreams) pushLog('只读目标已选择；主动上报配置不修改，请使用读取/刷新参数', 'info');
   };
+
+  useEffect(() => () => {
+    clientRef.current?.disconnect();
+  }, []);
 
   return {
     connText,

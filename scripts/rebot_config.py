@@ -171,6 +171,29 @@ def preparation_checks(state, now=None):
     return rows
 
 
+def parameter_provenance(state):
+    """Report evidence, never infer physical backup from a software profile."""
+    snapshots = state['snapshots'] if state else []
+    approved = state['approved'] if state else {}
+    physical = [s for s in snapshots if s['source'] != 'mock']
+    source_counts = {source: sum(s['source'] == source for s in snapshots)
+                     for source in ('authorized-browser-read', 'historical-file', 'mock')}
+    return dict(
+        device_parameters=dict(source='explicit archived DeviceSnapshot only',
+            status=('unavailable' if state is None else 'partial-unverified-archive' if physical else 'not-collected'),
+            snapshot_count=len(physical), source_counts=source_counts,
+            last_measured_at=max((s['measured_at'] for s in physical), default=None),
+            full_backup_verified=False, identity_verified=False,
+            note='软件配置已保存不等于真实设备参数已备份；快照只覆盖实际读回字段，无法证明完整性、当前值或掉电持久化'),
+        mit_runtime=dict(source='real executor command evidence unavailable', status='unknown-not-backed-up',
+            fields=['q_des','qd_des','Kp','Kd','tau_ff'], full_backup_verified=False,
+            note='逐帧命令不是 PP/CSP 寄存器；没有真实帧记录时不推断增益。B1 合成配置与帧单独标为 mock-only'),
+        approved_profile=dict(source='explicit human software-only review', status=('unavailable' if state is None else 'software-approved' if approved else 'not-approved'),
+            axis_versions={key:value['version'] for key,value in approved.items()},
+            applied_to_device=False, physical_validation=False,
+            note='批准记录仅证明软件审核，既不证明设备当前值，也不授予实机执行权限'))
+
+
 class ConfigStore:
     def __init__(self, root):
         self.root = Path(root)
@@ -210,7 +233,7 @@ class ConfigStore:
         except (ValueError, OSError, TypeError, KeyError) as e:
             state, error = None, f'配置不可用，保留原文件：{e}'
         return dict(state=state, error=error, hardware=False, armed=False, drill=True,
-                    execution_state='LOCKED', reason=LOCK_REASON, preparation=preparation_checks(state) if state else [],
+                    execution_state='LOCKED', provenance=parameter_provenance(state), reason=LOCK_REASON, preparation=preparation_checks(state) if state else [],
                     fields={k:dict(unit=v[0],label=v[1],group=v[2]) for k,v in FIELDS.items()})
 
     def fingerprint(self):
@@ -309,7 +332,7 @@ class ConfigStore:
                 self._commit(state, dict(action='mock-write-readback',axis_id=int(key),outcome=outcome,transport='mock',warning='仅模拟；真实失败可能部分生效，需人工复核；不自动回滚设备'))
             else:
                 raise ValueError(LOCK_REASON)
-            return dict(state=state,hardware=False,armed=False,drill=True,preparation=preparation_checks(state))
+            return dict(state=state,hardware=False,armed=False,drill=True,preparation=preparation_checks(state),provenance=parameter_provenance(state))
 
 
 class ConfigAPI:

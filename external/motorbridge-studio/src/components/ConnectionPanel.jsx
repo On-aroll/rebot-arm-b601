@@ -80,6 +80,7 @@ export function ConnectionPanel() {
 
       {!collapsed && (
         <>
+          <p role="note">只读连接：手动连接后可读取 RS 参数及已审计寄存器；真实写入始终锁定。选择电机不写主动上报参数。断线后需手动重连。扫描及未审计的厂家操作保持锁定。</p>
           <div className="connCompactGrid">
             <div className="field compactField connFieldUrl">
               <label>{t('ws_url')}</label>

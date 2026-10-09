@@ -1,6 +1,13 @@
+// Closed read allowlist: connecting is allowed, actuator operations never are.
+// No scan/verify/streams: their vendor-specific side effects have not been audited.
+export const READ_ONLY_OPS = Object.freeze([
+  'capabilities', 'set_target', 'close_bus', 'robstride_read_param',
+  'robstride_ping', 'get_register_u32', 'get_register_f32',
+]);
+
 export class WsGatewayClient {
-  constructor({ readOnly = false, onEvent, onState, onParams, onOpen, onClose, onError, onMessage }) {
-    this.readOnly = readOnly;
+  constructor({ onEvent, onState, onParams, onOpen, onClose, onError, onMessage }) {
+    this.readOnly = true; // Informational; callers cannot opt into writes.
     this.ws = null;
     this.pendingByReqId = new Map();
     this.nextReqId = 1;
@@ -28,25 +35,29 @@ export class WsGatewayClient {
   }
 
   connect(url) {
-    // Legacy studio drivers are quarantined in this offline batch.
-    if (!this.readOnly) { this.onError?.(new Error("LOCKED：旧实机控制入口已隔离，请使用控制台只读连接")); return; }
     this.disconnect();
-    this.ws = new WebSocket(url);
+    const socket = new WebSocket(url);
+    this.ws = socket;
 
-    this.ws.onopen = () => {
+    socket.onopen = () => {
+      if (this.ws !== socket) return;
       this.onOpen?.();
     };
 
-    this.ws.onclose = () => {
+    socket.onclose = () => {
+      if (this.ws !== socket) return;
+      this.ws = null;
       this.rejectPending('ws closed');
       this.onClose?.();
     };
 
-    this.ws.onerror = () => {
+    socket.onerror = () => {
+      if (this.ws !== socket) return;
       this.onError?.(new Error('ws error'));
     };
 
-    this.ws.onmessage = (ev) => {
+    socket.onmessage = (ev) => {
+      if (this.ws !== socket) return;
       let msg;
       try {
         msg = JSON.parse(ev.data);
@@ -101,9 +112,11 @@ export class WsGatewayClient {
 
   disconnect() {
     this.rejectPending('ws disconnected');
-    if (this.ws) {
+    const socket = this.ws;
+    this.ws = null;
+    if (socket) {
       try {
-        this.ws.close();
+        socket.close();
       } catch {
         // ignore
       }
@@ -113,8 +126,15 @@ export class WsGatewayClient {
 
   send(op, payload = {}, timeoutMs = 8000, { onProgress } = {}) {
     // Validate the final op; payload must not override protocol routing fields.
-    if (!this.readOnly || !['set_target', 'robstride_read_param', 'close_bus'].includes(op) || Object.hasOwn(payload, 'op') || Object.hasOwn(payload, 'req_id')) {
-      return Promise.reject(new Error('LOCKED：当前仅允许显式授权后的只读查询'));
+    if (!READ_ONLY_OPS.includes(op) || !payload || typeof payload !== 'object' || Array.isArray(payload) || Object.hasOwn(payload, 'op') || Object.hasOwn(payload, 'req_id')) {
+      return Promise.reject(new Error(`LOCKED：${op} 不在已审计只读白名单；写入、扫描和主动上报配置仍锁定`));
+    }
+    let safePayload;
+    try {
+      safePayload = JSON.parse(JSON.stringify(payload));
+      if (!safePayload || typeof safePayload !== 'object' || Array.isArray(safePayload) || Object.hasOwn(safePayload, 'op') || Object.hasOwn(safePayload, 'req_id')) throw new Error('routing override');
+    } catch {
+      return Promise.reject(new Error('LOCKED：payload 必须是无协议覆盖的 JSON 对象'));
     }
     return new Promise((resolve, reject) => {
       if (!this.isConnected()) {
@@ -123,7 +143,7 @@ export class WsGatewayClient {
       }
 
       const reqId = this.nextReqId++;
-      const req = { op, req_id: reqId, ...payload };
+      const req = { ...safePayload, op, req_id: reqId };
       const pending = {
         resolve,
         reject,

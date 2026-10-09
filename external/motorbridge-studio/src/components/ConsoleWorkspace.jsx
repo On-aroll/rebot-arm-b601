@@ -248,7 +248,7 @@ export function ConsoleWorkspace() {
       <div className="consoleHeading card glass">
         <div><span className="consoleEyebrow">reBot B601-RS · 虚实联调控制台</span>
           <h2>虚实工作台 <small>MIT 路线 · 软件配置保护</small></h2>
-          <p>XYZ 与动作程序由仿真求解。静态姿态已人工确认；逐轴动态映射、TCP 与实机执行仍待验收。</p></div>
+          <p>软件配置保护不等于真实 MIT 参数备份。静态姿态已确认；动态映射、TCP 与实机执行仍待验收。</p></div>
         <div className="consoleBadges">
           <span className={`badge ${problem ? 'err' : 'ok'}`}>{problem ? '仿真反馈异常' : '仿真在线'}</span>
           <span className={`badge ${gatewayOnline ? 'ok' : (gateway.status === 'offline' ? 'err' : '')}`}>
@@ -363,6 +363,10 @@ export function ConsoleWorkspace() {
             onSource={(source) => { setDisplaySource(source); setCameraView('overview'); setGhost(false); }} />
           <p>显示映射仍保留原浏览器记录；软件批准配置独立保存，不会自动覆盖映射，也不把静态确认升级为动态验收。</p>
         </details>
+        <h4>参数来源与备份状态</h4>
+        <p>真实设备参数：{config.provenance?.device_parameters?.snapshot_count ? `${config.provenance.device_parameters.snapshot_count} 份局部快照，身份与完整备份未核验` : config.provenance?.device_parameters?.status === 'not-collected' ? '未采集，未验证备份' : '状态不可用，不能判断备份'}。来源：明确归档的只读查询或历史文件；不能证明设备当前值。</p>
+        <p>MIT 每帧控制参数：真实来源未知，未备份；PP/CSP 读数不能替代。B1 使用独立合成数据，不代表现场调定值。</p>
+        <p>人工批准配置：{config.provenance?.approved_profile?.status === 'software-approved' ? `已有 ${Object.keys(config.provenance.approved_profile.axis_versions).length} 轴的软件批准记录` : config.provenance?.approved_profile?.status === 'not-approved' ? '尚无批准记录' : '状态不可用'}。来源为人工逐次软件审核，不证明已写入设备或已现场验证。</p>
         <h4>软件配置保护</h4><p>版本 {config.state?.revision ?? '未知'} · 设备身份未核验 · 真实控制始终锁定。导出不含设备序列号或快照；导入仅恢复草稿。</p>
         <div className="motorActions"><button disabled={config.busy} onClick={config.reload}>刷新软件配置</button><button disabled={!config.state || config.busy} onClick={exportConfig}>导出软件备份</button>
           <label>导入为草稿 <input type="file" accept="application/json,.json" disabled={!config.state || config.busy} onChange={importConfig} /></label></div>
@@ -397,7 +401,7 @@ export function ConsoleWorkspace() {
             缺的是执行层与手柄映射：摇杆 → 末端 XYZ 增量 → 自动求各关节运动。</p>
         </section>
 
-        <section className="card glass consoleCard"><h3>接入边界</h3><p>J1–J6 保留 MIT，夹爪单独核实。软件批准不授予实机权限；本地服务没有 CAN 执行实现。旧控制页的设备通路已隔离。</p><p>MIT 的 Kp、Kd、前馈及轨迹速度/加速度/jerk 须独立验证；PP/CSP 寄存器不提供 MIT 限速证明。现场动态映射、TCP、出力和停止行为未验收。</p></section>
+        <section className="card glass consoleCard"><h3>接入边界</h3><p>J1–J6 保留 MIT，夹爪单独核实。软件批准不授予实机权限；本地服务没有 CAN 执行实现。旧控制页恢复已审计的只读连接；真实写入仍锁定。</p><p>MIT 的 Kp、Kd、前馈及轨迹速度/加速度/jerk 须独立验证；PP/CSP 寄存器不提供 MIT 限速证明。现场动态映射、TCP、出力和停止行为未验收。</p></section>
       </div>
       </details>
     </section>

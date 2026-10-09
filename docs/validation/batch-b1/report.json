@@ -1,0 +1,345 @@
+{
+  "stage": "B1",
+  "source": "synthetic-test-fixture",
+  "approval_scope": "mock-only",
+  "passed": true,
+  "tests_run": 25,
+  "failures": 0,
+  "errors": 0,
+  "cases": [
+    {
+      "id": "b1_tests.MitMockTests.test_ack_alone_does_not_confirm_arrival_and_task_timeout",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_bad_waypoint_limits_nonfinite_and_seventh_axis",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_cancel_during_read_prevents_next_frame",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_cancel_preempts_missing_feedback_and_motion_ack",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_clock_reverse_early_tick_and_cycle_stall",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_config_changes_invalidate_preview_and_stop_active_task",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_configuration_is_explicit_mock_only_and_immutable",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_connection_read_write_and_negative_ack_errors",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_continuity_and_bounds_independent_numerical_derivatives",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_delayed_ack_does_not_create_catchup_burst",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_expired_command_is_not_replayed",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_expired_replayed_changed_task_and_copied_plan",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_extreme_finite_duration_is_rejected_without_frames",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_feedback_nonfinite_mode_identity_validity_speed",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_feedback_timeout_each_axis",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_feedback_timestamp_and_sequence_order",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_first_pose_drift_and_moving_start_rejected",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_first_target_raw_feedback_and_complete_six_axes",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_invalid_replacement_preview_invalidates_previous_token",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_missing_ack_no_extra_motion_and_fault",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_no_hardware_transport_or_subclass_adapter",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_reset_and_process_restart_never_replay_frames",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_six_axis_feedback_skew_is_not_hidden_by_freshest_axis",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_stop_ack_delayed_missing_negative_and_send_failure",
+      "passed": true
+    },
+    {
+      "id": "b1_tests.MitMockTests.test_tracking_error_and_estimated_torque_rejection",
+      "passed": true
+    }
+  ],
+  "config_sha256": "56296af34517a0fd6a36cc7fbd8c0e3aa0f5905177f0aa80477e2dcdc3b744ca",
+  "fixture": "tests/fixtures/mit_mock_only.json",
+  "real_hardware_operations_in_this_runner": 0,
+  "no_claim_about_external_process_CAN_traffic": true,
+  "configuration_backup_status": "software-only; actual MIT gains unknown and not backed up",
+  "trajectory": {
+    "duration_s": 3.4400000000000004,
+    "segment_durations_s": [
+      1.83,
+      1.61
+    ],
+    "sampled_max_abs_velocity": [
+      0.3585744337678673,
+      0.40756152235976806,
+      0.4780992450238234,
+      0.4780992450238234,
+      0.3585744337678675,
+      0.27170768157317915
+    ],
+    "sampled_max_abs_acceleration": [
+      0.6729551956206788,
+      0.86933937280471,
+      0.8972735941609057,
+      0.8972735941609057,
+      0.6729551956206794,
+      0.5795595818698076
+    ],
+    "sampled_max_abs_jerk": [
+      2.569505042292961,
+      3.7731354357695137,
+      3.426006723057284,
+      3.773135435769515,
+      2.5695050422929633,
+      2.515423623846346
+    ],
+    "axis_limits": [
+      {
+        "q_min": -12,
+        "q_max": 12,
+        "v_max": 0.6,
+        "a_max": 1.2,
+        "jerk_max": 5.0,
+        "kp": 2,
+        "kd": 0.1,
+        "tau_ff": 0,
+        "kp_max": 5,
+        "kd_max": 1,
+        "torque_max": 2,
+        "error_max": 0.1
+      },
+      {
+        "q_min": -12,
+        "q_max": 12,
+        "v_max": 0.5599999999999999,
+        "a_max": 1.1199999999999999,
+        "jerk_max": 4.6,
+        "kp": 2,
+        "kd": 0.1,
+        "tau_ff": 0,
+        "kp_max": 5,
+        "kd_max": 1,
+        "torque_max": 2,
+        "error_max": 0.1
+      },
+      {
+        "q_min": -12,
+        "q_max": 12,
+        "v_max": 0.52,
+        "a_max": 1.04,
+        "jerk_max": 4.2,
+        "kp": 2,
+        "kd": 0.1,
+        "tau_ff": 0,
+        "kp_max": 5,
+        "kd_max": 1,
+        "torque_max": 2,
+        "error_max": 0.1
+      },
+      {
+        "q_min": -12,
+        "q_max": 12,
+        "v_max": 0.48,
+        "a_max": 0.96,
+        "jerk_max": 3.8,
+        "kp": 2,
+        "kd": 0.1,
+        "tau_ff": 0,
+        "kp_max": 5,
+        "kd_max": 1,
+        "torque_max": 2,
+        "error_max": 0.1
+      },
+      {
+        "q_min": -12,
+        "q_max": 12,
+        "v_max": 0.43999999999999995,
+        "a_max": 0.8799999999999999,
+        "jerk_max": 3.4,
+        "kp": 2,
+        "kd": 0.1,
+        "tau_ff": 0,
+        "kp_max": 5,
+        "kd_max": 1,
+        "torque_max": 2,
+        "error_max": 0.1
+      },
+      {
+        "q_min": -12,
+        "q_max": 12,
+        "v_max": 0.39999999999999997,
+        "a_max": 0.7999999999999999,
+        "jerk_max": 3.0,
+        "kp": 2,
+        "kd": 0.1,
+        "tau_ff": 0,
+        "kp_max": 5,
+        "kd_max": 1,
+        "torque_max": 2,
+        "error_max": 0.1
+      }
+    ]
+  },
+  "execution": {
+    "state": "COMPLETED",
+    "reason": null,
+    "hardware": false,
+    "hardware_state": "LOCKED",
+    "source": "synthetic-test-fixture",
+    "physical_stop_verified": false,
+    "stop_requested": false,
+    "stop_sent": false,
+    "stop_acknowledged": false,
+    "motion_frames": 346
+  },
+  "first_frame": {
+    "task": 1,
+    "sequence": 1,
+    "config_hash": "56296af34517a0fd6a36cc7fbd8c0e3aa0f5905177f0aa80477e2dcdc3b744ca",
+    "issued_at": 0.0,
+    "expires_at": 0.06,
+    "q_des": [
+      6.4,
+      -3.8,
+      0.5,
+      -0.8,
+      2.1,
+      -7.2
+    ],
+    "qd_des": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "kp": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "kd": [
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1
+    ],
+    "tau_ff": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "last_frame": {
+    "task": 1,
+    "sequence": 346,
+    "config_hash": "56296af34517a0fd6a36cc7fbd8c0e3aa0f5905177f0aa80477e2dcdc3b744ca",
+    "issued_at": 3.4499999999999704,
+    "expires_at": 3.5099999999999705,
+    "q_des": [
+      6.5,
+      -3.9,
+      0.2,
+      -0.7,
+      2.0,
+      -7.3
+    ],
+    "qd_des": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "kp": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "kd": [
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1
+    ],
+    "tau_ff": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "limitations": [
+    "Ideal follower, no inertia/gravity/contact/drive encoding",
+    "Virtual scheduler, not wall-clock realtime or physical stop proof",
+    "Rest at each waypoint; moving-start/streamed replanning/J7 unsupported",
+    "No physical transport, no CAN ownership or independent watchdog implemented"
+  ]
+}
