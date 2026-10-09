@@ -102,7 +102,7 @@ def validate_state(state):
                 expected |= {'approved_at','confirmation','version'}
             if set(profile) != expected or profile['schema_version'] != SCHEMA or profile['axis_id'] != int(key) or profile['model'] != ('rs-06' if int(key) < 4 else 'rs-00'):
                 raise ValueError('轴配置元数据无效')
-            if profile['control_mode'] != ('MIT' if int(key) <= 6 else 'unknown') or profile['source'] != 'human-software' or profile['measured_at'] is not None:
+            if profile['control_mode'] != ('MIT' if int(key) <= 6 else 'unknown') or profile['source'] not in ('human-software', 'user-provided-mit-initial-trial') or profile['measured_at'] is not None:
                 raise ValueError('不能把软件配置伪装成设备读数')
             if profile['review_status'] != ('software-approved' if category == 'approved' else 'draft'):
                 raise ValueError('审批状态无效')
@@ -187,6 +187,7 @@ def parameter_provenance(state):
             note='软件配置已保存不等于真实设备参数已备份；快照只覆盖实际读回字段，无法证明完整性、当前值或掉电持久化'),
         mit_runtime=dict(source='real executor command evidence unavailable', status='unknown-not-backed-up',
             fields=['q_des','qd_des','Kp','Kd','tau_ff'], full_backup_verified=False,
+            user_trial_axes=[int(k) for k,p in (state['drafts'].items() if state else []) if p['source']=='user-provided-mit-initial-trial'],
             note='逐帧命令不是 PP/CSP 寄存器；没有真实帧记录时不推断增益。B1 合成配置与帧单独标为 mock-only'),
         approved_profile=dict(source='explicit human software-only review', status=('unavailable' if state is None else 'software-approved' if approved else 'not-approved'),
             axis_versions={key:value['version'] for key,value in approved.items()},
@@ -268,6 +269,53 @@ class ConfigStore:
         finally:
             Path(name).unlink(missing_ok=True)
         return state
+
+    def save_user_mit_trial(self, model_limits):
+        """Explicit one-time user request, not a startup migration or motor write.
+
+        Never replaces an existing different draft or approval. Conflicts are
+        returned for a human decision; a single transaction saves all six axes.
+        """
+        with self.locked():
+            state = self.load()
+            gains = {'kp': 3., 'kd': 1., 'tau_ff': 0.}
+            conflicts = []
+            for axis in range(1, 7):
+                for category in ('approved', 'drafts'):
+                    profile = state[category].get(str(axis))
+                    if profile:
+                        for name, value in gains.items():
+                            old = profile['fields'][name]['value']
+                            if old is not None and old != value:
+                                conflicts.append(dict(axis_id=axis, category=category, field=name, before=old, proposed=value))
+            if conflicts:
+                return dict(saved=False, conflicts=conflicts, hardware=False)
+            changed = False
+            filled_model_fields = {}
+            for axis in range(1, 7):
+                key = str(axis)
+                fields = copy.deepcopy(state['drafts'].get(key, {}).get('fields') or
+                                       state['approved'].get(key, {}).get('fields') or blank_fields())
+                for name, value in gains.items(): fields[name]['value'] = value
+                # Model data are identified in the audit event; not physical approval.
+                for name, value in dict(q_min=float(model_limits[axis-1][0]),q_max=float(model_limits[axis-1][1]),direction=1,offset=0).items():
+                    if fields[name]['value'] is None:
+                        fields[name]['value'] = value
+                        filled_model_fields.setdefault(key, []).append(name)
+                validate_fields(fields)
+                old = state['drafts'].get(key)
+                if old and old['fields'] == fields and old['source'] == 'user-provided-mit-initial-trial': continue
+                state['drafts'][key] = dict(schema_version=SCHEMA,axis_id=axis,model='rs-06' if axis<=3 else 'rs-00',
+                    source='user-provided-mit-initial-trial',measured_at=None,control_mode='MIT',review_status='draft',fields=fields,saved_at=time.time())
+                changed = True
+            if changed:
+                self._commit(state, dict(action='save-user-mit-initial-trial', label='用户提供的 MIT 初始试验配置',
+                    axes=[1,2,3,4,5,6], field_sources={'kp/kd/tau_ff':'user task 2026-10-09',
+                    'q_min/q_max':'existing Robot.lower/upper from locked URDF/MuJoCo; model-only',
+                    'direction/offset':'official identity mapping and prior static confirmation'},
+                    filled_model_fields=filled_model_fields, retained_fields='non-empty model/mapping/engineering fields retained from existing profile',
+                    physical_validation=False, hardware_writes=False))
+            return dict(saved=True, changed=changed, revision=state['revision'], hardware=False)
 
     def action(self, body, session='local-test'):
         with self.locked():

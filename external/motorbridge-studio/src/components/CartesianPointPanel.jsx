@@ -12,7 +12,7 @@ async function request(path, body) {
   return result;
 }
 
-export function CartesianPointPanel({ state, locked, active, moving, now, onPreview, onBusy, onExecuted }) {
+export function CartesianPointPanel({ state, locked, active, moving, now, onPreview, onBusy, onExecuted, resetKey, readiness }) {
   const [xyz, setXyz] = React.useState(['200', '150', '200']);
   const [orientation, setOrientation] = React.useState('position');
   const [speed, setSpeed] = React.useState('0.15');
@@ -28,6 +28,7 @@ export function CartesianPointPanel({ state, locked, active, moving, now, onPrev
       .catch(() => { if (alive) setCapabilities(null); });
     return () => { alive = false; };
   }, []);
+  React.useEffect(() => { setPlan(null); setJobId(null); setMessage('仿真姿态就绪，请输入坐标并计算预览。'); }, [resetKey]);
   const occupied = pending || locked || active || moving;
   const expired = plan && now >= plan.expiresAt;
   const changed = plan && Array.isArray(state?.q_deg) && state.q_deg.some((q, i) => Math.abs(q - plan.start_deg[i]) > .5);
@@ -97,8 +98,8 @@ export function CartesianPointPanel({ state, locked, active, moving, now, onPrev
     <div className="consoleActions">
       <button disabled={occupied} onClick={() => perform('point_plan')}>{pending ? '处理中…' : '计算并预览'}</button>
       <button className="primary" disabled={occupied || invalidPlan || Boolean(jobId)} onClick={() => perform('point_execute')}>执行仿真到点</button>
-      <button disabled title={hardwareReason}>实机＋模型执行（尚未就绪）</button>
-      <button disabled={pending || !ownJob || !['running', 'paused'].includes(ownJob.status)} onClick={cancel}>停止本次仿真到点</button>
+      <button disabled title={hardwareReason}>确认实机执行（待单轴验收）</button>
+      <button disabled={pending || !ownJob || !['running', 'paused'].includes(ownJob.status)} onClick={cancel}>停止当前任务</button>
     </div>
     <p className="consoleNote">到点采用平滑关节插值，末端不保证沿直线移动；预览仅检查模型中的碰撞，不能识别实物周围障碍。</p>
     {plan && <div className="pointPlanSummary">
@@ -110,6 +111,7 @@ export function CartesianPointPanel({ state, locked, active, moving, now, onPrev
     {plan && !jobId && (expired || changed) && <p role="alert">{expired ? '预览已超过 60 秒' : '仿真起点已经变化'}，请重新计算。</p>}
     <p role="status" className="consoleMessage">{ownJob?.status === 'succeeded' ? `仿真任务完成，当前末端误差 ${actualError?.toFixed(2) ?? '—'} mm。实机未下发。`
       : ownJob?.status === 'failed' ? `到点失败：${ownJob.error}` : message}</p>
-    <p className="pointHardwareReason">{hardwareReason} 下方可保存和审核软件参数；本批次不提供真实使能或参数写入。</p>
+    {readiness?.reasons && <details className="pointReadiness"><summary>实机执行还差什么</summary><ul>{readiness.reasons.map(reason=><li key={reason}>{reason}</li>)}</ul></details>}
+    <p className="pointHardwareReason">{hardwareReason} 连接与同步不需要填写全部工程参数；实机执行前会列出当次试验边界及确认项。</p>
   </section>;
 }

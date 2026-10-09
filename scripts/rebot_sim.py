@@ -12,6 +12,7 @@ from PIL import Image
 from rebot_core import Robot, ROOT, URDF, SCENE, HOME
 from rebot_point import PointPlanner, point_capabilities
 from rebot_config import ConfigStore, ConfigAPI
+from rebot_hardware_readiness import readiness
 
 OUT=Path(os.environ.get('REBOT_OUTPUT_DIR', str(ROOT/'outputs')))
 STUDIO_LOCALES=('en','zh','es')
@@ -138,6 +139,7 @@ def lan_addresses():
 
 def serve(port,host='127.0.0.1'):
     from grasp_demo import build_scene
+    from rebot_pose_sync import synchronize_pose
     from rebot_program import ProgramRunner, pick_place_steps, compile_program
     from rebot_writing import writing_program, CENTER
     config_store=ConfigStore(OUT/'private_config'); config_api=ConfigAPI(config_store, port)
@@ -220,11 +222,13 @@ def serve(port,host='127.0.0.1'):
                     data.update(job=runner.snapshot(),backend='mujoco',feedback_source='simulation',
                                 stream_id=state['stream_id'],sequence=state['sequence'],
                                 feedback_time_unix_s=state['feedback_time_unix_s'],error=state['error'],
-                                manual_motion=state['motion'] is not None,playing=state['playing'],
+                                manual_motion=state['motion'] is not None,playing=state['playing'],pose_sync=state.get('pose_sync'),
                                 limits_deg=np.column_stack((np.rad2deg(r.lower),np.rad2deg(r.upper))).tolist(),
                                 trace_xyz=[p.tolist() for p in runner.trail.points],
                                 trace_styles=list(runner.trail.styles))
                 return self.send(data)
+            if path=='/hardware-readiness':
+                return self.send(readiness(config_store))
             if path=='/point-capabilities':
                 return self.send(point_capabilities())
             if path=='/machine-state':
@@ -268,6 +272,13 @@ def serve(port,host='127.0.0.1'):
                     if state['error']: raise ValueError(state['error'])
                     if runner.active and action not in ('camera','camera_writing','camera_robot','program_pause','program_resume','program_cancel','pause'):
                         raise ValueError('动作程序持有控制权；请先取消或等待结束')
+                    if action == 'sync_hardware_pose':
+                        if state['motion'] is not None or state['playing']:
+                            raise ValueError('请先停止当前仿真任务，再初始化姿态')
+                        result=synchronize_pose(r, body.get('motors'), body.get('mapping'))
+                        point_planner.plans.clear(); runner.trail.clear()
+                        state['pose_sync']=result
+                        return self.send(result)
                     if action in ('point_plan','point_execute'):
                         if state['motion'] is not None or state['playing']:
                             raise ValueError('请先停止当前仿真运动，再操作目标点')

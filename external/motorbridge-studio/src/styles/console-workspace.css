@@ -284,3 +284,19 @@
 .consoleApp .cartesianPanel .consoleMessage { padding:7px; }
 .consoleApp .cartesianPanel .pointHardwareReason { padding:7px; }
 @media(max-width:720px) { .consoleApp .hero { flex-wrap:wrap; } .consoleApp .consoleActions { flex-wrap:wrap; } .consoleApp .consoleActions button { flex:1 1 40%; } }
+
+/* Daily operation: connection first, three gains per expanded joint. */
+.deviceConnection{padding:18px;margin:12px 0 16px;min-width:0}
+.deviceHeading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.deviceHeading h3{margin:0 0 6px}.deviceHeading p{margin:0;color:var(--muted,#9aaeb5);font-size:13px}
+.deviceMetrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:16px 0}
+.deviceMetrics span{background:rgba(100,150,160,.08);padding:10px;border-radius:9px;font-size:12px;overflow-wrap:anywhere}
+.deviceMetrics strong{display:block;margin-top:6px;font-size:14px}
+.deviceModes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.deviceModes span{font-size:12px;padding:5px 10px;background:rgba(100,150,160,.1);border-radius:5px}
+.deviceAdvanced{margin-top:14px;font-size:13px}.deviceAdvanced input{max-width:100%;box-sizing:border-box}
+.onlineBadge{color:#69ceac}.offlineBadge{color:#b9c8d0}
+.mitBasicInputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.mitBasicInputs label{display:flex;flex-direction:column;gap:6px;font-size:13px;min-width:0}
+.mitBasicInputs small{font-size:11px;color:#94a6b3;overflow-wrap:anywhere}.mitBasicInputs input{width:100%;box-sizing:border-box;min-width:0}
+.engineeringParameters{padding:10px 0}.engineeringParameters h5{margin-bottom:4px}
+@media(max-width:700px){.deviceMetrics{grid-template-columns:repeat(2,minmax(0,1fr))}.mitBasicInputs{grid-template-columns:1fr}.deviceConnection .consoleActions button{flex:1 1 140px}.deviceHeading{align-items:flex-start}}

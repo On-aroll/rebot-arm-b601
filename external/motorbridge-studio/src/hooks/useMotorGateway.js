@@ -128,6 +128,7 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
     cyclesRef.current += 1;
     setMotors(next);
     setMeta({ cycleMs: Date.now() - started, updatedAt: Date.now(), cycles: cyclesRef.current, error: failure });
+    return next;
   }, [readOne, send]);
 
   const connect = React.useCallback(async (targetUrl) => {

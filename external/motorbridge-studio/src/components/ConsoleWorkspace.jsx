@@ -2,6 +2,7 @@ import React from 'react';
 import { ArmUrdfViewer } from './ArmUrdfViewer';
 import { HardwareMappingPanel } from './HardwareMappingPanel';
 import { loadMapping, mapHardwareFeedback } from '../lib/hardwareMapping';
+import { DeviceConnectionPanel } from './DeviceConnectionPanel';
 import { CartesianPointPanel } from './CartesianPointPanel';
 import { MotorModuleCard } from './MotorModuleCard';
 import { useMotorGateway, MACHINE_IDS, MACHINE_MODELS } from '../hooks/useMotorGateway';
@@ -90,6 +91,10 @@ export function ConsoleWorkspace() {
   const [displaySource, setDisplaySource] = React.useState(requestedHardwareView ? 'hardware' : 'simulation');
   const lastHardwareJoints = React.useRef({});
   const [pointPlan, setPointPlan] = React.useState(null);
+  const [syncing, setSyncing] = React.useState(false);
+  const [synchronization, setSynchronization] = React.useState(null);
+  const [syncVersion, setSyncVersion] = React.useState(0);
+  const [hardwareReadiness, setHardwareReadiness] = React.useState(null);
   const [machine, setMachine] = React.useState(null);
   const [document, setDocument] = React.useState(null);
   const [networkError, setNetworkError] = React.useState('');
@@ -147,7 +152,12 @@ export function ConsoleWorkspace() {
 
   React.useEffect(() => {
     let disposed = false;
-    let simTimer; let machineTimer;
+    let simTimer; let machineTimer; let readinessTimer;
+    const pollReadiness = async () => {
+      try { const next=await api('/hardware-readiness'); if (!disposed) setHardwareReadiness(next); }
+      catch { if (!disposed) setHardwareReadiness(null); }
+      finally { if (!disposed) readinessTimer=setTimeout(pollReadiness,3000); }
+    };
     const poll = async () => {
       try {
         const next = await api('/studio-state');
@@ -169,11 +179,11 @@ export function ConsoleWorkspace() {
         if (!disposed) machineTimer = setTimeout(pollMachine, 500);
       }
     };
-    poll(); pollMachine();
+    poll(); pollMachine(); pollReadiness();
     const clock = setInterval(() => setNow(Date.now()), 400);
     api('/writing-program').then((data) => { if (!disposed) setDocument(data); })
       .catch((error) => { if (!disposed) setMessage(`程序读取失败：${error.message}`); });
-    return () => { disposed = true; clearTimeout(simTimer); clearTimeout(machineTimer); clearInterval(clock); };
+    return () => { disposed = true; clearTimeout(simTimer); clearTimeout(machineTimer); clearTimeout(readinessTimer); clearInterval(clock); };
   }, []);
 
   const problem = networkError || feedbackProblem(state, now);
@@ -206,6 +216,19 @@ export function ConsoleWorkspace() {
     : (machineLive ? `twin-sync 文件 · ${formatAge(machineAge)}` : '未接入');
   const simDeg = state?.q_deg || [];
   const readCount = gatewayOnline ? MACHINE_IDS.filter((id) => gateway.motors[id]?.mechPosDeg != null).length : 0;
+
+  async function synchronizeHardwarePose() {
+    if (syncing || active || moving) return;
+    setSyncing(true); setSynchronization(null);
+    try {
+      const readings = await gateway.refresh();
+      if (!readings) throw new Error('状态查询正在进行，请稍后再点同步');
+      const result = await api('/command', {action:'sync_hardware_pose',motors:readings,mapping});
+      setSynchronization(result); setSyncVersion(v=>v+1); setPointPlan(null);
+      setState(await api('/studio-state')); setDisplaySource('simulation');
+    } catch(error) { setSynchronization({ok:false,error:error.message}); }
+    finally { setSyncing(false); }
+  }
 
   async function command(action) {
     if (commandBusy.current || problem) return;
@@ -247,8 +270,8 @@ export function ConsoleWorkspace() {
     <section className="consoleWorkspace" aria-label="虚实联调控制台">
       <div className="consoleHeading card glass">
         <div><span className="consoleEyebrow">reBot B601-RS · 虚实联调控制台</span>
-          <h2>虚实工作台 <small>MIT 路线 · 软件配置保护</small></h2>
-          <p>软件配置保护不等于真实 MIT 参数备份。静态姿态已确认；动态映射、TCP 与实机执行仍待验收。</p></div>
+          <h2>机械臂工作台 <small>连接 → 同步姿态 → 输入坐标 → 预演 → 确认执行</small></h2>
+          <p>沿用已确认的静态姿态映射。实机反馈、仿真预演和计划路径分别显示。</p></div>
         <div className="consoleBadges">
           <span className={`badge ${problem ? 'err' : 'ok'}`}>{problem ? '仿真反馈异常' : '仿真在线'}</span>
           <span className={`badge ${gatewayOnline ? 'ok' : (gateway.status === 'offline' ? 'err' : '')}`}>
@@ -258,7 +281,8 @@ export function ConsoleWorkspace() {
         </div>
         <button disabled title="本批次不发送 CAN stop；物理停止能力待现场验收">软件停止（非物理急停）</button>
       </div>
-      <div className="consoleStatus" role="status"><strong>LOCKED · 演练 ON · 总控 OFF · 真实出力状态未知</strong><span>{config.reason || 'MIT 独立执行器及停止/失联策略尚未验收；后端拒绝真实执行'}</span></div>
+      <DeviceConnectionPanel readiness={hardwareReadiness} gateway={gateway} now={now} onSync={synchronizeHardwarePose} syncing={syncing} synchronization={synchronization} blocked={active||moving||busy||Boolean(problem)} />
+      <div className="consoleStatus" role="status"><strong>LOCKED · 演练 ON · 总控 OFF · 真实出力状态未知</strong><span>{hardwareReadiness?.next_step || '正在读取现场验收条件；实机执行保持锁定'}</span></div>
       {config.error && <div className="consoleAlert" role="alert">{config.error}；仿真仍可用，配置不可自动恢复默认值。</div>}
       {problem && <div className="consoleAlert" role="alert">{problem}。画面保留最后一次仿真反馈。</div>}
       <div className="consolePrimary"><div className="consoleModelColumn">
@@ -289,7 +313,7 @@ export function ConsoleWorkspace() {
       </div>
 
       </div><div className="consolePointColumn">
-      <CartesianPointPanel state={state} locked={locked} active={active} moving={moving} now={now}
+      <CartesianPointPanel readiness={hardwareReadiness} state={state} resetKey={syncVersion} locked={locked||syncing} active={active} moving={moving} now={now}
         onPreview={(plan) => { setPointPlan(plan); if (plan) { setDisplaySource('simulation'); setCameraView('overview'); setShowPlan(true); setGhost(false); } }} onBusy={(value) => { commandBusy.current = value; setBusy(value); }}
         onExecuted={() => { setDisplaySource('simulation'); setCameraView('overview'); setGhost(false); setShowPlan(true); }} />
 
@@ -365,16 +389,12 @@ export function ConsoleWorkspace() {
         </details>
         <h4>参数来源与备份状态</h4>
         <p>真实设备参数：{config.provenance?.device_parameters?.snapshot_count ? `${config.provenance.device_parameters.snapshot_count} 份局部快照，身份与完整备份未核验` : config.provenance?.device_parameters?.status === 'not-collected' ? '未采集，未验证备份' : '状态不可用，不能判断备份'}。来源：明确归档的只读查询或历史文件；不能证明设备当前值。</p>
-        <p>MIT 每帧控制参数：真实来源未知，未备份；PP/CSP 读数不能替代。B1 使用独立合成数据，不代表现场调定值。</p>
+        <p>待验证 MIT 配置：J1–J6 的 Kp=3、Kd=1、前馈=0 来自用户本次要求；不是设备读回或物理验收。既有真实调定值未被覆盖，B1 合成数据不用于实机。</p>
         <p>人工批准配置：{config.provenance?.approved_profile?.status === 'software-approved' ? `已有 ${Object.keys(config.provenance.approved_profile.axis_versions).length} 轴的软件批准记录` : config.provenance?.approved_profile?.status === 'not-approved' ? '尚无批准记录' : '状态不可用'}。来源为人工逐次软件审核，不证明已写入设备或已现场验证。</p>
         <h4>软件配置保护</h4><p>版本 {config.state?.revision ?? '未知'} · 设备身份未核验 · 真实控制始终锁定。导出不含设备序列号或快照；导入仅恢复草稿。</p>
         <div className="motorActions"><button disabled={config.busy} onClick={config.reload}>刷新软件配置</button><button disabled={!config.state || config.busy} onClick={exportConfig}>导出软件备份</button>
           <label>导入为草稿 <input type="file" accept="application/json,.json" disabled={!config.state || config.busy} onChange={importConfig} /></label></div>
-        <h4>只读网关（会发送参数查询帧）</h4><div className="gwRow"><label className="gwUrl">网关地址<input value={gateway.endpoint} onChange={e => gateway.setEndpoint(e.target.value)} disabled={gatewayOnline} /></label>
-          <button disabled={gateway.status === 'connecting' || gatewayOnline} onClick={() => {
-            if (window.confirm('此操作会连接 can0，对 J1–J7 发送 set_target 和 0x7019/0x7005/0x7017/0x701e/0x7018/0x7024 参数查询；不会写参数或使能。仅在已获得本次现场只读授权后继续。')) gateway.connect();
-          }}>授权并连接只读查询</button><button disabled={gateway.status === 'disconnected'} onClick={gateway.disconnect}>断开只读查询</button></div>
-        <p>每轮反馈仅用于监视，不能作为 MIT 伺服时钟。刷新或重连不恢复出力权限，停止查询不代表电机停止。</p>
+        <h4>读数归档与通信记录</h4><p>连接和姿态同步入口已移到顶部。以下归档只保存已读取的数据，不改变电机。</p>
         <div className="motorActions">{MACHINE_IDS.map(id => <button key={id} disabled={!gateway.motors[id]?.updatedAt || !config.state || config.busy} onClick={() => archiveSnapshot(id)}>归档 J{id} 现有读数</button>)}</div>
         {gateway.log.length > 0 && <ul className="gwLog">
           {gateway.log.slice(-6).reverse().map((entry) => (

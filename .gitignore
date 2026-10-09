@@ -51,3 +51,6 @@ Thumbs.db
 outputs/private_config/
 outputs/instances/
 .venv-sim/
+
+# Reproducible P4 scratch runs; selected evidence lives in docs/validation/mit-p4
+outputs/mit-p4/

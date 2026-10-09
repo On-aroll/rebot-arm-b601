@@ -19,7 +19,7 @@ describe('Cartesian point controls', () => {
   it('previews millimetres with free orientation, then executes only the reviewed token', async () => {
     const { fetch } = setup();
     expect(screen.getByRole('button',{name:'执行仿真到点'}).disabled).toBe(true);
-    expect(screen.getByRole('button',{name:/实机＋模型执行/}).disabled).toBe(true);
+    expect(screen.getByRole('button',{name:/确认实机执行/}).disabled).toBe(true);
     fireEvent.click(screen.getByRole('button',{name:'计算并预览'}));
     await screen.findByText(/预览通过/);
     const preview = JSON.parse(fetch.mock.calls.find(([,o])=>o?.body)[1].body);

@@ -49,6 +49,37 @@ class Robot:
         self.command(self.target, self.finger_target)
         mj.mj_forward(self.m, self.d)
 
+    def initialize_pose(self, q):
+        """Set simulator state and hold target together, preserving the scene/gripper.
+
+        Canonical control-URDF -> MuJoCo signs are kept in this class, as in reset.
+        Invalid feedback leaves both simulation state and target untouched.
+        """
+        q = np.asarray(q, dtype=float)
+        if q.shape != (6,) or not np.all(np.isfinite(q)):
+            raise ValueError('同步需要完整的六轴有限位置')
+        if np.any(q < self.lower) or np.any(q > self.upper):
+            raise ValueError('实机姿态超出模型范围；未裁剪角度')
+        if self.contacts(q):
+            raise ValueError('实机姿态在当前仿真场景中存在碰撞；请检查桌面/物体位置')
+        saved = {name: getattr(self.d, name).copy() for name in
+                 ('qpos', 'qvel', 'qacc', 'qacc_warmstart', 'ctrl', 'qfrc_applied')}
+        old_target = self.target.copy()
+        try:
+            self.d.qpos[self.qadr] = -q
+            self.d.qvel[self.vadr] = 0
+            self.d.qacc[self.vadr] = 0
+            self.d.qacc_warmstart[self.vadr] = 0
+            self.command(q)
+            mj.mj_forward(self.m, self.d)
+            if np.max(np.abs(self.q-q)) > 1e-10 or np.max(np.abs(self.target-q)) > 1e-10:
+                raise ValueError('MuJoCo 初始化读回不一致，已恢复原仿真状态')
+        except Exception:
+            for name, value in saved.items(): getattr(self.d, name)[:] = value
+            self.target = old_target
+            mj.mj_forward(self.m, self.d)
+            raise
+
     def command(self, q, finger=None):
         q = np.asarray(q, dtype=float)
         if q.shape != (6,) or not np.all(np.isfinite(q)):

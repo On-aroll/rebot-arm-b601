@@ -5,7 +5,7 @@ import uuid
 import numpy as np
 
 
-HARDWARE_REASON = '实机同步尚未开放：需要逐轴确认方向和零位，并完成MIT 独立执行器与停止/失联验收。'
+HARDWARE_REASON = '实机同步到点待验收：先完成一个已支撑关节的小幅动作与停止试验；再确认六轴加速度、jerk、跟踪误差及转矩包络。沿用现有静态映射，不要求重新定义零位。'
 
 
 def point_capabilities():

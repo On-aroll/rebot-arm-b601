@@ -20,7 +20,7 @@ export function MotorModuleCard({ id, label, motor, status, plannedDeg, expanded
     if (!dirty) setDraft(Object.fromEntries(Object.keys(fields).map(key => [key, saved?.fields?.[key]?.value ?? ''])));
   }, [saved, fields, dirty]);
   React.useEffect(() => { setReview(null); setConfirmed(false); }, [config?.state?.revision]);
-  const fresh = status === 'online' && Number.isFinite(reading.positionUpdatedAt) && Date.now() - reading.positionUpdatedAt < 3000;
+  const fresh = status === 'online' && Number.isFinite(reading.positionUpdatedAt) && Date.now() - reading.positionUpdatedAt >= 0 && Date.now() - reading.positionUpdatedAt < 3000;
   const latest = config?.state?.snapshots?.filter(s => s.axis_id === id).at(-1);
   async function run(body) {
     try { return await config.action(body); }
@@ -52,17 +52,23 @@ export function MotorModuleCard({ id, label, motor, status, plannedDeg, expanded
       <details><summary>配置核对与阻断原因</summary><ul>{config?.preparation?.find(row => row.axis_id === id)?.reasons.map(reason => <li key={reason}>{reason}</li>) || <li>配置或设备快照尚不可用；实机锁定</li>}</ul><p>设备模式与 MIT 路线可比较；逐帧 MIT 增益和轨迹约束没有对应设备寄存器读回，不能拿 PP/CSP 数值证明一致。</p></details>
       <h4>只读测量</h4><p>真实出力状态未知。原始多圈角不归一化；模式：{modeLabel(reading.runMode)}。仿真目标：{Number.isFinite(plannedDeg) ? `${plannedDeg.toFixed(2)}°` : '未知'}。</p>
       <p>位置采集：{reading.positionUpdatedAt ? new Date(reading.positionUpdatedAt).toLocaleString() : '未读取'}。归档快照：{latest ? `${latest.source} · ${new Date(latest.measured_at * 1000).toLocaleString()}` : '尚未采集'}。设备身份未核验。</p>
-      <h4>{id <= 6 ? 'MIT 每帧控制量与软件轨迹约束' : '夹爪独立配置草稿（模式与机构待核实）'}</h4>
-      <p>下列增益来自人工软件配置，不是设备寄存器读回。PP/CSP 限速与 loc_kp 不能证明 MIT 已限速，也不会自动作为 MIT Kp。范围仅检查数值形式，机械允许范围待验收。</p>
-      <div className="motorTableScroll"><table className="profileTable"><thead><tr><th>参数 / 单位</th><th>设备读数</th><th>已批准软件值</th><th>编辑草稿</th></tr></thead><tbody>
-        {Object.entries(fields).map(([key, spec]) => <tr key={key}><td><label htmlFor={`draft-${id}-${key}`}>{spec.label}</label><small>{key} · {spec.unit}</small></td>
-          <td>不可据此读回</td><td>{valueText(approved?.fields?.[key]?.value)}</td><td><input id={`draft-${id}-${key}`} type="number" step="any" value={draft[key] ?? ''} placeholder="未确认" onChange={e => { setDraft(v => ({ ...v, [key]: e.target.value })); setDirty(true); setReview(null); setConfirmed(false); }} /></td></tr>)}
-      </tbody></table></div>
+      <h4>{id <= 6 ? 'MIT 基本参数' : '夹爪独立配置'}</h4>
+      <p>配置来源：{saved?.source === 'user-provided-mit-initial-trial' ? '用户提供的 MIT 初始试验配置 · 尚未实机验证' : saved ? '人工编辑的软件草稿' : '尚无草稿'}。这里显示每帧控制参数，不是电机寄存器读回。</p>
+      <div className="mitBasicInputs">{Object.entries(fields).filter(([key])=>['kp','kd','tau_ff'].includes(key)).map(([key,spec])=><label key={key} htmlFor={`draft-${id}-${key}`}>{spec.label}<small>{key} · {spec.unit} · 已批准：{valueText(approved?.fields?.[key]?.value)}</small><input aria-label={fields[key].label} id={`draft-${id}-${key}`} type="number" step="any" value={draft[key]??''} placeholder="待确认" onChange={e=>{setDraft(v=>({...v,[key]:e.target.value}));setDirty(true);setReview(null);setConfirmed(false);}} /></label>)}</div>
+      <p className="consoleNote">Kp 决定偏离目标后的拉回力度；Kd 抑制运动振荡；前馈直接补充力矩。降低 Kp 不能代替限速。</p>
+      <details className="engineeringParameters"><summary>运动规划、模型与高级工程参数</summary>
+      <p>模型限位和既有方向映射已整理；它们不是实机安全验收。空白约束保持待确认，不填默认值。</p>
+      {[
+        ['运动规划',['v_max','a_max','jerk_max','timeout']],
+        ['机械模型与映射',['q_min','q_max','direction','offset']],
+        ['高级保护',['error_max','torque_max']],
+      ].map(([title,keys])=><div key={title}><h5>{title}</h5><div className="mitBasicInputs">{keys.filter(key=>fields[key]).map(key=><label key={key} htmlFor={`draft-${id}-${key}`}>{fields[key].label}<small>{fields[key].unit} · 已批准：{valueText(approved?.fields?.[key]?.value)}</small><input aria-label={fields[key].label} id={`draft-${id}-${key}`} type="number" step="any" value={draft[key]??''} placeholder="待确认" onChange={e=>{setDraft(v=>({...v,[key]:e.target.value}));setDirty(true);setReview(null);setConfirmed(false);}} /></label>)}</div></div>)}
+      </details>
       <p>批准时间：{approved ? new Date(approved.approved_at * 1000).toLocaleString() : '未批准'}；仅软件人工确认，未现场验证。映射草稿的批准不会自动替换显示映射。</p>
       <div className="motorActions"><button disabled={!config?.state || config.busy} onClick={save}>保存草稿</button>
         <button disabled={!saved || dirty || config?.busy} onClick={inspect}>审核变更</button>
         <button onClick={() => setHistory(v => !v)}>查看变更记录</button>
-        <button disabled title="本批次没有真实驱动通道">应用到真实电机（待验收）</button></div>
+        <button disabled title="尚未取得当次现场执行许可">应用到真实电机（待验收）</button></div>
       {review && <section className="reviewBox" aria-label="软件配置审核"><p>{review.warning}</p>
         <ul>{review.changes.map(c => <li key={c.field}>{fields[c.field]?.label}：{valueText(c.before.value)} → {valueText(c.after.value)} {c.after.unit}</li>)}</ul>
         <label><input type="checkbox" checked={confirmed} onChange={e => setConfirmed(e.target.checked)} />我逐项核对了差异，仅批准本地软件配置，不授权电机动作</label>

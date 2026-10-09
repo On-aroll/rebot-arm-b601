@@ -27,6 +27,24 @@ class Protection(unittest.TestCase):
         token = self.act('review', axis_id=1)['review_token']
         return self.act('approve', review_token=token, confirm='software-only')
 
+    def test_user_trial_is_explicit_non_destructive_and_idempotent(self):
+        limits=[[-2.,2.]]*6
+        first=self.store.save_user_mit_trial(limits)
+        self.assertTrue(first['saved']); self.assertFalse(first['hardware'])
+        state=self.store.load()
+        self.assertEqual(state['approved'],{})
+        self.assertEqual(set(state['drafts']),set('123456'))
+        for profile in state['drafts'].values():
+            self.assertEqual(profile['source'],'user-provided-mit-initial-trial')
+            self.assertEqual([profile['fields'][k]['value'] for k in ('kp','kd','tau_ff')],[3,1,0])
+            self.assertIsNone(profile['fields']['torque_max']['value'])
+        self.assertFalse(self.store.save_user_mit_trial(limits)['changed'])
+        self.assertEqual(self.store.load(),state)
+        self.draft(9); before=self.store.load()
+        refused=self.store.save_user_mit_trial(limits)
+        self.assertFalse(refused['saved']); self.assertEqual(refused['conflicts'][0]['before'],9)
+        self.assertEqual(self.store.load(),before)
+
     def test_restart_separation_and_nulls(self):
         state = self.store.status()
         self.assertFalse(state['hardware']); self.assertFalse(state['armed']); self.assertTrue(state['drill'])
