@@ -1,0 +1,133 @@
+"""Reuse Seeed RebotArm registration/JointGroup behind the existing P4 guards.
+
+Construction is inert. No upstream end-pose node, mode write, gravity feedforward,
+group enable/disable, homing, context-manager exit or disconnect is called.
+Actual hardware still needs the existing one-use onsite permit.
+"""
+import importlib.metadata
+import importlib.util
+from pathlib import Path
+import subprocess
+import sys
+
+from rebot_mit_hardware import MODELS, SdkTransport
+from rebot_mit_mock import finite
+
+ROOT = Path(__file__).resolve().parents[1]
+OFFICIAL = ROOT / 'external/reBotArm_control_py'
+COMMIT = '6415d43130d1e143c70dc106096a857ac5556f81'
+
+
+def official_module():
+    head = subprocess.check_output(['git', '-C', str(OFFICIAL), 'rev-parse', 'HEAD'], text=True).strip()
+    changes = subprocess.check_output(['git', '-C', str(OFFICIAL), 'status', '--porcelain', '--untracked-files=no'], text=True)
+    if head != COMMIT or changes.strip():
+        raise RuntimeError('Seeed SDK 版本或源码变化；请先审核，不连接 CAN')
+    source = OFFICIAL / 'reBotArm_control_py/actuator/rebotarm.py'
+    name = 'rebot_seeed_sdk_actuator'
+    # Import the actual actuator module without the package's eager Pinocchio /
+    # dynamics imports. ROS Python and the simulation use different ABIs.
+    rebotarm = sys.modules.get(name)
+    if rebotarm is None:
+        spec = importlib.util.spec_from_file_location(name, source)
+        rebotarm = importlib.util.module_from_spec(spec)
+        sys.modules[name] = rebotarm
+        try:
+            spec.loader.exec_module(rebotarm)
+        except Exception:
+            sys.modules.pop(name, None)
+            raise
+    if Path(rebotarm.__file__).resolve() != source:
+        raise RuntimeError('加载的 Seeed SDK 来源不符；拒绝连接')
+    return rebotarm
+
+
+class SeeedTransport(SdkTransport):
+    """The P4 executor supplies permission, timing and feedback checks unchanged."""
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.arm = None
+        self.trial_group = None
+
+    def open_readonly(self):
+        if self.controller:
+            raise RuntimeError('连接已打开')
+        upstream = official_module()
+        if self.factory is None:
+            if importlib.metadata.version('motorbridge') != '0.5.6':
+                raise RuntimeError('真实路径只审核了 motorbridge 0.5.6')
+            from motorbridge import Controller
+            factory = Controller
+        else:
+            factory = self.factory  # Injected fake SDK, only used by offline tests.
+        transport = self
+
+        class Arm(upstream.RebotArm):
+            def _make_controller(self, vendor):
+                if vendor != 'robstride' or transport.controller is not None:
+                    raise RuntimeError('只允许一个 RobStride CAN 控制器')
+                transport.controller = factory(channel='can0')
+                return transport.controller
+
+        # The official RS YAML is read, never modified. Its gain defaults are
+        # never sent: trial frames below always carry explicit approved gains.
+        self.arm = Arm(hw_yaml=str(OFFICIAL / 'config/rebotarm_rs.yaml'))
+        # Register J1-J6 only; no gripper/group-wide lifecycle in this trial.
+        self.arm._all_joints = [j for j in self.arm._all_joints if j.name in {f'joint{i}' for i in MODELS}]
+        actual = [(j.name, j.motor_id, j.feedback_id, j.model, j.vendor) for j in self.arm._all_joints]
+        expected = [(f'joint{i}', i, 0xFD, model, 'robstride') for i, model in MODELS.items()]
+        if actual != expected:
+            raise RuntimeError('Seeed RS 电机映射不符；未连接')
+        self.ownership.acquire()
+        try:
+            self.arm.connect()  # Upstream connect only registers motors.
+            self.motors = {i: self.arm._motor_map[f'joint{i}'] for i in MODELS}
+            self.ownership.claim()
+        except Exception:
+            # Registration can fail partway; close every created handle without
+            # invoking upstream disconnect(), which would disable all motors.
+            self.motors = dict(enumerate(self.arm._motor_map.values(), 1))
+            self.close()
+            raise
+
+    def authorize(self, config, permit):
+        if len(permit.axes) != 1:
+            raise PermissionError('Seeed 接入本轮仅允许单轴试验')
+        upstream = official_module()
+        axis = permit.axes[0]
+        transport = self
+
+        class CheckedMotor:
+            def send_mit(self, *values):
+                try:
+                    # Keep the already-tested permit, model and gain checks;
+                    # convert SDK CallError so JointGroup cannot swallow it.
+                    SdkTransport.frame(transport, axis, values)
+                except Exception as error:
+                    raise RuntimeError(f'Seeed J{axis} 发送失败：{error}') from error
+
+        class NoGroupLifecycle:
+            def __getattr__(self, name):
+                raise PermissionError(f'禁止组级操作：{name}')
+
+        limits = config.axes[axis-1]
+        name = f'joint{axis}'
+        joint = upstream.JointCfg(name, axis, 0xFD, MODELS[axis], 'robstride', kp=limits.kp, kd=limits.kd)
+        group = upstream.JointGroup('onsite-single-axis', [name], [joint], {name: CheckedMotor()}, {'robstride': NoGroupLifecycle()})
+        super().authorize(config, permit)
+        self.trial_group = group
+
+    def frame(self, axis, values):
+        if not self.trial_group or not self.permit or self.permit.axes != (axis,):
+            raise PermissionError('不是当次获准单轴')
+        if len(values) != 5 or not all(finite(v) for v in values):
+            raise ValueError('需要五个明确 MIT 参数')
+        self.trial_group.send_mit(*([v] for v in values))
+
+    def close(self):
+        super().close()
+        self.trial_group = None
+        if self.arm:
+            self.arm._connected = False
+            self.arm._motor_map.clear()
+        self.arm = None
