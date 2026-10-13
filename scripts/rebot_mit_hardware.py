@@ -52,6 +52,7 @@ class Envelope:
     version: str
     axes: tuple
     policy: TrialPolicy
+    start_boundary_tolerance: float = 0.
 
     @classmethod
     def parse(cls, data):
@@ -79,11 +80,16 @@ class Envelope:
         p=TrialPolicy(**p)
         if p.period>=p.command_age or p.io_timeout>=p.feedback_age or p.settle_time>=p.task_timeout:
             raise ValueError('试验时序约束无效')
-        return cls(data['version'],tuple(axes),p)
+        tolerance=data.get('start_boundary_tolerance',0.)
+        if not finite(tolerance) or not 0<=tolerance<=math.radians(1):
+            raise ValueError('起点边界容差必须明确且不超过 1°')
+        return cls(data['version'],tuple(axes),p,tolerance)
 
     @property
     def fingerprint(self):
-        return hashlib.sha256(json.dumps(asdict(self),sort_keys=True,allow_nan=False).encode()).hexdigest()
+        data=asdict(self)
+        if not self.start_boundary_tolerance: data.pop('start_boundary_tolerance')
+        return hashlib.sha256(json.dumps(data,sort_keys=True,allow_nan=False).encode()).hexdigest()
 
 @dataclass
 class OnsitePermit:
@@ -165,6 +171,7 @@ class SdkTransport:
         self.factory=factory; self.ownership=ownership or CanOwnership(); self.clock=clock
         self.controller=None; self.motors={}; self.active=set(); self.permit=None; self.envelope=None
         self.sent=0
+        self.latest_samples={}; self.boundary_start={}; self.boundary_recovered=set()
 
     def open_readonly(self):
         if self.controller: raise RuntimeError('连接已打开')
@@ -196,6 +203,7 @@ class SdkTransport:
             if received-requested>policy.feedback_age: raise TimeoutError(f'J{i} 反馈查询超过试验时限')
             if not finite(q) or not finite(v) or type(mode) is not int: raise ValueError(f'J{i} 无效反馈')
             samples[i]=Sample(i,q,v,mode,requested,received)
+        self.latest_samples.update(samples)
         return samples
 
     def authorize(self, config, permit):
@@ -203,6 +211,10 @@ class SdkTransport:
                 permit.axes==tuple(MODELS) and permit.coordinated_start_checked is True):
             raise PermissionError('多轴试验需要明确的六轴协同起动许可；默认仅允许单轴')
         self.ownership.check()
+        if config.start_boundary_tolerance:
+            if any(i not in self.latest_samples or not 0<=self.clock()-self.latest_samples[i].requested_at<=config.policy.feedback_age for i in permit.axes):
+                raise PermissionError('边界容差必须绑定新鲜原始起点')
+            self.boundary_start={i:self.latest_samples[i].q for i in permit.axes}
         with _PERMIT_LOCK:
             permit.validate(config,self.clock())
             _CONSUMED_PERMITS.add(permit.token)
@@ -221,10 +233,18 @@ class SdkTransport:
         if axis not in self.active or self.clock()>=self.permit.expires_at: raise PermissionError('许可失效')
         if len(values)!=5 or not all(finite(v) for v in values): raise ValueError('MIT 帧必须是五个有限数值')
         a=self.envelope.axes[axis-1]
-        if not a.q_min<=values[0]<=a.q_max or abs(values[1])>a.v_max or tuple(values[2:])!=(a.kp,a.kd,a.tau_ff):
+        bounded=a.q_min<=values[0]<=a.q_max
+        if not bounded and axis not in self.boundary_recovered:
+            start=self.boundary_start.get(axis); tolerance=self.envelope.start_boundary_tolerance
+            if start is not None and a.q_min-tolerance<=start<a.q_min:
+                bounded=max(a.q_min-tolerance,start-self.envelope.policy.arrival_q)<=values[0]<a.q_min and values[1]>=0
+            elif start is not None and a.q_max<start<=a.q_max+tolerance:
+                bounded=a.q_max<values[0]<=min(a.q_max+tolerance,start+self.envelope.policy.arrival_q) and values[1]<=0
+        if not bounded or abs(values[1])>a.v_max or tuple(values[2:])!=(a.kp,a.kd,a.tau_ff):
             raise ValueError('MIT 帧与已确认的范围/增益不一致')
         self.ownership.check()
         self.motors[axis].send_mit(*values)
+        if a.q_min<=values[0]<=a.q_max: self.boundary_recovered.add(axis)
         self.sent+=1  # Host send completion; MIT frame has no per-frame drive ACK.
 
     def stop_supported(self):
@@ -250,7 +270,7 @@ class SdkTransport:
         finally:
             for m in self.motors.values(): m.close()
             if self.controller: self.controller.close()
-            self.controller=None; self.motors={}; self.ownership.close()
+            self.controller=None; self.motors={}; self.latest_samples.clear(); self.boundary_start.clear(); self.boundary_recovered.clear(); self.ownership.close()
 
 
 class MotionIntent:
@@ -309,7 +329,8 @@ class HardwareExecutor:
             s=samples[i]; a=self.config.axes[i-1]
             if s.mode!=0: raise ValueError(f'J{i} 实际模式不是 MIT；未自动切换')
             if not 0<=now-s.requested_at<=p.feedback_age: raise TimeoutError(f'J{i} 反馈过期')
-            if not a.q_min<=s.q<=a.q_max: raise ValueError(f'J{i} 原始位置越限；未归一化或裁剪')
+            margin=self.config.start_boundary_tolerance
+            if not a.q_min-margin<=s.q<=a.q_max+margin: raise ValueError(f'J{i} 原始位置越限；未归一化或裁剪')
             if abs(s.qd)>a.v_max: raise ValueError(f'J{i} 实测速度超过试验边界')
             if s.qd_raw is not None and a.kd*abs(s.qd_raw)>a.torque_max:
                 raise ValueError(f'J{i} 原始速度反馈的阻尼估算超过包络')
@@ -374,7 +395,7 @@ class HardwareExecutor:
             waypoints=tuple(tuple(point[i-1] if i in permit.axes else start[i-1] for i in MODELS) for point in waypoints)
             if intent.source=='onsite-single-axis' and len(permit.axes)!=1: raise ValueError('首次试验必须只有一个轴')
             scoped_axes=permit.axes if intent.source=='onsite-single-axis' else None
-            trajectory=Trajectory.create(start,waypoints,self.config,axes=scoped_axes)
+            trajectory=Trajectory.create(start,waypoints,self.config,axes=scoped_axes,start_tolerance=self.config.start_boundary_tolerance)
             if trajectory.duration+self.config.policy.settle_time>self.config.policy.task_timeout: raise ValueError('轨迹无法在试验时限内完成')
             self.bus.authorize(self.config,permit)
             # For each enabled axis read position AGAIN before its first frame.
@@ -410,7 +431,7 @@ class HardwareExecutor:
             if len(permit.axes)>1:
                 self._send(start,(0.,)*6,samples,permit)
             if holding: waypoints=(start,)
-            trajectory=Trajectory.create(start,waypoints,self.config,axes=scoped_axes)
+            trajectory=Trajectory.create(start,waypoints,self.config,axes=scoped_axes,start_tolerance=self.config.start_boundary_tolerance)
             began=self.clock(); last=began; settled=None; self.state='RUNNING'
             while True:
                 check(); now=self.clock(); elapsed=now-began

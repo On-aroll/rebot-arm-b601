@@ -1,14 +1,16 @@
-"""Model-only nearby point selection; this test never imports a CAN transport."""
+"""Model-only planning and rejection before opening a CAN transport."""
 import json
 from pathlib import Path
 import sys
 import unittest
+from dataclasses import replace
+from unittest.mock import patch
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from rebot_core import Robot
 from rebot_mit_hardware import Envelope
 from rebot_mit_mock import Trajectory
-from rebot_xyz_trial import plan_nearby
+from rebot_xyz_trial import plan_nearby,execute
 
 
 class NearbyPlan(unittest.TestCase):
@@ -40,8 +42,25 @@ class NearbyPlan(unittest.TestCase):
         start=np.deg2rad([61.96,-.39,.1,.56,-.91,4.46])
         before=start.copy()
         with self.assertRaisesRegex(ValueError,'实测起点越限'):
-            plan_nearby(self.robot,start,self.config)
+            plan_nearby(self.robot,start,replace(self.config,start_boundary_tolerance=0.))
         np.testing.assert_array_equal(start,before)
+
+    def test_explicit_tolerance_preserves_raw_start_and_identifies_load_deficit(self):
+        start=np.deg2rad([61.96,-.39,.1,.56,-.91,4.46]);before=start.copy()
+        plan=plan_nearby(self.robot,start,self.config)
+        np.testing.assert_array_equal(start,before)
+        np.testing.assert_array_equal(plan['expected_start'],start)
+        self.assertEqual(plan['boundary_recovery_axes'],[2])
+        self.assertEqual(plan['start_boundary_tolerance_deg'],1.)
+        self.assertTrue(all(a.q_min<=q<=a.q_max for a,q in zip(self.config.axes,plan['target'])))
+        self.assertEqual(plan['gravity_check']['insufficient_axes'],[2,3,4])
+        self.assertEqual(plan['gravity_check']['sample_count'],51)
+        self.assertTrue(np.all(np.asarray(plan['gravity_check']['sampled_peak_Nm'])>=np.abs(plan['gravity_check']['estimated_Nm'])))
+        self.assertFalse(plan['execution_ready'])
+        with patch('rebot_seeed_transport.SeeedTransport') as bus:
+            with self.assertRaisesRegex(ValueError,'承重控制尚未验证'):
+                execute(self.config,plan,'synthetic approval')
+            bus.assert_not_called()
 
 
 if __name__=='__main__': unittest.main()

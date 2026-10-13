@@ -12,6 +12,7 @@ export const MACHINE_IDS = [1, 2, 3, 4, 5, 6, 7];
 
 export const DEFAULT_MAX_SPD = 0.3;        // legacy display threshold only, never MIT safety evidence
 export const MAX_SINGLE_STEP_DEG = 15;     // 单次目标位移上限，防一步跳太大
+export const START_BOUNDARY_TOLERANCE_DEG = 1; // 用户允许的起点读数偏差；不用于运动目标限位
 
 const DEG = 180 / Math.PI;
 
@@ -289,7 +290,8 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
         if (Date.now() - measuredAt >= 3000) throw new Error('位置读取已过期；未发送使能');
         if (!mode.ok || mode.data?.value !== 0) throw new Error('实际模式不是 MIT 或未读到；未发送使能，未自动切换模式');
         if (id <= 6 && (!limits || !Number.isFinite(limits[0]) || !Number.isFinite(limits[1]) || limits[0] >= limits[1])) throw new Error('模型限位不可用；未发送使能');
-        if (id <= 6 && (q * DEG < limits[0] || q * DEG > limits[1])) throw new Error(`J${id} 原始角度超出模型范围；未发送使能，请核对姿态`);
+        if (id <= 6 && (q * DEG < limits[0] - START_BOUNDARY_TOLERANCE_DEG || q * DEG > limits[1] + START_BOUNDARY_TOLERANCE_DEG)) throw new Error(`J${id} 原始角度超出模型范围及 1° 起点容差；未发送使能`);
+        if (id <= 6 && (q * DEG < limits[0] || q * DEG > limits[1])) note(`J${id} 起点在 1° 边界容差内；保留原始角度，不修改零位或目标限位`, 'warn');
       }
       connected();
       const response = await client.send(op, { vendor: 'robstride', motor_id: id, feedback_id: FEEDBACK_ID }, 4000);

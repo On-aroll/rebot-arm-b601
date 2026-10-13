@@ -44,7 +44,8 @@ def plan_nearby(robot, start, config):
     q=np.asarray(start,dtype=float)
     if q.shape!=(6,) or not np.all(np.isfinite(q)):
         raise ValueError('需要六轴有限实测起点')
-    if np.any(q<robot.lower) or np.any(q>robot.upper):
+    margin=config.start_boundary_tolerance
+    if np.any(q<robot.lower-margin) or np.any(q>robot.upper+margin):
         raise ValueError('实测起点越限；未裁剪或修改零位')
     if robot.contacts(q): raise ValueError('实测起点在模型中有碰撞')
     xyz=robot.fk(q).translation
@@ -57,7 +58,7 @@ def plan_nearby(robot, start, config):
                 delta=target-q
                 if np.any(np.abs(delta)>=math.radians(60)):
                     raise ValueError('存在关节变化达到 60°')
-                trajectory=Trajectory.create(q.tolist(),[target.tolist()],config)
+                trajectory=Trajectory.create(q.tolist(),[target.tolist()],config,start_tolerance=margin)
                 if trajectory.duration+config.policy.settle_time>config.policy.task_timeout:
                     raise ValueError('不能在本轮试验时限内完成')
                 robot.check_path(q,target)
@@ -68,10 +69,30 @@ def plan_nearby(robot, start, config):
                 rejected.append(dict(axis=axis,sign=sign,reason=str(e)))
     if not candidates: raise ValueError('未找到 5 mm 邻近、限位/碰撞/试验时序均通过的候选点')
     selected=min(candidates,key=lambda item:item['joint_distance_rad'])
+    # Reuse the official pure helper with the project's explicit RS model.
+    # Do not call GravityCompensation.start(): it switches modes and enables.
+    from reBotArm_control_py.dynamics import compute_generalized_gravity
+    data=robot.pm.createData()
+    trajectory=Trajectory.create(q.tolist(),[selected['target']],config,start_tolerance=margin)
+    gravity_samples=np.asarray([
+        compute_generalized_gravity(robot.pm,np.asarray(trajectory.sample(t)[0]),data)[:6]
+        for t in np.linspace(0,trajectory.duration,51)
+    ])
+    if not np.all(np.isfinite(gravity_samples)):
+        raise ValueError('官方 RS 重力估算出现非有限值；不生成实机方案')
+    peaks=np.max(np.abs(gravity_samples),axis=0)
+    gravity_check=dict(source='Seeed compute_generalized_gravity with explicit locked RS URDF; estimate only',
+        estimated_Nm=gravity_samples[0].tolist(),sampled_peak_Nm=peaks.tolist(),sample_count=51,
+        software_effort_limits_Nm=[a.torque_max for a in config.axes],
+        insufficient_axes=[i+1 for i,a in enumerate(config.axes) if peaks[i]>a.torque_max],
+        continuous_external_support_verified=False)
     return dict(ok=True,expected_start=q.tolist(),start_xyz_m=xyz.tolist(),**selected,
                 controlled_axes=list(AXES),gripper_commanded=False,orientation_mode='position',
                 selection='smallest joint distance among six seeded 5 mm axis candidates; not a global optimum',
                 candidate_count=len(candidates),rejected=rejected,config_hash=config.fingerprint,
+                start_boundary_tolerance_deg=math.degrees(margin),
+                boundary_recovery_axes=[i+1 for i in range(6) if not robot.lower[i]<=q[i]<=robot.upper[i]],
+                gravity_check=gravity_check,execution_ready=not gravity_check['insufficient_axes'],
                 planned_at=time.time(),hardware_writes=0)
 
 
@@ -81,6 +102,8 @@ def execute(config, plan, evidence):
         raise ValueError('需要通过的六轴只读起点与邻近 XYZ 预演')
     if plan.get('config_hash')!=config.fingerprint or not 0<=time.time()-plan.get('planned_at',0)<60:
         raise ValueError('预演已过期或配置变化，请重新准备')
+    if plan.get('execution_ready') is not True or plan.get('gravity_check',{}).get('insufficient_axes')!=[]:
+        raise ValueError('承重控制尚未验证，当前软件力矩包络不足；不要求现场手托，不使能六轴')
     start,target=plan['expected_start'],plan['target']
     if len(start)!=6 or len(target)!=6 or any(abs(a-b)>=math.radians(60) for a,b in zip(start,target)):
         raise ValueError('本轮必须六轴且每轴变化小于 60°')

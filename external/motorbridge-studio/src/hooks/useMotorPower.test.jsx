@@ -73,12 +73,20 @@ it('refuses missing confirmations, invalid axes, forbidden actions, bad modes an
   expect(socket.sent).toEqual([]);
   socket.mode = 1;
   await act(async () => { await expect(result.current.requestPower(1, 'enable', confirmations, [-180, 180])).rejects.toThrow('实际模式不是 MIT'); });
-  socket.mode = 0; socket.position = -0.01;
+  socket.mode = 0; socket.position = -0.02;
   await act(async () => { await expect(result.current.requestPower(2, 'enable', confirmations, [0, 180])).rejects.toThrow('原始角度超出'); });
   await act(async () => { await expect(result.current.requestPower(1, 'enable', confirmations)).rejects.toThrow('模型限位不可用'); });
   expect(socket.sent.some(r => r.op === 'enable')).toBe(false);
   await act(async () => { await result.current.requestPower(2, 'disable', confirmations); });
   expect(socket.sent.at(-2).op).toBe('disable');
+});
+
+it('allows a confirmed sub-degree boundary reading without zero, gain, mode or motion writes', async () => {
+  const { result, socket } = await connected();
+  socket.position = -.39 * Math.PI / 180;
+  await act(async () => { await result.current.requestPower(2, 'enable', confirmations, [0, 180]); });
+  expect(socket.sent.map(r => r.op)).toEqual(['set_target', 'robstride_read_param', 'robstride_read_param', 'enable', 'close_bus']);
+  expect(result.current.log.some(entry => entry.text.includes('1° 边界容差'))).toBe(true);
 });
 
 it('sends an emergency disable without confirmation gates and leaves polling stopped', async () => {

@@ -1,7 +1,10 @@
 """Six-axis trial contracts: actual Seeed classes, timed virtual motors only."""
 from dataclasses import replace
+import hashlib
+import json
 from pathlib import Path
 import sys
+import math
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from test_mit_hardware_offline import Clock,Controller,Motor,Owner,config
@@ -48,6 +51,65 @@ class CoordinatedTrial(unittest.TestCase):
         self.seq+=1; self.executor.heartbeat(self.executor.session,self.seq,True)
     def wait(self,t): self.clock.wait(t); self.beat()
     def calls(self,op): return [c for c in self.sdk.calls if c[0]==op]
+
+    def test_tolerance_is_explicit_bounded_and_old_configuration_hash_stays_valid(self):
+        from dataclasses import asdict
+        data=asdict(config());data.pop('start_boundary_tolerance')
+        expected=hashlib.sha256(json.dumps(data,sort_keys=True,allow_nan=False).encode()).hexdigest()
+        self.assertEqual(config().fingerprint,expected)
+        data['source']='explicit-onsite-trial-proposal'
+        from rebot_mit_hardware import Envelope
+        self.assertEqual(Envelope.parse(data).start_boundary_tolerance,0.)
+        for tolerance in (-.01,math.radians(1.01),float('nan'),True):
+            with self.subTest(tolerance=tolerance),self.assertRaises(ValueError):
+                Envelope.parse(dict(data,start_boundary_tolerance=tolerance))
+
+    def boundary_fixture(self, start=-.39):
+        limits=list(self.config.axes); limits[1]=replace(limits[1],q_min=0.)
+        self.config=replace(self.config,axes=tuple(limits),start_boundary_tolerance=math.radians(1))
+        self.executor.config=self.config; self.permit.config_hash=self.config.fingerprint
+        register=self.sdk.add_robstride_motor
+        def with_boundary(i,host,model):
+            motor=register(i,host,model)
+            if i==2: motor.q=math.radians(start)
+            return motor
+        self.sdk.add_robstride_motor=with_boundary
+        start_q=[0.]*6; start_q[1]=math.radians(start)
+        target=[0.]*6; target[1]=math.radians(.2)
+        self.intent=MotionIntent([target],'xyz','boundary-inward',expected_start=start_q)
+
+    def test_explicit_sub_degree_start_recovers_inward_without_clipping(self):
+        self.boundary_fixture()
+        self.executor.run(self.intent,self.permit)
+        self.assertEqual(self.executor.state,'ARRIVED',self.executor.reason)
+        frames=[c for c in self.calls('mit') if c[1]==2]
+        self.assertAlmostEqual(frames[0][2],math.radians(-.39))
+        self.assertAlmostEqual(frames[-1][2],math.radians(.2))
+        self.assertTrue(all(c[3]>=0 for c in frames if c[2]<0))
+        self.assertFalse(any(c[0] in ('zero','write_param','ensure_mode') for c in self.sdk.calls))
+
+    def test_more_than_one_degree_or_outside_destination_never_enable(self):
+        self.boundary_fixture(-1.01)
+        self.executor.run(self.intent,self.permit)
+        self.assertFalse(self.calls('enable'))
+        self.setUp(); self.boundary_fixture()
+        target=[0.]*6; target[1]=math.radians(-.1)
+        self.intent=MotionIntent([target],'xyz','invalid-boundary-end',expected_start=self.intent.expected_start)
+        self.executor.run(self.intent,self.permit)
+        self.assertFalse(self.calls('enable'))
+
+    def test_transport_refuses_outward_frame_and_reentry_after_recovery(self):
+        self.boundary_fixture()
+        self.bus.open_readonly(); self.bus.read(range(1,7),self.config.policy)
+        self.bus.authorize(self.config,self.permit); self.bus.enable(2)
+        try:
+            with self.assertRaises(RuntimeError): self.bus.frame(2,(math.radians(-.4),-.001,3.,1.,0.))
+            with self.assertRaises(RuntimeError): self.bus.frame(2,(math.radians(-.9),0.,3.,1.,0.))
+            self.bus.frame(2,(math.radians(-.39),0.,3.,1.,0.))
+            self.bus.frame(2,(0.,0.,3.,1.,0.))
+            with self.assertRaises(RuntimeError): self.bus.frame(2,(math.radians(-.1),0.,3.,1.,0.))
+        finally:
+            self.bus.stop_supported(); self.bus.close()
 
     def test_six_axes_timed_startup_refreshes_current_targets_and_finishes(self):
         self.executor.run(self.intent,self.permit)

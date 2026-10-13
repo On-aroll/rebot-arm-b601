@@ -3,7 +3,7 @@
   "approval": "requires-explicit-onsite-evidence",
   "envelope": {
     "source": "explicit-onsite-trial-proposal",
-    "version": "seeed-nearby-xyz-2026-10-13-v1",
+    "version": "seeed-nearby-xyz-start-tolerance-1deg-v2",
     "axes": [
       {
         "q_min": -2.6179938779914944,
@@ -102,9 +102,11 @@
       "arrival_qd": 0.01,
       "settle_time": 0.3,
       "task_timeout": 5.0
-    }
+    },
+    "start_boundary_tolerance": 0.017453292519943295
   },
-  "parameter_source": "user 3/1/0 unchanged; existing conservative software envelope reused; not a hardware backup",
+  "parameter_source": "user 3/1/0 unchanged; inherited J1 effort envelope retained for offline review, insufficient for this unsupported six-axis pose; not a hardware backup",
   "model_limit_source": "running project /studio-state; not measured mechanical limits",
-  "hardware_writes": 0
+  "hardware_writes": 0,
+  "start_tolerance_source": "User explicitly accepts a sub-degree boundary deviation; raw q retained, nominal waypoint limits unchanged."
 }

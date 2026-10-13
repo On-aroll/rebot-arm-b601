@@ -1,0 +1,96 @@
+{
+  "reviewed_at": 1791908229.5555105,
+  "source": "replay of recorded read-only start; NOT fresh execution authorization",
+  "hardware_writes": 0,
+  "motion_commands": 0,
+  "official_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+  "model": "external/reBotArm_control_py/urdf/RS/urdf/ReBot_Arm_RS.urdf",
+  "tolerance_deg": 1,
+  "raw_start_deg": [
+    61.9629024144654,
+    -0.395507413294451,
+    0.10498152832740337,
+    0.5646975222967343,
+    -0.9206543249958298,
+    4.467040620497189
+  ],
+  "goal_xyz_mm": [
+    139.29556137763407,
+    -268.0280423063489,
+    228.4916831285445
+  ],
+  "joint_delta_deg": [
+    0.010537510879150943,
+    0.4620777085353572,
+    0.3951985205541696,
+    0.7318980312365224,
+    0.015661332477450867,
+    0.0
+  ],
+  "boundary_recovery_axes": [
+    2
+  ],
+  "gravity_check": {
+    "source": "Seeed compute_generalized_gravity with explicit locked RS URDF; estimate only",
+    "estimated_Nm": [
+      -1.280914198494021e-17,
+      1.5663915060811848,
+      6.74222089205861,
+      1.9961479319259057,
+      0.0002314703929261899,
+      -0.0008151444754431842
+    ],
+    "sampled_peak_Nm": [
+      6.807539536420049e-17,
+      1.5669650657437093,
+      6.74222089205861,
+      1.9961479319259057,
+      0.00037284533491567084,
+      0.0008151444754431842
+    ],
+    "sample_count": 51,
+    "software_effort_limits_Nm": [
+      0.2,
+      0.2,
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "insufficient_axes": [
+      2,
+      3,
+      4
+    ],
+    "continuous_external_support_verified": false
+  },
+  "official_controller_pure_gravity_preview_Nm": [
+    -1.280914198494021e-17,
+    1.5663915060811848,
+    6.74222089205861,
+    1.9961479319259057,
+    0.0002314703929261899,
+    -0.0008151444754431842
+  ],
+  "configured_mit_gains": {
+    "kp": 3,
+    "kd": 1,
+    "tau_ff": 0,
+    "source": "user trial values unchanged"
+  },
+  "feedforward_approval": "not approved; calculated preview only, no controller start/end/home invoked",
+  "execution_ready": false,
+  "checks": {
+    "backend_virtual_sdk": 99,
+    "model_and_official_pure_helpers": 6,
+    "frontend": 148,
+    "frontend_build": "passed"
+  },
+  "remaining_risks": [
+    "Model gravity is not measured device torque; payload/contact/friction are uncalibrated.",
+    "Existing 0.2 Nm effort envelope and tau_ff=0 cannot support this unassisted pose.",
+    "Current support is verified only at rest; release after movement is not verified.",
+    "Gateway/SDK success is not proof of physical stopping.",
+    "J7 is a separate gripper; motor angle/displacement and TCP are not calibrated."
+  ]
+}
