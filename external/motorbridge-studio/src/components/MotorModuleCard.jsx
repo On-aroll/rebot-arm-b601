@@ -5,6 +5,9 @@ import { AxisPowerControls } from './AxisPowerControls';
 const EMPTY_FIELDS = Object.freeze({});
 const modeLabel = mode => ({ 0: 'MIT', 1: 'PP', 2: '速度', 3: '电流', 5: 'CSP' }[mode] || '未知');
 const valueText = value => value == null ? '未确认' : String(value);
+// Read-only reference from the pinned Seeed RS YAML, never draft defaults.
+const OFFICIAL_RS_GAINS = { 1:[50,3], 2:[150,10], 3:[150,10], 4:[50,5], 5:[50,4], 6:[50,4], 7:[50,4] };
+const OFFICIAL_RS_CONFIG = 'https://github.com/Seeed-Projects/reBotArm_control_py/blob/6415d43130d1e143c70dc106096a857ac5556f81/config/rebotarm_rs.yaml';
 
 export function MotorModuleCard({ id, label, motor, status, plannedDeg, expanded = false, onToggle, config, gateway, powerBlocked, limits }) {
   const reading = motor || {};
@@ -17,6 +20,7 @@ export function MotorModuleCard({ id, label, motor, status, plannedDeg, expanded
   const saved = config?.state?.drafts?.[id];
   const approved = config?.state?.approved?.[id];
   const fields = config?.fields || EMPTY_FIELDS;
+  const reference = OFFICIAL_RS_GAINS[id];
   React.useEffect(() => {
     if (!dirty) setDraft(Object.fromEntries(Object.keys(fields).map(key => [key, saved?.fields?.[key]?.value ?? ''])));
   }, [saved, fields, dirty]);
@@ -57,9 +61,10 @@ export function MotorModuleCard({ id, label, motor, status, plannedDeg, expanded
       <h4>{id <= 6 ? 'MIT 基本参数' : '夹爪独立配置'}</h4>
       <p>配置来源：{saved?.source === 'user-provided-mit-initial-trial' ? '用户提供的 MIT 初始试验配置 · 尚未实机验证' : saved ? '人工编辑的软件草稿' : '尚无草稿'}。这里显示每帧控制参数，不是电机寄存器读回。</p>
       <div className="mitBasicInputs">{Object.entries(fields).filter(([key])=>['kp','kd','tau_ff'].includes(key)).map(([key,spec])=><label key={key} htmlFor={`draft-${id}-${key}`}>{spec.label}<small>{key} · {spec.unit} · 已批准：{valueText(approved?.fields?.[key]?.value)}</small><input aria-label={fields[key].label} id={`draft-${id}-${key}`} type="number" step="any" value={draft[key]??''} placeholder="待确认" onChange={e=>{setDraft(v=>({...v,[key]:e.target.value}));setDirty(true);setReview(null);setConfirmed(false);}} /></label>)}</div>
-      <p className="consoleNote">Kp 决定偏离目标后的拉回力度；Kd 抑制运动振荡；前馈直接补充力矩。降低 Kp 不能代替限速。</p>
-      <details className="engineeringParameters"><summary>运动规划、模型与高级工程参数</summary>
-      <p>模型限位和既有方向映射已整理；它们不是实机安全验收。空白约束保持待确认，不填默认值。</p>
+      <p className="consoleNote">Kp 是拉回目标位置的力度；Kd 是减缓运动的阻尼；前馈力矩是额外推力。MIT 需要连续控制帧，使能按钮本身不发送保持或运动目标。降低 Kp 不能代替限速。</p>
+      {reference && <p className="consoleNote">本轴官方 RS 示例：Kp={reference[0]}，Kd={reference[1]}（<a href={OFFICIAL_RS_CONFIG} target="_blank" rel="noreferrer">官方 RS 配置（锁定版本）</a>）。仅供对照，这是软件示例增益，设备调定值与现场适用性仍需核实。</p>}
+      <details className="engineeringParameters"><summary>运动规划、模型与高级工程参数（通常无需填写）</summary>
+      <p>这些字段供轨迹程序和标定维护，分别约束运动快慢、坐标换算和异常保护。日常使能/失能无需填写；单轴运动试验使用独立试验方案。模型限位和方向映射不是实机安全验收，空白仍表示待确认。</p>
       {[
         ['运动规划',['v_max','a_max','jerk_max','timeout']],
         ['机械模型与映射',['q_min','q_max','direction','offset']],

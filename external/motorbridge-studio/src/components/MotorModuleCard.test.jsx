@@ -39,3 +39,11 @@ it('renders an unavailable configuration service without an update loop', () => 
   expect(screen.getByRole('button',{name:'保存草稿'}).disabled).toBe(true);
   expect(spy).not.toHaveBeenCalled(); spy.mockRestore();
 });
+it('shows official reference gains without importing them into the draft or motor', () => {
+  const c=config(); const write=vi.fn();
+  render(<MotorModuleCard id={2} label="J2" expanded config={c} gateway={{write}} />);
+  expect(screen.getByText(/本轴官方 RS 示例：Kp=150，Kd=10/)).toBeTruthy();
+  expect(screen.getByRole('link',{name:'官方 RS 配置（锁定版本）'}).getAttribute('href')).toContain('6415d43130d1e143c70dc106096a857ac5556f81');
+  expect(screen.getByLabelText('MIT 刚度').value).toBe('');
+  expect(c.action).not.toHaveBeenCalled(); expect(write).not.toHaveBeenCalled();
+});

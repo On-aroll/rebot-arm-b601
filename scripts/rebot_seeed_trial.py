@@ -23,10 +23,10 @@ def prepare(config, bus):
         bus.open_readonly()
         for _ in range(3):
             samples = bus.read(range(1, 7), config.policy)
+            readings.append({str(i): asdict(s) for i, s in samples.items()})
             checker.validate_feedback(samples, range(1, 7))
             if any(abs(s.qd) > config.policy.start_speed for s in samples.values()):
                 raise ValueError('实机速度读数超过本次静止阈值；不自动提高阈值')
-            readings.append({str(i): asdict(s) for i, s in samples.items()})
         return dict(ok=True, hardware_writes=0, readings=readings,
                     expected_start=[samples[i].q for i in range(1, 7)])
     except Exception as error:

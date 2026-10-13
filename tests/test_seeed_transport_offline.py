@@ -46,6 +46,21 @@ class SeeedOffline(unittest.TestCase):
         self.assertFalse(any(self.calls(op) for op in ('enable', 'disable', 'mit')))
         self.assertEqual(len(self.calls('close_motor')), 6)
 
+    def test_rejected_preparation_keeps_raw_feedback_and_never_enables(self):
+        register = self.sdk.add_robstride_motor
+        def with_out_of_range_joint(i, host, model):
+            motor = register(i, host, model)
+            if i == 2:
+                motor.q = -1.01
+            return motor
+        self.sdk.add_robstride_motor = with_out_of_range_joint
+        result = prepare(self.config, self.bus)
+        self.assertFalse(result['ok'])
+        self.assertIn('J2 原始位置越限', result['reason'])
+        self.assertEqual(result['readings'][0]['2']['q'], -1.01)
+        self.assertEqual(result['hardware_writes'], 0)
+        self.assertFalse(any(self.calls(op) for op in ('enable', 'disable', 'mit')))
+
     def test_single_axis_uses_official_group_explicit_gains_and_fresh_first_frame(self):
         self.executor.run(self.intent, self.permit)
         self.assertEqual(self.executor.state, 'ARRIVED', self.executor.reason)
