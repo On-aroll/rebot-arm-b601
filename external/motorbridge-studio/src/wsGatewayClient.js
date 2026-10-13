@@ -137,7 +137,11 @@ export class WsGatewayClient {
     try {
       safePayload = JSON.parse(JSON.stringify(payload));
       if (!safePayload || typeof safePayload !== 'object' || Array.isArray(safePayload) || Object.hasOwn(safePayload, 'op') || Object.hasOwn(safePayload, 'req_id')) throw new Error('routing override');
-      if (powerOp && (Object.keys(safePayload).sort().join(',') !== 'feedback_id,motor_id,vendor' || safePayload.vendor !== 'robstride' || !Number.isInteger(safePayload.motor_id) || safePayload.motor_id < 1 || safePayload.motor_id > 7 || safePayload.feedback_id !== 0xfd)) throw new Error('power routing must match a known axis');
+      if (powerOp) {
+        const fields = Object.keys(safePayload).sort().join(',');
+        const model = safePayload.motor_id <= 3 ? 'rs-06' : 'rs-00';
+        if (!['feedback_id,motor_id,vendor', 'feedback_id,model,motor_id,vendor'].includes(fields) || safePayload.vendor !== 'robstride' || !Number.isInteger(safePayload.motor_id) || safePayload.motor_id < 1 || safePayload.motor_id > 7 || safePayload.feedback_id !== 0xfd || (Object.hasOwn(safePayload, 'model') && safePayload.model !== model)) throw new Error('power routing must match a known axis');
+      }
     } catch {
       return Promise.reject(new Error('LOCKED：payload 必须是无协议覆盖的 JSON 对象'));
     }

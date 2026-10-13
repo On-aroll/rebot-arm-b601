@@ -223,6 +223,17 @@
 .consoleWorkspace .compactMotor { padding:0; min-width:0; }
 .motorSummary { display:grid; grid-template-columns:100px 70px 110px 1fr 100px 140px 65px; align-items:center; gap:8px; width:100%; text-align:left; padding:10px 14px; border:0; background:transparent; font-size:12px; }
 .motorSummary:hover { background:#edf4f7; }
+.axisPowerControls { padding: 0 14px 10px; font-size: 12px; }
+.axisPowerRow { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.axisPowerRow > div { display: flex; gap: 6px; }
+.axisPowerRow button { min-width: 64px; min-height: 34px; }
+.axisPowerRow .axisEnable { color: #17614b; border-color: #74a696; }
+.axisPowerRow .axisDisable { color: #a52222; border-color: #d98b8b; font-weight: 700; }
+.axisPowerConfirmation { margin-top: 10px; padding-top: 10px; border-top: 1px solid #d6dbe0; }
+.axisPowerConfirmation p { line-height: 1.6; }
+.axisPowerConfirmation label { display: flex; align-items: flex-start; gap: 8px; margin: 8px 0; line-height: 1.5; }
+.axisPowerConfirmation input[type=checkbox] { flex: 0 0 16px; width: 16px; height: 16px; margin: 2px 0 0; }
+.axisPowerConfirmation .consoleActions { flex-wrap: wrap; }
 .motorSummary strong { font-size:14px; }
 .motorDetails { padding:12px 18px 18px; border-top:1px solid #dde6ed; font-size:13px; }
 .motorDetails p { line-height:1.7; }

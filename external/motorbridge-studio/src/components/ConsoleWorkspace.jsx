@@ -190,7 +190,7 @@ export function ConsoleWorkspace() {
   const job = state?.job;
   const active = job?.status === 'running' || job?.status === 'paused';
   const moving = Boolean(state?.manual_motion || state?.playing);
-  const locked = Boolean(problem || busy);
+  const locked = Boolean(problem || busy || gateway.powerPending != null);
   const jointTargets = React.useMemo(() => feedbackJoints(state), [state]);
   const feedbackTrace = React.useMemo(() => ({ points: (state?.trace_xyz || []).map(toStudioPoint) }), [state]);
   const plannedPath = React.useMemo(() => {
@@ -277,12 +277,12 @@ export function ConsoleWorkspace() {
           <span className={`badge ${gatewayOnline ? 'ok' : (gateway.status === 'offline' ? 'err' : '')}`}>
             {gatewayOnline ? `网关 ${readCount}/7 轴` : `网关：${GATEWAY_STATUS[gateway.status] || gateway.status}`}
           </span>
-          <span className={`badge ${gateway.armed ? 'err' : ''}`}>{gateway.armed ? (gateway.drill ? '总开关开 · 演练' : '总开关开 · 实发') : '实机只读'}</span>
+          <span className="badge">逐轴使能 / 失能 · 轨迹锁定</span>
         </div>
-        <button disabled title="本批次不发送 CAN stop；物理停止能力待现场验收">软件停止（非物理急停）</button>
+        <a href="#motor-control-panel">实机电机 · 使能 / 失能</a>
       </div>
-      <DeviceConnectionPanel readiness={hardwareReadiness} gateway={gateway} now={now} onSync={synchronizeHardwarePose} syncing={syncing} synchronization={synchronization} blocked={active||moving||busy||Boolean(problem)} />
-      <div className="consoleStatus" role="status"><strong>LOCKED · 演练 ON · 总控 OFF · 真实出力状态未知</strong><span>{hardwareReadiness?.next_step || '正在读取现场验收条件；实机执行保持锁定'}</span></div>
+      <DeviceConnectionPanel readiness={hardwareReadiness} gateway={gateway} now={now} onSync={synchronizeHardwarePose} syncing={syncing} synchronization={synchronization} blocked={active||moving||busy||Boolean(problem)||gateway.powerPending!=null} />
+      <div className="consoleStatus" role="status"><strong>逐轴电源可手动操作 · XYZ 实机执行锁定</strong><span>{hardwareReadiness?.next_step || '正在读取现场验收条件；实机执行保持锁定'}</span></div>
       {config.error && <div className="consoleAlert" role="alert">{config.error}；仿真仍可用，配置不可自动恢复默认值。</div>}
       {problem && <div className="consoleAlert" role="alert">{problem}。画面保留最后一次仿真反馈。</div>}
       <div className="consolePrimary"><div className="consoleModelColumn">
@@ -318,14 +318,16 @@ export function ConsoleWorkspace() {
         onExecuted={() => { setDisplaySource('simulation'); setCameraView('overview'); setGhost(false); setShowPlan(true); }} />
 
       </div></div>
-      <div className="consoleModulesHead">
-        <h3>七轴概览 <small>展开单轴查看读数、草稿与审核记录</small></h3>
+      <div id="motor-control-panel" className="consoleModulesHead">
+        <h3>实机七轴 · 使能 / 失能 <small>J1–J7 独立电机</small></h3>
         <span>实机读数来源：{realSource}
           {gateway.cycleMs ? ` · 每轮 ${gateway.cycleMs} ms` : ''}</span>
       </div>
       <div className="consoleModules">
         {AXES.map((axis) => <MotorModuleCard key={axis.id} id={axis.id} label={axis.label}
-          motor={gateway.motors?.[axis.id]} status={gateway.status}
+          motor={gateway.motors?.[axis.id]} status={gateway.status} gateway={gateway}
+          powerBlocked={active || moving || busy || syncing || hardwareReadiness?.power_trial?.busy}
+          limits={axis.id <= 6 ? state?.limits_deg?.[axis.id - 1] : null}
           plannedDeg={axis.id <= 6 ? state?.target_deg?.[axis.id - 1] : null} config={config} expanded={expandedAxis === axis.id} onToggle={() => toggleAxis(axis.id)} />)}
       </div>
 

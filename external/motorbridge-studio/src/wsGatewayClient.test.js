@@ -44,9 +44,23 @@ it('explicit console clients permit only correctly routed enable/disable while a
   for (const op of ['mit', 'pos_vel', 'vel', 'ensure_mode', 'robstride_write_param', 'set_zero', 'set_id', 'stop', 'clear_error']) {
     await expect(client.send(op, {})).rejects.toThrow('LOCKED');
   }
-  for (const payload of [{}, { vendor: 'robstride', motor_id: 8, feedback_id: 0xfd }, { vendor: 'robstride', motor_id: 2, feedback_id: 0xfd, op: 'mit' }]) {
+  for (const payload of [{}, { vendor: 'robstride', motor_id: 8, feedback_id: 0xfd }, { vendor: 'robstride', motor_id: 2, feedback_id: 0xfd, op: 'mit' }, { vendor: 'robstride', motor_id: 2, feedback_id: 0xfd, model: 'rs-00' }, { vendor: 'robstride', motor_id: 7, feedback_id: 0xfd, model: 'rs-06' }]) {
     await expect(client.send('enable', payload)).rejects.toThrow('LOCKED');
   }
   expect(client.ws.sent).toHaveLength(2);
+  client.disconnect();
+});
+
+it('accepts the exact known model for each explicit withdrawal route', async () => {
+  vi.stubGlobal('WebSocket', Socket);
+  const client = new WsGatewayClient({ allowPowerControl: true });
+  client.connect('ws://mock.test');
+  for (let id = 1; id <= 7; id++) {
+    const promise = client.send('disable', { vendor: 'robstride', model: id <= 3 ? 'rs-06' : 'rs-00', motor_id: id, feedback_id: 0xfd });
+    const request = client.ws.sent.at(-1);
+    client.ws.reply(request);
+    expect((await promise).ok).toBe(true);
+  }
+  expect(client.ws.sent).toHaveLength(7);
   client.disconnect();
 });
