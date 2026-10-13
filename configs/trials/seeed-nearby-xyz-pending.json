@@ -1,0 +1,110 @@
+{
+  "operation": "nearby-xyz-five-millimeters",
+  "approval": "requires-explicit-onsite-evidence",
+  "envelope": {
+    "source": "explicit-onsite-trial-proposal",
+    "version": "seeed-nearby-xyz-2026-10-13-v1",
+    "axes": [
+      {
+        "q_min": -2.6179938779914944,
+        "q_max": 2.6179938779914944,
+        "v_max": 0.02,
+        "a_max": 0.04,
+        "jerk_max": 0.2,
+        "kp": 3.0,
+        "kd": 1.0,
+        "tau_ff": 0.0,
+        "kp_max": 3.0,
+        "kd_max": 1.0,
+        "torque_max": 0.2,
+        "error_max": 0.017453292519943295
+      },
+      {
+        "q_min": -0.0,
+        "q_max": 3.14,
+        "v_max": 0.02,
+        "a_max": 0.04,
+        "jerk_max": 0.2,
+        "kp": 3.0,
+        "kd": 1.0,
+        "tau_ff": 0.0,
+        "kp_max": 3.0,
+        "kd_max": 1.0,
+        "torque_max": 0.2,
+        "error_max": 0.017453292519943295
+      },
+      {
+        "q_min": -0.0,
+        "q_max": 3.14,
+        "v_max": 0.02,
+        "a_max": 0.04,
+        "jerk_max": 0.2,
+        "kp": 3.0,
+        "kd": 1.0,
+        "tau_ff": 0.0,
+        "kp_max": 3.0,
+        "kd_max": 1.0,
+        "torque_max": 0.2,
+        "error_max": 0.017453292519943295
+      },
+      {
+        "q_min": -1.57,
+        "q_max": 1.57,
+        "v_max": 0.02,
+        "a_max": 0.04,
+        "jerk_max": 0.2,
+        "kp": 3.0,
+        "kd": 1.0,
+        "tau_ff": 0.0,
+        "kp_max": 3.0,
+        "kd_max": 1.0,
+        "torque_max": 0.2,
+        "error_max": 0.017453292519943295
+      },
+      {
+        "q_min": -1.57,
+        "q_max": 1.57,
+        "v_max": 0.02,
+        "a_max": 0.04,
+        "jerk_max": 0.2,
+        "kp": 3.0,
+        "kd": 1.0,
+        "tau_ff": 0.0,
+        "kp_max": 3.0,
+        "kd_max": 1.0,
+        "torque_max": 0.2,
+        "error_max": 0.017453292519943295
+      },
+      {
+        "q_min": -3.14,
+        "q_max": 3.14,
+        "v_max": 0.02,
+        "a_max": 0.04,
+        "jerk_max": 0.2,
+        "kp": 3.0,
+        "kd": 1.0,
+        "tau_ff": 0.0,
+        "kp_max": 3.0,
+        "kd_max": 1.0,
+        "torque_max": 0.2,
+        "error_max": 0.017453292519943295
+      }
+    ],
+    "policy": {
+      "period": 0.1,
+      "io_timeout": 0.05,
+      "feedback_age": 0.6,
+      "command_age": 0.3,
+      "jitter_max": 0.15,
+      "lease_timeout": 0.75,
+      "start_speed": 0.01,
+      "arrival_q": 0.0017453292519943296,
+      "arrival_qd": 0.01,
+      "settle_time": 0.3,
+      "task_timeout": 5.0
+    }
+  },
+  "parameter_source": "user 3/1/0 unchanged; existing conservative software envelope reused; not a hardware backup",
+  "model_limit_source": "running project /studio-state; not measured mechanical limits",
+  "hardware_writes": 0
+}

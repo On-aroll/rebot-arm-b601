@@ -50,16 +50,52 @@ class SeeedOffline(unittest.TestCase):
         register = self.sdk.add_robstride_motor
         def with_out_of_range_joint(i, host, model):
             motor = register(i, host, model)
-            if i == 2:
+            if i == 1:
                 motor.q = -1.01
             return motor
         self.sdk.add_robstride_motor = with_out_of_range_joint
         result = prepare(self.config, self.bus)
         self.assertFalse(result['ok'])
-        self.assertIn('J2 原始位置越限', result['reason'])
-        self.assertEqual(result['readings'][0]['2']['q'], -1.01)
+        self.assertIn('J1 原始位置越限', result['reason'])
+        self.assertEqual(result['readings'][0]['1']['q'], -1.01)
         self.assertEqual(result['hardware_writes'], 0)
         self.assertFalse(any(self.calls(op) for op in ('enable', 'disable', 'mit')))
+
+    def test_supported_j1_trial_preserves_uncommanded_out_of_model_raw_pose(self):
+        register = self.sdk.add_robstride_motor
+        def with_passive_joint(i, host, model):
+            motor = register(i, host, model)
+            if i == 2: motor.q = -1.01
+            if i == 4: motor.qd = .09
+            return motor
+        self.sdk.add_robstride_motor = with_passive_joint
+        prepared = prepare(self.config, self.bus)
+        self.assertTrue(prepared['ok'], prepared)
+        self.assertEqual(prepared['controlled_axes'], [1])
+        self.assertEqual(prepared['expected_start'][1], -1.01)
+        self.assertTrue(prepared['uncommanded_model_warnings'])
+        target = list(prepared['expected_start']); target[0] += .00872664626
+        intent = MotionIntent([target], 'onsite-single-axis', 'scoped-raw-pose', expected_start=prepared['expected_start'])
+        self.executor.run(intent, self.permit)
+        self.assertEqual(self.executor.state, 'ARRIVED', self.executor.reason)
+        self.assertEqual(self.calls('enable'), [('enable', 1)])
+        self.assertEqual(self.calls('disable'), [('disable', 1)])
+        self.assertTrue(all(frame[1] == 1 for frame in self.calls('mit')))
+        self.assertEqual(self.sdk.motors[2].q, -1.01)
+
+    def test_xyz_still_rejects_an_out_of_model_passive_axis(self):
+        register = self.sdk.add_robstride_motor
+        def with_passive_joint(i, host, model):
+            motor = register(i, host, model)
+            if i == 2: motor.q = -1.01
+            return motor
+        self.sdk.add_robstride_motor = with_passive_joint
+        start = [0, -1.01, 0, 0, 0, 0]
+        target = list(start); target[0] = .00872664626
+        self.executor.run(MotionIntent([target], 'xyz', 'xyz-must-check-six', expected_start=start), self.permit)
+        self.assertEqual(self.executor.state, 'FAULT')
+        self.assertIn('J2 原始位置越限', self.executor.reason)
+        self.assertFalse(self.calls('enable'))
 
     def test_single_axis_uses_official_group_explicit_gains_and_fresh_first_frame(self):
         self.executor.run(self.intent, self.permit)

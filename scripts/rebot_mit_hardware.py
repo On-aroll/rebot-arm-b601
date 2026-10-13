@@ -2,7 +2,7 @@
 
 No default motion limits, automatic enable, ensure_mode, generic SDK stop, zero
 write, parameter write or automatic target recovery. Tests inject a fake SDK.
-Actual motion requires a fresh, one-use onsite permit issued outside the web API.
+Actual motion requires a fresh, one-use onsite permit from an explicitly confirmed trial.
 """
 from dataclasses import dataclass, asdict, replace, field
 import fcntl
@@ -30,6 +30,7 @@ class Sample:
     mode: int
     requested_at: float
     received_at: float
+    qd_raw: float | None = None
     # Host request/response bounds, NOT a drive-provided timestamp or enabled bit.
 
 @dataclass(frozen=True)
@@ -86,7 +87,7 @@ class Envelope:
 
 @dataclass
 class OnsitePermit:
-    """Ephemeral operator evidence, never produced by config approval or HTTP.
+    """Ephemeral operator evidence, never produced by software config approval.
 
     Supported-release is the only implemented physical stop policy. It is NOT
     accepted for an unsupported gravity joint, nor enabled automatically.
@@ -100,6 +101,7 @@ class OnsitePermit:
     operator_present: bool
     token: str = field(default_factory=lambda:secrets.token_hex(24))
     used: bool = False
+    coordinated_start_checked: bool = False
 
     def validate(self, config, now):
         if self.used or self.token in _CONSUMED_PERMITS or self.config_hash!=config.fingerprint or not now<self.expires_at:
@@ -197,8 +199,9 @@ class SdkTransport:
         return samples
 
     def authorize(self, config, permit):
-        if self.factory is None and len(permit.axes)!=1:
-            raise PermissionError('P4 真实适配器仅开放待批准的单轴试验；六轴启动/保持须在 P6 验收')
+        if self.factory is None and len(permit.axes)!=1 and not (
+                permit.axes==tuple(MODELS) and permit.coordinated_start_checked is True):
+            raise PermissionError('多轴试验需要明确的六轴协同起动许可；默认仅允许单轴')
         self.ownership.check()
         with _PERMIT_LOCK:
             permit.validate(config,self.clock())
@@ -255,12 +258,20 @@ class MotionIntent:
     must resolve IK upstream and require a live lease; never streams browser CAN.
     """
     def __init__(self, waypoints, source, request_id, expected_start=None):
-        if source not in ('onsite-single-axis','xyz','gamepad-planned') or not request_id:
+        if source not in ('onsite-single-axis','onsite-hold','xyz','gamepad-planned') or not request_id:
             raise ValueError('需要明确运动来源及一次性请求编号')
         self.waypoints=tuple(tuple(p) for p in waypoints); self.source=source; self.request_id=request_id
         self.expected_start=tuple(expected_start) if expected_start is not None else None
         if source!='onsite-single-axis' and (self.expected_start is None or len(self.expected_start)!=6 or not all(finite(v) for v in self.expected_start)):
             raise ValueError('XYZ/手柄计划必须绑定已经预演的真实起点')
+
+
+class HoldIntent(MotionIntent):
+    """No browser-supplied destination: hold the newly sampled J1 position."""
+    def __init__(self, request_id, expected_start, seconds):
+        if seconds != 3: raise ValueError('首次 J1 保持仅允许 3 秒')
+        super().__init__([], 'onsite-hold', request_id, expected_start)
+        self.hold_seconds = 3.
 
 
 class HardwareExecutor:
@@ -300,6 +311,8 @@ class HardwareExecutor:
             if not 0<=now-s.requested_at<=p.feedback_age: raise TimeoutError(f'J{i} 反馈过期')
             if not a.q_min<=s.q<=a.q_max: raise ValueError(f'J{i} 原始位置越限；未归一化或裁剪')
             if abs(s.qd)>a.v_max: raise ValueError(f'J{i} 实测速度超过试验边界')
+            if s.qd_raw is not None and a.kd*abs(s.qd_raw)>a.torque_max:
+                raise ValueError(f'J{i} 原始速度反馈的阻尼估算超过包络')
 
     def _send(self, q, v, samples, permit):
         issued=self.clock(); p=self.config.policy
@@ -311,7 +324,8 @@ class HardwareExecutor:
             a=self.config.axes[i-1]; s=samples[i]; k=i-1
             error=q[k]-s.q
             # Conservative absolute software effort envelope, NOT measured torque.
-            estimate=a.kp*abs(error)+a.kd*abs(v[k]-s.qd)+abs(a.tau_ff)
+            damping_error=max(abs(v[k]-s.qd), abs(v[k]-s.qd_raw) if s.qd_raw is not None else 0.)
+            estimate=a.kp*abs(error)+a.kd*damping_error+abs(a.tau_ff)
             if abs(error)>a.error_max or estimate>a.torque_max: raise ValueError(f'J{i} 跟踪误差/软件转矩包络超限')
             values=(q[k],v[k],a.kp,a.kd,a.tau_ff)
             self.bus.frame(i,values); self.last_axis_command[i]=self.clock(); frames.append(dict(axis=i,values=values,estimated_effort=estimate))
@@ -340,20 +354,32 @@ class HardwareExecutor:
             self.bus.open_readonly()
             check=lambda:self.check(permit)
             samples=self.bus.read(tuple(MODELS),self.config.policy,check)
-            self.validate_feedback(samples,tuple(MODELS))
+            # A supported single-axis trial checks only its commanded drive.
+            # Other raw positions stay unchanged; XYZ retains all-six checks.
+            checked_axes=permit.axes if intent.source=='onsite-single-axis' else tuple(MODELS)
+            self.validate_feedback(samples,checked_axes)
             start=tuple(samples[i].q for i in MODELS)
             if intent.expected_start is not None and any(abs(a-b)>self.config.policy.arrival_q for a,b in zip(start,intent.expected_start)):
                 raise ValueError('真实起点与已预演起点不一致，需重新规划')
-            if any(abs(samples[i].qd)>self.config.policy.start_speed for i in MODELS): raise ValueError('机械臂未静止，不接受跳变起点')
-            for point in intent.waypoints:
+            if any(abs(samples[i].qd)>self.config.policy.start_speed for i in checked_axes): raise ValueError('受控轴未静止，不接受跳变起点')
+            holding=isinstance(intent,HoldIntent)
+            if intent.source=='onsite-hold' and (not holding or permit.axes!=(1,)):
+                raise ValueError('保持试验仅允许 J1 和后端新鲜目标')
+            waypoints=(start,) if holding else intent.waypoints
+            reviewed=start if holding or intent.expected_start is None else intent.expected_start
+            for point in waypoints:
                 if len(point)!=6: raise ValueError('需要六轴目标')
-                if any(point[i-1]!=start[i-1] for i in MODELS if i not in permit.axes): raise ValueError('目标包含未获准的轴')
+                if any(point[i-1]!=reviewed[i-1] for i in MODELS if i not in permit.axes): raise ValueError('目标包含未获准的轴')
+            # Passive slots track the newly sampled start, never a stale reading.
+            waypoints=tuple(tuple(point[i-1] if i in permit.axes else start[i-1] for i in MODELS) for point in waypoints)
             if intent.source=='onsite-single-axis' and len(permit.axes)!=1: raise ValueError('首次试验必须只有一个轴')
-            trajectory=Trajectory.create(start,intent.waypoints,self.config)
+            scoped_axes=permit.axes if intent.source=='onsite-single-axis' else None
+            trajectory=Trajectory.create(start,waypoints,self.config,axes=scoped_axes)
             if trajectory.duration+self.config.policy.settle_time>self.config.policy.task_timeout: raise ValueError('轨迹无法在试验时限内完成')
             self.bus.authorize(self.config,permit)
             # For each enabled axis read position AGAIN before its first frame.
             # Never first target HOME or the previous task's endpoint.
+            startup_samples={}
             for i in permit.axes:
                 check(); self.last_axis_command[i]=self.clock(); self.bus.enable(i); check()
                 current=self.bus.read((i,),self.config.policy,check)
@@ -361,12 +387,19 @@ class HardwareExecutor:
                 if abs(current[i].q-start[i-1])>self.config.policy.arrival_q or abs(current[i].qd)>self.config.policy.start_speed:
                     raise ValueError('使能后起点变化，停止并重新预演')
                 values=(current[i].q,0.,self.config.axes[i-1].kp,self.config.axes[i-1].kd,self.config.axes[i-1].tau_ff)
-                if self.config.axes[i-1].kd*abs(current[i].qd)>self.config.axes[i-1].torque_max:
+                if self.config.axes[i-1].kd*max(abs(current[i].qd),abs(current[i].qd_raw or 0.))>self.config.axes[i-1].torque_max:
                     raise ValueError('首帧阻尼力矩估算超过包络')
                 issued=self.clock()
                 self.bus.frame(i,values)
                 if self.clock()-issued>self.config.policy.command_age: raise TimeoutError('首帧发送超过有效期')
                 self.last_axis_command[i]=self.clock(); check()
+                startup_samples.update(current)
+                if len(permit.axes)>1:
+                    # Refresh already started axes during sequential SDK setup.
+                    # A slow enable/read still faults before any stale target.
+                    started=tuple(startup_samples)
+                    hold_q=tuple(startup_samples[j].q if j in startup_samples else start[j-1] for j in MODELS)
+                    self._send(hold_q,(0.,)*6,startup_samples,replace(permit,axes=started))
             # Rebase all permitted axes on post-enable feedback, so the curve
             # cannot jump back to a pre-enable pose after its first hold frame.
             samples=self.bus.read(permit.axes,self.config.policy,check)
@@ -374,23 +407,34 @@ class HardwareExecutor:
             if any(abs(samples[i].q-start[i-1])>self.config.policy.arrival_q or abs(samples[i].qd)>self.config.policy.start_speed for i in permit.axes):
                 raise ValueError('使能后实机起点发生变化，需重新规划')
             start=tuple(samples[i].q if i in samples else start[i-1] for i in MODELS)
-            trajectory=Trajectory.create(start,intent.waypoints,self.config)
+            if len(permit.axes)>1:
+                self._send(start,(0.,)*6,samples,permit)
+            if holding: waypoints=(start,)
+            trajectory=Trajectory.create(start,waypoints,self.config,axes=scoped_axes)
             began=self.clock(); last=began; settled=None; self.state='RUNNING'
             while True:
                 check(); now=self.clock(); elapsed=now-began
                 if elapsed>self.config.policy.task_timeout: raise TimeoutError('任务超时')
+                if holding and elapsed>=intent.hold_seconds:
+                    if settled is None or now-settled<self.config.policy.settle_time:
+                        raise TimeoutError('3 秒保持已结束，未达到稳定条件；停止发送目标并撤力')
+                    self.motion_arrived=True; break
                 if now-last>self.config.policy.period+self.config.policy.jitter_max: raise TimeoutError('执行循环延迟超限')
                 samples=self.bus.read(permit.axes,self.config.policy,check); self.feedback=samples
                 self.validate_feedback(samples,permit.axes); check()
                 now=self.clock(); elapsed=now-began
                 if elapsed>self.config.policy.task_timeout: raise TimeoutError('任务超时')
+                if holding and elapsed>=intent.hold_seconds:
+                    if settled is None or now-settled<self.config.policy.settle_time:
+                        raise TimeoutError('3 秒保持已结束，未达到稳定条件；停止发送目标并撤力')
+                    self.motion_arrived=True; break
                 if now-last>self.config.policy.period+self.config.policy.jitter_max: raise TimeoutError('反馈周期延迟超限')
                 q,v,_,_=trajectory.sample(elapsed)
                 self._send(q,v,samples,permit); last=now
                 if elapsed>=trajectory.duration:
                     arrived=all(abs(samples[i].q-q[i-1])<=self.config.policy.arrival_q and abs(samples[i].qd)<=self.config.policy.arrival_qd for i in permit.axes)
                     settled=now if arrived and settled is None else settled if arrived else None
-                    if settled is not None and now-settled>=self.config.policy.settle_time:
+                    if settled is not None and now-settled>=self.config.policy.settle_time and elapsed>=getattr(intent,'hold_seconds',0):
                         self.motion_arrived=True; break
                 self.wait(max(0.,self.config.policy.period-(self.clock()-now)))
         except Exception as e:
@@ -420,8 +464,9 @@ class HardwareExecutor:
             self.state=terminal
 
     def status(self):
+        permit=self.bus.permit
         return dict(state=self.state,reason=self.reason,motion_arrived_before_stop=self.motion_arrived,stop=self.stop_result,frames=len(self.frames),
                     feedback={str(i):asdict(s) for i,s in self.feedback.items()},
-                    physical_acceptance=False, hardware_permission=bool(self.bus.permit and self.state in ('PREPARING','RUNNING') and
-                        not self.cancelled.is_set() and self.clock()<min(self.bus.permit.expires_at,self.lease_until)),
+                    physical_acceptance=False, hardware_permission=bool(permit and self.state in ('PREPARING','RUNNING') and
+                        not self.cancelled.is_set() and self.clock()<min(permit.expires_at,self.lease_until)),
                     note='试验执行记录不是动态标定、转矩实测或物理停止验收')

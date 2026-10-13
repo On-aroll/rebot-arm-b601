@@ -5,6 +5,7 @@ group enable/disable, homing, context-manager exit or disconnect is called.
 Actual hardware still needs the existing one-use onsite permit.
 """
 import importlib.metadata
+from dataclasses import replace
 import importlib.util
 from pathlib import Path
 import subprocess
@@ -44,10 +45,13 @@ def official_module():
 
 class SeeedTransport(SdkTransport):
     """The P4 executor supplies permission, timing and feedback checks unchanged."""
-    def __init__(self, **kwargs):
+    def __init__(self, *, position_window=False, **kwargs):
         super().__init__(**kwargs)
         self.arm = None
         self.trial_group = None
+        self.trial_groups = {}
+        self.position_window = position_window
+        self.previous_samples = {}
 
     def open_readonly(self):
         if self.controller:
@@ -90,43 +94,64 @@ class SeeedTransport(SdkTransport):
             self.close()
             raise
 
+    def read(self, axes, policy, check=lambda:None):
+        axes=tuple(axes)
+        samples=super().read(axes,policy,check)
+        if not self.position_window:
+            return samples
+        if any(i not in self.previous_samples for i in axes):
+            self.previous_samples.update(samples)
+            samples=super().read(axes,policy,check)
+        result={}
+        for i,s in samples.items():
+            previous=self.previous_samples[i]
+            dt=(s.requested_at+s.received_at-previous.requested_at-previous.received_at)/2
+            if not 0<dt<=policy.feedback_age:
+                raise TimeoutError(f'J{i} 位置差分窗口无效或过期')
+            result[i]=replace(s,qd=(s.q-previous.q)/dt,qd_raw=s.qd)
+        self.previous_samples.update(samples)
+        return result
+
     def authorize(self, config, permit):
-        if len(permit.axes) != 1:
-            raise PermissionError('Seeed 接入本轮仅允许单轴试验')
+        if len(permit.axes) != 1 and not (permit.axes==tuple(MODELS) and permit.coordinated_start_checked is True):
+            raise PermissionError('Seeed 多轴试验需要明确六轴许可；默认仅允许单轴')
         upstream = official_module()
-        axis = permit.axes[0]
         transport = self
 
         class CheckedMotor:
+            def __init__(self, axis): self.axis=axis
             def send_mit(self, *values):
                 try:
                     # Keep the already-tested permit, model and gain checks;
                     # convert SDK CallError so JointGroup cannot swallow it.
-                    SdkTransport.frame(transport, axis, values)
+                    SdkTransport.frame(transport, self.axis, values)
                 except Exception as error:
-                    raise RuntimeError(f'Seeed J{axis} 发送失败：{error}') from error
+                    raise RuntimeError(f'Seeed J{self.axis} 发送失败：{error}') from error
 
         class NoGroupLifecycle:
             def __getattr__(self, name):
                 raise PermissionError(f'禁止组级操作：{name}')
 
-        limits = config.axes[axis-1]
-        name = f'joint{axis}'
-        joint = upstream.JointCfg(name, axis, 0xFD, MODELS[axis], 'robstride', kp=limits.kp, kd=limits.kd)
-        group = upstream.JointGroup('onsite-single-axis', [name], [joint], {name: CheckedMotor()}, {'robstride': NoGroupLifecycle()})
         super().authorize(config, permit)
-        self.trial_group = group
+        for axis in permit.axes:
+            limits = config.axes[axis-1]
+            name = f'joint{axis}'
+            joint = upstream.JointCfg(name, axis, 0xFD, MODELS[axis], 'robstride', kp=limits.kp, kd=limits.kd)
+            self.trial_groups[axis] = upstream.JointGroup('onsite-approved', [name], [joint], {name: CheckedMotor(axis)}, {'robstride': NoGroupLifecycle()})
+        self.trial_group = self.trial_groups[permit.axes[0]]
 
     def frame(self, axis, values):
-        if not self.trial_group or not self.permit or self.permit.axes != (axis,):
-            raise PermissionError('不是当次获准单轴')
+        if axis not in self.trial_groups or not self.permit or axis not in self.permit.axes:
+            raise PermissionError('不是当次获准轴')
         if len(values) != 5 or not all(finite(v) for v in values):
             raise ValueError('需要五个明确 MIT 参数')
-        self.trial_group.send_mit(*([v] for v in values))
+        self.trial_groups[axis].send_mit(*([v] for v in values))
 
     def close(self):
         super().close()
         self.trial_group = None
+        self.trial_groups.clear()
+        self.previous_samples.clear()
         if self.arm:
             self.arm._connected = False
             self.arm._motor_map.clear()

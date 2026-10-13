@@ -114,17 +114,23 @@ class Trajectory:
     durations: tuple
 
     @classmethod
-    def create(cls, start, waypoints, config):
+    def create(cls, start, waypoints, config, *, axes=None):
         points = (vector(start, 'start'),) + tuple(vector(p, 'waypoint') for p in waypoints)
         if len(points) < 2:
             raise ValueError('At least one waypoint required')
+        selected = tuple(range(1, AXES+1)) if axes is None else tuple(axes)
+        if not selected or len(set(selected)) != len(selected) or any(type(i) is not int or not 1 <= i <= AXES for i in selected):
+            raise ValueError('Explicit valid controlled axes required')
         durations = []
         for q in points:
-            if any(not a.q_min <= x <= a.q_max for x, a in zip(q, config.axes)):
+            if any(q[i-1] != points[0][i-1] for i in range(1, AXES+1) if i not in selected):
+                raise ValueError('Uncommanded axis must remain at its raw start')
+            if any(not config.axes[i-1].q_min <= q[i-1] <= config.axes[i-1].q_max for i in selected):
                 raise ValueError('Raw continuous position outside mock limits; no wrap/clip')
         for left, right in zip(points, points[1:]):
             required = config.policy.period
-            for x, y, a in zip(left, right, config.axes):
+            for i in selected:
+                x, y, a = left[i-1], right[i-1], config.axes[i-1]
                 d = abs(y-x)
                 # Exact extrema of the unit septic's first three derivatives.
                 required = max(required, d*(35/16)/a.v_max,
