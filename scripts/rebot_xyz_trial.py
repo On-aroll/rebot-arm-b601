@@ -86,13 +86,24 @@ def plan_nearby(robot, start, config):
         software_effort_limits_Nm=[a.torque_max for a in config.axes],
         insufficient_axes=[i+1 for i,a in enumerate(config.axes) if peaks[i]>a.torque_max],
         continuous_external_support_verified=False)
+    # Raising an abort threshold does not produce holding torque. Check whether
+    # the actual configured PD/feedforward could balance the model within the
+    # existing tracking-error bound. Friction/payload still require site testing.
+    residuals=np.max(np.abs(gravity_samples-np.asarray([a.tau_ff for a in config.axes])),axis=0)
+    required_offsets=np.asarray([residuals[i]/a.kp if a.kp>0 else math.inf for i,a in enumerate(config.axes)])
+    static_balance_check=dict(source='gravity residual divided by configured MIT Kp; not physical acceptance',
+        required_offset_deg=np.rad2deg(required_offsets).tolist(),
+        allowed_error_deg=[math.degrees(a.error_max) for a in config.axes],
+        insufficient_axes=[i+1 for i,a in enumerate(config.axes) if required_offsets[i]>a.error_max],
+        payload_and_friction_validated=False)
     return dict(ok=True,expected_start=q.tolist(),start_xyz_m=xyz.tolist(),**selected,
                 controlled_axes=list(AXES),gripper_commanded=False,orientation_mode='position',
                 selection='smallest joint distance among six seeded 5 mm axis candidates; not a global optimum',
                 candidate_count=len(candidates),rejected=rejected,config_hash=config.fingerprint,
                 start_boundary_tolerance_deg=math.degrees(margin),
                 boundary_recovery_axes=[i+1 for i in range(6) if not robot.lower[i]<=q[i]<=robot.upper[i]],
-                gravity_check=gravity_check,execution_ready=not gravity_check['insufficient_axes'],
+                gravity_check=gravity_check,static_balance_check=static_balance_check,
+                execution_ready=not (gravity_check['insufficient_axes'] or static_balance_check['insufficient_axes']),
                 planned_at=time.time(),hardware_writes=0)
 
 
@@ -102,8 +113,9 @@ def execute(config, plan, evidence):
         raise ValueError('需要通过的六轴只读起点与邻近 XYZ 预演')
     if plan.get('config_hash')!=config.fingerprint or not 0<=time.time()-plan.get('planned_at',0)<60:
         raise ValueError('预演已过期或配置变化，请重新准备')
-    if plan.get('execution_ready') is not True or plan.get('gravity_check',{}).get('insufficient_axes')!=[]:
-        raise ValueError('承重控制尚未验证，当前软件力矩包络不足；不要求现场手托，不使能六轴')
+    if (plan.get('execution_ready') is not True or plan.get('gravity_check',{}).get('insufficient_axes')!=[]
+            or plan.get('static_balance_check',{}).get('insufficient_axes')!=[]):
+        raise ValueError('承重控制尚未验证；放宽软件力矩上限不等于已有足够的 PD/前馈力矩，不使能六轴')
     start,target=plan['expected_start'],plan['target']
     if len(start)!=6 or len(target)!=6 or any(abs(a-b)>=math.radians(60) for a,b in zip(start,target)):
         raise ValueError('本轮必须六轴且每轴变化小于 60°')

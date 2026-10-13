@@ -53,14 +53,52 @@ class NearbyPlan(unittest.TestCase):
         self.assertEqual(plan['boundary_recovery_axes'],[2])
         self.assertEqual(plan['start_boundary_tolerance_deg'],1.)
         self.assertTrue(all(a.q_min<=q<=a.q_max for a,q in zip(self.config.axes,plan['target'])))
-        self.assertEqual(plan['gravity_check']['insufficient_axes'],[2,3,4])
+        self.assertEqual(plan['gravity_check']['insufficient_axes'],[])
         self.assertEqual(plan['gravity_check']['sample_count'],51)
         self.assertTrue(np.all(np.asarray(plan['gravity_check']['sampled_peak_Nm'])>=np.abs(plan['gravity_check']['estimated_Nm'])))
         self.assertFalse(plan['execution_ready'])
+        self.assertEqual(plan['static_balance_check']['insufficient_axes'],[2,3,4])
         with patch('rebot_seeed_transport.SeeedTransport') as bus:
             with self.assertRaisesRegex(ValueError,'承重控制尚未验证'):
                 execute(self.config,plan,'synthetic approval')
             bus.assert_not_called()
+
+    def test_raising_effort_ceiling_alone_does_not_authorize_unbalanced_motion(self):
+        start=np.deg2rad([61.96,-.39,.1,.56,-.91,4.46])
+        raised=replace(self.config,axes=tuple(replace(a,torque_max=10.) for a in self.config.axes))
+        plan=plan_nearby(self.robot,start,raised)
+        self.assertEqual(plan['gravity_check']['insufficient_axes'],[])
+        self.assertEqual(plan['static_balance_check']['insufficient_axes'],[2,3,4])
+        self.assertFalse(plan['execution_ready'])
+        self.assertGreater(plan['static_balance_check']['required_offset_deg'][2],100.)
+        with patch('rebot_seeed_transport.SeeedTransport') as bus:
+            with self.assertRaisesRegex(ValueError,'PD/前馈'):
+                execute(raised,plan,'synthetic onsite evidence')
+            bus.assert_not_called()
+
+    def test_pending_gravity_profile_has_capacity_in_model_but_is_not_the_active_config(self):
+        from reBotArm_control_py.dynamics import compute_generalized_gravity
+        start=np.deg2rad([61.96,-.39,.1,.56,-.91,4.46])
+        proposal=json.loads((Path(__file__).resolve().parents[1]/'configs/trials/seeed-nearby-xyz-gravity-proposal.json').read_text())
+        self.assertEqual(proposal['approval'],'pending-explicit-MIT-gain-and-feedforward-change')
+        gravity=compute_generalized_gravity(self.robot.pm,start)[:6]
+        # Dataclass replacement is for pure offline comparison only. The real
+        # parser still rejects these unapproved gains/feedforward values.
+        preview=replace(self.config,axes=tuple(replace(a,kp=p['proposed_kp'],kd=p['proposed_kd'],
+            kp_max=p['proposed_kp'],kd_max=p['proposed_kd'],tau_ff=float(g))
+            for a,p,g in zip(self.config.axes,proposal['axes'],gravity)))
+        plan=plan_nearby(self.robot,start,preview)
+        self.assertEqual(plan['gravity_check']['insufficient_axes'],[])
+        self.assertEqual(plan['static_balance_check']['insufficient_axes'],[])
+        self.assertLess(max(plan['static_balance_check']['required_offset_deg']),.01)
+        # A hypothetical 0.5 Nm unmodelled load/friction is only a scenario,
+        # not calibration of this arm or proof of hardware tracking.
+        self.assertTrue(all(.5/a.kp<a.error_max for a in preview.axes))
+        self.assertTrue(all(a.torque_max<rated for a,rated in zip(preview.axes,[11,11,11,5,5,5])))
+        self.assertTrue(all((a.kp,a.kd,a.tau_ff)==(3.,1.,0.) for a in self.config.axes))
+        from dataclasses import asdict
+        with self.assertRaisesRegex(ValueError,'3/1/0'):
+            Envelope.parse(dict(asdict(preview),source='explicit-onsite-trial-proposal'))
 
 
 if __name__=='__main__': unittest.main()

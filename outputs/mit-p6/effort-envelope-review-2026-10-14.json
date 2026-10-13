@@ -1,0 +1,220 @@
+{
+  "reviewed_at": 1791911818.2002254,
+  "source": "Recorded read-only pose replay; not a fresh start or execution permit",
+  "hardware_writes": 0,
+  "motion_commands": 0,
+  "active_config_hash": "e741ab1c21ca620a58ce12daa6ea8d726db19660c96ba25719caa0db93fbf641",
+  "software_effort_limits_Nm": [
+    1.0,
+    3.0,
+    9.0,
+    3.0,
+    1.0,
+    1.0
+  ],
+  "active_control_parameters": [
+    {
+      "axis": 1,
+      "kp": 3.0,
+      "kd": 1.0,
+      "tau_ff": 0.0
+    },
+    {
+      "axis": 2,
+      "kp": 3.0,
+      "kd": 1.0,
+      "tau_ff": 0.0
+    },
+    {
+      "axis": 3,
+      "kp": 3.0,
+      "kd": 1.0,
+      "tau_ff": 0.0
+    },
+    {
+      "axis": 4,
+      "kp": 3.0,
+      "kd": 1.0,
+      "tau_ff": 0.0
+    },
+    {
+      "axis": 5,
+      "kp": 3.0,
+      "kd": 1.0,
+      "tau_ff": 0.0
+    },
+    {
+      "axis": 6,
+      "kp": 3.0,
+      "kd": 1.0,
+      "tau_ff": 0.0
+    }
+  ],
+  "gravity_estimate_Nm": [
+    -1.280914198494021e-17,
+    1.5663915060811848,
+    6.74222089205861,
+    1.9961479319259057,
+    0.0002314703929261899,
+    -0.0008151444754431842
+  ],
+  "raised_envelope_capacity_check": {
+    "source": "Seeed compute_generalized_gravity with explicit locked RS URDF; estimate only",
+    "estimated_Nm": [
+      -1.280914198494021e-17,
+      1.5663915060811848,
+      6.74222089205861,
+      1.9961479319259057,
+      0.0002314703929261899,
+      -0.0008151444754431842
+    ],
+    "sampled_peak_Nm": [
+      6.807539536420049e-17,
+      1.5669650657437093,
+      6.74222089205861,
+      1.9961479319259057,
+      0.00037284533491567084,
+      0.0008151444754431842
+    ],
+    "sample_count": 51,
+    "software_effort_limits_Nm": [
+      1.0,
+      3.0,
+      9.0,
+      3.0,
+      1.0,
+      1.0
+    ],
+    "insufficient_axes": [],
+    "continuous_external_support_verified": false
+  },
+  "current_static_balance": {
+    "source": "gravity residual divided by configured MIT Kp; not physical acceptance",
+    "required_offset_deg": [
+      1.3001442810177127e-15,
+      29.92682830385137,
+      128.7669338866291,
+      38.12361726104065,
+      0.00712082136726987,
+      0.015568112712099944
+    ],
+    "allowed_error_deg": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "insufficient_axes": [
+      2,
+      3,
+      4
+    ],
+    "payload_and_friction_validated": false
+  },
+  "current_execution_ready": false,
+  "pending_proposal": {
+    "operation": "offline-gravity-control-proposal",
+    "approval": "pending-explicit-MIT-gain-and-feedforward-change",
+    "source": "engineering trial proposal based on locked Seeed RS gravity helper, not a device backup",
+    "official_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+    "official_reference": "https://github.com/Seeed-Projects/reBotArm_control_py/blob/6415d43130d1e143c70dc106096a857ac5556f81/reBotArm_control_py/controllers/gravity_compensation.py",
+    "software_envelope_file": "configs/trials/seeed-nearby-xyz-pending.json",
+    "axes": [
+      {
+        "id": 1,
+        "proposed_kp": 30.0,
+        "proposed_kd": 1.0,
+        "software_effort_limit_Nm": 1.0
+      },
+      {
+        "id": 2,
+        "proposed_kp": 50.0,
+        "proposed_kd": 2.0,
+        "software_effort_limit_Nm": 3.0
+      },
+      {
+        "id": 3,
+        "proposed_kp": 60.0,
+        "proposed_kd": 2.0,
+        "software_effort_limit_Nm": 9.0
+      },
+      {
+        "id": 4,
+        "proposed_kp": 40.0,
+        "proposed_kd": 1.0,
+        "software_effort_limit_Nm": 3.0
+      },
+      {
+        "id": 5,
+        "proposed_kp": 30.0,
+        "proposed_kd": 1.0,
+        "software_effort_limit_Nm": 1.0
+      },
+      {
+        "id": 6,
+        "proposed_kp": 30.0,
+        "proposed_kd": 1.0,
+        "software_effort_limit_Nm": 1.0
+      }
+    ],
+    "feedforward": "Seeed compute_generalized_gravity with explicit RS model and fresh joint feedback; identity direction; not an EEPROM write",
+    "initial_test": "Supported current-pose hold only; first position target equals fresh feedback, no homing or new XYZ target",
+    "following_test": "Only after observed holding and stopping: the prepared 5 mm nearby XYZ; J7 unchanged",
+    "unchanged": {
+      "velocity_limit_rad_s": 0.02,
+      "acceleration_limit_rad_s2": 0.04,
+      "jerk_limit_rad_s3": 0.2,
+      "tracking_error_deg": 1,
+      "start_tolerance_deg": 1
+    },
+    "not_applied": [
+      "MIT Kp/Kd remain 3/1 in the active trial envelope",
+      "MIT feedforward remains zero",
+      "No motor enable, mode change, parameter write or movement"
+    ],
+    "remaining": [
+      "Model gravity and friction are not calibrated on this arm",
+      "Holding/termination support must be established before XYZ movement",
+      "Live gravity integration needs separate ABI-compatible transport/runtime validation"
+    ],
+    "hardware_writes": 0
+  },
+  "model_preview_at_start_torques": {
+    "static_balance": {
+      "source": "gravity residual divided by configured MIT Kp; not physical acceptance",
+      "required_offset_deg": [
+        1.0555076893774128e-16,
+        0.0006572509592320114,
+        0.0007653058965777088,
+        0.0044398946212224335,
+        0.0002700062501634701,
+        4.1375664660453623e-07
+      ],
+      "allowed_error_deg": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "insufficient_axes": [],
+      "payload_and_friction_validated": false
+    },
+    "note": "Pure calculation with frozen start gravity; NOT live gravity control, physical tracking, or calibrated friction"
+  },
+  "verification": {
+    "virtual_sdk_mock_checks": 99,
+    "model_planning_checks": 5,
+    "official_pure_gravity_checks": 3,
+    "diff_check": "passed"
+  },
+  "remaining_risks": [
+    "Current gains/feedforward remain 3/1/0 and cannot balance this model within 1 degree.",
+    "New gains and nonzero feedforward require explicit user confirmation; live integration is not enabled.",
+    "Model/payload/contact/friction uncertainties require supported hold acceptance before XYZ movement.",
+    "Software torque bound is not a driver current limit or a physical safety controller."
+  ]
+}
