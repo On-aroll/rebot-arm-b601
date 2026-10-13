@@ -21,7 +21,6 @@ import { JointList } from './robot-arm/JointList';
 import { JointControlPanel } from './robot-arm/JointControlPanel';
 import { SelfCheckReport } from './robot-arm/SelfCheckReport';
 import {
-  armPreferredMode,
   clampByLimit,
   LiveMoveScheduler,
   ParamManager,
@@ -80,6 +79,7 @@ function RobotArmToolbar({
   onOpenFirstUse,
 }) {
   const { t } = useI18n();
+  const { readOnly = false } = useConnectionContext();
   const importFileRef = React.useRef(null);
   const onImportFile = (e) => {
     const f = e.target.files?.[0];
@@ -101,7 +101,7 @@ function RobotArmToolbar({
         </div>
         <button
           className="ghostBtn"
-          disabled={!canAction || armToolbarBusy}
+          disabled={!canAction || armToolbarBusy || readOnly}
           onClick={detectRobotArmModel}
           title={t('arm_auto_detect_hint')}
         >
@@ -124,21 +124,21 @@ function RobotArmToolbar({
         >
           {t('arm_self_check')}
         </button>
-        <button disabled={!canAction || armToolbarBusy} onClick={enableAllRobotArm}>
+        <button disabled={!canAction || armToolbarBusy || readOnly} onClick={enableAllRobotArm}>
           {t('arm_enable_all')}
         </button>
-        <button disabled={!canAction || armToolbarBusy} onClick={disableAllRobotArm}>
+        <button disabled={!canAction || armToolbarBusy || readOnly} onClick={disableAllRobotArm}>
           {t('arm_disable_all')}
         </button>
         <button
-          disabled={!canAction || armToolbarBusy}
+          disabled={!canAction || armToolbarBusy || readOnly}
           onClick={onZeroAllSafe}
           title={t('arm_zero_all_guard_hint')}
         >
           {t('arm_zero_all')}
         </button>
         <button
-          disabled={!canAction || armToolbarBusy || !paramSupported}
+          disabled={!canAction || armToolbarBusy || !paramSupported || readOnly}
           onClick={applyDefaultTemplate}
           title={paramSupported ? '' : t('arm_params_vendor_unsupported')}
         >
@@ -156,7 +156,7 @@ function RobotArmToolbar({
         {paramSupported && (
           <>
             <button
-              disabled={!canAction || armToolbarBusy || !paramSupported}
+              disabled={!canAction || armToolbarBusy || !paramSupported || readOnly}
               onClick={() => importFileRef.current?.click()}
               title={
                 paramSupported ? t('arm_import_params_hint') : t('arm_params_vendor_unsupported')
@@ -423,10 +423,10 @@ function mapJoint7ToGripperOpening(joint7Raw, { joint7Min, joint7Max, openingMax
   return t * openingMax;
 }
 
-export function RobotArmPage() {
+export function RobotArmPage({ onOpenConsole }) {
   const { t } = useI18n();
   const { devMode } = useDevContext();
-  const { connected, canAction, sendCmd } = useConnectionContext();
+  const { connected, canAction, sendCmd, readOnly = false } = useConnectionContext();
   const { uiPrefs, setUiPref } = usePreferencesContext();
   const { patchControl, controlMotor, zeroMotor, refreshMotorState } = useControlContext();
   const {
@@ -466,32 +466,11 @@ export function RobotArmPage() {
   const [firstUseOpen, setFirstUseOpen] = React.useState(false);
   const [gripperOpening, setGripperOpening] = React.useState(0);
   const rowsRef = React.useRef(robotArmJointRows);
-  const controlSyncSignatureRef = React.useRef('');
   const jointLimits = React.useMemo(() => jointLimitsForProfile(robotArmModel), [robotArmModel]);
 
   React.useEffect(() => {
     rowsRef.current = robotArmJointRows;
   }, [robotArmJointRows]);
-
-  React.useEffect(() => {
-    if (!robotArmJointRows.length) return;
-    const syncSignature = `${robotArmModel}:${robotArmJointRows.map((row) => row.key).join('|')}`;
-    if (controlSyncSignatureRef.current === syncSignature) return;
-    robotArmJointRows.forEach((row) => {
-      const lim = jointLimits[Number(row.joint)] || { min: -3.14, max: 3.14 };
-      const rawPos = Number(row?.hit?.pos);
-      const synced = row?.hit?.online && Number.isFinite(rawPos) ? clampByLimit(rawPos, lim) : 0;
-      patchControl(row.key, {
-        mode: armPreferredMode(),
-        vlim: 1,
-        tau: 0,
-        kp: 30,
-        kd: 1,
-        target: synced,
-      });
-    });
-    controlSyncSignatureRef.current = syncSignature;
-  }, [jointLimits, robotArmJointRows, patchControl, robotArmModel]);
 
   React.useEffect(() => {
     if (robotArmJointRows.length === 0) return;
@@ -540,6 +519,9 @@ export function RobotArmPage() {
         </div>
 
         {!connected && <div className="offlineBanner">{t('ws_disconnected_motor')}</div>}
+        {readOnly && <p role="note">本页可连接、逐轴读取原始角度和参数，角度输入用于本地模型预览。实机运动、写零位和设备参数仍锁定；逐轴电源操作沿用控制台的现场确认入口。
+          {onOpenConsole && <button className="ghostBtn small" onClick={onOpenConsole}>打开逐轴现场控制</button>}
+        </p>}
 
         <ZeroDialogManager
           robotArmJointRows={robotArmJointRows}
@@ -583,6 +565,7 @@ export function RobotArmPage() {
                         setArmParamOpBusy={setArmParamOpBusy}
                         askZeroConfirm={zero.askZeroConfirm}
                         canAction={canAction}
+                        readOnly={readOnly}
                         armToolbarBusy={armToolbarBusy}
                       >
                         {(params) => {

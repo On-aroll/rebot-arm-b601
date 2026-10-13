@@ -219,6 +219,7 @@ export function useGatewayBridge({
   }, []);
 
   return {
+    readOnly: true,
     connText,
     connected,
     targetTransport,

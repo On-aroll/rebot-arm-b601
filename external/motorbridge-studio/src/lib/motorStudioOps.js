@@ -764,6 +764,16 @@ export async function probeMotorOp({
   pushLog,
   options = {},
 }) {
+  // Known RS joints are queried individually. The old scan op is not in the
+  // audited allowlist and cannot establish feedback on this B601 firmware.
+  if (String(h?.vendor) === 'robstride') {
+    try {
+      const next = await refreshMotorStateOp({ h, vendors, setTargetFor, sendCmd, setHits, pushLog });
+      return next.online === true;
+    } finally {
+      if (options?.closeBusAfter !== false) await closeBusQuietly();
+    }
+  }
   try {
     const model = modelForHit(h, vendors);
     await setTargetFor(h.vendor, model, h.esc_id, h.mst_id);

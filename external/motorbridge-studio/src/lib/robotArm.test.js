@@ -9,9 +9,17 @@ import {
   buildDamiaoTemplateParsed,
   jointLimitsForProfile,
   normalizeRobotArmModel,
+  buildRobotArmHit,
 } from './robotArm';
 
 describe('robotArm config', () => {
+  it('routes B601-RS proximal joints to rs-06 and distal joints to rs-00', () => {
+    for (let joint = 1; joint <= 7; joint += 1) {
+      const hit = buildRobotArmHit({ joint, esc_id: joint }, 'rebot-arm-robstride');
+      expect(hit.model).toBe(joint <= 3 ? 'rs-06' : 'rs-00');
+      expect(hit.mst_id).toBe(253);
+    }
+  });
   it('normalizes aliases', () => {
     expect(normalizeRobotArmModel('reBot-Arm Lite')).toBe('rebot-arm-robstride');
     expect(normalizeRobotArmModel('7dof')).toBe('rebot-arm-damiao');

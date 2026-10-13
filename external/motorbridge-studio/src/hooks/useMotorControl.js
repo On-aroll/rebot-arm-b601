@@ -160,8 +160,13 @@ export function useMotorControl({
       pushLog,
     });
 
-  const refreshMotorState = (h) =>
-    refreshMotorStateOp({ h, vendors, setTargetFor, sendCmd, setHits, pushLog });
+  const refreshMotorState = async (h) => {
+    try {
+      return await refreshMotorStateOp({ h, vendors, setTargetFor, sendCmd, setHits, pushLog });
+    } finally {
+      await closeBusQuietly();
+    }
+  };
 
   const probeMotor = (h, options = {}) =>
     probeMotorOp({ h, vendors, setTargetFor, sendCmd, setHits, closeBusQuietly, pushLog, options });

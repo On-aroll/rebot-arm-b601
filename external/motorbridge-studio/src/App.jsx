@@ -23,6 +23,10 @@ export default function App() {
   const [page, setPage] = React.useState(/\/(console|writing)$/.test(window.location.pathname) ? 'console' : 'general');
   const [helpOpen, setHelpOpen] = React.useState(false);
   const version = `v${appPackage.version}`;
+  const openConsole = () => {
+    studio.connection.disconnectWs();
+    setPage('console');
+  };
 
   const pathParts = String(window.location.pathname || '/').replace(import.meta.env.BASE_URL, '/')
     .split('/')
@@ -57,7 +61,7 @@ export default function App() {
             <button className={page === 'robot_arm' ? 'primary' : ''} onClick={() => setPage('robot_arm')}>
               {t('page_robot_arm')}
             </button>
-            <button className={page === 'console' ? 'primary' : ''} onClick={() => setPage('console')}>
+            <button className={page === 'console' ? 'primary' : ''} onClick={openConsole}>
               {t('page_console')}
             </button>
             <button className="ghostBtn" onClick={() => setHelpOpen(true)}>
@@ -92,7 +96,7 @@ export default function App() {
             <MotorSection />
           </>
         ) : (
-          <RobotArmPage />
+          <RobotArmPage onOpenConsole={openConsole} />
         )}
 
         {page !== 'console' && <StateLogsPanel />}

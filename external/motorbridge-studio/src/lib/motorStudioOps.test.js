@@ -6,6 +6,7 @@ import {
   mapParamStreamToHit,
   mapResponseToHit,
   probeHitMatchesTarget,
+  probeMotorOp,
 } from './motorStudioOps';
 
 describe('motor studio ops', () => {
@@ -131,6 +132,30 @@ describe('motor studio ops', () => {
         acceptAnyFeedbackId: true,
       })
     ).toBe(false);
+  });
+});
+
+describe('legacy arm RS probe regression', () => {
+  it('reads a known joint through the read-only allowlist instead of blocked scan', async () => {
+    const sendCmd = vi.fn(async (op, p) => {
+      if (op !== 'robstride_read_param') throw new Error(`LOCKED: ${op}`);
+      return { ok: true, data: { value: p.param_id === 0x7019 ? -7.2 : 0 } };
+    });
+    const closeBusQuietly = vi.fn();
+    const setHits = vi.fn();
+    expect(await probeMotorOp({ h: { vendor: 'robstride', model: 'rs-06', esc_id: 1, mst_id: 253 },
+      vendors: {}, sendCmd, setTargetFor: vi.fn(), setHits, closeBusQuietly, pushLog: vi.fn(), options: { fastProbe: true } })).toBe(true);
+    const hits = setHits.mock.calls.at(-1)[0]([]);
+    expect(hits[0].pos).toBe(-7.2);
+    expect(hits[0].run_mode).toBe(0);
+    expect(closeBusQuietly).toHaveBeenCalledTimes(1);
+  });
+  it('does not mark an unresponsive motor online and releases the bus', async () => {
+    const closeBusQuietly = vi.fn();
+    expect(await probeMotorOp({ h: { vendor: 'robstride', model: 'rs-06', esc_id: 1, mst_id: 253 },
+      vendors: {}, sendCmd: vi.fn(async () => ({ ok: false, error: 'timeout' })), setTargetFor: vi.fn(),
+      setHits: vi.fn(), closeBusQuietly, pushLog: vi.fn() })).toBe(false);
+    expect(closeBusQuietly).toHaveBeenCalledTimes(1);
   });
 });
 

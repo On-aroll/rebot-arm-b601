@@ -31,3 +31,22 @@ it('times out unacknowledged reads without retry or extra socket traffic',async(
   await vi.advanceTimersByTimeAsync(21);await rejected;
   expect(client.pendingByReqId.size).toBe(0);expect(client.ws.sent).toHaveLength(1);client.disconnect();
 });
+it('explicit console clients permit only correctly routed enable/disable while all motion and parameter writes stay locked', async () => {
+  vi.stubGlobal('WebSocket', Socket);
+  const client = new WsGatewayClient({ allowPowerControl: true });
+  client.connect('ws://mock.test');
+  for (const op of ['enable', 'disable']) {
+    const promise = client.send(op, { vendor: 'robstride', motor_id: 2, feedback_id: 0xfd });
+    const request = client.ws.sent.at(-1);
+    client.ws.reply(request);
+    expect((await promise).ok).toBe(true);
+  }
+  for (const op of ['mit', 'pos_vel', 'vel', 'ensure_mode', 'robstride_write_param', 'set_zero', 'set_id', 'stop', 'clear_error']) {
+    await expect(client.send(op, {})).rejects.toThrow('LOCKED');
+  }
+  for (const payload of [{}, { vendor: 'robstride', motor_id: 8, feedback_id: 0xfd }, { vendor: 'robstride', motor_id: 2, feedback_id: 0xfd, op: 'mit' }]) {
+    await expect(client.send('enable', payload)).rejects.toThrow('LOCKED');
+  }
+  expect(client.ws.sent).toHaveLength(2);
+  client.disconnect();
+});

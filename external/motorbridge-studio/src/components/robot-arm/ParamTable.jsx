@@ -59,6 +59,7 @@ export function ParamTable({
   exportParams,
   importParams,
   onClose,
+  readOnly = false,
 }) {
   const { t } = useI18n();
   const fileInputRef = React.useRef(null);
@@ -87,14 +88,14 @@ export function ParamTable({
         </button>
         <button
           className="primary"
-          disabled={!canAction || armToolbarBusy || !canWriteParams || !paramSupported}
+          disabled={!canAction || armToolbarBusy || !canWriteParams || !paramSupported || readOnly}
           onClick={writeParams}
           title={paramSupported ? '' : t('arm_params_vendor_unsupported')}
         >
           {t('arm_write_params')}
         </button>
         <button
-          disabled={!canAction || armToolbarBusy || !paramSupported}
+          disabled={!canAction || armToolbarBusy || !paramSupported || readOnly}
           onClick={applyDefaultTemplate}
           title={paramSupported ? '' : t('arm_params_vendor_unsupported')}
         >
@@ -112,7 +113,7 @@ export function ParamTable({
         {paramSupported && (
           <>
             <button
-              disabled={!canAction || armToolbarBusy || paramBusy || !paramSupported}
+              disabled={!canAction || armToolbarBusy || paramBusy || !paramSupported || readOnly}
               onClick={() => fileInputRef.current?.click()}
               title={
                 paramSupported ? t('arm_import_params_hint') : t('arm_params_vendor_unsupported')
