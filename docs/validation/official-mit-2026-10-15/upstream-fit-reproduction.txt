@@ -1,0 +1,2 @@
+file                                             n    off      k       c   fric    rms
+pdsweep_joint3_1784312640.json                 897  +0.02  0.946  +0.121 +0.491  0.265

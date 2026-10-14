@@ -13,7 +13,7 @@ sys.path.insert(0,str(ROOT/'scripts'))
 from test_mit_hardware_offline import Clock,Controller,Owner
 from rebot_mit_hardware import Envelope,HardwareExecutor,MotionIntent,OnsitePermit,Sample
 from rebot_seeed_transport import SeeedTransport
-from rebot_official_motion import OfficialMIT,policy
+from rebot_official_motion import OfficialMIT,policy,apply_slow_gains,gain_policy
 
 
 class OfficialMotion(unittest.TestCase):
@@ -187,6 +187,82 @@ class OfficialMotion(unittest.TestCase):
         self.assertNotEqual(before,Envelope.parse(raw).fingerprint)
         raw.pop('feedforward');self.assertEqual(raw,saved)
         self.assertEqual(Envelope.parse(raw).fingerprint,before)
+
+    def test_reviewed_official_gains_move_six_virtual_motors_and_preserve_source(self):
+        raw=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        apply_slow_gains(raw);raw['feedforward']=policy();raw['policy']['task_timeout']=15.
+        self.config=Envelope.parse(raw);self.executor.config=self.config
+        self.permit.config_hash=self.config.fingerprint
+        self.executor.run(self.intent,self.permit)
+        self.assertEqual(self.executor.state,'ARRIVED',self.executor.reason)
+        for c in self.calls('mit'):
+            self.assertEqual(c[4:6],(self.config.axes[c[1]-1].kp,self.config.axes[c[1]-1].kd))
+        self.assertEqual(self.executor.status()['control']['gain_review'],gain_policy())
+        j3=[c for c in self.calls('mit') if c[1]==3]
+        self.assertEqual(j3[0][6],0.)
+        self.assertGreater(j3[-1][6],6.)
+        ramp=[c[6] for c in j3[:-1]]
+        self.assertTrue(all(a<=b+1e-8 for a,b in zip(ramp,ramp[1:])))
+        self.assertEqual(self.config.policy.start_speed,.01)
+
+    def test_gravity_fade_is_cancelled_without_any_post_stop_target(self):
+        raw=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        apply_slow_gains(raw);raw['feedforward']=policy();raw['policy']['task_timeout']=15.
+        self.executor.config=Envelope.parse(raw);self.permit.config_hash=self.executor.config.fingerprint
+        def cancel_during_fade():
+            if any(c[0]=='mit' and c[1]==3 and c[6]>0 for c in self.sdk.calls): self.executor.cancel()
+        self.sdk.after_frame=cancel_during_fade
+        self.executor.run(self.intent,self.permit)
+        self.assertEqual(self.executor.state,'CANCELLED',self.executor.reason)
+        first_stop=next(i for i,c in enumerate(self.sdk.calls) if c[0]=='disable')
+        self.assertFalse(any(c[0]=='mit' for c in self.sdk.calls[first_stop:]))
+        self.assertFalse(self.executor.motion_arrived)
+
+    def test_reviewed_profile_installs_fresh_hold_before_the_post_enable_sweep(self):
+        raw=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        apply_slow_gains(raw);raw['feedforward']=policy();raw['policy']['task_timeout']=15.
+        self.executor.config=Envelope.parse(raw);self.permit.config_hash=self.executor.config.fingerprint
+        self.executor.run(self.intent,self.permit)
+        self.assertEqual(self.executor.state,'ARRIVED',self.executor.reason)
+        for axis in range(1,7):
+            index=next(i for i,c in enumerate(self.sdk.calls) if c==('enable',axis))
+            first=self.sdk.calls[index+1]
+            self.assertEqual(first[0:2],('mit',axis))
+            self.assertAlmostEqual(first[2],self.start[axis-1])
+            self.assertEqual(first[3],0.)
+            self.assertEqual(first[6],0.)
+
+    def test_reviewed_startup_waits_for_sub_limit_speed_before_enabling_next_axis(self):
+        raw=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        apply_slow_gains(raw);raw['feedforward']=policy();raw['policy']['task_timeout']=15.
+        self.executor.config=Envelope.parse(raw);self.permit.config_hash=self.executor.config.fingerprint
+        original=self.bus.read; injected=False
+        def read(*args,**kwargs):
+            nonlocal injected
+            samples=original(*args,**kwargs)
+            if self.bus.active=={1,2,3} and not injected:
+                samples[3]=replace(samples[3],qd=.015);injected=True
+            return samples
+        self.bus.read=read
+        self.executor.run(self.intent,self.permit)
+        self.assertEqual(self.executor.state,'ARRIVED',self.executor.reason)
+        self.assertTrue(injected)
+        self.assertEqual(self.executor.config.axes[2].v_max,.02)
+
+    def test_gains_need_explicit_source_and_cannot_exceed_official_limits(self):
+        raw=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        original=copy.deepcopy(raw);old_hash=Envelope.parse(raw).fingerprint
+        raw['axes'][0]['kp']=raw['axes'][0]['kp_max']=50.
+        with self.assertRaisesRegex(ValueError,'3/1/0'):Envelope.parse(raw)
+        raw['gain_review']=gain_policy();Envelope.parse(raw)
+        for field,value in (('kp',81.),('kd',6.),('tau_ff',.1)):
+            changed=copy.deepcopy(raw);changed['axes'][0][field]=value
+            if field=='kp':changed['axes'][0]['kp_max']=value
+            if field=='kd':changed['axes'][0]['kd_max']=value
+            with self.assertRaisesRegex(ValueError,'官方到点增益'):Envelope.parse(changed)
+        raw['gain_review']['source_commit']='wrong'
+        with self.assertRaisesRegex(ValueError,'配置来源'):Envelope.parse(raw)
+        self.assertEqual(Envelope.parse(original).fingerprint,old_hash)
 
 
 if __name__=='__main__':unittest.main()

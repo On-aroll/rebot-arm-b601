@@ -42,11 +42,14 @@ def configure_motion(raw, start, target, settings):
         raise ValueError('任务时限请选择按轨迹自动计算或手动设置')
     task_raw=copy.deepcopy(raw)
     ff=settings.get('feedforward_mode','none')
-    if ff not in ('none','seeed-rs-gravity-v1'):
+    if ff not in ('none','seeed-rs-gravity-v1','seeed-rs-slow-position-v1'):
         raise ValueError('请选择无前馈或 Seeed 官方重力前馈')
     if ff!='none':
         from rebot_official_motion import policy
         task_raw['feedforward']=policy()
+        if ff=='seeed-rs-slow-position-v1':
+            from rebot_official_motion import apply_slow_gains
+            apply_slow_gains(task_raw)
     else: task_raw.pop('feedforward',None)
     for axis in task_raw['axes']: axis['v_max']=speed
     if mode=='manual':
@@ -194,7 +197,7 @@ def assess_motion(robot, start, target, config):
     if gravity_check['insufficient_axes']:
         reasons.append('J'+ '/J'.join(map(str,gravity_check['insufficient_axes']))+' 模型重力估算超过当前软件力矩包络')
     if static_balance_check['insufficient_axes']:
-        reasons.append('J'+ '/J'.join(map(str,static_balance_check['insufficient_axes']))+' 的 Kp=3、Kd=1、前馈=0 在现有 1° 跟踪误差内不足以平衡模型重力；未自动改增益或前馈')
+        reasons.append('J'+ '/J'.join(map(str,static_balance_check['insufficient_axes']))+' 的本次增益与前馈在当前跟踪误差边界内不足以平衡模型重力；未自动改增益或前馈')
     if reserve_check['insufficient_axes']:
         reasons.append('J'+ '/J'.join(map(str,reserve_check['insufficient_axes']))+' 官方重力前馈加跟踪余量超过本次软件力矩包络')
     return dict(gravity_check=gravity_check,static_balance_check=static_balance_check,
@@ -215,7 +218,7 @@ def execute(config, plan, evidence):
     start,target=plan['expected_start'],plan['target']
     if len(start)!=6 or len(target)!=6 or any(abs(a-b)>=math.radians(60) for a,b in zip(start,target)):
         raise ValueError('本轮必须六轴且每轴变化小于 60°')
-    permit=OnsitePermit(config.fingerprint,AXES,time.monotonic()+15,evidence,AXES,True,True,
+    permit=OnsitePermit(config.fingerprint,AXES,time.monotonic()+config.policy.task_timeout+10,evidence,AXES,True,True,
                         coordinated_start_checked=True)
     executor=HardwareExecutor(config,SeeedTransport(position_window=True))
     for sig in (signal.SIGINT,signal.SIGTERM):
@@ -231,7 +234,7 @@ def execute(config, plan, evidence):
         executor.cancel(); executor.worker.join()
     result=executor.status()
     result.update(backend='seeed-sdk-p4-guarded',plan=plan,command_log=executor.frames,
-                  parameter_source='user 3/1/0; explicit software envelope, not a device parameter backup')
+                  parameter_source='explicit task envelope and pinned official/reference sources; not a device parameter backup')
     return result
 
 

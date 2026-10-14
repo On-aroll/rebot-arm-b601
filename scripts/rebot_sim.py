@@ -389,7 +389,7 @@ def serve(port,host='127.0.0.1'):
                                     assessment=assess_motion(r,q,np.deg2rad(result['q_deg']),envelope)
                                     result['hardware_preflight']=dict(assessment,parameters=raw,motion_settings=settings,
                                         task_timeout_s=envelope.policy.task_timeout,
-                                        parameter_source='existing gains and limits; task speed and duration selected in webpage; not device parameters')
+                                        parameter_source='task gains/source and timing explicitly selected in webpage; saved drafts and device parameters unchanged')
                                     if np.isfinite(assessment.get('hardware_seconds',np.nan)):
                                         result['seconds']=assessment['hardware_seconds']
                                         plan['seconds']=result['seconds']

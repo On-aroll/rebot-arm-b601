@@ -1,0 +1,133 @@
+{
+  "type": "validation-report",
+  "branch": "codex/mit-console-protection",
+  "physical_xyz_arrival": false,
+  "device_parameter_writes": 0,
+  "saved_proposal_sha256": "fb34001a6aad21c25b53f25ba9b7781d7882f391f745467f00f1e1a6af8f3b3f",
+  "records": [
+    {
+      "file": "device-readonly-audit.json",
+      "sha256": "509fd3d6e2d8ed2851637491d38c6d99fbd6e22a06c1318844047e32e3a31e9f"
+    },
+    {
+      "file": "communication-timeout-readonly.json",
+      "sha256": "3b3bddb074eb58bf5ffdb2377ea1667e982532c7ac28acc133def32182cb22f7"
+    },
+    {
+      "file": "j1-kp50-result.json",
+      "sha256": "e5f2d407b1181ec1d357576ce413c5aa04da7fd6bc42b6026ca26b1c1bc09685",
+      "state": "FAULT",
+      "reason": "使能后实机起点发生变化，需重新规划",
+      "motion_arrived_before_stop": false,
+      "stop_ack_axes": [
+        1
+      ],
+      "stationary_feedback": true
+    },
+    {
+      "file": "j1-kp50-settle-result.json",
+      "sha256": "d178ce30b03286fb2a2ff7532969978531b58d52c5ca65ced2b1657282496a05",
+      "state": "FAULT",
+      "reason": "任务超时; 停止反馈验证失败：J1 实测速度超过试验边界：-0.020781 rad/s，允许 ±0.02 rad/s",
+      "motion_arrived_before_stop": false,
+      "stop_ack_axes": [
+        1
+      ],
+      "stationary_feedback": null
+    },
+    {
+      "file": "j1-kp80-result.json",
+      "sha256": "5abf402acf9adfcc3ce14492891dd27d02719c5254351479131cc5b796b0881c",
+      "state": "FAULT",
+      "reason": "任务超时; 停止反馈验证失败：J1 实测速度超过试验边界：-0.039061 rad/s，允许 ±0.02 rad/s",
+      "motion_arrived_before_stop": false,
+      "stop_ack_axes": [
+        1
+      ],
+      "stationary_feedback": null
+    },
+    {
+      "file": "j1-kp80-reverse-result.json",
+      "sha256": "62b5b15cd442cb75c271a842974bab72e4f4526d45cb63f32b9c4764ba592a9e",
+      "state": "FAULT",
+      "reason": "任务超时",
+      "motion_arrived_before_stop": false,
+      "stop_ack_axes": [
+        1
+      ],
+      "stationary_feedback": true
+    },
+    {
+      "file": "nearby-xyz-result.json",
+      "sha256": "00c1d05e38acc27244ebb0038b0d50eb6fe5eb1cec6839f8e82f0032adbeb7e5",
+      "state": "FAULT",
+      "reason": "J3 实测速度超过试验边界：0.139101 rad/s，允许 ±0.02 rad/s",
+      "motion_arrived_before_stop": false,
+      "stop_ack_axes": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "stationary_feedback": true
+    },
+    {
+      "file": "nearby-xyz-ramp-result-v2.json",
+      "sha256": "ce709dab02408c698b5c04eae2c5f03e591263b194d4817f2f44b1991e64c0c8",
+      "state": "FAULT",
+      "reason": "使能后起点变化，停止并重新预演",
+      "motion_arrived_before_stop": false,
+      "stop_ack_axes": [
+        1,
+        2,
+        3
+      ],
+      "stationary_feedback": true
+    },
+    {
+      "file": "nearby-xyz-ramp-result-v3.json",
+      "sha256": "2d856544f18c31049b23b4d63d41937837f07c39210b7fd9dc940ac2d5bbf463",
+      "state": "FAULT",
+      "reason": "J3 跟踪误差/软件转矩包络超限",
+      "motion_arrived_before_stop": false,
+      "stop_ack_axes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "stationary_feedback": true
+    }
+  ],
+  "last_trial_command_batch_interval_median_s": 0.2504889420015388,
+  "onsite_observation": {
+    "j1_support_does_not_restrict_rotation": true,
+    "j3_j4_support_load_status": "awaiting-user-observation"
+  },
+  "browser_preflight": {
+    "goal_mm": [
+      300.59,
+      16.23,
+      227.02
+    ],
+    "execution_ready_model_only": true,
+    "residual_mm": 0.001,
+    "hardware_seconds": 1.5,
+    "task_timeout_s": 7,
+    "hardware_commands_from_browser": 0,
+    "screenshot": "console-profile.png",
+    "screenshot_sha256": "cc5d5f7a8800845343c561cd634e1a6c064f93830b76bfb0159f02e6a79ed4a1"
+  },
+  "upstream_calibration_reproduction": {
+    "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+    "script": "tools/gravity_calibration/fit_sweeps.py",
+    "dataset": "tools/gravity_calibration/data/pdsweep_joint3_1784312640.json",
+    "qmin_rad": 0.4,
+    "samples": 897,
+    "scope": "recorded upstream data; no hardware connection; not local calibration",
+    "parameters_applied": false,
+    "output": "upstream-fit-reproduction.txt"
+  }
+}

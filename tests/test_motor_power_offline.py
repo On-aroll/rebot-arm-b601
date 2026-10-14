@@ -317,8 +317,9 @@ class HoldTrial(unittest.TestCase):
 
     def wait(self, seconds):
         self.clock.wait(seconds)
-        self.sequence += 1
-        self.executor.heartbeat(self.executor.session, self.sequence, True)
+        if self.executor.state != 'STOPPING':
+            self.sequence += 1
+            self.executor.heartbeat(self.executor.session, self.sequence, True)
 
     def commands(self, operation):
         return [c for c in self.sdk.calls if c[0] == operation]
@@ -373,17 +374,22 @@ class HoldTrial(unittest.TestCase):
                             self.clock.wait(.015)
                     self.sdk.callback = read_delay
                 sent_at = []
+                disabled_at = []
                 original = Motor.send_mit
+                original_disable = Motor.disable
                 def send(motor, *values):
                     sent_at.append(self.clock())
                     original(motor, *values)
-                with patch.object(Motor, 'send_mit', send):
+                def disable(motor):
+                    disabled_at.append(self.clock())
+                    original_disable(motor)
+                with patch.object(Motor, 'send_mit', send), patch.object(Motor, 'disable', disable):
                     self.executor.run(self.intent, self.permit)
                 self.assertEqual(self.executor.state, 'FAULT')
                 self.assertIn('3 秒保持已结束', self.executor.reason)
                 self.assertEqual(self.commands('disable'), [('disable', 1)])
                 self.assertGreaterEqual(self.clock(), 3.)
-                self.assertLess(self.clock(), 3.1)
+                self.assertLess(disabled_at[0], 3.1)
                 self.assertTrue(all(t < 3. for t in sent_at))
                 self.assertFalse(self.executor.motion_arrived)
 

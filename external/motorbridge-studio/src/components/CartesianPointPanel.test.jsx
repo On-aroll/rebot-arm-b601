@@ -128,4 +128,13 @@ describe('Two-mode XYZ workflow', () => {
     expect(posts(fetch)[1].body.hardware_motion.feedforward_mode).toBe('seeed-rs-gravity-v1');
     expect(posts(fetch).map(p=>p.body.action)).toEqual(['point_plan','point_plan']);
   });
+  it('selects reviewed official point gains without applying device settings or executing',async()=>{
+    const {fetch}=setup({mode:'hardware'});
+    fireEvent.change(screen.getByLabelText('轨迹控制方案'),{target:{value:'seeed-rs-slow-position-v1'}});
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));await screen.findByText(/预演通过/);
+    expect(posts(fetch)[0].body.hardware_motion.feedforward_mode).toBe('seeed-rs-slow-position-v1');
+    expect(posts(fetch).map(p=>p.body.action)).toEqual(['point_plan']);
+    fireEvent.change(screen.getByLabelText('轨迹控制方案'),{target:{value:'none'}});
+    expect(screen.getByRole('button',{name:'确认实机执行'}).disabled).toBe(true);
+  });
 });

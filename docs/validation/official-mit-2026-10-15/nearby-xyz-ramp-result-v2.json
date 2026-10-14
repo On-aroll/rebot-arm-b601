@@ -1,0 +1,880 @@
+{
+  "state": "FAULT",
+  "reason": "使能后起点变化，停止并重新预演",
+  "motion_arrived_before_stop": false,
+  "stop": {
+    "requested": true,
+    "policy": "explicitly-supported-release",
+    "attempted_axes": [
+      1,
+      2,
+      3
+    ],
+    "sent_axes": [
+      1,
+      2,
+      3
+    ],
+    "sdk_status_ack_axes": [
+      1,
+      2,
+      3
+    ],
+    "send_status": {
+      "1": "host-send-complete-and-sdk-status-observed",
+      "2": "host-send-complete-and-sdk-status-observed",
+      "3": "host-send-complete-and-sdk-status-observed"
+    },
+    "errors": {},
+    "physical_stopped": false,
+    "observations": [
+      {
+        "time": 44693.309076167,
+        "feedback": {
+          "1": {
+            "axis": 1,
+            "q": -0.0189617071300745,
+            "qd": -0.000702161288310667,
+            "mode": 0,
+            "requested_at": 44693.234543445,
+            "received_at": 44693.259239418,
+            "qd_raw": 0.0
+          },
+          "2": {
+            "axis": 2,
+            "q": -0.0032810105476528406,
+            "qd": 0.0014036774638616877,
+            "mode": 0,
+            "requested_at": 44693.25951382,
+            "received_at": 44693.284149237,
+            "qd_raw": 0.0
+          },
+          "3": {
+            "axis": 3,
+            "q": 0.004814995918422937,
+            "qd": -0.0028063738925862957,
+            "mode": 0,
+            "requested_at": 44693.284406813,
+            "received_at": 44693.309040662,
+            "qd_raw": 0.0
+          }
+        }
+      },
+      {
+        "time": 44693.48331618,
+        "feedback": {
+          "1": {
+            "axis": 1,
+            "q": -0.01883387379348278,
+            "qd": 0.0007315428822483916,
+            "mode": 0,
+            "requested_at": 44693.4093969,
+            "received_at": 44693.433875623,
+            "qd_raw": 0.0
+          },
+          "2": {
+            "axis": 2,
+            "q": -0.0033236080780625343,
+            "qd": -0.00024410294625839141,
+            "mode": 0,
+            "requested_at": 44693.434149575,
+            "received_at": 44693.458526315,
+            "qd_raw": 0.0
+          },
+          "3": {
+            "axis": 3,
+            "q": 0.004900243598967791,
+            "qd": 0.0004891091087196027,
+            "mode": 0,
+            "requested_at": 44693.458756883,
+            "received_at": 44693.483274084,
+            "qd_raw": 0.0
+          }
+        }
+      },
+      {
+        "time": 44693.657693961,
+        "feedback": {
+          "1": {
+            "axis": 1,
+            "q": -0.018919095396995544,
+            "qd": -0.0004888502804042934,
+            "mode": 0,
+            "requested_at": 44693.583691548,
+            "received_at": 44693.608242342,
+            "qd_raw": 0.0
+          },
+          "2": {
+            "axis": 2,
+            "q": -0.003238413017243147,
+            "qd": 0.0004886446092482457,
+            "mode": 0,
+            "requested_at": 44693.608475794,
+            "received_at": 44693.632899577,
+            "qd_raw": 0.0
+          },
+          "3": {
+            "axis": 3,
+            "q": 0.004814995918422937,
+            "qd": -0.0004886455169197323,
+            "mode": 0,
+            "requested_at": 44693.633286133,
+            "received_at": 44693.657659037,
+            "qd_raw": 0.0
+          }
+        }
+      }
+    ],
+    "stationary_sample": true,
+    "observation_duration_s": 0.4234785379958339
+  },
+  "frames": 7,
+  "feedback": {
+    "1": {
+      "axis": 1,
+      "q": -0.01883387379348278,
+      "qd": 0.0004790176175131951,
+      "mode": 0,
+      "requested_at": 44693.052530829,
+      "received_at": 44693.077138151,
+      "qd_raw": 0.0
+    },
+    "2": {
+      "axis": 2,
+      "q": -0.0035366483498364687,
+      "qd": -0.0011953115533306392,
+      "mode": 0,
+      "requested_at": 44693.077371539,
+      "received_at": 44693.102051429,
+      "qd_raw": 0.0
+    },
+    "3": {
+      "axis": 3,
+      "q": 0.005326324142515659,
+      "qd": -0.014528980164630107,
+      "mode": 0,
+      "requested_at": 44693.102317236,
+      "received_at": 44693.126725321,
+      "qd_raw": 0.0
+    },
+    "4": {
+      "axis": 4,
+      "q": 0.015493214130401611,
+      "qd": -0.00042958642494885055,
+      "mode": 0,
+      "requested_at": 44693.126980255,
+      "received_at": 44693.151643739,
+      "qd_raw": -0.03910663351416588
+    },
+    "5": {
+      "axis": 5,
+      "q": 0.03110145963728428,
+      "qd": -0.00021438833465942963,
+      "mode": 0,
+      "requested_at": 44693.151967344,
+      "received_at": 44693.176536521,
+      "qd_raw": 0.010588742792606354
+    },
+    "6": {
+      "axis": 6,
+      "q": 0.042644668370485306,
+      "qd": 0.0004279271127116053,
+      "mode": 0,
+      "requested_at": 44693.176942513,
+      "received_at": 44693.201456083,
+      "qd_raw": -0.055650390684604645
+    }
+  },
+  "control": {
+    "config_fingerprint": "0f4a3e604e61edade72e6fe5a8ccaa1bf5fa0d5130ee450ab8d5b9c734a6209d",
+    "feedforward": {
+      "mode": "seeed-rs-gravity-v1",
+      "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+      "model_sha256": "3838ca8f9d586be22a89b33c7cbdd4abd43d4a92a2de377b294eef4c5bd7654d"
+    },
+    "gain_review": {
+      "mode": "seeed-rs-bounded-gains-v1",
+      "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+      "config_sha256": "ff8d04f47da57906edf61510a512bbb40c9d0309927af4acf7081568392c8def",
+      "reference_commit": "aa807cf2affe85b13b86221159871aae7742c01b",
+      "reference_config_sha256": "2b487458a5f243229eb9b1fe52c4f93e413b70e5fcf2c056df6b0d5401e8fe30",
+      "startup_gravity_ramp_s": 4.0
+    },
+    "kp": [
+      80.0,
+      75.0,
+      75.0,
+      40.0,
+      40.0,
+      40.0
+    ],
+    "kd": [
+      5.0,
+      6.0,
+      6.0,
+      4.0,
+      4.0,
+      4.0
+    ],
+    "fixed_tau_ff": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "speed_limits_rad_s": [
+      0.02,
+      0.02,
+      0.02,
+      0.02,
+      0.02,
+      0.02
+    ]
+  },
+  "physical_acceptance": false,
+  "hardware_permission": false,
+  "note": "试验执行记录不是动态标定、转矩实测或物理停止验收",
+  "backend": "seeed-sdk-p4-guarded",
+  "plan": {
+    "ok": true,
+    "expected_start": [
+      -0.019046926870942116,
+      -0.00315316510386765,
+      0.006689866539090872,
+      0.01545486506074667,
+      0.03129320964217186,
+      0.042606331408023834
+    ],
+    "start_xyz_m": [
+      0.3005981217390863,
+      0.012076727853729593,
+      0.22656892693269753
+    ],
+    "goal_xyz_m": [
+      0.3005981217390863,
+      0.017076727853729594,
+      0.22656892693269753
+    ],
+    "target": [
+      -0.03052500651192934,
+      0.0009384084180965363,
+      0.007182910149890554,
+      0.01854897293492611,
+      0.03889595626787373,
+      0.042606331408023834
+    ],
+    "delta_deg": [
+      -0.6576455203436031,
+      0.23442989437602574,
+      0.028249318014712553,
+      0.177279322548677,
+      0.43560529436004514,
+      0.0
+    ],
+    "joint_distance_rad": 0.014700531892564794,
+    "duration_s": 1.5,
+    "position_error_mm": 0.00062091687651971,
+    "controlled_axes": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "gripper_commanded": false,
+    "orientation_mode": "position",
+    "selection": "smallest joint distance among six seeded 5 mm axis candidates; not a global optimum",
+    "candidate_count": 5,
+    "rejected": [
+      {
+        "axis": 0,
+        "sign": -1,
+        "reason": "Trajectory requires at least 12.1 s plus 0.3 s reserve; task budget is 10 s"
+      }
+    ],
+    "config_hash": "0f4a3e604e61edade72e6fe5a8ccaa1bf5fa0d5130ee450ab8d5b9c734a6209d",
+    "start_boundary_tolerance_deg": 1.0,
+    "boundary_recovery_axes": [
+      2
+    ],
+    "gravity_check": {
+      "source": "Seeed compute_generalized_gravity with explicit locked RS URDF; estimate only",
+      "estimated_Nm": [
+        -4.126466746426362e-18,
+        1.570644100322065,
+        6.737929567841426,
+        1.9940438216627654,
+        -0.0006960982718434985,
+        -0.0008172678044453255
+      ],
+      "sampled_peak_Nm": [
+        2.9124697662266664e-17,
+        1.570644100322065,
+        6.744916625876666,
+        1.9940438216627654,
+        0.0008416692063665449,
+        0.0008172693613703675
+      ],
+      "sample_count": 51,
+      "software_effort_limits_Nm": [
+        1.0,
+        3.0,
+        9.0,
+        3.0,
+        1.0,
+        1.0
+      ],
+      "insufficient_axes": [],
+      "continuous_external_support_verified": false
+    },
+    "static_balance_check": {
+      "source": "gravity residual divided by configured MIT Kp; not physical acceptance",
+      "required_offset_deg": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "allowed_error_deg": [
+        0.6,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "insufficient_axes": [],
+      "payload_and_friction_validated": false,
+      "nominal_model_only": true,
+      "feedforward_mode": "seeed-rs-gravity-v1"
+    },
+    "effort_reserve_check": {
+      "estimated_peak_with_tracking_reserve_Nm": [
+        0.9377580409572781,
+        2.999641039317812,
+        8.173913564872413,
+        2.772175522460497,
+        0.7789733700040983,
+        0.7789489701591021
+      ],
+      "insufficient_axes": []
+    },
+    "control_source": "Seeed RebotArmEndPose._loop_cb: measured q → g(q) → MIT q/dq/kp/kd/tau",
+    "execution_ready": true,
+    "execution_reasons": [],
+    "hardware_seconds": 1.5,
+    "planned_at": 1791996007.914817,
+    "hardware_writes": 0,
+    "envelope": {
+      "source": "explicit-onsite-trial-proposal",
+      "version": "seeed-nearby-xyz-per-axis-effort-v3",
+      "axes": [
+        {
+          "q_min": -2.6179938779914944,
+          "q_max": 2.6179938779914944,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 80.0,
+          "kd": 5.0,
+          "tau_ff": 0.0,
+          "kp_max": 80.0,
+          "kd_max": 5.0,
+          "torque_max": 1.0,
+          "error_max": 0.010471975511965976
+        },
+        {
+          "q_min": -0.0,
+          "q_max": 3.14,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 75.0,
+          "kd": 6.0,
+          "tau_ff": 0.0,
+          "kp_max": 75.0,
+          "kd_max": 6.0,
+          "torque_max": 3.0,
+          "error_max": 0.017453292519943295
+        },
+        {
+          "q_min": -0.0,
+          "q_max": 3.14,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 75.0,
+          "kd": 6.0,
+          "tau_ff": 0.0,
+          "kp_max": 75.0,
+          "kd_max": 6.0,
+          "torque_max": 9.0,
+          "error_max": 0.017453292519943295
+        },
+        {
+          "q_min": -1.57,
+          "q_max": 1.57,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 40.0,
+          "kd": 4.0,
+          "tau_ff": 0.0,
+          "kp_max": 40.0,
+          "kd_max": 4.0,
+          "torque_max": 3.0,
+          "error_max": 0.017453292519943295
+        },
+        {
+          "q_min": -1.57,
+          "q_max": 1.57,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 40.0,
+          "kd": 4.0,
+          "tau_ff": 0.0,
+          "kp_max": 40.0,
+          "kd_max": 4.0,
+          "torque_max": 1.0,
+          "error_max": 0.017453292519943295
+        },
+        {
+          "q_min": -3.14,
+          "q_max": 3.14,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 40.0,
+          "kd": 4.0,
+          "tau_ff": 0.0,
+          "kp_max": 40.0,
+          "kd_max": 4.0,
+          "torque_max": 1.0,
+          "error_max": 0.017453292519943295
+        }
+      ],
+      "policy": {
+        "period": 0.1,
+        "io_timeout": 0.05,
+        "feedback_age": 0.6,
+        "command_age": 0.3,
+        "jitter_max": 0.15,
+        "lease_timeout": 0.75,
+        "start_speed": 0.01,
+        "arrival_q": 0.0017453292519943296,
+        "arrival_qd": 0.01,
+        "settle_time": 0.3,
+        "task_timeout": 10.0
+      },
+      "start_boundary_tolerance": 0.017453292519943295,
+      "gain_review": {
+        "mode": "seeed-rs-bounded-gains-v1",
+        "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+        "config_sha256": "ff8d04f47da57906edf61510a512bbb40c9d0309927af4acf7081568392c8def",
+        "reference_commit": "aa807cf2affe85b13b86221159871aae7742c01b",
+        "reference_config_sha256": "2b487458a5f243229eb9b1fe52c4f93e413b70e5fcf2c056df6b0d5401e8fe30",
+        "startup_gravity_ramp_s": 4.0
+      },
+      "feedforward": {
+        "mode": "seeed-rs-gravity-v1",
+        "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+        "model_sha256": "3838ca8f9d586be22a89b33c7cbdd4abd43d4a92a2de377b294eef4c5bd7654d"
+      }
+    }
+  },
+  "command_log": [
+    {
+      "time": 44692.694885659,
+      "phase": "enable-hold",
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.018919095396995544,
+            0.0,
+            80.0,
+            5.0,
+            0.0
+          ],
+          "estimated_effort": 0.001378002434024865
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018919095396995544,
+          "qd": 0.000275600486804973,
+          "mode": 0,
+          "requested_at": 44692.665675773,
+          "received_at": 44692.69011948,
+          "qd_raw": 0.0
+        }
+      }
+    },
+    {
+      "time": 44692.844725461,
+      "phase": "first-hold",
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.01900431700050831,
+            0.0,
+            80.0,
+            5.0,
+            0.0
+          ],
+          "estimated_effort": 0.014114494137602147
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.01900431700050831,
+          "qd": -0.0028228988275204293,
+          "mode": 0,
+          "requested_at": 44692.695884922,
+          "received_at": 44692.720289118,
+          "qd_raw": 0.0
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0031105678062886,
+          "qd": -0.00023062639896658795,
+          "mode": 0,
+          "requested_at": 44692.720731174,
+          "received_at": 44692.74523775,
+          "qd_raw": 0.0
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.006519423797726631,
+          "qd": -0.0009236493852788519,
+          "mode": 0,
+          "requested_at": 44692.745557894,
+          "received_at": 44692.770077708,
+          "qd_raw": 0.0
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.01545486506074667,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 44692.770302224,
+          "received_at": 44692.794932529,
+          "qd_raw": 0.024675626307725906
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.031216507777571678,
+          "qd": 0.00041589487769380374,
+          "mode": 0,
+          "requested_at": 44692.795180834,
+          "received_at": 44692.819757751,
+          "qd_raw": 0.025239819660782814
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04272136837244034,
+          "qd": 0.0012486191199924642,
+          "mode": 0,
+          "requested_at": 44692.820012285,
+          "received_at": 44692.844550867,
+          "qd_raw": 0.02780626155436039
+        }
+      }
+    },
+    {
+      "time": 44692.845041651,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.01900431700050831,
+            0.0,
+            80.0,
+            5.0,
+            0.0
+          ],
+          "estimated_effort": 0.014114494137602147
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.01900431700050831,
+          "qd": -0.0028228988275204293,
+          "mode": 0,
+          "requested_at": 44692.695884922,
+          "received_at": 44692.720289118,
+          "qd_raw": 0.0
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0031105678062886,
+          "qd": -0.00023062639896658795,
+          "mode": 0,
+          "requested_at": 44692.720731174,
+          "received_at": 44692.74523775,
+          "qd_raw": 0.0
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.006519423797726631,
+          "qd": -0.0009236493852788519,
+          "mode": 0,
+          "requested_at": 44692.745557894,
+          "received_at": 44692.770077708,
+          "qd_raw": 0.0
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.01545486506074667,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 44692.770302224,
+          "received_at": 44692.794932529,
+          "qd_raw": 0.024675626307725906
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.031216507777571678,
+          "qd": 0.00041589487769380374,
+          "mode": 0,
+          "requested_at": 44692.795180834,
+          "received_at": 44692.819757751,
+          "qd_raw": 0.025239819660782814
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04272136837244034,
+          "qd": 0.0012486191199924642,
+          "mode": 0,
+          "requested_at": 44692.820012285,
+          "received_at": 44692.844550867,
+          "qd_raw": 0.02780626155436039
+        }
+      }
+    },
+    {
+      "time": 44692.874247201,
+      "phase": "enable-hold",
+      "commands": [
+        {
+          "axis": 2,
+          "values": [
+            -0.0031105678062886,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.0
+        }
+      ],
+      "feedback": {
+        "2": {
+          "axis": 2,
+          "q": -0.0031105678062886,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 44692.845340583,
+          "received_at": 44692.869855995,
+          "qd_raw": 0.0
+        }
+      }
+    },
+    {
+      "time": 44693.022354407,
+      "phase": "first-hold",
+      "commands": [
+        {
+          "axis": 2,
+          "values": [
+            -0.0033236080780625343,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.02372241511226242
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018919095396995544,
+          "qd": 0.0004765286876628724,
+          "mode": 0,
+          "requested_at": 44692.874749473,
+          "received_at": 44692.899101264,
+          "qd_raw": 0.0
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0033236080780625343,
+          "qd": -0.003953735852043737,
+          "mode": 0,
+          "requested_at": 44692.899304301,
+          "received_at": 44692.923658845,
+          "qd_raw": 0.0
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.006562074180692434,
+          "qd": 0.00023917214390952268,
+          "mode": 0,
+          "requested_at": 44692.923913169,
+          "received_at": 44692.94837252,
+          "qd_raw": 0.0
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.015569913201034069,
+          "qd": 0.0006457829034471519,
+          "mode": 0,
+          "requested_at": 44692.948578079,
+          "received_at": 44692.972962608,
+          "qd_raw": -0.007356221321970224
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.031139809638261795,
+          "qd": -0.0004311266714370275,
+          "mode": 0,
+          "requested_at": 44692.973205433,
+          "received_at": 44692.99753642,
+          "qd_raw": 0.03345106542110443
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04256796836853027,
+          "qd": -0.0008633421556357879,
+          "mode": 0,
+          "requested_at": 44692.997756776,
+          "received_at": 44693.022169549,
+          "qd_raw": -0.09392545372247696
+        }
+      }
+    },
+    {
+      "time": 44693.022672499,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.01900431700050831,
+            0.0,
+            80.0,
+            5.0,
+            0.0
+          ],
+          "estimated_effort": 0.00920037171933548
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.0033236080780625343,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.02372241511226242
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018919095396995544,
+          "qd": 0.0004765286876628724,
+          "mode": 0,
+          "requested_at": 44692.874749473,
+          "received_at": 44692.899101264,
+          "qd_raw": 0.0
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0033236080780625343,
+          "qd": -0.003953735852043737,
+          "mode": 0,
+          "requested_at": 44692.899304301,
+          "received_at": 44692.923658845,
+          "qd_raw": 0.0
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.006562074180692434,
+          "qd": 0.00023917214390952268,
+          "mode": 0,
+          "requested_at": 44692.923913169,
+          "received_at": 44692.94837252,
+          "qd_raw": 0.0
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.015569913201034069,
+          "qd": 0.0006457829034471519,
+          "mode": 0,
+          "requested_at": 44692.948578079,
+          "received_at": 44692.972962608,
+          "qd_raw": -0.007356221321970224
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.031139809638261795,
+          "qd": -0.0004311266714370275,
+          "mode": 0,
+          "requested_at": 44692.973205433,
+          "received_at": 44692.99753642,
+          "qd_raw": 0.03345106542110443
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04256796836853027,
+          "qd": -0.0008633421556357879,
+          "mode": 0,
+          "requested_at": 44692.997756776,
+          "received_at": 44693.022169549,
+          "qd_raw": -0.09392545372247696
+        }
+      }
+    },
+    {
+      "time": 44693.05196661,
+      "phase": "enable-hold",
+      "commands": [
+        {
+          "axis": 3,
+          "values": [
+            0.006476826034486294,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.0051565671908189205
+        }
+      ],
+      "feedback": {
+        "3": {
+          "axis": 3,
+          "q": 0.006476826034486294,
+          "qd": -0.0008594278651364867,
+          "mode": 0,
+          "requested_at": 44693.023134848,
+          "received_at": 44693.047534323,
+          "qd_raw": 0.0
+        }
+      }
+    }
+  ],
+  "parameter_source": "explicit task envelope and pinned official/reference sources; not a device parameter backup",
+  "device_parameter_writes": 0
+}

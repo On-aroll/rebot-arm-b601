@@ -125,9 +125,10 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
         onChange={e=>{setFeedforwardMode(e.target.value);invalidate();}}>
         <option value="none">原方案：Kp=3 / Kd=1 / 前馈=0</option>
         <option value="seeed-rs-gravity-v1">Seeed 官方：Kp=3 / Kd=1 + 重力前馈</option>
+        <option value="seeed-rs-slow-position-v1">试验：官方范围增益 + 重力缓启动</option>
       </select></label>}
     </div></details>
-    {!offline && <p className="consoleNote">以上设置只用于本次任务。Kp=3、Kd=1、加速度与 jerk 沿用已有配置；自动时限最多 120 秒。官方方案随实测姿态计算重力前馈，不覆盖保存的前馈草稿或设备参数。修改后须重新预演，现场确认后再执行。</p>}
+    {!offline && <p className="consoleNote">以上设置只用于本次任务，不覆盖保存草稿或设备参数。加速度与 jerk 沿用已有配置，自动时限最多 120 秒，修改后须重新预演。{feedforwardMode==='seeed-rs-slow-position-v1' && <> 本次 Kp 80/75/75/40/40/40、Kd 5/6/6/4/4/4 在锁定官方/参考范围内；J1/J2 跟踪边界为 0.6°/0.75°，其余为 1°。官方模型的重力力矩以 4 秒渐变接入，这是本项目适配，真实到位仍待验收。</>}</p>}
     <div className="consoleActions">
       <button disabled={occupied || !previewReady} onClick={preview}>{pending ? '处理中…' : '计算并预演'}</button>
       {offline ? <button className="primary" disabled={occupied || invalidPlan || submitted || !virtualEnabled} onClick={execute}>执行虚拟动作</button>
@@ -137,7 +138,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     {!previewReady && <p className="consoleNote">{offline ? '等待完整、新鲜的虚拟电机反馈；请检查虚拟服务。' : '请先连接实机，取得完整、新鲜的六轴位置。'}</p>}
     {offline && !virtualEnabled && <p className="consoleNote">可以先预演；执行前点击上方“使能虚拟电机”。</p>}
     {!offline && !hardwareConfirmed && !executing && <p className="consoleNote">预演通过后，勾选上方一次现场确认即可点击“确认实机执行”。</p>}
-    {!offline && <p className="consoleNote">使能本身不会保持姿态。{feedforwardMode==='none'?'本次使用 Kp=3、Kd=1、前馈=0。':'本次复用 Seeed 官方 MIT 轨迹回调，使用 Kp=3、Kd=1 和随姿态变化的重力前馈。'}首帧目标为实测当前位置；停止不自动回零，沿用已有撤力流程。</p>}
+    {!offline && <p className="consoleNote">使能本身不会保持姿态。{feedforwardMode==='none'?'本次使用 Kp=3、Kd=1、前馈=0。':feedforwardMode==='seeed-rs-slow-position-v1'?'本次使用受限官方到点增益与随姿态变化的重力前馈。':'本次复用 Seeed 官方 MIT 轨迹回调，使用 Kp=3、Kd=1 和随姿态变化的重力前馈。'}首帧目标为实测当前位置；停止不自动回零，沿用已有撤力流程。</p>}
     <p className="consoleNote">预演检查模型内的关节路径与碰撞，末端不保证走直线；不验证真实承重或现场障碍。</p>
     {plan && <div className="pointPlanSummary">
       <span>{offline ? '预计运动' : Number.isFinite(plan.hardware_preflight?.hardware_seconds) ? '实机预计运动' : '模型预演估计'} <strong>{plan.seconds.toFixed(1)} s</strong></span>

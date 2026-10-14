@@ -81,6 +81,22 @@ class HardwareOffline(unittest.TestCase):
         with self.assertRaises(PermissionError): self.bus.enable(6)
         self.assertEqual(self.sdk.calls,[])
 
+    def test_small_enable_settling_holds_before_trajectory_without_relaxing_limits(self):
+        from dataclasses import replace
+        original=self.bus.read;counts=0
+        def read(*args,**kwargs):
+            nonlocal counts
+            samples=original(*args,**kwargs);counts+=1
+            if counts==3:
+                samples[6]=replace(samples[6],qd=self.config.policy.start_speed*1.5)
+            return samples
+        self.bus.read=read
+        self.run_trial()
+        self.assertEqual(self.executor.state,'ARRIVED',self.executor.reason)
+        commands=self.commands('mit')
+        self.assertTrue(all(c[2]==0. for c in commands[:2]))
+        self.assertEqual(self.executor.config.policy.start_speed,.01)
+
     def test_readonly_lifecycle_no_shutdown_no_defaults(self):
         self.bus.open_readonly(); self.bus.read(range(1,7),self.config.policy); self.bus.close()
         self.assertFalse(self.commands('enable')); self.assertFalse(self.commands('mit')); self.assertFalse(self.commands('disable'))
@@ -208,7 +224,7 @@ class HardwareOffline(unittest.TestCase):
         self.setUp(); self.sdk.after_frame=lambda:setattr(self.sdk.motors[6],'qd',.4)
         self.config=replace(self.config,axes=tuple(replace(a,torque_max=.01) for a in self.config.axes))
         self.executor.config=self.config; self.permit.config_hash=self.config.fingerprint
-        self.run_trial(); self.assertTrue('转矩' in self.executor.reason or '起点' in self.executor.reason); self.assertEqual(len(self.commands('mit')),1)
+        self.run_trial(); self.assertTrue('力矩' in self.executor.reason or '起点' in self.executor.reason); self.assertEqual(len(self.commands('mit')),1)
 
     def test_permit_cannot_replay_in_a_new_executor(self):
         self.run_trial(); previous=len(self.sdk.calls)
@@ -259,6 +275,27 @@ class HardwareOffline(unittest.TestCase):
                 self.assertTrue(self.executor.motion_arrived)
                 self.assertTrue(self.executor.reason)
                 self.assertFalse(self.executor.stop_result['physical_stopped'])
+
+    def test_release_recoil_is_recorded_then_requires_a_quiet_window(self):
+        from dataclasses import replace
+        original=self.bus.read;recoil=True
+        def read(*args,**kwargs):
+            nonlocal recoil
+            samples=original(*args,**kwargs)
+            if self.executor.state=='STOPPING' and recoil:
+                samples[6]=replace(samples[6],qd=self.config.axes[5].v_max*1.5)
+                recoil=False
+            return samples
+        self.bus.read=read
+        self.run_trial()
+        self.assertEqual(self.executor.state,'ARRIVED',self.executor.reason)
+        stop=self.executor.stop_result
+        self.assertTrue(stop['stationary_sample'])
+        self.assertFalse(stop['physical_stopped'])
+        self.assertEqual(stop['observations'][0]['feedback']['6']['qd'],.75)
+        self.assertGreaterEqual(stop['observation_duration_s'],self.config.policy.settle_time)
+        stop_index=next(i for i,c in enumerate(self.sdk.calls) if c[0]=='disable')
+        self.assertFalse(any(c[0]=='mit' for c in self.sdk.calls[stop_index+1:]))
 
     def test_stop_phase_is_visible_before_success(self):
         from unittest.mock import patch
