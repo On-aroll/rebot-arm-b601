@@ -120,7 +120,7 @@ export function ConsoleWorkspace() {
   const [ghost, setGhost] = React.useState(false);
   const [showPlan, setShowPlan] = React.useState(false);
   const [showTrail, setShowTrail] = React.useState(true);
-  const [now, setNow] = React.useState(Date.now());
+  const [clockTime, setNow] = React.useState(Date.now());
   const commandBusy = React.useRef(false);
   const config = useSoftwareConfig();
   const [expandedAxis, setExpandedAxis] = React.useState(() => {
@@ -163,6 +163,9 @@ export function ConsoleWorkspace() {
   }
   const gamepad = useGamepad();
   const gateway = useMotorGateway({ intervalMs: 500 });
+  // A completed query samples the same local clock after all axis readings.
+  // Do not judge new feedback against the previous 400 ms clock tick.
+  const now = Math.max(clockTime, gateway.updatedAt || 0);
 
   React.useEffect(() => {
     let disposed = false;

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ConsoleWorkspace } from './ConsoleWorkspace';
 
 const g = vi.hoisted(() => ({ status: 'disconnected', motors: {}, endpoint: 'ws://mock.test',
@@ -15,7 +15,7 @@ vi.mock('./RosControlPanel', () => ({ RosControlPanel: () => <div>ROS 虚拟诊�
 beforeEach(() => {
   window.history.replaceState({}, '', '/zh/studio/console');
   g.status = 'disconnected';
-  g.motors = {}; g.powerRequests = {}; g.powerPending = null; g.powerGroup = null;
+  g.motors = {}; g.updatedAt = 0; g.powerRequests = {}; g.powerPending = null; g.powerGroup = null;
   ros.running = false;
   ros.state = {backend:'ros2-fake',namespace:'rebotarm_validation',hardware:false,fresh:true,enabled:false,feedback_time:Date.now()/1000,q_rad:[.1,0,0,0,0,0],job:{status:'idle'}};
   vi.stubGlobal('fetch', vi.fn(async path => ({ ok: true, json: async () => path === '/studio-state'
@@ -56,6 +56,41 @@ it('switches to shared hardware controls without issuing commands or showing vir
   expect(g.connect).not.toHaveBeenCalled();
   expect(g.requestAllPower).not.toHaveBeenCalled();
   expect(ros.action).not.toHaveBeenCalled();
+});
+
+it('keeps newly received feedback fresh between clock ticks and still expires silent axes', () => {
+  vi.useFakeTimers();
+  try {
+    vi.setSystemTime(1000);
+    vi.stubGlobal('fetch', vi.fn(() => new Promise(() => {})));
+    window.history.replaceState({}, '', '/zh/studio/console?pose=hardware');
+    g.status = 'online';
+    const readings = time => Object.fromEntries([1,2,3,4,5,6,7].map(id => [id,
+      { mechPosRad: 0, positionUpdatedAt: time, fieldTimes: {runMode: time}, runMode: 0, error: '' }]));
+    g.motors = readings(1000); g.updatedAt = 1000;
+    const view = render(<ConsoleWorkspace />);
+    expect(screen.getByText('7 / 7')).toBeTruthy();
+
+    // A query completes before the independent 400 ms display clock ticks.
+    vi.setSystemTime(1250);
+    g.motors = readings(1250); g.updatedAt = 1250;
+    view.rerender(<ConsoleWorkspace />);
+    expect(screen.getByText('七轴反馈正常')).toBeTruthy();
+    expect(screen.getByText('7 / 7')).toBeTruthy();
+    expect(screen.getByText('反馈新鲜', {selector: '.deviceMetrics strong'})).toBeTruthy();
+
+    // A timestamp beyond the completed query remains invalid.
+    g.motors = {...g.motors, 7: {...g.motors[7], positionUpdatedAt: 1251}};
+    view.rerender(<ConsoleWorkspace />);
+    expect(screen.getByText('6 / 7')).toBeTruthy();
+    g.motors = readings(1250);
+    view.rerender(<ConsoleWorkspace />);
+
+    act(() => vi.advanceTimersByTime(3200));
+    expect(screen.getByText('0 / 7')).toBeTruthy();
+    expect(screen.getByText('待完整新鲜反馈')).toBeTruthy();
+    expect(g.requestAllPower).not.toHaveBeenCalled();
+  } finally { cleanup(); vi.useRealTimers(); }
 });
 
 it('locks mode switching during virtual motion and leaves task stop available', async () => {
