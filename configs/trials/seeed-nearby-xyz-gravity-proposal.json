@@ -8,37 +8,37 @@
   "axes": [
     {
       "id": 1,
-      "proposed_kp": 30.0,
+      "proposed_kp": 3.0,
       "proposed_kd": 1.0,
       "software_effort_limit_Nm": 1.0
     },
     {
       "id": 2,
-      "proposed_kp": 50.0,
+      "proposed_kp": 3.0,
       "proposed_kd": 2.0,
       "software_effort_limit_Nm": 3.0
     },
     {
       "id": 3,
-      "proposed_kp": 60.0,
+      "proposed_kp": 3.0,
       "proposed_kd": 2.0,
       "software_effort_limit_Nm": 9.0
     },
     {
       "id": 4,
-      "proposed_kp": 40.0,
+      "proposed_kp": 3.0,
       "proposed_kd": 1.0,
       "software_effort_limit_Nm": 3.0
     },
     {
       "id": 5,
-      "proposed_kp": 30.0,
+      "proposed_kp": 3.0,
       "proposed_kd": 1.0,
       "software_effort_limit_Nm": 1.0
     },
     {
       "id": 6,
-      "proposed_kp": 30.0,
+      "proposed_kp": 3.0,
       "proposed_kd": 1.0,
       "software_effort_limit_Nm": 1.0
     }
@@ -63,5 +63,6 @@
     "Holding/termination support must be established before XYZ movement",
     "Live gravity integration needs separate ABI-compatible transport/runtime validation"
   ],
-  "hardware_writes": 0
+  "hardware_writes": 0,
+  "kp_source": "User explicitly requires all Kp values to be 3; damping/feedforward changes remain pending."
 }

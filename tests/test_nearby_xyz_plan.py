@@ -81,6 +81,7 @@ class NearbyPlan(unittest.TestCase):
         start=np.deg2rad([61.96,-.39,.1,.56,-.91,4.46])
         proposal=json.loads((Path(__file__).resolve().parents[1]/'configs/trials/seeed-nearby-xyz-gravity-proposal.json').read_text())
         self.assertEqual(proposal['approval'],'pending-explicit-MIT-gain-and-feedforward-change')
+        self.assertTrue(all(p['proposed_kp']==3. for p in proposal['axes']))
         gravity=compute_generalized_gravity(self.robot.pm,start)[:6]
         # Dataclass replacement is for pure offline comparison only. The real
         # parser still rejects these unapproved gains/feedforward values.
@@ -90,10 +91,10 @@ class NearbyPlan(unittest.TestCase):
         plan=plan_nearby(self.robot,start,preview)
         self.assertEqual(plan['gravity_check']['insufficient_axes'],[])
         self.assertEqual(plan['static_balance_check']['insufficient_axes'],[])
-        self.assertLess(max(plan['static_balance_check']['required_offset_deg']),.01)
+        self.assertLess(max(plan['static_balance_check']['required_offset_deg']),1.)
         # A hypothetical 0.5 Nm unmodelled load/friction is only a scenario,
         # not calibration of this arm or proof of hardware tracking.
-        self.assertTrue(all(.5/a.kp<a.error_max for a in preview.axes))
+        self.assertTrue(all(.5/a.kp>a.error_max for a in preview.axes))
         self.assertTrue(all(a.torque_max<rated for a,rated in zip(preview.axes,[11,11,11,5,5,5])))
         self.assertTrue(all((a.kp,a.kd,a.tau_ff)==(3.,1.,0.) for a in self.config.axes))
         from dataclasses import asdict
