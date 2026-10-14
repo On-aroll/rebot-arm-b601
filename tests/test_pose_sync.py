@@ -7,7 +7,7 @@ from unittest.mock import patch
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'scripts'))
 from rebot_core import Robot, HOME
-from rebot_pose_sync import synchronize_pose
+from rebot_pose_sync import synchronize_pose, feedback_pose
 
 class PoseSync(unittest.TestCase):
     def setUp(self):
@@ -55,5 +55,17 @@ class PoseSync(unittest.TestCase):
         before=self.robot.d.qpos[self.robot.finger_qadr].copy(); ctrl=self.robot.d.ctrl[self.robot.finger_acts].copy()
         self.sync()
         np.testing.assert_array_equal(before,self.robot.d.qpos[self.robot.finger_qadr]); np.testing.assert_array_equal(ctrl,self.robot.d.ctrl[self.robot.finger_acts])
+
+    def test_preview_retains_subdegree_boundary_reading_without_syncing_or_changing_limits(self):
+        raw=float(self.robot.lower[1]-np.deg2rad(.39))
+        self.motors['2']['mechPosRad']=raw
+        before=self.robot.d.qpos.copy(); lower=self.robot.lower.copy()
+        q,_=feedback_pose(self.robot,self.motors,self.mapping,now=101,start_tolerance=np.deg2rad(1))
+        self.assertEqual(q[1],raw)
+        np.testing.assert_array_equal(before,self.robot.d.qpos)
+        np.testing.assert_array_equal(lower,self.robot.lower)
+        with self.assertRaises(ValueError): self.sync()
+        self.motors['2']['mechPosRad']=float(self.robot.lower[1]-np.deg2rad(1.01))
+        with self.assertRaises(ValueError): feedback_pose(self.robot,self.motors,self.mapping,now=101,start_tolerance=np.deg2rad(1))
 
 if __name__=='__main__': unittest.main(verbosity=2)

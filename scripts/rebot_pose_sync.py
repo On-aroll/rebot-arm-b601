@@ -9,8 +9,10 @@ import uuid
 import numpy as np
 
 
-def synchronize_pose(robot, motors, mapping, *, now=None, max_age_s=3.):
+def feedback_pose(robot, motors, mapping, *, now=None, max_age_s=3., start_tolerance=0.):
     now = time.time() if now is None else now
+    if not math.isfinite(start_tolerance) or not 0 <= start_tolerance <= math.radians(1):
+        raise ValueError('起点容差必须在 0–1° 内；目标限位不变')
     if not isinstance(mapping, dict) or mapping.get('version') != 1 or not isinstance(mapping.get('axes'), list) or len(mapping['axes']) != 6:
         raise ValueError('关节映射格式不完整；需要已有的六轴映射')
     q, measured = [], []
@@ -26,11 +28,16 @@ def synchronize_pose(robot, motors, mapping, *, now=None, max_age_s=3.):
             raise ValueError(f'J{i} 位置读取失败，请刷新状态')
         if type(stamp) not in (int, float) or not math.isfinite(stamp) or not 0 <= now-stamp/1000 <= max_age_s:
             raise ValueError(f'J{i} 位置反馈超过 {max_age_s:g} 秒或时间异常，请重新读取')
-        if not robot.lower[i-1] <= value <= robot.upper[i-1]:
+        if not robot.lower[i-1]-start_tolerance <= value <= robot.upper[i-1]+start_tolerance:
             raise ValueError(f'J{i} 原始位置 {math.degrees(value):.2f}° 超出模型范围 '
                              f'{(math.degrees(robot.lower[i-1])+0.):.2f}°…{math.degrees(robot.upper[i-1]):.2f}°；未裁剪或改零位')
         q.append(value); measured.append(stamp/1000)
-    q = np.asarray(q)
+    return np.asarray(q), measured
+
+
+def synchronize_pose(robot, motors, mapping, *, now=None, max_age_s=3.):
+    now = time.time() if now is None else now
+    q, measured = feedback_pose(robot, motors, mapping, now=now, max_age_s=max_age_s)
     robot.initialize_pose(q)
     errors = (robot.q-q).tolist()
     return dict(ok=True, synchronization_id=uuid.uuid4().hex, source='browser-readonly-feedback',

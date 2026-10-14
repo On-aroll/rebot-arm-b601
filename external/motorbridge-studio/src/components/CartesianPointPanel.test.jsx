@@ -77,4 +77,18 @@ describe('Two-mode XYZ workflow', () => {
     fireEvent.click(stop);
     expect(props.onStop).toHaveBeenCalledOnce();
   });
+  it('unlocks a reviewed hardware plan with the shared confirmation and submits only its token', async () => {
+    const execute = vi.fn(async () => ({status:{state:'PREPARING',busy:true}}));
+    const {fetch,props,rerender}=setup({mode:'hardware',onExecuteHardware:execute,hardwareConfirmed:false});
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));
+    await screen.findByText(/预演通过/);
+    expect(screen.getByRole('button',{name:'确认实机执行'}).disabled).toBe(true);
+    rerender(<CartesianPointPanel {...props} hardwareConfirmed />);
+    expect(screen.getByRole('button',{name:'确认实机执行'}).disabled).toBe(false);
+    fireEvent.click(screen.getByRole('button',{name:'确认实机执行'}));
+    await waitFor(()=>expect(execute).toHaveBeenCalledExactlyOnceWith('point-token'));
+    expect(posts(fetch).some(p=>p.url==='/ros-control/action')).toBe(false);
+    rerender(<CartesianPointPanel {...props} hardwareConfirmed locked feedback={{q_deg:[0,0,0,0,0,0],job:{status:'running'}}} />);
+    expect(screen.getByRole('button',{name:'立即停止实机任务'}).disabled).toBe(false);
+  });
 });

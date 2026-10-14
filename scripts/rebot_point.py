@@ -5,11 +5,12 @@ import uuid
 import numpy as np
 
 
-HARDWARE_REASON = '实机同步到点待验收：先完成一个已支撑关节的小幅动作与停止试验；再确认六轴加速度、jerk、跟踪误差及转矩包络。沿用现有静态映射，不要求重新定义零位。'
+HARDWARE_REASON = '实机同步执行已接入 Seeed SDK：预演后由本机用户确认，服务端复读起点并验证轨迹、时序与出力条件。沿用既有 3/1/0 试验配置；不修改设备参数。J1 及六轴动态验收尚未通过，网页停止不能替代现场独立断电。'
 
 
 def point_capabilities():
     return dict(simulation=True, hardware=False, hardware_reason=HARDWARE_REASON,
+                hardware_execution_endpoint='/hardware-point/action',physical_acceptance=False,
                 frame='base_link', tcp='gripper_end', units='mm')
 
 
@@ -41,7 +42,8 @@ class PointPlanner:
         if source not in ('mujoco', 'ros2-fake', 'hardware-preview'):
             raise ValueError('未知的预演来源')
         start = r.motion_start() if start is None else np.asarray(start, dtype=float)
-        if start.shape != (6,) or not np.all(np.isfinite(start)) or np.any(start < r.lower) or np.any(start > r.upper):
+        tolerance = np.deg2rad(1) if source == 'hardware-preview' else 0.
+        if start.shape != (6,) or not np.all(np.isfinite(start)) or np.any(start < r.lower-tolerance) or np.any(start > r.upper+tolerance):
             raise ValueError('预演起点必须是模型范围内完整的六轴反馈')
         target = r.ik(xyz / 1000, seed=start, position_only=mode == 'position')
         if np.any(target < r.lower) or np.any(target > r.upper):
@@ -65,6 +67,7 @@ class PointPlanner:
         return dict(ok=True, plan_id=plan_id, expires_in_s=60, target='simulation', execution_source=source,
                     xyz_mm=xyz.tolist(), q_deg=np.rad2deg(target).tolist(),
                     start_deg=np.rad2deg(start).tolist(), seconds=seconds,
+                    start_tolerance_deg=float(np.rad2deg(tolerance)),
                     speed_rad_s=speed, orientation_mode=mode, path_xyz=path,
                     position_error_mm=float(np.linalg.norm(actual_xyz * 1000 - xyz)),
                     **point_capabilities())

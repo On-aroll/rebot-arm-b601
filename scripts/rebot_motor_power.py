@@ -1,4 +1,4 @@
-"""Local operator-confirmed J1 power trial; no CAN on import or construction.
+"""Local operator-confirmed J1 or reviewed XYZ trial; no CAN on import.
 
 The UI prepares a read-only plan, then explicitly confirms that exact plan once.
 A child process uses the audited SDK environment. Software profiles stay untouched.
@@ -23,8 +23,9 @@ def trial_proposal(state, limits):
     for i in range(1,7):
         p = state['drafts'].get(str(i)) or state['approved'].get(str(i)) or {}
         f = p.get('fields', {})
-        if tuple(f.get(k,{}).get('value') for k in ('kp','kd','tau_ff')) != (3,1,0):
-            raise ValueError(f'J{i} 已保存增益不是用户提供的 3/1/0；请核对现有草稿，未覆盖任何值')
+        values=tuple(f.get(k,{}).get('value') for k in ('kp','kd','tau_ff'))
+        if values != (3,1,0):
+            raise ValueError(f'J{i} 已保存参数 Kp={values[0]}、Kd={values[1]}、前馈={values[2]}，与本次试验的 3/1/0 不一致；请核对现有草稿，未覆盖任何值')
     # An explicit disposable proposal, displayed in full before confirmation.
     # Passive axes receive NO frames; their model/velocity limits remain guards.
     axes = [dict(q_min=float(lo),q_max=float(hi),v_max=.02,a_max=.04,jerk_max=.2,
@@ -45,27 +46,34 @@ def trial_proposal(state, limits):
 
 
 class MotorPowerAPI:
-    def __init__(self, store, port, root, limits, check_pose, idle=lambda:True, *, popen=subprocess.Popen, clock=time.monotonic):
+    def __init__(self, store, port, root, limits, check_pose, idle=lambda:True, *, point_plan=None, popen=subprocess.Popen, clock=time.monotonic):
         self.store,self.port,self.root,self.limits=store,port,Path(root),limits
         self.check_pose,self.idle,self.popen,self.clock=check_pose,idle,popen,clock
+        self.point_plan=point_plan
         self.lock=threading.RLock(); self.pipe_lock=threading.Lock()
         self.sessions={}; self.plan=None; self.process=None; self.owner=None; self.sequence=0
         self.proposal=None; self.stop_requested=False; self.closed=False; self.generation=0
-        self.snapshot=dict(state='IDLE',busy=False,axis=1,reason='先检查新鲜起点，再确认当次 J1 使能保持。',physical_acceptance=False,feedback={})
+        self.snapshot=dict(state='IDLE',busy=False,axis=1,reason='等待用户确认本次已预演的实机任务；尚未下发。',physical_acceptance=False,feedback={})
 
     def status(self):
         with self.lock:
             result=copy.deepcopy(self.snapshot)
             if self.proposal: result['proposal']=copy.deepcopy(self.proposal)
             result['enabled_feedback_available']=False
+            wall=time.time(); mono=time.monotonic()
+            result['observed_at_ms']=wall*1000
+            result['motors']={str(i):dict(id=int(i),model='rs-06' if int(i)<=3 else 'rs-00',
+                mechPosRad=s['q'],positionUpdatedAt=(wall-(mono-s['requested_at']))*1000,error='')
+                for i,s in result.get('feedback',{}).items() if all(k in s for k in ('q','requested_at'))}
             return result
 
     def _new_process(self):
         python=self.root/'.venv/bin/python'
         if not python.is_file(): raise ValueError('缺少已审核 motorbridge 0.5.6 环境 .venv/bin/python；未启动实机')
-        return self.popen([str(python),'-u',str(self.root/'scripts/rebot_power_worker.py')],
+        env=dict(os.environ,PYTHONPATH=str(self.root/'.venv/lib/python3.12/site-packages')+':'+str(self.root/'scripts'))
+        return self.popen(['/usr/bin/python3','-u',str(self.root/'scripts/rebot_power_worker.py')],
                           stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1,
-                          cwd=str(self.root),start_new_session=True)
+                          cwd=str(self.root),env=env,start_new_session=True)
 
     def _send(self, body):
         # Small writes, separate from the status lock; STOP never queues behind a probe.
@@ -116,23 +124,30 @@ class MotorPowerAPI:
             with self.lock: self.snapshot.update(state='FAULT',busy=False,reason=str(e))
             return dict(status=self.status())
 
-    def start(self, token, body):
+    def start(self, token, body, *, point=False):
         with self.lock:
             if self.closed or self.snapshot['busy']: raise ValueError('已有试验或服务正在关闭')
-            plan=self.plan
-            if not plan or plan['id']!=body.get('plan_id') or plan['session']!=token or self.clock()>=plan['expires']:
-                raise ValueError('准备方案已过期、已消费或不属于当前页面，请重新检查')
             if not isinstance(body.get('confirmed'),dict) or any(body['confirmed'].get(k) is not True for k in CONFIRMATIONS):
                 raise ValueError('请确认当前在场、独立断电、可靠支撑、周围空间及本次完整方案')
+            if point:
+                if self.point_plan is None: raise ValueError('XYZ 执行器未接入')
+                plan=self.point_plan(body.get('plan_id'))
+                plan=dict(plan,session=token)
+            else: plan=self.plan
+            if not plan or plan['id']!=body.get('plan_id') or plan['session']!=token or self.clock()>=plan['expires']:
+                raise ValueError('准备方案已过期、已消费或不属于当前页面，请重新检查')
             if not self.idle(): raise ValueError('仿真任务尚未结束')
             if plan['revision']!=self.store.status()['state']['revision']:
                 self.plan=None; raise ValueError('软件配置已变化，请重新检查；没有覆盖修改')
             self.plan=None; self.owner=token; self.sequence=0; self.stop_requested=False
-            self.snapshot.update(state='PREPARING',busy=True,reason='正在复读真实起点；随后仅尝试使能 J1',feedback={})
+            self.snapshot.update(state='PREPARING',busy=True,axes=list(range(1,7)) if point else [1],
+                                 reason='正在复读真实起点；仅执行本次已确认目标' if point else '正在复读真实起点；随后仅尝试使能 J1',feedback={})
             try:
                 self.process=self._new_process()
-                self._send(dict(operation='hold-j1',seconds=3,config=plan['config'],expected_start=plan['expected_start'],
-                                request_id=secrets.token_hex(16),evidence='当前本机页面明确确认 J1 3 秒保持、机械支撑及撤力方案'))
+                message=dict(operation='move-xyz' if point else 'hold-j1',seconds=3,config=plan['config'],expected_start=plan['expected_start'],
+                             request_id=secrets.token_hex(16),evidence='本机用户点击确认执行已预演 XYZ，沿用七轴现场确认' if point else '当前本机页面明确确认 J1 3 秒保持、机械支撑及撤力方案')
+                if point: message['target']=plan['target']
+                self._send(message)
                 threading.Thread(target=self._read_worker,args=(self.process,),daemon=True,name='j1-power-status').start()
             except Exception as e:
                 self.snapshot.update(state='FAULT',busy=False,reason=str(e))
@@ -182,13 +197,15 @@ class MotorPowerAPI:
                 if self.snapshot['state']=='READY': self.snapshot.update(state='IDLE',reason='当次准备已取消，未使能')
                 return dict(status=self.status(),note='当前没有本会话拥有的使能轴；未对未知状态设备发送批量失能')
             self.stop_requested=True
-            self.snapshot.update(state='STOPPING',reason='已请求停止并撤去 J1 力矩，等待 SDK 与速度反馈；异常时使用独立断电')
+            self.snapshot.update(state='STOPPING',reason='已请求停止并撤去本任务运动轴力矩，等待 SDK 与速度反馈；异常时使用独立断电')
         try: self._send(dict(action='stop'))
         except (OSError,ValueError) as e:
             with self.lock: self.snapshot.update(reason='停止请求传输失败，实际状态未知：'+str(e))
         return dict(status=self.status())
 
     def request(self, path, headers, peer, body):
+        point=path.startswith('/hardware-point/')
+        if point: path=path.replace('/hardware-point/','/motor-power/',1)
         host=headers.get('Host','')
         if peer not in ('127.0.0.1','::1') or host not in (f'127.0.0.1:{self.port}',f'localhost:{self.port}') or headers.get('Origin')!='http://'+host or headers.get('Sec-Fetch-Site') not in (None,'same-origin'):
             raise ValueError('实机试验只接受本机同源页面请求')
@@ -201,8 +218,11 @@ class MotorPowerAPI:
             token=headers.get('X-Motor-Session')
             if path!='/motor-power/action' or token not in self.sessions: raise ValueError('单轴操作会话失效，请重新打开操作入口')
         action=body.get('action')
+        if point and action not in ('execute','stop','heartbeat'):
+            raise ValueError('XYZ 入口只接受已预演任务、停止和会话心跳')
         if action=='prepare': return self.prepare(token)
         if action=='start': return self.start(token,body)
+        if action=='execute' and point: return self.start(token,body,point=True)
         if action=='stop': return self.stop()
         if action=='heartbeat':
             with self.lock:

@@ -141,7 +141,7 @@ def lan_addresses():
 
 def serve(port,host='127.0.0.1'):
     from grasp_demo import build_scene
-    from rebot_pose_sync import synchronize_pose
+    from rebot_pose_sync import synchronize_pose, feedback_pose
     from rebot_program import ProgramRunner, pick_place_steps, compile_program
     from rebot_writing import writing_program, CENTER
     config_store=ConfigStore(OUT/'private_config'); config_api=ConfigAPI(config_store, port)
@@ -149,6 +149,33 @@ def serve(port,host='127.0.0.1'):
     writing_document=writing_program();writing_compiled=compile_program(writing_document,r)
     r.m.vis.quality.offsamples=0
     lock=threading.RLock(); stop=threading.Event()
+    def hardware_configuration():
+        from rebot_motor_power import trial_proposal
+        from rebot_mit_hardware import Envelope
+        trial_proposal(config_store.status()['state'],list(zip(r.lower,r.upper)))
+        raw=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        envelope=Envelope.parse(raw)
+        if any(abs(a.q_min-lo)>1e-8 or abs(a.q_max-hi)>1e-8 for a,lo,hi in zip(envelope.axes,r.lower,r.upper)):
+            raise ValueError('当前模型限位与既有实机试验方案不同；未覆盖参数')
+        return raw,envelope
+
+    def resolve_hardware_point(plan_id):
+        with lock:
+            plan=point_planner.plans.get(plan_id)
+            if not plan or plan['source']!='hardware-preview' or point_planner.clock()>=plan['expires']:
+                raise ValueError('实机预演不存在、过期或已消费，请重新预演')
+            if plan['configuration']!=config_store.fingerprint():
+                raise ValueError('配置已改变，请重新预演')
+            from rebot_xyz_trial import assess_motion
+            raw,envelope=hardware_configuration()
+            if plan.get('hardware_config_hash')!=envelope.fingerprint:
+                raise ValueError('实机试验参数已变化或预演未绑定参数，请重新预演')
+            assessment=assess_motion(r,plan['start'],plan['target'],envelope)
+            if not assessment['execution_ready']:
+                raise ValueError('；'.join(assessment['execution_reasons']))
+            point_planner.plans.pop(plan_id)
+            return dict(id=plan_id,expires=plan['expires'],config=raw,revision=config_store.status()['state']['revision'],
+                        expected_start=plan['start'].tolist(),target=plan['target'].tolist())
     state=dict(stream_id=uuid.uuid4().hex,sequence=0,feedback_time_unix_s=0.,frame=b'',error='',motion=None,playing=False,azimuth=125.,elevation=-20.,lookat=[.1,0,.30],distance=1.4,ghost_robot=False)
     trajectories={kind:r.trajectory(kind) for kind in ('joints','circle')}
     def animate():
@@ -238,6 +265,7 @@ def serve(port,host='127.0.0.1'):
                 return self.send(dict(readiness(config_store),power_trial=motor_power.status()))
             if path=='/point-capabilities':
                 return self.send(point_capabilities())
+            if path=='/hardware-point/state': return self.send(motor_power.status())
             if path=='/machine-state':
                 # 实机只读关节读数，由 rebot_twin_sync 发布；本服务不开 CAN。
                 return self.send(read_report(MACHINE_LIVE,'twin_sync',max_age_s=2.))
@@ -275,6 +303,8 @@ def serve(port,host='127.0.0.1'):
                     from rebot_kinematics import coordinate_preview
                     with lock: result=coordinate_preview(r, body.get('q_deg'))
                     return self.send(result)
+                if self.path.startswith('/hardware-point/'):
+                    return self.send(motor_power.request(self.path,self.headers,self.client_address[0],body))
                 if self.path.startswith('/motor-power/'):
                     raise ValueError('自研实发入口暂停；本轮使用 ROS 虚拟控制栈验证，不允许真实使能')
                 if self.path=='/ros-control/action':
@@ -331,6 +361,18 @@ def serve(port,host='127.0.0.1'):
                         if state['motion'] is not None or state['playing']:
                             raise ValueError('请先停止当前仿真运动，再操作目标点')
                         if action=='point_plan':
+                            if body.get('execution_source')=='hardware-preview':
+                                q,_=feedback_pose(r,body.get('motors'),body.get('mapping'),start_tolerance=np.deg2rad(1))
+                                result=point_planner.preview(body,start=q)
+                                try:
+                                    from rebot_xyz_trial import assess_motion
+                                    raw,envelope=hardware_configuration()
+                                    point_planner.plans[result['plan_id']]['hardware_config_hash']=envelope.fingerprint
+                                    result['hardware_preflight']=dict(assess_motion(r,q,np.deg2rad(result['q_deg']),envelope),
+                                        parameters=raw,parameter_source='existing explicit onsite XYZ trial envelope; not device parameters')
+                                except (ValueError,OSError) as error:
+                                    result['hardware_preflight']=dict(execution_ready=False,execution_reasons=[str(error)])
+                                return self.send(result)
                             return self.send(point_planner.preview(body))
                         document=point_planner.take(body)
                         job=runner.submit(document)
@@ -391,7 +433,7 @@ def serve(port,host='127.0.0.1'):
     def power_check_pose(q):
         with lock:
             if r.contacts(np.asarray(q)): raise ValueError('当前真实姿态在模型中有碰撞，请核对现场与仿真场景')
-    motor_power=MotorPowerAPI(config_store,port,ROOT,list(zip(r.lower,r.upper)),power_check_pose,power_idle)
+    motor_power=MotorPowerAPI(config_store,port,ROOT,list(zip(r.lower,r.upper)),power_check_pose,power_idle,point_plan=resolve_hardware_point)
     worker=threading.Thread(target=animate,daemon=True);worker.start()
     server=ThreadingHTTPServer((host,port),Handler)
     print(f'RS 仿真控制台：http://127.0.0.1:{port}',flush=True)

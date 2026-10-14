@@ -111,6 +111,48 @@ class PowerAPI(unittest.TestCase):
             self.action('start', plan_id='invented', confirmed={k: True for k in CONFIRMATIONS})
         self.popen.assert_not_called()
 
+    def test_xyz_namespace_uses_only_server_plan_and_preserves_parameters(self):
+        raw,_=trial_proposal(self.store.state,self.api.limits)
+        trusted=dict(id='xyz-token',expires=60.,config=raw,revision=self.store.state['revision'],
+                     expected_start=[0.]*6,target=[.001]*6)
+        self.api.point_plan=Mock(return_value=trusted)
+        headers=dict(self.base_headers,**{'X-Motor-Session':self.token})
+        before=copy.deepcopy(self.store.state)
+        result=self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='execute',plan_id='xyz-token',
+            confirmed={k:True for k in CONFIRMATIONS},target=[99.]*6,kp=500.))
+        self.api.point_plan.assert_called_once_with('xyz-token')
+        self.assertTrue(result['status']['busy'])
+        message=self.process.messages()[0]
+        self.assertEqual(message['operation'],'move-xyz')
+        self.assertEqual(message['target'],trusted['target'])
+        self.assertEqual(message['config'],raw)
+        self.assertEqual(self.store.state,before)
+
+    def test_xyz_unconfirmed_or_failed_preflight_never_starts_a_worker(self):
+        self.api.point_plan=Mock(side_effect=ValueError('PD/前馈不足以承重'))
+        headers=dict(self.base_headers,**{'X-Motor-Session':self.token})
+        with self.assertRaises(ValueError): self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='execute',plan_id='xyz-token'))
+        self.api.point_plan.assert_not_called()
+        with self.assertRaisesRegex(ValueError,'承重'):
+            self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='execute',plan_id='xyz-token',confirmed={k:True for k in CONFIRMATIONS}))
+        self.popen.assert_not_called()
+
+    def test_xyz_worker_reuses_executor_with_six_axis_permit_and_never_j7(self):
+        raw,_=trial_proposal(self.store.state,self.api.limits)
+        message=dict(operation='move-xyz',config=raw,expected_start=[0.]*6,target=[.001]*6,
+                     request_id='virtual-point-test',evidence='synthetic onsite confirmation')
+        with patch('rebot_power_worker.HardwareExecutor') as factory, patch('rebot_power_worker.threading.Thread'), \
+             patch('rebot_power_worker.signal.signal'),patch('rebot_power_worker.emit'):
+            executor=factory.return_value
+            executor.worker.is_alive.return_value=False
+            run_trial(message,bus=Mock())
+            intent,permit=executor.start.call_args.args
+            self.assertEqual(list(intent.expected_start),message['expected_start'])
+            self.assertEqual([list(q) for q in intent.waypoints],[message['target']])
+            self.assertEqual(permit.axes,(1,2,3,4,5,6))
+            self.assertTrue(permit.coordinated_start_checked)
+            self.assertTrue(all((a.kp,a.kd,a.tau_ff)==(3.,1.,0.) for a in factory.call_args.args[0].axes))
+
     def test_each_confirmation_requires_literal_true(self):
         plan = self.prepare()
         for key in CONFIRMATIONS:

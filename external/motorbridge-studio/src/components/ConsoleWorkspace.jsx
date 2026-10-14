@@ -11,6 +11,7 @@ import { MachinePowerControls } from './MachinePowerControls';
 import { InitialStateCheck } from './InitialStateCheck';
 import { LiveCoordinates } from './LiveCoordinates';
 import { useFeedbackCoordinates } from '../hooks/useFeedbackCoordinates';
+import { useHardwarePoint } from '../hooks/useHardwarePoint';
 import { MotorModuleCard } from './MotorModuleCard';
 import { useMotorGateway, MACHINE_IDS, MACHINE_MODELS } from '../hooks/useMotorGateway';
 import { useSoftwareConfig } from '../hooks/useSoftwareConfig';
@@ -104,7 +105,8 @@ export function ConsoleWorkspace() {
   const [initialCheckBusy, setInitialCheckBusy] = React.useState(false);
   const ros = useRosValidation();
   const rosFeedback = ros.state;
-  const powerBusy = ros.running;
+  const [onsiteConfirmed, setOnsiteConfirmed] = React.useState(false);
+  const lastReadMotors = React.useRef({});
   const [executionTrail, setExecutionTrail] = React.useState([]);
   const [synchronization, setSynchronization] = React.useState(null);
   const [syncVersion, setSyncVersion] = React.useState(0);
@@ -163,9 +165,14 @@ export function ConsoleWorkspace() {
   }
   const gamepad = useGamepad();
   const gateway = useMotorGateway({ intervalMs: 500 });
+  const hardware = useHardwarePoint({ beforeExecute: () => gateway.releaseForTrial(),
+    onFinished: () => gateway.connect().catch(error => setMessage(error.message)) });
+  const powerBusy = ros.running || hardware.busy;
+  React.useEffect(() => { if (gateway.status === 'online') lastReadMotors.current = gateway.motors; }, [gateway.status, gateway.motors]);
+  const liveMotors = hardware.state?.busy ? {...lastReadMotors.current, ...hardware.state.motors} : gateway.motors;
   // A completed query samples the same local clock after all axis readings.
   // Do not judge new feedback against the previous 400 ms clock tick.
-  const now = Math.max(clockTime, gateway.updatedAt || 0);
+  const now = Math.max(clockTime, gateway.updatedAt || 0, hardware.state?.observed_at_ms || 0);
 
   React.useEffect(() => {
     let disposed = false;
@@ -220,8 +227,8 @@ export function ConsoleWorkspace() {
   }, [document, showPlan, task, pointPlan, diagnosticSimulation]);
 
   // 实机读数优先走网关，其次才是 twin-sync 发布的文件。
-  const gatewayOnline = gateway.status === 'online';
-  const mapped = React.useMemo(() => mapHardwareFeedback(gateway.motors, mapping, state?.limits_deg, now, gatewayOnline), [gateway.motors, mapping, state?.limits_deg, now, gatewayOnline]);
+  const gatewayOnline = gateway.status === 'online' || Boolean(hardware.state?.busy);
+  const mapped = React.useMemo(() => mapHardwareFeedback(liveMotors, mapping, state?.limits_deg, now, gatewayOnline), [liveMotors, mapping, state?.limits_deg, now, gatewayOnline]);
   React.useEffect(() => { if (mapped.joints) lastHardwareJoints.current = mapped.joints; }, [mapped.joints]);
   const measuredView = mapped.joints || lastHardwareJoints.current;
   const rosFresh = Boolean(rosFeedback?.fresh && Number.isFinite(rosFeedback.feedback_time) && now - rosFeedback.feedback_time * 1000 >= -1000 && now - rosFeedback.feedback_time * 1000 < 1500);
@@ -230,7 +237,9 @@ export function ConsoleWorkspace() {
   const calculatedXyz = useFeedbackCoordinates(measuredQ, coordinateFresh && displaySource !== 'simulation');
   const displayedXyz = displaySource === 'simulation' ? state?.xyz?.map(v => v * 1000) : calculatedXyz;
   const coordinateAge = displaySource === 'hardware' ? Math.max(...mapped.rows.map(row => row.ageMs)) : displaySource === 'simulation' ? now - (state?.feedback_time_unix_s || 0) * 1000 : now - (rosFeedback?.feedback_time || 0) * 1000;
-  const executionFeedback = workMode === 'offline' ? { ...rosFeedback, q_deg: rosFeedback?.q_rad?.map(q => q * 180 / Math.PI) } : { q_deg: mapped.rows.map(row => row.modelDeg) };
+  const executionFeedback = workMode === 'offline' ? { ...rosFeedback, q_deg: rosFeedback?.q_rad?.map(q => q * 180 / Math.PI) }
+    : { q_deg: mapped.rows.map(row => row.modelDeg), job: {status: hardware.state?.busy ? 'running' :
+      ({ARRIVED:'succeeded',FAULT:'failed',CANCELLED:'cancelled'})[hardware.state?.state] || 'idle',error:hardware.state?.reason} };
   const previewReady = workMode === 'offline' ? rosFresh : mapped.complete;
 
   React.useEffect(() => { setExecutionTrail([]); }, [workMode, diagnosticSimulation]);
@@ -268,10 +277,9 @@ export function ConsoleWorkspace() {
   }
 
   async function prepareHardwarePreview() {
-    const readings = await gateway.refresh();
+    const readings = await gateway.refresh({ waitForIdle: true, full: false });
     if (!readings) throw new Error('状态查询正在进行，请稍后再预演');
-    const result = await api('/command', { action: 'sync_hardware_pose', motors: readings, mapping });
-    setSynchronization(result); setState(await api('/studio-state'));
+    return { motors: readings, mapping };
   }
 
   function changeMode(mode) {
@@ -325,7 +333,7 @@ export function ConsoleWorkspace() {
         <div className="consoleBadges">
           <span className={`badge ${problem ? 'err' : 'ok'}`}>{problem ? '模型预演不可用' : '模型预演在线'}</span>
           {(workMode === 'hardware' || gatewayOnline) && <span className={`badge ${gatewayOnline ? 'ok' : (gateway.status === 'offline' ? 'err' : '')}`}>
-            {gatewayOnline ? `网关 ${readCount}/7 轴` : `网关：${GATEWAY_STATUS[gateway.status] || gateway.status}`}
+            {hardware.state?.busy ? 'Seeed SDK 执行中' : gatewayOnline ? `网关 ${readCount}/7 轴` : `网关：${GATEWAY_STATUS[gateway.status] || gateway.status}`}
           </span>}
           <span className="badge">{workMode === 'offline' ? '当前执行器：虚拟电机' : '当前反馈：真实机械臂'}</span>
         </div>
@@ -338,7 +346,8 @@ export function ConsoleWorkspace() {
       </div>
       {workMode === 'offline' ? <OfflineControls controller={ros} fresh={rosFresh} blocked={busy || active || moving || syncing} /> : <div className="consoleSetup">
       <DeviceConnectionPanel readiness={hardwareReadiness} gateway={gateway} now={now} onSync={synchronizeHardwarePose} syncing={syncing} synchronization={synchronization} blocked={active||moving||locked||syncing} powerBusy={powerBusy} />
-      <MachinePowerControls gateway={gateway} limits={state?.limits_deg} blocked={active || moving || busy || powerBusy || initialCheckBusy || syncing || hardwareReadiness?.power_trial?.busy} />
+      <MachinePowerControls gateway={gateway} limits={state?.limits_deg} blocked={active || moving || busy || powerBusy || initialCheckBusy || syncing || hardwareReadiness?.power_trial?.busy}
+        onConfirmationChange={setOnsiteConfirmed} taskActive={hardware.busy} onStopTask={hardware.stop} />
       </div>}
       {workMode === 'hardware' && <InitialStateCheck gateway={gateway} mapping={mapping} limits={state?.limits_deg} now={now}
         blocked={active || moving || busy || powerBusy || syncing || ros.pending || hardwareReadiness?.power_trial?.busy} onBusyChange={setInitialCheckBusy} />}
@@ -381,10 +390,11 @@ export function ConsoleWorkspace() {
       <LiveCoordinates source={displaySource === 'hardware' ? '实机关节反馈 → 模型计算' : displaySource === 'ros' ? 'ROS 虚拟反馈 → 模型计算' : 'MuJoCo 仿真反馈'}
         xyz={displayedXyz} fresh={coordinateFresh} ageMs={coordinateAge} cycleMs={displaySource === 'hardware' ? gateway.cycleMs : 0} />
       <CartesianPointPanel mode={workMode} feedback={executionFeedback} previewReady={previewReady} virtualEnabled={Boolean(rosFeedback?.enabled)}
+        hardwareConfirmed={onsiteConfirmed} onExecuteHardware={planId => hardware.execute(planId, onsiteConfirmed)} hardwareError={hardware.error}
         currentXyz={!diagnosticSimulation && coordinateFresh ? displayedXyz : null} readiness={hardwareReadiness} resetKey={syncVersion} locked={locked||syncing} active={active} moving={moving} now={now}
-        onPrepareHardwarePreview={prepareHardwarePreview} onStop={() => ros.action('stop')}
+        onPrepareHardwarePreview={prepareHardwarePreview} onStop={() => workMode === 'offline' ? ros.action('stop') : hardware.stop()}
         onPreview={(plan) => { setPointPlan(plan); if (plan) { setDiagnosticSimulation(false); setCameraView('overview'); setShowPlan(true); setGhost(false); } }} onBusy={(value) => { commandBusy.current = value; setBusy(value); }}
-        onExecuted={(result) => { ros.acceptFeedback(result); setDiagnosticSimulation(false); setExecutionTrail([]); setCameraView('overview'); setGhost(false); setShowPlan(true); }} />
+        onExecuted={(result) => { if (workMode === 'offline') ros.acceptFeedback(result); setDiagnosticSimulation(false); setExecutionTrail([]); setCameraView('overview'); setGhost(false); setShowPlan(true); }} />
 
       </div></div>
       <details className="consoleAdvanced card glass"><summary>逐轴调试与参数 · J1–J7（按需展开）</summary>

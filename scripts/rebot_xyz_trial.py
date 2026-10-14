@@ -69,11 +69,31 @@ def plan_nearby(robot, start, config):
                 rejected.append(dict(axis=axis,sign=sign,reason=str(e)))
     if not candidates: raise ValueError('未找到 5 mm 邻近、限位/碰撞/试验时序均通过的候选点')
     selected=min(candidates,key=lambda item:item['joint_distance_rad'])
+    assessment=assess_motion(robot,q,selected['target'],config)
+    return dict(ok=True,expected_start=q.tolist(),start_xyz_m=xyz.tolist(),**selected,
+                controlled_axes=list(AXES),gripper_commanded=False,orientation_mode='position',
+                selection='smallest joint distance among six seeded 5 mm axis candidates; not a global optimum',
+                candidate_count=len(candidates),rejected=rejected,config_hash=config.fingerprint,
+                start_boundary_tolerance_deg=math.degrees(margin),
+                boundary_recovery_axes=[i+1 for i in range(6) if not robot.lower[i]<=q[i]<=robot.upper[i]],
+                **assessment,planned_at=time.time(),hardware_writes=0)
+
+
+def assess_motion(robot, start, target, config):
+    """Pure preflight shared by the terminal trial and the webpage. No CAN."""
+    import numpy as np
+    q=np.asarray(start,dtype=float)
+    target=np.asarray(target,dtype=float)
+    if q.shape!=(6,) or target.shape!=(6,) or not np.all(np.isfinite(q)) or not np.all(np.isfinite(target)):
+        raise ValueError('需要完整的六轴实测起点与目标')
+    if np.any(np.abs(target-q)>=math.radians(60)):
+        raise ValueError('本轮每轴变化必须小于 60°')
+    robot.check_path(q,target)
     # Reuse the official pure helper with the project's explicit RS model.
     # Do not call GravityCompensation.start(): it switches modes and enables.
     from reBotArm_control_py.dynamics import compute_generalized_gravity
     data=robot.pm.createData()
-    trajectory=Trajectory.create(q.tolist(),[selected['target']],config,start_tolerance=margin)
+    trajectory=Trajectory.create(q.tolist(),[target.tolist()],config,start_tolerance=config.start_boundary_tolerance)
     gravity_samples=np.asarray([
         compute_generalized_gravity(robot.pm,np.asarray(trajectory.sample(t)[0]),data)[:6]
         for t in np.linspace(0,trajectory.duration,51)
@@ -96,15 +116,15 @@ def plan_nearby(robot, start, config):
         allowed_error_deg=[math.degrees(a.error_max) for a in config.axes],
         insufficient_axes=[i+1 for i,a in enumerate(config.axes) if required_offsets[i]>a.error_max],
         payload_and_friction_validated=False)
-    return dict(ok=True,expected_start=q.tolist(),start_xyz_m=xyz.tolist(),**selected,
-                controlled_axes=list(AXES),gripper_commanded=False,orientation_mode='position',
-                selection='smallest joint distance among six seeded 5 mm axis candidates; not a global optimum',
-                candidate_count=len(candidates),rejected=rejected,config_hash=config.fingerprint,
-                start_boundary_tolerance_deg=math.degrees(margin),
-                boundary_recovery_axes=[i+1 for i in range(6) if not robot.lower[i]<=q[i]<=robot.upper[i]],
-                gravity_check=gravity_check,static_balance_check=static_balance_check,
-                execution_ready=not (gravity_check['insufficient_axes'] or static_balance_check['insufficient_axes']),
-                planned_at=time.time(),hardware_writes=0)
+    reasons=[]
+    if trajectory.duration+config.policy.settle_time>config.policy.task_timeout:
+        reasons.append(f'按已确认的 {config.axes[0].v_max:g} rad/s 试验速度需 {trajectory.duration:.1f} 秒，超过本轮 {config.policy.task_timeout:g} 秒时限；请选择更近的目标')
+    if gravity_check['insufficient_axes']:
+        reasons.append('J'+ '/J'.join(map(str,gravity_check['insufficient_axes']))+' 模型重力估算超过当前软件力矩包络')
+    if static_balance_check['insufficient_axes']:
+        reasons.append('J'+ '/J'.join(map(str,static_balance_check['insufficient_axes']))+' 的 Kp=3、Kd=1、前馈=0 在现有 1° 跟踪误差内不足以平衡模型重力；未自动改增益或前馈')
+    return dict(gravity_check=gravity_check,static_balance_check=static_balance_check,
+                execution_ready=not reasons,execution_reasons=reasons,hardware_seconds=trajectory.duration)
 
 
 def execute(config, plan, evidence):

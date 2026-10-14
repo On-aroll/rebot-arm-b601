@@ -13,7 +13,8 @@ async function request(path, body) {
 }
 
 export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, virtualEnabled, locked, active, moving, now,
-  onPreview, onBusy, onExecuted, onPrepareHardwarePreview, onStop, resetKey, readiness, currentXyz }) {
+  onPreview, onBusy, onExecuted, onPrepareHardwarePreview, onExecuteHardware, hardwareConfirmed = false, hardwareError,
+  onStop, resetKey, readiness, currentXyz }) {
   const offline = mode === 'offline';
   const [xyz, setXyz] = React.useState(['200', '150', '200']);
   const [orientation, setOrientation] = React.useState('position');
@@ -32,7 +33,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
   }, []);
   React.useEffect(() => {
     setPlan(null); setSubmitted(false); onPreview(null);
-    setMessage(offline ? '从虚拟电机当前反馈开始预演，无需手动同步姿态。' : '预演前读取实机当前姿态；真实轨迹执行仍待验收。');
+    setMessage(offline ? '从虚拟电机当前反馈开始预演，无需手动同步姿态。' : '预演读取实机当前姿态；确认执行后交给 Seeed SDK，模型跟随真实反馈。');
   }, [mode, resetKey]);
   const occupied = pending || locked || active || moving;
   const expired = plan && now >= plan.expiresAt;
@@ -59,8 +60,8 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
       let result;
       if (offline) result = await request('/ros-control/action', { ...body, action: 'preview' });
       else {
-        await onPrepareHardwarePreview();
-        result = await request('/command', { ...body, action: 'point_plan', target: 'simulation', execution_source: 'hardware-preview' });
+        const measured = await onPrepareHardwarePreview();
+        result = await request('/command', { ...body, ...measured, action: 'point_plan', target: 'simulation', execution_source: 'hardware-preview' });
       }
       const next = { ...result, expiresAt: Date.now() + result.expires_in_s * 1000 };
       setPlan(next); onPreview(next);
@@ -69,12 +70,12 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     finally { running.current = false; setPending(false); onBusy(false); }
   }
   async function execute() {
-    if (!offline || running.current || occupied || invalidPlan || submitted || !virtualEnabled) return;
+    if (running.current || occupied || invalidPlan || submitted || (offline ? !virtualEnabled : !hardwareConfirmed || !onExecuteHardware)) return;
     running.current = true; setPending(true); onBusy(true);
     try {
-      const result = await request('/ros-control/action', { action: 'execute', plan_id: plan.plan_id });
+      const result = offline ? await request('/ros-control/action', { action: 'execute', plan_id: plan.plan_id }) : await onExecuteHardware(plan.plan_id);
       setSubmitted(true); onExecuted(result);
-      setMessage('虚拟动作已提交，三维模型持续跟随执行反馈。');
+      setMessage(offline ? '虚拟动作已提交，三维模型持续跟随执行反馈。' : '实机任务已提交；模型跟随执行器读取的真实关节反馈。');
     } catch (error) { setMessage(error.message); setPlan(null); onPreview(null); }
     finally { running.current = false; setPending(false); onBusy(false); }
   }
@@ -100,21 +101,30 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     <div className="consoleActions">
       <button disabled={occupied || !previewReady} onClick={preview}>{pending ? '处理中…' : '计算并预演'}</button>
       {offline ? <button className="primary" disabled={occupied || invalidPlan || submitted || !virtualEnabled} onClick={execute}>执行虚拟动作</button>
-        : <button disabled title={hardwareReason}>确认实机执行（待验收）</button>}
-      {offline && <button className="danger" disabled={!executing} onClick={onStop}>停止当前任务</button>}
+        : <button className="primary" disabled={occupied || invalidPlan || submitted || !hardwareConfirmed || !onExecuteHardware} onClick={execute}>确认实机执行</button>}
+      <button className="danger" disabled={!executing && !(pending && !offline)} onClick={onStop}>{offline ? '停止当前任务' : '立即停止实机任务'}</button>
     </div>
     {!previewReady && <p className="consoleNote">{offline ? '等待完整、新鲜的虚拟电机反馈；请检查虚拟服务。' : '请先连接实机，取得完整、新鲜的六轴位置。'}</p>}
     {offline && !virtualEnabled && <p className="consoleNote">可以先预演；执行前点击上方“使能虚拟电机”。</p>}
+    {!offline && !hardwareConfirmed && !executing && <p className="consoleNote">预演通过后，勾选上方一次现场确认即可点击“确认实机执行”。</p>}
+    {!offline && <p className="consoleNote">使能本身不会保持姿态。实机执行使用既有试验参数 Kp=3、Kd=1、前馈=0；轨迹、出力检查和首帧目标由服务端完成。</p>}
     <p className="consoleNote">预演检查模型内的关节路径与碰撞，末端不保证走直线；不验证真实承重或现场障碍。</p>
     {plan && <div className="pointPlanSummary">
-      <span>预计运动 <strong>{plan.seconds.toFixed(1)} s</strong></span>
+      <span>{offline ? '预计运动' : '预演动画'} <strong>{plan.seconds.toFixed(1)} s</strong></span>
+      {!offline && Number.isFinite(plan.hardware_preflight?.hardware_seconds) && <span>实机预计 <strong>{plan.hardware_preflight.hardware_seconds.toFixed(1)} s</strong></span>}
       <span>求解残差 <strong>{plan.position_error_mm.toFixed(3)} mm</strong></span>
       <span>当前距目标 <strong>{actualError?.toFixed(2) ?? '—'} mm</strong></span>
       <details><summary>查看六轴计算结果</summary><div className="consoleJoints">{plan.q_deg.map((q, i) => <span key={i}>J{i + 1}<strong>{q.toFixed(2)}°</strong></span>)}</div></details>
     </div>}
     {plan && !submitted && (expired || changed) && <p role="alert">{expired ? '预演已超过 60 秒' : '反馈起点已经变化'}，请重新预演。</p>}
-    <p role="status" className="consoleMessage">{submitted && job?.status === 'succeeded' ? `虚拟动作完成，当前末端误差 ${actualError?.toFixed(2) ?? '—'} mm。`
-      : submitted && job?.status === 'failed' ? `虚拟执行失败：${job.error}` : submitted && job?.status === 'cancelled' ? '虚拟动作已停止。' : message}</p>
+    {plan?.hardware_preflight && <div className="consoleNote"><strong>实机执行检查</strong>
+      <p>{plan.hardware_preflight.execution_ready ? '当前试验参数的模型检查通过；执行前仍会复读实机起点。' : '路径预演已通过，当前实机试验参数有以下阻挡：'}</p>
+      {plan.hardware_preflight.execution_reasons?.map(reason => <p key={reason}>{reason}</p>)}
+      <details><summary>本次实机试验参数与重力估算</summary><pre>{JSON.stringify(plan.hardware_preflight,null,2)}</pre></details>
+    </div>}
+    <p role="status" className="consoleMessage">{submitted && job?.status === 'succeeded' ? `${offline ? '虚拟动作完成' : '实机反馈已到位，任务已结束并撤力'}，当前末端误差 ${actualError?.toFixed(2) ?? '—'} mm。`
+      : submitted && job?.status === 'failed' ? `执行失败：${job.error}` : submitted && job?.status === 'cancelled' ? '动作已停止，请确认现场状态。' : message}</p>
+    {hardwareError && !offline && <p role="alert">{hardwareError}</p>}
     <details className="pointReadiness"><summary>{offline ? '控制点与离线验证说明' : '实机执行状态与控制点说明'}</summary>
       {!offline && <><p>{hardwareReason}</p>{readiness?.reasons && <ul>{readiness.reasons.map(reason => <li key={reason}>{reason}</li>)}</ul>}</>}
       <p>控制点为 gripper_end，未计入额外笔尖或打印头长度。预演不发送运动指令；当前坐标根据执行反馈计算。</p>

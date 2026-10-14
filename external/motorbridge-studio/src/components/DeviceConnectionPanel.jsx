@@ -22,7 +22,7 @@ export function DeviceConnectionPanel({ gateway, now, onSync, syncing, synchroni
     <details className="deviceAdvanced"><summary>网关地址与通信说明</summary><label>网关地址<input value={gateway.endpoint} disabled={online} onChange={e=>gateway.setEndpoint(e.target.value)} /></label>
       <button disabled={!online||syncing||blocked} onClick={onSync}>{syncing?'正在读取并同步…':'手动更新 MuJoCo 起点（高级）'}</button>
       <div className="deviceModes">{Array.from({length:6},(_,i)=>i+1).map(id=><span key={id}>J{id} · {freshMode(id)?modeName(gateway.motors[id]?.runMode):'模式待刷新'}</span>)}</div>
-      <p>执行器：{readiness?.executor_label || '状态未读取'}。{powerBusy ? 'ROS 虚拟任务执行中。' : ''}实机 XYZ 轨迹仍待验收。</p>
+      <p>执行器：{readiness?.executor_label || '状态未读取'}。{powerBusy ? '执行器正在处理任务。' : ''}实机 XYZ 现场执行已接入，动态效果待验收。</p>
       <p>连接与手动刷新读取完整参数；自动查询仅读取位置，减少反馈延迟。七轴共用下方一个现场确认；失能不弹确认框。断开查询或关闭页面不会自动撤力，刷新页面不恢复使能。</p></details>
   </section>;
 }

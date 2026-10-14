@@ -419,7 +419,7 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
         powerRef.current || groupRef.current || withdrawalsRef.current.size || busyRef.current || !client?.isConnected()) return;
     stoppedRef.current = false;
     setPollingPaused(false);
-    return runCycle({ full: true });
+    return runCycle({ full: options.full !== false });
   }, [runCycle]);
 
   const releaseForTrial = React.useCallback(async () => {

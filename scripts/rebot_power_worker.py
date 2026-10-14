@@ -1,7 +1,7 @@
-"""Private pipe worker for explicit J1 trials, using the audited SDK environment.
+"""Private pipe worker for explicit J1 or XYZ trials with the audited SDK.
 
 No socket server; importing this module does not connect. Only a parent-issued
-start message after the operator confirms a prepared plan can enable J1.
+start message after the operator confirms a prepared plan can enable its axes.
 """
 from dataclasses import asdict
 import json
@@ -50,12 +50,21 @@ def probe(config, bus):
 
 def run_trial(message, bus=None):
     config = Envelope.parse(message['config'])
-    if message['operation'] != 'hold-j1' or message.get('seconds') != 3:
+    point=message['operation']=='move-xyz'
+    if not point and (message['operation'] != 'hold-j1' or message.get('seconds') != 3):
         raise ValueError('仅支持 J1 当次 3 秒保持试验')
-    executor = HardwareExecutor(config, bus or SdkTransport())
-    permit = OnsitePermit(config.fingerprint, (1,), time.monotonic()+10,
-        message['evidence'], (1,), True, True)
-    intent = HoldIntent(message['request_id'], message['expected_start'], seconds=3)
+    if point:
+        from rebot_mit_hardware import MotionIntent
+        from rebot_seeed_transport import SeeedTransport
+        axes=tuple(range(1,7))
+        intent=MotionIntent([message['target']],'xyz',message['request_id'],expected_start=message['expected_start'])
+        executor=HardwareExecutor(config,bus or SeeedTransport(position_window=True))
+    else:
+        axes=(1,)
+        intent=HoldIntent(message['request_id'],message['expected_start'],seconds=3)
+        executor=HardwareExecutor(config,bus or SdkTransport())
+    permit = OnsitePermit(config.fingerprint, axes, time.monotonic()+10,
+        message['evidence'], axes, True, True,coordinated_start_checked=point)
     executor.heartbeat(executor.session, 0, True)
     for name in (signal.SIGTERM, signal.SIGINT):
         signal.signal(name, lambda *_: executor.cancel())
