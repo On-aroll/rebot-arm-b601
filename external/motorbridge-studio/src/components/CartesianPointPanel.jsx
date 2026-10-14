@@ -124,7 +124,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     </div>}
     <p role="status" className="consoleMessage">{submitted && job?.status === 'succeeded' ? `${offline ? '虚拟动作完成' : '实机反馈已到位，任务已结束并撤力'}，当前末端误差 ${actualError?.toFixed(2) ?? '—'} mm。`
       : submitted && job?.status === 'failed' ? `执行失败：${job.error}` : submitted && job?.status === 'cancelled' ? '动作已停止，请确认现场状态。' : message}</p>
-    {hardwareError && !offline && <p role="alert">{hardwareError}</p>}
+    {hardwareError && !offline && hardwareError !== message && <p role="alert">{hardwareError}</p>}
     <details className="pointReadiness"><summary>{offline ? '控制点与离线验证说明' : '实机执行状态与控制点说明'}</summary>
       {!offline && <><p>{hardwareReason}</p>{readiness?.reasons && <ul>{readiness.reasons.map(reason => <li key={reason}>{reason}</li>)}</ul>}</>}
       <p>控制点为 gripper_end，未计入额外笔尖或打印头长度。预演不发送运动指令；当前坐标根据执行反馈计算。</p>

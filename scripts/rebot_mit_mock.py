@@ -108,6 +108,13 @@ def shape(u):
             840*u-5040*u**2+8400*u**3-4200*u**4)
 
 
+class TrajectoryBudgetError(ValueError):
+    """Finite duration rejection with estimates for the read-only preview UI."""
+    def __init__(self, duration, budget, reserve):
+        self.duration, self.budget, self.reserve = duration, budget, reserve
+        super().__init__(f'Trajectory requires at least {duration:.1f} s plus {reserve:g} s reserve; task budget is {budget:g} s')
+
+
 @dataclass(frozen=True)
 class Trajectory:
     points: tuple
@@ -140,15 +147,19 @@ class Trajectory:
                                math.sqrt(d*(84*math.sqrt(5)/25)/a.a_max),
                                (d*52.5/a.jerk_max)**(1/3))
             cycles = required/config.policy.period
-            if not finite(cycles) or required+config.policy.command_age >= config.policy.task_timeout:
-                raise ValueError('Trajectory duration is unrepresentable or exceeds task budget')
+            if not finite(cycles):
+                raise ValueError('Trajectory duration is unrepresentable')
+            if required+config.policy.command_age >= config.policy.task_timeout:
+                raise TrajectoryBudgetError(sum(durations)+required,config.policy.task_timeout,config.policy.command_age)
             duration = math.ceil(cycles)*config.policy.period
             cubic_time = duration*duration*duration
             if not finite(cubic_time) or cubic_time == 0:
                 raise ValueError('Trajectory time scale is unrepresentable')
             durations.append(duration)
-        if not finite(sum(durations)) or sum(durations) + config.policy.command_age >= config.policy.task_timeout:
-            raise ValueError('Trajectory exceeds explicit task time budget')
+        if not finite(sum(durations)):
+            raise ValueError('Trajectory duration is unrepresentable')
+        if sum(durations) + config.policy.command_age >= config.policy.task_timeout:
+            raise TrajectoryBudgetError(sum(durations),config.policy.task_timeout,config.policy.command_age)
         return cls(points, tuple(durations))
 
     @property

@@ -91,4 +91,15 @@ describe('Two-mode XYZ workflow', () => {
     rerender(<CartesianPointPanel {...props} hardwareConfirmed locked feedback={{q_deg:[0,0,0,0,0,0],job:{status:'running'}}} />);
     expect(screen.getByRole('button',{name:'立即停止实机任务'}).disabled).toBe(false);
   });
+  it('shows an execution rejection once when the hook and panel report the same reason', async () => {
+    const message='轨迹至少需 77 秒；本次试验时限只有 5 秒。';
+    const execute=vi.fn(async()=>{throw new Error(message);});
+    const {props,rerender}=setup({mode:'hardware',hardwareConfirmed:true,onExecuteHardware:execute});
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));
+    await screen.findByText(/预演通过/);
+    fireEvent.click(screen.getByRole('button',{name:'确认实机执行'}));
+    await screen.findByText(message);
+    rerender(<CartesianPointPanel {...props} hardwareError={message} />);
+    expect(screen.getAllByText(message)).toHaveLength(1);
+  });
 });

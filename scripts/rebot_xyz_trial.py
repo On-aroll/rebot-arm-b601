@@ -12,7 +12,7 @@ import signal
 import time
 
 from rebot_mit_hardware import Envelope, HardwareExecutor, MotionIntent, OnsitePermit
-from rebot_mit_mock import Trajectory
+from rebot_mit_mock import Trajectory, TrajectoryBudgetError
 
 AXES=tuple(range(1,7))
 
@@ -93,7 +93,16 @@ def assess_motion(robot, start, target, config):
     # Do not call GravityCompensation.start(): it switches modes and enables.
     from reBotArm_control_py.dynamics import compute_generalized_gravity
     data=robot.pm.createData()
-    trajectory=Trajectory.create(q.tolist(),[target.tolist()],config,start_tolerance=config.start_boundary_tolerance)
+    try:
+        trajectory=Trajectory.create(q.tolist(),[target.tolist()],config,start_tolerance=config.start_boundary_tolerance)
+    except TrajectoryBudgetError as error:
+        reason=(f'按当前 {config.axes[0].v_max:g} rad/s 实机试验速度，轨迹至少需 {error.duration:.1f} 秒，'
+                f'另需预留 {error.reserve:g} 秒；本次试验时限只有 {error.budget:g} 秒。'
+                '请缩小目标位移，或另行确认更长的试验时限。尚未进入出力检查，未启动电机。')
+        return dict(execution_ready=False,execution_reasons=[reason],hardware_seconds=error.duration,
+                    task_timeout_s=error.budget,
+                    gravity_check=dict(status='not-evaluated',reason='duration exceeds trial budget'),
+                    static_balance_check=dict(status='not-evaluated',reason='duration exceeds trial budget'))
     gravity_samples=np.asarray([
         compute_generalized_gravity(robot.pm,np.asarray(trajectory.sample(t)[0]),data)[:6]
         for t in np.linspace(0,trajectory.duration,51)

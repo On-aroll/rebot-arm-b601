@@ -9,7 +9,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'scripts'))
 from rebot_mit_mock import (HardwareDisabledTransport, MockConfig, MockExecutor,
-                           MockMotorTransport, Trajectory, VirtualClock, shape)
+                           MockMotorTransport, Trajectory, TrajectoryBudgetError, VirtualClock, shape)
 FIXTURE = Path(__file__).parent/'fixtures/mit_mock_only.json'
 START = (6.4, -3.8, .5, -.8, 2.1, -7.2)  # deliberately raw multi-turn
 TARGET = (6.7, -3.6, .1, -.4, 1.8, -7.1)
@@ -155,6 +155,16 @@ class MitMockTests(unittest.TestCase):
         self.raw['policy'].update(period=1e106,command_age=1e108,ack_timeout=1e107,task_timeout=1e110)
         self.build()
         with self.assertRaises(ValueError): self.executor.prepare(WAYPOINTS,'v1')
+        self.assertEqual(self.bus.frames,[])
+
+    def test_finite_over_budget_plan_reports_duration_without_bypassing_limit(self):
+        before=self.config.fingerprint
+        limited=replace(self.config,policy=replace(self.config.policy,task_timeout=1.))
+        with self.assertRaises(TrajectoryBudgetError) as caught:
+            Trajectory.create(START,[TARGET],limited)
+        self.assertGreater(caught.exception.duration,1.)
+        self.assertEqual(caught.exception.budget,1.)
+        self.assertEqual(self.config.fingerprint,before)
         self.assertEqual(self.bus.frames,[])
 
     def test_first_pose_drift_and_moving_start_rejected(self):

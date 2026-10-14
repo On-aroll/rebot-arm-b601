@@ -10,7 +10,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from rebot_core import Robot
 from rebot_mit_hardware import Envelope
 from rebot_mit_mock import Trajectory
-from rebot_xyz_trial import plan_nearby,execute
+from rebot_xyz_trial import plan_nearby,execute,assess_motion
 
 
 class NearbyPlan(unittest.TestCase):
@@ -44,6 +44,22 @@ class NearbyPlan(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'实测起点越限'):
             plan_nearby(self.robot,start,replace(self.config,start_boundary_tolerance=0.))
         np.testing.assert_array_equal(start,before)
+
+    def test_far_xyz_preview_reports_trial_time_instead_of_generic_exception(self):
+        start=np.deg2rad([-1.15,-.37,.02,.98,2.41,2.45])
+        target=self.robot.ik(np.array([.30071,.200,.22487]),seed=start,position_only=True)
+        before=self.config.fingerprint
+        with patch('rebot_seeed_transport.SeeedTransport') as bus:
+            result=assess_motion(self.robot,start,target,self.config)
+            bus.assert_not_called()
+        self.assertFalse(result['execution_ready'])
+        self.assertGreater(result['hardware_seconds'],5.)
+        self.assertEqual(result['task_timeout_s'],5.)
+        self.assertIn('0.02 rad/s',result['execution_reasons'][0])
+        self.assertIn('时限只有 5 秒',result['execution_reasons'][0])
+        self.assertIn('未启动电机',result['execution_reasons'][0])
+        self.assertEqual(result['gravity_check']['status'],'not-evaluated')
+        self.assertEqual(self.config.fingerprint,before)
 
     def test_explicit_tolerance_preserves_raw_start_and_identifies_load_deficit(self):
         start=np.deg2rad([61.96,-.39,.1,.56,-.91,4.46]);before=start.copy()
