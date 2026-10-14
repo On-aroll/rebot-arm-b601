@@ -346,6 +346,7 @@ class HardwareExecutor:
         self.lock=threading.Lock(); self.lease_until=0.; self.lease_seq=-1; self.session=secrets.token_hex(16)
         self.motion_arrived=False; self.last_axis_command={}; self.consumed=False; self.state='IDLE'; self.reason=''; self.stop_result=None; self.feedback={}; self.frames=[]; self.used=set(); self.worker=None
         self.official_motion=None
+        self.failure_feedback={}
         self.gravity_scale=1.
 
     def heartbeat(self, session, sequence, focused):
@@ -387,6 +388,7 @@ class HardwareExecutor:
             self.validate_feedback(samples,tuple(MODELS))
             commands=self.official_motion.commands(q,v,[samples[i].q for i in MODELS],self.gravity_scale)
         frames=[]
+        entry=dict(time=issued,commands=frames,feedback={str(i):asdict(s) for i,s in samples.items()})
         for i in permit.axes:
             self.check(permit)
             if self.clock()-issued>p.command_age: raise TimeoutError('当前帧已过期')
@@ -400,10 +402,22 @@ class HardwareExecutor:
                 raise ValueError(f'J{i} 跟踪误差 {math.degrees(abs(error)):.3f}° 超过 {math.degrees(a.error_max):g}° 边界')
             if estimate>a.torque_max:
                 raise ValueError(f'J{i} 软件力矩估算 {estimate:.3f} N·m 超过 {a.torque_max:g} N·m 包络')
-            self.bus.frame(i,values); self.last_axis_command[i]=self.clock(); frames.append(dict(axis=i,values=values,estimated_effort=estimate))
+            if not frames: self.frames.append(entry)
+            self._recorded_frame(i,values,estimate,entry)
+            self.last_axis_command[i]=self.clock()
             self.check(permit)
             if self.clock()-issued>p.command_age: raise TimeoutError('SDK 发送完成已超时，停止旧任务')
-        self.frames.append(dict(time=issued,commands=frames,feedback={str(i):asdict(s) for i,s in samples.items()}))
+
+    def _recorded_frame(self, axis, values, effort, entry):
+        command=dict(axis=axis,values=values,estimated_effort=effort,
+                     requested_at=self.clock(),send_status='attempted')
+        entry['commands'].append(command)
+        try:
+            self.bus.frame(axis,values)
+        except Exception as error:
+            command.update(send_status='unknown-may-have-reached-drive',error=str(error))
+            raise
+        command.update(send_status='host-send-complete',completed_at=self.clock())
 
     def start(self, intent, permit):
         with self.lock:
@@ -478,10 +492,11 @@ class HardwareExecutor:
                     immediate=(pre[i].q,0.,self.config.axes[i-1].kp,self.config.axes[i-1].kd,0.)
                 self.last_axis_command[i]=self.clock();self.bus.enable(i);check()
                 if immediate is not None:
-                    issued=self.clock();self.bus.frame(i,immediate);self.last_axis_command[i]=self.clock()
-                    self.frames.append(dict(time=issued,phase='enable-hold',commands=[dict(axis=i,values=immediate,
-                        estimated_effort=self.config.axes[i-1].kd*max(abs(pre[i].qd),abs(pre[i].qd_raw or 0.)))],
-                        feedback={str(i):asdict(pre[i])}))
+                    issued=self.clock()
+                    entry=dict(time=issued,phase='enable-hold',commands=[],feedback={str(i):asdict(pre[i])})
+                    self.frames.append(entry)
+                    self._recorded_frame(i,immediate,self.config.axes[i-1].kd*max(abs(pre[i].qd),abs(pre[i].qd_raw or 0.)),entry)
+                    self.last_axis_command[i]=self.clock()
                     if self.clock()-issued>self.config.policy.command_age: raise TimeoutError('启动保持帧发送超过有效期')
                     check()
                 read_axes=tuple(MODELS) if self.official_motion is not None else (i,)
@@ -510,10 +525,10 @@ class HardwareExecutor:
                     raise ValueError('首帧阻尼力矩估算超过包络')
                 check()  # Includes computation time in the startup command deadline.
                 issued=self.clock()
-                self.bus.frame(i,values)
+                entry=dict(time=issued,phase='first-hold',commands=[],feedback={str(j):asdict(s) for j,s in current.items()})
+                self.frames.append(entry)
+                self._recorded_frame(i,values,startup_effort,entry)
                 if self.clock()-issued>self.config.policy.command_age: raise TimeoutError('首帧发送超过有效期')
-                self.frames.append(dict(time=issued,phase='first-hold',commands=[dict(axis=i,values=values,estimated_effort=startup_effort)],
-                    feedback={str(j):asdict(s) for j,s in current.items()}))
                 self.last_axis_command[i]=self.clock(); check()
                 startup_samples[i]=current[i]
                 if len(permit.axes)>1:
@@ -583,6 +598,7 @@ class HardwareExecutor:
                         self.motion_arrived=True; break
                 self.wait(max(0.,self.config.policy.period-(self.clock()-now)))
         except Exception as e:
+            self.failure_feedback=dict(self.feedback)
             self.reason=str(e); self.state='CANCELLED' if isinstance(e,InterruptedError) else 'FAULT'
         finally:
             terminal='ARRIVED' if self.motion_arrived else self.state
@@ -608,6 +624,9 @@ class HardwareExecutor:
                                 raise ValueError(f'J{i} 停止反馈模式异常或过期')
                             if not a.q_min-margin<=s.q<=a.q_max+margin:
                                 raise ValueError(f'J{i} 停止后原始位置越限')
+                        # The twin must follow post-release measurements, not
+                        # remain frozen at the last pre-stop command error.
+                        self.feedback.update(stopped)
                         now=self.clock()
                         stationary=bool(axes) and all(abs(s.qd)<=p.arrival_qd for s in stopped.values())
                         quiet=now if stationary and quiet is None else quiet if stationary else None
@@ -633,6 +652,7 @@ class HardwareExecutor:
         permit=self.bus.permit
         return dict(state=self.state,reason=self.reason,motion_arrived_before_stop=self.motion_arrived,stop=self.stop_result,frames=len(self.frames),
                     feedback={str(i):asdict(s) for i,s in self.feedback.items()},
+                    failure_feedback={str(i):asdict(s) for i,s in self.failure_feedback.items()},
                     control=dict(config_fingerprint=self.config.fingerprint,
                         feedforward=asdict(self.config.feedforward) if self.config.feedforward else None,
                         gain_review=asdict(self.config.gain_review) if self.config.gain_review else None,

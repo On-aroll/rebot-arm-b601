@@ -81,6 +81,30 @@ class HardwareOffline(unittest.TestCase):
         with self.assertRaises(PermissionError): self.bus.enable(6)
         self.assertEqual(self.sdk.calls,[])
 
+    def test_first_hold_send_failure_keeps_attempt_and_cleanup_evidence(self):
+        self.sdk.fault='send'
+        self.run_trial()
+        self.assertEqual(self.executor.state,'FAULT')
+        command=self.executor.frames[0]['commands'][0]
+        self.assertEqual(command['axis'],6)
+        self.assertEqual(command['send_status'],'unknown-may-have-reached-drive')
+        self.assertIn('synthetic send failure',command['error'])
+        self.assertEqual(self.commands('disable'),[('disable',6)])
+
+    def test_partial_batch_survives_later_axis_tracking_rejection(self):
+        from unittest.mock import Mock
+        from rebot_mit_hardware import Sample
+        self.bus.frame=Mock()
+        samples={i:Sample(i,0.,0.,0,0.,0.) for i in (1,2,3)}
+        self.permit.axes=(1,2,3)
+        target=[0.]*6;target[2]=.2
+        with self.assertRaisesRegex(ValueError,'J3 跟踪误差'):
+            self.executor._send(target,[0.]*6,samples,self.permit)
+        self.assertEqual([c.args[0] for c in self.bus.frame.call_args_list],[1,2])
+        trace=self.executor.frames[0]['commands']
+        self.assertEqual([c['axis'] for c in trace],[1,2])
+        self.assertTrue(all(c['send_status']=='host-send-complete' for c in trace))
+
     def test_small_enable_settling_holds_before_trajectory_without_relaxing_limits(self):
         from dataclasses import replace
         original=self.bus.read;counts=0
@@ -282,9 +306,11 @@ class HardwareOffline(unittest.TestCase):
         def read(*args,**kwargs):
             nonlocal recoil
             samples=original(*args,**kwargs)
-            if self.executor.state=='STOPPING' and recoil:
-                samples[6]=replace(samples[6],qd=self.config.axes[5].v_max*1.5)
-                recoil=False
+            if self.executor.state=='STOPPING':
+                samples[6]=replace(samples[6],q=samples[6].q-.002)
+                if recoil:
+                    samples[6]=replace(samples[6],qd=self.config.axes[5].v_max*1.5)
+                    recoil=False
             return samples
         self.bus.read=read
         self.run_trial()
@@ -294,6 +320,9 @@ class HardwareOffline(unittest.TestCase):
         self.assertFalse(stop['physical_stopped'])
         self.assertEqual(stop['observations'][0]['feedback']['6']['qd'],.75)
         self.assertGreaterEqual(stop['observation_duration_s'],self.config.policy.settle_time)
+        final_feedback=stop['observations'][-1]['feedback']['6']
+        self.assertEqual(self.executor.status()['feedback']['6'],final_feedback)
+        self.assertAlmostEqual(final_feedback['q'],self.sdk.motors[6].q-.002)
         stop_index=next(i for i,c in enumerate(self.sdk.calls) if c[0]=='disable')
         self.assertFalse(any(c[0]=='mit' for c in self.sdk.calls[stop_index+1:]))
 

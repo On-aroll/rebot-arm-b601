@@ -159,10 +159,12 @@ class MotorPowerAPI:
 
     def _read_worker(self, process):
         terminal=None
+        command_log=None
         try:
             for line in process.stdout:
                 if not line.startswith(PREFIX): continue
                 data=json.loads(line[len(PREFIX):]); kind=data.pop('kind',None)
+                if kind=='result': command_log=data.pop('command_log',None)
                 with self.lock:
                     if self.process is not process: continue
                     self.snapshot.update(data)
@@ -188,6 +190,7 @@ class MotorPowerAPI:
                     result=self.status()
             if process.stdin: process.stdin.close()
             directory=self.root/'outputs/mit-p5/runtime'; directory.mkdir(parents=True,exist_ok=True)
+            if command_log is not None: result['command_log']=command_log
             (directory/(time.strftime('%Y%m%d-%H%M%S')+'-'+secrets.token_hex(4)+'.json')).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
 
     def stop(self):

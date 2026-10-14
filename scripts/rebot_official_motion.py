@@ -29,7 +29,7 @@ def policy():
 def gain_policy():
     return dict(mode=GAIN_MODE,source_commit=COMMIT,config_sha256=hashlib.sha256(CONFIG.read_bytes()).hexdigest(),
         reference_commit=REFERENCE_COMMIT,reference_config_sha256=hashlib.sha256(REFERENCE_CONFIG.read_bytes()).hexdigest(),
-        startup_gravity_ramp_s=4.)
+        startup_gravity_ramp_s=8.)
 
 
 def official_gain_limits():
@@ -53,11 +53,15 @@ def apply_slow_gains(raw):
     # Per-task values within the pinned SDK/reference position-loop gains. Never stored
     # in the drive or substituted for the user's saved software draft.
     raw['gain_review']=gain_policy()
-    for axis,kp,kd in zip(raw['axes'],(80.,75.,75.,40.,40.,40.),(5.,6.,6.,4.,4.,4.)):
+    for axis,kp,kd in zip(raw['axes'],(80.,75.,150.,50.,40.,40.),(5.,6.,10.,5.,4.,4.)):
         axis.update(kp=kp,kd=kd,kp_max=kp,kd_max=kd)
     raw['axes'][0]['error_max']=min(raw['axes'][0]['error_max'],0.6*3.141592653589793/180.)
     # Reserve actual torque headroom instead of raising the existing 3 Nm cap.
     raw['axes'][1]['error_max']=min(raw['axes'][1]['error_max'],0.75*3.141592653589793/180.)
+    # J3/J4 now use the actual SDK position-loop gains. Tighten their tracking
+    # bounds to keep the existing 9/3 Nm effort ceilings, rather than raise them.
+    raw['axes'][2]['error_max']=min(raw['axes'][2]['error_max'],0.6*3.141592653589793/180.)
+    raw['axes'][3]['error_max']=min(raw['axes'][3]['error_max'],0.75*3.141592653589793/180.)
 
 
 class OfficialMIT:

@@ -137,16 +137,38 @@ class PowerAPI(unittest.TestCase):
             self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='execute',plan_id='xyz-token',confirmed={k:True for k in CONFIRMATIONS}))
         self.popen.assert_not_called()
 
+    def test_failed_trial_trace_is_saved_once_and_excluded_from_status_polling(self):
+        self.start()
+        trace=[dict(time=1.,commands=[dict(axis=3,values=[.01,0.,150.,10.,1.])])]
+        terminal=dict(kind='result',state='FAULT',reason='J3 tracking boundary',frames=1,
+                      command_log=trace,expected_start=[0.]*6,target=[.001]*6,
+                      physical_acceptance=False)
+        self.process.stdout=io.StringIO('REBOT_POWER_JSON '+json.dumps(terminal)+'\n')
+        self.api._read_worker(self.process)
+        status=self.api.status()
+        self.assertFalse(status['busy'])
+        self.assertEqual(status['reason'],'J3 tracking boundary')
+        self.assertNotIn('command_log',status)
+        self.assertNotIn('command_log',status['result'])
+        files=list((self.root/'outputs/mit-p5/runtime').glob('*.json'))
+        self.assertEqual(len(files),1)
+        report=json.loads(files[0].read_text())
+        self.assertEqual(report['command_log'],trace)
+        self.assertEqual(report['expected_start'],[0.]*6)
+        self.assertEqual(report['target'],[.001]*6)
+
     def test_xyz_worker_reuses_executor_with_six_axis_permit_and_never_j7(self):
         raw,_=trial_proposal(self.store.state,self.api.limits)
         raw['policy']['task_timeout']=83.
         message=dict(operation='move-xyz',config=raw,expected_start=[0.]*6,target=[.001]*6,
                      request_id='virtual-point-test',evidence='synthetic onsite confirmation')
         with patch('rebot_power_worker.HardwareExecutor') as factory, patch('rebot_power_worker.threading.Thread'), \
-             patch('rebot_power_worker.signal.signal'),patch('rebot_power_worker.emit'), \
+             patch('rebot_power_worker.signal.signal'),patch('rebot_power_worker.emit') as emit, \
              patch('rebot_power_worker.time.monotonic',return_value=10.):
             executor=factory.return_value
             executor.worker.is_alive.return_value=False
+            executor.status.return_value={'state':'FAULT','frames':1}
+            executor.frames=[dict(commands=[dict(axis=3,values=(.01,0.,150.,10.,1.))])]
             run_trial(message,bus=Mock())
             intent,permit=executor.start.call_args.args
             self.assertEqual(list(intent.expected_start),message['expected_start'])
@@ -155,6 +177,12 @@ class PowerAPI(unittest.TestCase):
             self.assertTrue(permit.coordinated_start_checked)
             self.assertTrue(all((a.kp,a.kd,a.tau_ff)==(3.,1.,0.) for a in factory.call_args.args[0].axes))
             self.assertEqual(permit.expires_at,103.)
+            final=emit.call_args.args[0]
+            self.assertEqual(final['kind'],'result')
+            self.assertEqual(final['command_log'],executor.frames)
+            self.assertEqual(final['expected_start'],message['expected_start'])
+            self.assertEqual(final['target'],message['target'])
+            self.assertIn('no per-frame drive ACK',final['command_evidence'])
 
     def test_each_confirmation_requires_literal_true(self):
         plan = self.prepare()

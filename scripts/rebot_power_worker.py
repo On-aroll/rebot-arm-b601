@@ -88,7 +88,11 @@ def run_trial(message, bus=None):
     while executor.worker.is_alive():
         emit(dict(kind='status', **executor.status()))
         executor.worker.join(.1)
-    emit(dict(kind='result', **executor.status()))
+    # Emit the trace once, after cleanup. Polling carries only the small status;
+    # requests are host-side evidence, not per-frame acknowledgements by drives.
+    emit(dict(kind='result', **executor.status(), command_log=executor.frames,
+              expected_start=message['expected_start'], target=message.get('target'),
+              command_evidence='host MIT requests; no per-frame drive ACK'))
 
 
 def main():

@@ -128,7 +128,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
         <option value="seeed-rs-slow-position-v1">试验：官方范围增益 + 重力缓启动</option>
       </select></label>}
     </div></details>
-    {!offline && <p className="consoleNote">以上设置只用于本次任务，不覆盖保存草稿或设备参数。加速度与 jerk 沿用已有配置，自动时限最多 120 秒，修改后须重新预演。{feedforwardMode==='seeed-rs-slow-position-v1' && <> 本次 Kp 80/75/75/40/40/40、Kd 5/6/6/4/4/4 在锁定官方/参考范围内；J1/J2 跟踪边界为 0.6°/0.75°，其余为 1°。官方模型的重力力矩以 4 秒渐变接入，这是本项目适配，真实到位仍待验收。</>}</p>}
+    {!offline && <p className="consoleNote">以上设置只用于本次任务，不覆盖保存草稿或设备参数。加速度与 jerk 沿用已有配置，自动时限最多 120 秒，修改后须重新预演。{feedforwardMode==='seeed-rs-slow-position-v1' && <> 本次 Kp 80/75/150/50/40/40、Kd 5/6/10/5/4/4 在锁定官方/参考范围内；J1–J4 跟踪边界为 0.6°/0.75°/0.6°/0.75°，J5/J6 为 1°。官方模型的重力力矩以 8 秒渐变接入，这是本项目适配，真实到位仍待验收。</>}</p>}
     <div className="consoleActions">
       <button disabled={occupied || !previewReady} onClick={preview}>{pending ? '处理中…' : '计算并预演'}</button>
       {offline ? <button className="primary" disabled={occupied || invalidPlan || submitted || !virtualEnabled} onClick={execute}>执行虚拟动作</button>

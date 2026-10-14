@@ -1,0 +1,94 @@
+{
+  "type": "bounded-real-trial-analysis",
+  "goal_mm": [
+    300.73,
+    15.94,
+    226.27
+  ],
+  "startup_profile": {
+    "config_fingerprint": "7c67afa111b3ebe3e601a2ad5d4e5121c393c10b2640b168f72df3116e191569",
+    "feedforward": {
+      "mode": "seeed-rs-gravity-v1",
+      "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+      "model_sha256": "3838ca8f9d586be22a89b33c7cbdd4abd43d4a92a2de377b294eef4c5bd7654d"
+    },
+    "gain_review": {
+      "mode": "seeed-rs-bounded-gains-v1",
+      "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+      "config_sha256": "ff8d04f47da57906edf61510a512bbb40c9d0309927af4acf7081568392c8def",
+      "reference_commit": "aa807cf2affe85b13b86221159871aae7742c01b",
+      "reference_config_sha256": "2b487458a5f243229eb9b1fe52c4f93e413b70e5fcf2c056df6b0d5401e8fe30",
+      "startup_gravity_ramp_s": 8.0
+    },
+    "kp": [
+      80.0,
+      75.0,
+      150.0,
+      50.0,
+      40.0,
+      40.0
+    ],
+    "kd": [
+      5.0,
+      6.0,
+      10.0,
+      5.0,
+      4.0,
+      4.0
+    ],
+    "fixed_tau_ff": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "speed_limits_rad_s": [
+      0.02,
+      0.02,
+      0.02,
+      0.02,
+      0.02,
+      0.02
+    ]
+  },
+  "initial_model_xyz_mm": [
+    300.7167576252328,
+    10.976053010877449,
+    226.3026841548365
+  ],
+  "fault_model_xyz_mm": [
+    299.8808003634448,
+    11.167484007183132,
+    234.23403549813725
+  ],
+  "released_model_xyz_mm": [
+    300.7472346974347,
+    10.890780971424666,
+    226.22230619633763
+  ],
+  "physical_arrival": false,
+  "reason": "J3 跟踪误差 0.645° 超过 0.6° 边界",
+  "command_evidence": "host MIT requests; no per-frame drive ACK",
+  "contact_status": {
+    "source": "user observation",
+    "j1_support_restriction": false,
+    "links_or_gripper_table_support_contact": false,
+    "base_installation": "awaiting user answer"
+  },
+  "diagnostic_limits": "Host MIT arithmetic is not independently measured torque; no mass scale, zero or bias inferred from this transient.",
+  "trace_limitation": "This capture predates the partial-batch fix: successful J1/J2 requests in the rejecting final batch may be absent.",
+  "last_complete_j3_frame": {
+    "time_s": 5.9570385519982665,
+    "phase": "coupled-hold",
+    "axis": 3,
+    "target_deg": 0.3417978472300855,
+    "measured_deg": 0.9106463903144686,
+    "velocity_rad_s": 0.004950732530055633,
+    "feedforward_nm": 4.296113973573673,
+    "pd_position_nm": -1.489242003299296,
+    "signed_host_effort_nm": 2.757364644973821,
+    "absolute_component_bound_nm": 5.834863302173526
+  }
+}

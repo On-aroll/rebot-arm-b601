@@ -138,7 +138,7 @@ class NearbyPlan(unittest.TestCase):
         task,config=configure_motion(raw,start,target,dict(speed_rad_s=.02,timeout_mode='auto',feedforward_mode='seeed-rs-slow-position-v1'))
         result=assess_motion(self.robot,start,target,config)
         self.assertTrue(result['execution_ready'],result['execution_reasons'])
-        self.assertEqual([a.kp for a in config.axes],[80.,75.,75.,40.,40.,40.])
+        self.assertEqual([a.kp for a in config.axes],[80.,75.,150.,50.,40.,40.])
         self.assertEqual(raw,saved)
         self.assertIn('gain_review',task)
 
@@ -153,6 +153,12 @@ class NearbyPlan(unittest.TestCase):
         self.assertAlmostEqual(np.rad2deg(config.axes[1].error_max),.75)
         self.assertEqual(config.axes[1].torque_max,3.)
         self.assertLess(result['effort_reserve_check']['estimated_peak_with_tracking_reserve_Nm'][1],3.)
+        self.assertAlmostEqual(np.rad2deg(config.axes[2].error_max),.6)
+        self.assertAlmostEqual(np.rad2deg(config.axes[3].error_max),.75)
+        self.assertEqual(config.axes[2].torque_max,9.)
+        self.assertEqual(config.axes[3].torque_max,3.)
+        self.assertLess(result['effort_reserve_check']['estimated_peak_with_tracking_reserve_Nm'][2],9.)
+        self.assertLess(result['effort_reserve_check']['estimated_peak_with_tracking_reserve_Nm'][3],3.)
 
     def test_explicit_tolerance_preserves_raw_start_and_identifies_load_deficit(self):
         start=np.deg2rad([61.96,-.39,.1,.56,-.91,4.46]);before=start.copy()

@@ -104,7 +104,8 @@
   "last_trial_command_batch_interval_median_s": 0.2504889420015388,
   "onsite_observation": {
     "j1_support_does_not_restrict_rotation": true,
-    "j3_j4_support_load_status": "awaiting-user-observation"
+    "j3_j4_support_load_status": "user confirmed links and gripper do not contact support or table",
+    "base_installation": "awaiting user answer"
   },
   "browser_preflight": {
     "goal_mm": [
@@ -129,5 +130,50 @@
     "scope": "recorded upstream data; no hardware connection; not local calibration",
     "parameters_applied": false,
     "output": "upstream-fit-reproduction.txt"
+  },
+  "followup": {
+    "type": "bounded-web-execution-and-trace-fix",
+    "sdk_virtual_tests": 113,
+    "model_tests": 15,
+    "frontend_tests": 24,
+    "build": "passed; existing >500kB chunk warning",
+    "physical_xyz_arrival": false,
+    "trajectory_started": false,
+    "device_parameter_writes": 0,
+    "raw_reports": [
+      {
+        "file": "web-official-gains-4s.json",
+        "sha256": "7da73241c46a4a3da64fdb38b484223920326301b388a27fcfcc38b481a3da51",
+        "reason": "J3 跟踪误差 0.601° 超过 0.6° 边界",
+        "stop_ack_axes": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "stationary_feedback": true
+      },
+      {
+        "file": "web-official-gains-8s.json",
+        "sha256": "b5e6eec30a79566ffae984c93c8850c23d314420b6495bb4f5e1bdf7358f6441",
+        "reason": "J3 跟踪误差 0.645° 超过 0.6° 边界",
+        "stop_ack_axes": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "stationary_feedback": true
+      }
+    ],
+    "analysis": "web-8s-analysis.json",
+    "trace": "web-8s-trace.csv",
+    "partial_batch_trace_fix": "implemented after captured 8s trial; no retrospective augmentation",
+    "screenshot": "console-official-gains-trace.png",
+    "screenshot_sha256": "c626600de6e5034b057f647f36fc9f37fe025352f1e5bd6dd788117841c3f6bd"
   }
 }
