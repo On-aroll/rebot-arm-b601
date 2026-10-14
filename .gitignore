@@ -49,8 +49,13 @@ Thumbs.db
 
 # Private software profiles, snapshots, approvals and backups
 outputs/private_config/
+outputs/startup/
 outputs/instances/
 .venv-sim/
 
 # Reproducible P4 scratch runs; selected evidence lives in docs/validation/mit-p4
 outputs/mit-p4/
+
+# Local single-axis operator trial records (not configuration backups)
+outputs/mit-p5/
+outputs/mit-p6/

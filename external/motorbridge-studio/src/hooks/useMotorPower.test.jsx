@@ -20,9 +20,9 @@ class Socket {
     this.sent.push(request);
     if (request.op === 'set_target') this.axis = request.motor_id;
     const reply = () => this.onmessage?.({ data: JSON.stringify({
-      req_id: request.req_id, ok: this.fail !== request.op,
-      error: this.fail === request.op ? 'CAN 未确认' : undefined,
-      data: { value: request.param_id === 0x7005 ? this.mode : request.param_id === 0x7019 ? this.position : 0 },
+      req_id: request.req_id, ok: this.fail !== request.op && !this.failRequest?.(request),
+      error: this.fail === request.op || this.failRequest?.(request) ? 'CAN 未确认' : undefined,
+      data: { value: request.param_id === 0x7005 ? (this.modes?.[this.axis] ?? this.mode) : request.param_id === 0x7019 ? this.position : 0 },
     }) });
     if (this.defer?.(request)) this.release = reply;
     else queueMicrotask(reply);
@@ -221,4 +221,115 @@ it('does not retry an unconfirmed power command or claim a real enabled state', 
   expect(socket.sent.filter(r => r.op === 'enable')).toHaveLength(1);
   expect(result.current.powerRequests[1].error).toBe('CAN 未确认');
   expect(result.current.powerRequests[1].op).toBeUndefined();
+});
+
+it('validates all seven before the first enable, then refreshes each axis without changing parameters', async () => {
+  const { result, socket } = await connected();
+  await act(async () => { await result.current.requestAllPower('enable', confirmations, Array(6).fill([-180, 180])); });
+  const first = socket.sent.findIndex(r => r.op === 'enable');
+  expect(socket.sent.slice(0, first).filter(r => r.param_id === 0x7005)).toHaveLength(8);
+  expect(socket.sent.filter(r => r.op === 'enable').map(r => r.motor_id)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+  expect(socket.sent.every(r => ['set_target', 'robstride_read_param', 'enable', 'close_bus'].includes(r.op))).toBe(true);
+  expect(result.current.powerGroup).toMatchObject({ status: 'sent', sent: [1, 2, 3, 4, 5, 6, 7] });
+});
+
+it('rejects an invalid last-axis mode before enabling any of the seven axes', async () => {
+  const { result, socket } = await connected();
+  socket.modes = { 7: 1 };
+  await act(async () => { await expect(result.current.requestAllPower('enable', confirmations, Array(6).fill([-180, 180]))).rejects.toThrow('J7'); });
+  expect(socket.sent.some(r => r.op === 'enable')).toBe(false);
+  expect(result.current.powerGroup).toMatchObject({ status: 'failed', sent: [] });
+});
+
+it('does not send a group command with missing confirmation or invalid limits', async () => {
+  const { result, socket } = await connected();
+  await act(async () => { await expect(result.current.requestAllPower('enable', {}, Array(6).fill([-180, 180]))).rejects.toThrow('确认'); });
+  expect(socket.sent).toEqual([]);
+  await act(async () => { await expect(result.current.requestAllPower('enable', confirmations, [])).rejects.toThrow('限位'); });
+  expect(socket.sent.some(r => r.op === 'enable')).toBe(false);
+});
+
+it('queues all seven disables immediately despite a pending read and a failed axis', async () => {
+  const { result, socket } = await connected();
+  socket.defer = r => r.op === 'set_target';
+  socket.failRequest = r => r.op === 'disable' && r.motor_id === 1;
+  let query;
+  act(() => { query = result.current.refresh(); });
+  await waitFor(() => expect(socket.release).toBeTruthy());
+  await act(async () => { await expect(result.current.requestAllPower('disable')).rejects.toThrow('J1'); });
+  expect(socket.sent.filter(r => r.op === 'disable').map(r => [r.motor_id, r.model])).toEqual([
+    [1, 'rs-06'], [2, 'rs-06'], [3, 'rs-06'], [4, 'rs-00'], [5, 'rs-00'], [6, 'rs-00'], [7, 'rs-00'],
+  ]);
+  expect(result.current.powerGroup).toMatchObject({ op: 'disable', failed: [1] });
+  socket.defer = null;
+  await act(async () => { socket.release(); await query; });
+  expect(result.current.pollingPaused).toBe(true);
+});
+
+it('stops a partially sent group and preserves newer disable results after a late enable reply', async () => {
+  const { result, socket } = await connected();
+  socket.defer = r => r.op === 'enable' && r.motor_id === 2;
+  let rejected;
+  act(() => { rejected = expect(result.current.requestAllPower('enable', confirmations, Array(6).fill([-180, 180]))).rejects.toThrow('失能中断'); });
+  await waitFor(() => expect(socket.release).toBeTruthy());
+  await act(async () => { await expect(result.current.requestPower(7, 'enable', confirmations)).rejects.toThrow('七轴'); });
+  await act(async () => { await result.current.requestAllPower('disable'); });
+  socket.defer = null;
+  await act(async () => { socket.release(); await rejected; });
+  expect(socket.sent.filter(r => r.op === 'enable').map(r => r.motor_id)).toEqual([1, 2]);
+  expect(result.current.powerGroup).toMatchObject({ op: 'disable', status: 'sent' });
+  expect(Object.values(result.current.powerRequests).every(r => r.op === 'disable')).toBe(true);
+});
+
+it('keeps automatic polling position-only, preserving parameter timestamps until an explicit full refresh', async () => {
+  let tick;
+  const realInterval = globalThis.setInterval;
+  vi.spyOn(globalThis, 'setInterval').mockImplementation((callback, ms, ...args) => {
+    if (ms === 60000) { tick = callback; return 123456; }
+    return realInterval(callback, ms, ...args);
+  });
+  const { result, socket } = await connected();
+  const modeAt = result.current.motors[1].fieldTimes.runMode;
+  act(() => { tick(); });
+  await waitFor(() => expect(result.current.cycles).toBe(2));
+  expect(socket.sent.filter(r => r.op === 'robstride_read_param')).toHaveLength(7);
+  expect(socket.sent.filter(r => r.op === 'robstride_read_param').every(r => r.param_id === 0x7019)).toBe(true);
+  expect(result.current.motors[1].fieldTimes.runMode).toBe(modeAt);
+  expect(result.current.motors[1].positionUpdatedAt).toBeGreaterThanOrEqual(modeAt);
+  socket.sent = [];
+  await act(async () => { await result.current.refresh(); });
+  expect(socket.sent.some(r => r.param_id === 0x7005)).toBe(true);
+});
+
+it('queues an explicit initial-state refresh behind an existing read-only cycle without adding writes', async () => {
+  const { result, socket } = await connected();
+  vi.useFakeTimers();
+  socket.defer = r => r.op === 'set_target';
+  let first, queued;
+  act(() => { first = result.current.refresh(); queued = result.current.refresh({ waitForIdle: true }); });
+  expect(socket.sent.map(r => r.op)).toEqual(['set_target']);
+  socket.defer = null;
+  await act(async () => { socket.release(); await first; });
+  await act(async () => { await vi.advanceTimersByTimeAsync(50); await queued; });
+  expect(result.current.cycles).toBe(3);
+  expect(socket.sent.filter(r => r.param_id === 0x7005)).toHaveLength(14);
+  expect(socket.sent.every(r => ['set_target', 'robstride_read_param', 'close_bus'].includes(r.op))).toBe(true);
+});
+
+it('cancels a queued initial-state refresh after emergency withdrawal without restarting polling', async () => {
+  const { result, socket } = await connected();
+  vi.useFakeTimers();
+  socket.defer = r => r.op === 'set_target';
+  let first, queued;
+  act(() => { first = result.current.refresh(); queued = result.current.refresh({ waitForIdle: true }); });
+  await act(async () => { await result.current.requestAllPower('disable'); });
+  socket.defer = null;
+  await act(async () => { socket.release(); await first; });
+  let queuedResult;
+  await act(async () => { await vi.advanceTimersByTimeAsync(50); queuedResult = await queued; });
+  expect(queuedResult).toBeUndefined();
+  expect(result.current.pollingPaused).toBe(true);
+  expect(socket.sent.filter(r => r.op === 'set_target')).toHaveLength(1);
+  expect(socket.sent.filter(r => r.op === 'disable')).toHaveLength(7);
+  expect(socket.sent.some(r => r.op === 'enable' || r.op === 'robstride_read_param')).toBe(false);
 });

@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-14",
+  "branch": "codex/mit-console-protection",
+  "base_commit": "e09d56a",
+  "delivery": [
+    "complete console source",
+    "two work modes",
+    "seven-axis shared confirmation and power controls",
+    "read-only initial-state detection",
+    "feedback coordinates and trail",
+    "ROS Fake startup and adapter",
+    "Chinese user manual and updated restart guide"
+  ],
+  "checks": {
+    "frontend": {
+      "files": 34,
+      "passed": 188
+    },
+    "python_offline": {
+      "passed": 140
+    },
+    "frontend_build": "passed",
+    "shell_syntax": "passed",
+    "python_compile": "passed",
+    "point_planner": "passed; MuJoCo arrival error 0.5596 mm in this offline check",
+    "http_routes": "passed; read-only checks only",
+    "doc_links": "passed",
+    "diff_check": "passed"
+  },
+  "real_can_requests": 0,
+  "real_motor_motion": false,
+  "real_parameter_writes": false,
+  "private_software_profiles_included": false,
+  "node_modules_or_dist_included": false,
+  "physical_acceptance": false,
+  "merged_to_main": false,
+  "remaining": [
+    "Actual holding, motion and physical stop have not been accepted",
+    "Real XYZ remains disabled",
+    "Physical feedback latency and speed matching unverified",
+    "J7 displacement and external tool TCP calibration incomplete",
+    "Fresh-machine ROS and graphical dependency installation not verified by this run"
+  ],
+  "earlier_virtual_execution": {
+    "source": "outputs/console-modes-2026-10-14/report.json",
+    "date": "2026-10-14",
+    "xyz_mm": [
+      200,
+      150,
+      200
+    ],
+    "fake_fk_error_mm_approximately": 0.0005,
+    "stop": "cancelled with no subsequent drift; virtual only"
+  }
+}

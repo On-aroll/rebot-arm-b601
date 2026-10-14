@@ -219,6 +219,14 @@
 .consolePrimary .consoleViewport > div { max-width:100%; }
 .consoleSources { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
 .consoleSources button[aria-pressed=true] { border-color:#338477; background:#e0f1eb; color:#175c51; }
+.consoleWorkModes { display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:12px 16px; margin:12px 0; }
+.consoleModeButtons { display:flex; gap:6px; }
+.consoleModeButtons button { min-width:120px; }
+.consoleModeButtons button[aria-pressed=true] { border-color:#338477; background:#e0f1eb; color:#175c51; font-weight:600; }
+.consoleWorkModes small { color:#66798c; }
+.consoleWorkspace .offlineControls { margin:12px 0; }
+.consoleDiagnosticBanner { padding:8px 12px; background:#fff4db; color:#755715; margin-bottom:8px; border-radius:8px; font-size:12px; }
+.consoleDiagnosticBanner button { margin-left:8px; }
 .consoleWorkspace .consoleModules { display:flex; flex-direction:column; gap:6px; }
 .consoleWorkspace .compactMotor { padding:0; min-width:0; }
 .motorSummary { display:grid; grid-template-columns:100px 70px 110px 1fr 100px 140px 65px; align-items:center; gap:8px; width:100%; text-align:left; padding:10px 14px; border:0; background:transparent; font-size:12px; }
@@ -299,6 +307,8 @@
 /* Daily operation: connection first, three gains per expanded joint. */
 .deviceConnection{padding:18px;margin:12px 0 16px;min-width:0}
 .deviceHeading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.deviceHeading > div { min-width: 0; }
+.deviceHeading > strong { flex-shrink: 0; white-space: nowrap; }
 .deviceHeading h3{margin:0 0 6px}.deviceHeading p{margin:0;color:var(--muted,#9aaeb5);font-size:13px}
 .deviceMetrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:16px 0}
 .deviceMetrics span{background:rgba(100,150,160,.08);padding:10px;border-radius:9px;font-size:12px;overflow-wrap:anywhere}
@@ -311,3 +321,67 @@
 .mitBasicInputs small{font-size:11px;color:#94a6b3;overflow-wrap:anywhere}.mitBasicInputs input{width:100%;box-sizing:border-box;min-width:0}
 .engineeringParameters{padding:10px 0}.engineeringParameters h5{margin-bottom:4px}
 @media(max-width:700px){.deviceMetrics{grid-template-columns:repeat(2,minmax(0,1fr))}.mitBasicInputs{grid-template-columns:1fr}.deviceConnection .consoleActions button{flex:1 1 140px}.deviceHeading{align-items:flex-start}}
+
+.motorPowerPanel { margin-top: 12px; }
+.motorPowerPanel p { line-height: 1.55; }
+.motorPowerPanel .motorPowerHint { font-size: 12px; opacity: .8; }
+.motorPowerActions { flex-wrap: wrap; }
+.motorPowerActions button { flex: 1 1 160px; min-height: 40px; }
+.motorPowerActions .danger { background: #a33c26; border-color: #a33c26; color: #fff; }
+.motorPowerProposal { padding: 12px; margin: 12px 0; border: 1px solid var(--border, #d6dbe0); border-radius: 10px; }
+.motorPowerProposal fieldset { margin: 12px 0; padding: 10px; border: 1px solid var(--border, #d6dbe0); border-radius: 8px; }
+.motorPowerProposal label { display: flex; align-items: flex-start; gap: 8px; margin: 8px 0; font-size: 13px; line-height: 1.5; }
+.motorPowerProposal input[type=checkbox] { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 2px; }
+.motorPowerProposal > button { width: 100%; min-height: 42px; margin-top: 8px; }
+.motorPowerPanel pre { max-height: 220px; overflow: auto; font-size: 11px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.motorPowerError { color: #ba3428; font-weight: 600; }
+.motorPowerFeedback { overflow-x: auto; margin: 12px 0; }
+.motorPowerFeedback table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.motorPowerFeedback caption { text-align: left; margin-bottom: 6px; font-weight: 600; }
+.motorPowerFeedback th, .motorPowerFeedback td { text-align: left; padding: 5px; border-bottom: 1px solid var(--border, #d6dbe0); }
+
+/* One machine confirmation and two power actions for daily use. */
+.consoleSetup { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.2fr); gap: 12px; margin-top: 12px; align-items: start; }
+.consoleWorkspace .consoleSetup .deviceConnection { margin: 0; }
+.consoleWorkspace .deviceMetrics { grid-template-columns: repeat(3,minmax(0,1fr)); margin: 10px 0; }
+.consoleWorkspace .deviceConnection { margin: 10px 0; padding: 12px 16px; }
+.machinePower { padding: 14px 16px; scroll-margin-top: 12px; }
+.machinePower h3 { margin: 0 0 10px; }
+.machineConfirmation { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.6; }
+.machineConfirmation input[type=checkbox] { flex: 0 0 18px; width: 18px; height: 18px; margin-top: 2px; }
+.machinePowerActions { display: flex; flex-wrap: wrap; margin: 12px 0; }
+.machinePowerActions button { min-height: 42px; flex: 1 1 200px; }
+.machinePowerActions .danger { background: #b12f32; color: #fff; border-color: #b12f32; font-weight: 700; }
+.machineAxisStatus { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 6px; margin: 10px 0; }
+.machineAxisStatus span { padding: 6px; border-radius: 6px; background: rgba(90,130,150,.08); font-size: 11px; }
+.machineAxisStatus strong { display: block; font-weight: 500; margin-top: 3px; }
+.machineAxisStatus .error { color: #b12f32; }
+.consoleWorkspace .consolePrimary { grid-template-columns: minmax(0,1.5fr) minmax(340px,1fr); }
+.consoleWorkspace .consolePrimary .consoleViewport { height: 470px; }
+.consolePointColumn { display: grid; gap: 12px; }
+.liveCoordinates { padding: 12px 14px; }
+.liveCoordinates > div:first-child { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 13px; }
+.liveCoordinates small, .liveCoordinates > div:first-child > span { font-size: 11px; color: #687e90; }
+.liveCoordinates .consoleTcp { margin: 12px 0; }
+.liveCoordinates .consoleTcp strong { font-size: 23px; font-variant-numeric: tabular-nums; }
+.calibrationHelp { background: rgba(100,150,160,.05); border-radius: 8px; font-size: 13px; line-height: 1.6; }
+.initialStateCheck { padding: 12px 16px; margin-top: 12px; font-size: 13px; line-height: 1.6; }
+.initialStateCheck .deviceHeading { flex-wrap: wrap; }
+.initialStateCheck .deviceHeading button { min-height: 40px; }
+.initialStateCheck > p { margin: 8px 0; }
+.initialStateCheck details { margin: 10px 0; }
+.initialStateCheck summary { cursor: pointer; font-weight: 600; }
+.initialCheckSummary { display: flex; gap: 8px; flex-wrap: wrap; }
+.initialCheckSummary span { padding: 4px 8px; border-radius: 6px; background: rgba(90,130,150,.08); }
+.initialManual label { display: flex; align-items: flex-start; gap: 8px; }
+.initialManual input[type=checkbox] { width: 18px; height: 18px; flex: 0 0 18px; margin-top: 3px; }
+.initialManual .machineAxisStatus small { display: block; font-size: 11px; }
+.pointOptions { font-size: 12px; margin: 10px 0; }
+.consoleWorkspace .pointOptions .cartesianInputs { grid-template-columns: minmax(0,1.6fr) minmax(0,1fr); }
+@media(max-width:720px) {
+  .consoleWorkspace .consolePrimary { grid-template-columns: minmax(0,1fr); }
+  .consoleWorkspace .consolePrimary .consoleViewport { height: 330px; }
+  .machineAxisStatus { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  .consoleWorkspace .deviceMetrics { grid-template-columns: minmax(0,1fr); }
+}
+@media(max-width:980px) { .consoleSetup { grid-template-columns: minmax(0,1fr); } }

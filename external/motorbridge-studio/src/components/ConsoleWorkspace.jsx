@@ -3,7 +3,14 @@ import { ArmUrdfViewer } from './ArmUrdfViewer';
 import { HardwareMappingPanel } from './HardwareMappingPanel';
 import { loadMapping, mapHardwareFeedback } from '../lib/hardwareMapping';
 import { DeviceConnectionPanel } from './DeviceConnectionPanel';
+import { RosControlPanel } from './RosControlPanel';
+import { OfflineControls } from './OfflineControls';
+import { useRosValidation } from '../hooks/useRosValidation';
 import { CartesianPointPanel } from './CartesianPointPanel';
+import { MachinePowerControls } from './MachinePowerControls';
+import { InitialStateCheck } from './InitialStateCheck';
+import { LiveCoordinates } from './LiveCoordinates';
+import { useFeedbackCoordinates } from '../hooks/useFeedbackCoordinates';
 import { MotorModuleCard } from './MotorModuleCard';
 import { useMotorGateway, MACHINE_IDS, MACHINE_MODELS } from '../hooks/useMotorGateway';
 import { useSoftwareConfig } from '../hooks/useSoftwareConfig';
@@ -88,10 +95,17 @@ export function ConsoleWorkspace() {
   const requestedHardwareView = React.useRef(new URL(window.location.href).searchParams.get('pose') === 'hardware').current;
   const [state, setState] = React.useState(null);
   const [mapping, setMapping] = React.useState(loadMapping);
-  const [displaySource, setDisplaySource] = React.useState(requestedHardwareView ? 'hardware' : 'simulation');
+  const [workMode, setWorkMode] = React.useState(requestedHardwareView ? 'hardware' : 'offline');
+  const [diagnosticSimulation, setDiagnosticSimulation] = React.useState(false);
+  const displaySource = diagnosticSimulation ? 'simulation' : workMode === 'offline' ? 'ros' : 'hardware';
   const lastHardwareJoints = React.useRef({});
   const [pointPlan, setPointPlan] = React.useState(null);
   const [syncing, setSyncing] = React.useState(false);
+  const [initialCheckBusy, setInitialCheckBusy] = React.useState(false);
+  const ros = useRosValidation();
+  const rosFeedback = ros.state;
+  const powerBusy = ros.running;
+  const [executionTrail, setExecutionTrail] = React.useState([]);
   const [synchronization, setSynchronization] = React.useState(null);
   const [syncVersion, setSyncVersion] = React.useState(0);
   const [hardwareReadiness, setHardwareReadiness] = React.useState(null);
@@ -104,7 +118,7 @@ export function ConsoleWorkspace() {
   const [cameraView, setCameraView] = React.useState('overview');
   const [resetViewSeq, setResetViewSeq] = React.useState(0);
   const [ghost, setGhost] = React.useState(false);
-  const [showPlan, setShowPlan] = React.useState(true);
+  const [showPlan, setShowPlan] = React.useState(false);
   const [showTrail, setShowTrail] = React.useState(true);
   const [now, setNow] = React.useState(Date.now());
   const commandBusy = React.useRef(false);
@@ -148,7 +162,7 @@ export function ConsoleWorkspace() {
     } catch (e) { setMessage(e.message); }
   }
   const gamepad = useGamepad();
-  const gateway = useMotorGateway({ intervalMs: 2500 });
+  const gateway = useMotorGateway({ intervalMs: 500 });
 
   React.useEffect(() => {
     let disposed = false;
@@ -190,7 +204,7 @@ export function ConsoleWorkspace() {
   const job = state?.job;
   const active = job?.status === 'running' || job?.status === 'paused';
   const moving = Boolean(state?.manual_motion || state?.playing);
-  const locked = Boolean(problem || busy || gateway.powerPending != null);
+  const locked = Boolean(problem || busy || powerBusy || initialCheckBusy || ros.pending || gateway.powerPending != null || ['checking', 'sending'].includes(gateway.powerGroup?.status));
   const jointTargets = React.useMemo(() => feedbackJoints(state), [state]);
   const feedbackTrace = React.useMemo(() => ({ points: (state?.trace_xyz || []).map(toStudioPoint) }), [state]);
   const plannedPath = React.useMemo(() => {
@@ -198,15 +212,35 @@ export function ConsoleWorkspace() {
     // 否则会在抓取任务上叠一层“国庆快乐”的字形。
     if (!showPlan) return [];
     if (pointPlan) return pointPlan.path_xyz.map(toStudioPoint);
-    if (task !== 'writing' || !document) return [];
+    if (!diagnosticSimulation || task !== 'writing' || !document) return [];
     return (document.steps.find((step) => step.op === 'trace_path')?.points || []).map(toStudioPoint);
-  }, [document, showPlan, task, pointPlan]);
+  }, [document, showPlan, task, pointPlan, diagnosticSimulation]);
 
   // 实机读数优先走网关，其次才是 twin-sync 发布的文件。
   const gatewayOnline = gateway.status === 'online';
   const mapped = React.useMemo(() => mapHardwareFeedback(gateway.motors, mapping, state?.limits_deg, now, gatewayOnline), [gateway.motors, mapping, state?.limits_deg, now, gatewayOnline]);
   React.useEffect(() => { if (mapped.joints) lastHardwareJoints.current = mapped.joints; }, [mapped.joints]);
   const measuredView = mapped.joints || lastHardwareJoints.current;
+  const rosFresh = Boolean(rosFeedback?.fresh && Number.isFinite(rosFeedback.feedback_time) && now - rosFeedback.feedback_time * 1000 >= -1000 && now - rosFeedback.feedback_time * 1000 < 1500);
+  const coordinateFresh = displaySource === 'hardware' ? mapped.complete : displaySource === 'ros' ? rosFresh : !problem;
+  const measuredQ = displaySource === 'hardware' ? mapped.rows.map(row => row.modelDeg) : displaySource === 'ros' ? rosFeedback?.q_rad?.map(q => q * 180 / Math.PI) : null;
+  const calculatedXyz = useFeedbackCoordinates(measuredQ, coordinateFresh && displaySource !== 'simulation');
+  const displayedXyz = displaySource === 'simulation' ? state?.xyz?.map(v => v * 1000) : calculatedXyz;
+  const coordinateAge = displaySource === 'hardware' ? Math.max(...mapped.rows.map(row => row.ageMs)) : displaySource === 'simulation' ? now - (state?.feedback_time_unix_s || 0) * 1000 : now - (rosFeedback?.feedback_time || 0) * 1000;
+  const executionFeedback = workMode === 'offline' ? { ...rosFeedback, q_deg: rosFeedback?.q_rad?.map(q => q * 180 / Math.PI) } : { q_deg: mapped.rows.map(row => row.modelDeg) };
+  const previewReady = workMode === 'offline' ? rosFresh : mapped.complete;
+
+  React.useEffect(() => { setExecutionTrail([]); }, [workMode, diagnosticSimulation]);
+  React.useEffect(() => {
+    if (displaySource === 'simulation' || !coordinateFresh || !displayedXyz) return;
+    const point = toStudioPoint(displayedXyz.map(v => v / 1000));
+    setExecutionTrail(previous => {
+      const last = previous.at(-1);
+      if (last && Math.hypot(last.x - point.x, last.y - point.y, last.z - point.z) < .00001) return previous;
+      return [...previous.slice(-1999), point];
+    });
+  }, [displaySource, coordinateFresh, displayedXyz]);
+
   const machineLive = Boolean(machine?.present && !machine?.stale);
   const machineAge = machine?.present ? now / 1000 - (machine.report_time_unix_s || 0) : null;
   const realDeg = React.useMemo(() => {
@@ -225,9 +259,22 @@ export function ConsoleWorkspace() {
       if (!readings) throw new Error('状态查询正在进行，请稍后再点同步');
       const result = await api('/command', {action:'sync_hardware_pose',motors:readings,mapping});
       setSynchronization(result); setSyncVersion(v=>v+1); setPointPlan(null);
-      setState(await api('/studio-state')); setDisplaySource('simulation');
+      setState(await api('/studio-state'));
     } catch(error) { setSynchronization({ok:false,error:error.message}); }
     finally { setSyncing(false); }
+  }
+
+  async function prepareHardwarePreview() {
+    const readings = await gateway.refresh();
+    if (!readings) throw new Error('状态查询正在进行，请稍后再预演');
+    const result = await api('/command', { action: 'sync_hardware_pose', motors: readings, mapping });
+    setSynchronization(result); setState(await api('/studio-state'));
+  }
+
+  function changeMode(mode) {
+    if (locked || active || moving || syncing) return;
+    setWorkMode(mode); setDiagnosticSimulation(false); setPointPlan(null); setShowPlan(false);
+    setSyncVersion(v => v + 1); setCameraView('overview');
   }
 
   async function command(action) {
@@ -236,13 +283,13 @@ export function ConsoleWorkspace() {
     setBusy(true); setMessage('');
     try {
       if (action === 'start') {
-        setDisplaySource('simulation');
+        setDiagnosticSimulation(true);
         setPointPlan(null);
         await api('/command', { action: 'reset' });
         await api('/command', { action: TASKS[task].action });
         setMessage(`已提交「${TASKS[task].label}」，模型跟随 MuJoCo 实际反馈。`);
       } else {
-        if (action === 'reset') setDisplaySource('simulation');
+        if (action === 'reset') setDiagnosticSimulation(true);
         await api('/command', { action });
       }
       setState(await api('/studio-state'));
@@ -270,68 +317,94 @@ export function ConsoleWorkspace() {
     <section className="consoleWorkspace" aria-label="虚实联调控制台">
       <div className="consoleHeading card glass">
         <div><span className="consoleEyebrow">reBot B601-RS · 虚实联调控制台</span>
-          <h2>机械臂工作台 <small>连接 → 同步姿态 → 输入坐标 → 预演 → 确认执行</small></h2>
-          <p>沿用已确认的静态姿态映射。实机反馈、仿真预演和计划路径分别显示。</p></div>
+          <h2>机械臂工作台 <small>输入 XYZ → 预演 → 执行 → 查看反馈</small></h2>
+          <p>{workMode === 'offline' ? '离线验证：无需机械臂，模型跟随虚拟电机反馈。' : '实机操作：模型跟随真实位置读数，实机轨迹执行待验收。'}</p></div>
         <div className="consoleBadges">
-          <span className={`badge ${problem ? 'err' : 'ok'}`}>{problem ? '仿真反馈异常' : '仿真在线'}</span>
-          <span className={`badge ${gatewayOnline ? 'ok' : (gateway.status === 'offline' ? 'err' : '')}`}>
+          <span className={`badge ${problem ? 'err' : 'ok'}`}>{problem ? '模型预演不可用' : '模型预演在线'}</span>
+          {(workMode === 'hardware' || gatewayOnline) && <span className={`badge ${gatewayOnline ? 'ok' : (gateway.status === 'offline' ? 'err' : '')}`}>
             {gatewayOnline ? `网关 ${readCount}/7 轴` : `网关：${GATEWAY_STATUS[gateway.status] || gateway.status}`}
-          </span>
-          <span className="badge">逐轴使能 / 失能 · 轨迹锁定</span>
+          </span>}
+          <span className="badge">{workMode === 'offline' ? '当前执行器：虚拟电机' : '当前反馈：真实机械臂'}</span>
         </div>
-        <a href="#motor-control-panel">实机电机 · 使能 / 失能</a>
       </div>
-      <DeviceConnectionPanel readiness={hardwareReadiness} gateway={gateway} now={now} onSync={synchronizeHardwarePose} syncing={syncing} synchronization={synchronization} blocked={active||moving||busy||Boolean(problem)||gateway.powerPending!=null} />
-      <div className="consoleStatus" role="status"><strong>逐轴电源可手动操作 · XYZ 实机执行锁定</strong><span>{hardwareReadiness?.next_step || '正在读取现场验收条件；实机执行保持锁定'}</span></div>
+      <div className="consoleWorkModes card glass" aria-label="工作模式">
+        <div className="consoleModeButtons"><button aria-pressed={workMode === 'offline'} disabled={locked || active || moving || syncing} onClick={() => changeMode('offline')}>离线验证</button>
+          <button aria-pressed={workMode === 'hardware'} disabled={locked || active || moving || syncing} onClick={() => changeMode('hardware')}>实机操作</button></div>
+        <small>切换模式只切换工作流程，不自动连接、使能或运动。</small>
+        {workMode === 'offline' && gatewayOnline && <button className="danger" onClick={() => gateway.requestAllPower('disable').catch(e => setMessage(e.message))}>实机全部立即失能</button>}
+      </div>
+      {workMode === 'offline' ? <OfflineControls controller={ros} fresh={rosFresh} blocked={busy || active || moving || syncing} /> : <div className="consoleSetup">
+      <DeviceConnectionPanel readiness={hardwareReadiness} gateway={gateway} now={now} onSync={synchronizeHardwarePose} syncing={syncing} synchronization={synchronization} blocked={active||moving||locked||syncing} powerBusy={powerBusy} />
+      <MachinePowerControls gateway={gateway} limits={state?.limits_deg} blocked={active || moving || busy || powerBusy || initialCheckBusy || syncing || hardwareReadiness?.power_trial?.busy} />
+      </div>}
+      {workMode === 'hardware' && <InitialStateCheck gateway={gateway} mapping={mapping} limits={state?.limits_deg} now={now}
+        blocked={active || moving || busy || powerBusy || syncing || ros.pending || hardwareReadiness?.power_trial?.busy} onBusyChange={setInitialCheckBusy} />}
+      {workMode === 'hardware' && <details className="consoleAdvanced calibrationHelp"><summary>方向与零位映射 · 首次核对 / 高级</summary>
+        <p>断电后靠支撑停住的姿态就是本次起点，不是机械零位。连接后模型直接显示真实关节角，XYZ 预演自动读取当前姿态；不要把当前姿态写成零位，也不用手托承重关节。</p>
+        <p>首次核对分为三件事：方向是否与模型一致、编码器零位如何对应模型、真实可动范围。已有映射保留；六轴起点允许已约定的 1° 边界偏差，目标仍须在名义限位内。夹爪可动范围独立核对，不参与 XYZ 求解。</p>
+        <HardwareMappingPanel profile={mapping} onChange={setMapping} mapped={mapped} source={displaySource} showSourceControls={false} />
+        <p>这里保存的是显示映射，不写电机零位。夹爪开合量和外接工具 TCP 的正式标定尚未完成。</p>
+      </details>}
       {config.error && <div className="consoleAlert" role="alert">{config.error}；仿真仍可用，配置不可自动恢复默认值。</div>}
       {problem && <div className="consoleAlert" role="alert">{problem}。画面保留最后一次仿真反馈。</div>}
       <div className="consolePrimary"><div className="consoleModelColumn">
-        <div className="consoleSources"><button aria-pressed={displaySource === 'simulation'} onClick={() => setDisplaySource('simulation')}>MuJoCo 仿真（预测）</button><button aria-pressed={displaySource === 'hardware'} onClick={() => setDisplaySource('hardware')}>实机反馈（只读）</button></div>
+        {diagnosticSimulation && <div className="consoleDiagnosticBanner">正在查看高级 MuJoCo 任务，不是当前执行反馈。<button onClick={() => setDiagnosticSimulation(false)}>返回当前执行反馈</button></div>}
       {displaySource === 'hardware' && (!mapped.complete || !mapped.withinLimits) && <div className="consoleAlert" role="alert">
-        {!mapped.complete ? '实机反馈不完整或已过期，三维画面停止更新。' : '存在超出模型限位的读数，画面按映射结果原样展示，没有裁剪；当前姿态不允许用于实机规划。'}
+        {!mapped.complete ? '实机反馈不完整或已过期，三维画面停止更新。' : '读数在名义模型范围之外，仍原样展示。已约定的 1° 起点偏差由执行检查单独判断，目标限位不放宽。'}
       </div>}
       <div className="card glass consoleStage">
-        <div className="consoleSceneToolbar"><strong>运动与轨迹</strong><div>
+        <div className="consoleSceneToolbar"><strong>{diagnosticSimulation ? 'MuJoCo 任务反馈' : '当前执行反馈与预演路径'}</strong><div>
           <button onClick={() => { setCameraView('writing'); setResetViewSeq((n) => n + 1); }}>正视文字</button>
           <button onClick={() => { setCameraView('overview'); setResetViewSeq((n) => n + 1); }}>机械臂全景</button>
         </div></div>
         <div className="consoleViewport" aria-label="RS 机械臂实时三维场景">
-          {displaySource === 'hardware' && !Object.keys(measuredView).length ? <div className="hardwarePoseLoading">等待读取完整的六轴实机姿态…<br /><small>不会用零位代替尚未取得的反馈。</small></div> : <ArmUrdfViewer profile="workspace_rs" jointTargets={displaySource === 'hardware' ? measuredView : jointTargets}
+          {displaySource === 'ros' && !rosFresh ? <div className="hardwarePoseLoading">等待虚拟电机反馈<br /><small>启动 ROS 虚拟服务后可离线执行完整动作。</small></div> : displaySource === 'hardware' && !Object.keys(measuredView).length ? <div className="hardwarePoseLoading">等待读取完整的六轴实机姿态…<br /><small>不会用零位代替尚未取得的反馈。</small></div> : <ArmUrdfViewer profile="workspace_rs" jointTargets={displaySource === 'ros' ? feedbackJoints(rosFeedback) : displaySource === 'hardware' ? measuredView : jointTargets}
             displayMeasuredOutOfRange={displaySource === 'hardware'} simMode="trajectory"
-            feedbackDriven feedbackTrace={displaySource === 'hardware' ? { points: [] } : feedbackTrace} plannedPath={displaySource === 'hardware' ? [] : plannedPath}
-            waypointMarkers={displaySource !== 'hardware' && pointPlan ? [{ id: 'cartesian-target', ...toStudioPoint(pointPlan.xyz_mm.map(v => v / 1000)), label: '目标点', color: 0xf29d38 }] : []}
+            feedbackDriven feedbackTrace={displaySource !== 'simulation' ? { points: executionTrail } : feedbackTrace} plannedPath={plannedPath}
+            waypointMarkers={pointPlan ? [{ id: 'cartesian-target', ...toStudioPoint(pointPlan.xyz_mm.map(v => v / 1000)), label: '目标点', color: 0xf29d38 }] : []}
             trailColor="#ef6948" trailVisible={showTrail} cameraView={cameraView}
             robotOpacity={ghost ? 0.2 : 1} resetViewSeq={resetViewSeq} />}
-          <div className="consoleSceneCaption">{displaySource === 'hardware' ? (mapped.complete ? '实机反馈姿态 · 只读预览' : '实机反馈过期 · 保留最后姿态') : (STATUS[job?.status] || '准备就绪')}<br />
-            <small>{displaySource === 'hardware' ? (mapped.confirmed ? '已人工核对映射；运动验收尚未完成' : '官方基准映射尚未核对；夹爪开合未知') : '拖动旋转 · 滚轮缩放 · 关节角取仿真实际反馈'}</small></div>
+          <div className="consoleSceneCaption">{displaySource === 'ros' ? 'ROS 虚拟电机反馈 · 非实机' : displaySource === 'hardware' ? (mapped.complete ? '实机反馈姿态 · 跟随最新读数' : '实机反馈过期 · 保留最后姿态') : (STATUS[job?.status] || '准备就绪')}<br />
+            <small>{displaySource === 'ros' ? '六轴姿态来自独立 ROS Fake Driver，夹爪未参与' : displaySource === 'hardware' ? (mapped.confirmed ? '按最新反馈直接更新，不添加动画延时；通信延迟见坐标栏' : '官方基准映射尚未核对；夹爪开合未知') : '拖动旋转 · 滚轮缩放 · 关节角取仿真实际反馈'}</small></div>
         </div>
         <div className="consoleLegend">
           <label><input type="checkbox" checked={showPlan} disabled={!pointPlan && !document} onChange={(e) => setShowPlan(e.target.checked)} /><i className="plan" />计划路径</label>
-          <label><input type="checkbox" checked={showTrail} onChange={(e) => setShowTrail(e.target.checked)} /><i className="actual" />实际仿真轨迹</label>
+          <label><input type="checkbox" checked={showTrail} onChange={(e) => setShowTrail(e.target.checked)} /><i className="actual" />执行反馈轨迹</label>
           <label><input type="checkbox" checked={ghost} onChange={(e) => setGhost(e.target.checked)} />淡化机械臂</label>
         </div>
       </div>
 
       </div><div className="consolePointColumn">
-      <CartesianPointPanel readiness={hardwareReadiness} state={state} resetKey={syncVersion} locked={locked||syncing} active={active} moving={moving} now={now}
-        onPreview={(plan) => { setPointPlan(plan); if (plan) { setDisplaySource('simulation'); setCameraView('overview'); setShowPlan(true); setGhost(false); } }} onBusy={(value) => { commandBusy.current = value; setBusy(value); }}
-        onExecuted={() => { setDisplaySource('simulation'); setCameraView('overview'); setGhost(false); setShowPlan(true); }} />
+      <LiveCoordinates source={displaySource === 'hardware' ? '实机关节反馈 → 模型计算' : displaySource === 'ros' ? 'ROS 虚拟反馈 → 模型计算' : 'MuJoCo 仿真反馈'}
+        xyz={displayedXyz} fresh={coordinateFresh} ageMs={coordinateAge} cycleMs={displaySource === 'hardware' ? gateway.cycleMs : 0} />
+      <CartesianPointPanel mode={workMode} feedback={executionFeedback} previewReady={previewReady} virtualEnabled={Boolean(rosFeedback?.enabled)}
+        currentXyz={!diagnosticSimulation && coordinateFresh ? displayedXyz : null} readiness={hardwareReadiness} resetKey={syncVersion} locked={locked||syncing} active={active} moving={moving} now={now}
+        onPrepareHardwarePreview={prepareHardwarePreview} onStop={() => ros.action('stop')}
+        onPreview={(plan) => { setPointPlan(plan); if (plan) { setDiagnosticSimulation(false); setCameraView('overview'); setShowPlan(true); setGhost(false); } }} onBusy={(value) => { commandBusy.current = value; setBusy(value); }}
+        onExecuted={(result) => { ros.acceptFeedback(result); setDiagnosticSimulation(false); setExecutionTrail([]); setCameraView('overview'); setGhost(false); setShowPlan(true); }} />
 
       </div></div>
-      <div id="motor-control-panel" className="consoleModulesHead">
-        <h3>实机七轴 · 使能 / 失能 <small>J1–J7 独立电机</small></h3>
+      <details className="consoleAdvanced card glass"><summary>逐轴调试与参数 · J1–J7（按需展开）</summary>
+      <div className="consoleModulesHead">
+        <h3>七轴读数与控制参数 <small>J1–J7 独立电机</small></h3>
         <span>实机读数来源：{realSource}
           {gateway.cycleMs ? ` · 每轮 ${gateway.cycleMs} ms` : ''}</span>
       </div>
       <div className="consoleModules">
         {AXES.map((axis) => <MotorModuleCard key={axis.id} id={axis.id} label={axis.label}
-          motor={gateway.motors?.[axis.id]} status={gateway.status} gateway={gateway}
-          powerBlocked={active || moving || busy || syncing || hardwareReadiness?.power_trial?.busy}
+          showPowerControls={false} motor={gateway.motors?.[axis.id]} status={gateway.status} gateway={gateway}
+          powerBlocked={active || moving || busy || powerBusy || initialCheckBusy || syncing || hardwareReadiness?.power_trial?.busy}
           limits={axis.id <= 6 ? state?.limits_deg?.[axis.id - 1] : null}
           plannedDeg={axis.id <= 6 ? state?.target_deg?.[axis.id - 1] : null} config={config} expanded={expandedAxis === axis.id} onToggle={() => toggleAxis(axis.id)} />)}
       </div>
 
-      <details className="consoleAdvanced card glass"><summary>已有仿真任务 · 写字 / 抓取 / 状态与导出</summary>
+      </details>
+      <details className="consoleAdvanced"><summary>高级诊断 · ROS 虚拟控制链路{powerBusy ? ' · 任务运行中' : ''}</summary>
+        <RosControlPanel controller={ros} onSynced={()=>{setSyncVersion(v=>v+1);setPointPlan(null);}} />
+      </details>
+
+      <details className="consoleAdvanced card glass"><summary>高级验证 · MuJoCo 写字 / 抓取 / 状态与导出</summary>
+      <p className="consoleNote">以下为已有的独立物理仿真任务。启动后显示 MuJoCo 反馈，结束后可返回主流程；不会执行 ROS 或实机动作。</p>
       <div className="consoleRow4">
         <section className="card glass consoleCard"><h3>任务执行 <small>仿真</small></h3>
           <div className="consoleRow"><select value={task} disabled={active || locked} onChange={(e) => setTask(e.target.value)}>
@@ -383,12 +456,7 @@ export function ConsoleWorkspace() {
       </div>
 
       </details>
-      <details className="card glass consoleAdvanced"><summary>高级调试 · 关节映射、软件备份与只读网关</summary>
-        <details><summary>关节映射（首次验收/高级调试）</summary>
-          <HardwareMappingPanel profile={mapping} onChange={setMapping} mapped={mapped} source={displaySource}
-            onSource={(source) => { setDisplaySource(source); setCameraView('overview'); setGhost(false); }} />
-          <p>显示映射仍保留原浏览器记录；软件批准配置独立保存，不会自动覆盖映射，也不把静态确认升级为动态验收。</p>
-        </details>
+      <details className="card glass consoleAdvanced"><summary>高级调试 · 软件备份、参数来源与通信记录</summary>
         <h4>参数来源与备份状态</h4>
         <p>真实设备参数：{config.provenance?.device_parameters?.snapshot_count ? `${config.provenance.device_parameters.snapshot_count} 份局部快照，身份与完整备份未核验` : config.provenance?.device_parameters?.status === 'not-collected' ? '未采集，未验证备份' : '状态不可用，不能判断备份'}。来源：明确归档的只读查询或历史文件；不能证明设备当前值。</p>
         <p>待验证 MIT 配置：J1–J6 的 Kp=3、Kd=1、前馈=0 来自用户本次要求；不是设备读回或物理验收。既有真实调定值未被覆盖，B1 合成数据不用于实机。</p>

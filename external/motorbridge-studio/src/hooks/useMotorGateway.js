@@ -40,6 +40,7 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
   const [powerPending, setPowerPending] = React.useState(null);
   const [powerDisabling, setPowerDisabling] = React.useState([]);
   const [pollingPaused, setPollingPaused] = React.useState(false);
+  const [powerGroup, setPowerGroup] = React.useState(null);
 
   const clientRef = React.useRef(null);
   const busyRef = React.useRef(false);
@@ -51,6 +52,7 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
   const powerEpoch = React.useRef(0);
   const pollEpoch = React.useRef(0);
   const focusEpoch = React.useRef(0);
+  const groupRef = React.useRef(null);
 
 
 
@@ -82,13 +84,22 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
     if (!ret.ok) throw new Error(ret.error || `set_target ID ${id} 失败`);
   }, [send]);
 
-  const readOne = React.useCallback(async (id, check) => {
+  const readOne = React.useCallback(async (id, check, full = true) => {
     check();
     await selectMotor(id);
     check();
     const position = await send('robstride_read_param', { param_id: MECH_POS, type: 'f32', timeout_ms: 800 }, 3000);
     check();
     const positionUpdatedAt = Date.now();
+    if (!full) {
+      const rad = position.ok ? position.data?.value : null;
+      const ok = Number.isFinite(rad);
+      return { ...motorsRef.current[id], id, model: MACHINE_MODELS[id],
+        mechPosRad: ok ? rad : null, mechPosDeg: ok ? rad * DEG : null,
+        mechPosWrapped: ok ? wrapDeg(rad * DEG) : null,
+        fieldTimes: { ...motorsRef.current[id]?.fieldTimes, mechPosRad: ok ? positionUpdatedAt : null },
+        positionUpdatedAt, updatedAt: Date.now(), error: ok ? '' : (position.error || 'mechPos 读取失败') };
+    }
     const params = {}; const paramErrors = {}; const fieldTimes = { mechPosRad: position.ok ? positionUpdatedAt : null };
     let runMode = null;
     try {
@@ -122,9 +133,9 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
     };
   }, [selectMotor, send]);
 
-  const runCycle = React.useCallback(async () => {
+  const runCycle = React.useCallback(async ({ full = false } = {}) => {
     const client = clientRef.current;
-    if (!client || stoppedRef.current || busyRef.current || powerRef.current || withdrawalsRef.current.size || !client.isConnected()) return;
+    if (!client || stoppedRef.current || busyRef.current || powerRef.current || groupRef.current || withdrawalsRef.current.size || !client.isConnected()) return;
     busyRef.current = true;
     const epoch = pollEpoch.current;
     const cancelled = () => stoppedRef.current || epoch !== pollEpoch.current || clientRef.current !== client;
@@ -136,7 +147,7 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
       for (const id of MACHINE_IDS) {
         if (cancelled()) return;
         try {
-          next[id] = await readOne(id, check);
+          next[id] = await readOne(id, check, full || cyclesRef.current === 0);
         } catch (error) {
           if (cancelled()) return;
           next[id] = { id, model: MACHINE_MODELS[id], error: error.message || String(error) };
@@ -152,13 +163,14 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
     }
     if (cancelled()) return;
     cyclesRef.current += 1;
+    motorsRef.current = next;
     setMotors(next);
     setMeta({ cycleMs: Date.now() - started, updatedAt: Date.now(), cycles: cyclesRef.current, error: failure });
     return next;
   }, [readOne, send]);
 
   const connect = React.useCallback(async (targetUrl) => {
-    if (powerRef.current || withdrawalsRef.current.size) throw new Error('逐轴电源请求尚未结束，请等待结果');
+    if (powerRef.current || groupRef.current || withdrawalsRef.current.size) throw new Error('电源请求尚未结束，请等待结果');
     pollEpoch.current += 1;
     powerEpoch.current += 1;
     const nextUrl = (targetUrl || endpoint).trim();
@@ -172,6 +184,8 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
     setArmed(false); setDrill(true);
     setMotors({});
     setPowerRequests({});
+    setPowerGroup(null);
+    cyclesRef.current = 0;
     setStatus('connecting');
     setEndpoint(nextUrl);
     await new Promise((resolve) => {
@@ -210,6 +224,7 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
     setStatus('disconnected');
     setMotors({});
     setPowerRequests({});
+    setPowerGroup(null);
     note('已断开网关，总开关同时复位', 'info');
   }, [note]);
 
@@ -228,6 +243,7 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
       setPollingPaused(true);
       pollEpoch.current += 1;
       powerEpoch.current += 1;
+      setPowerGroup(null);
       const withdrawal = {};
       withdrawalsRef.current.set(id, withdrawal);
       publishPowerPending();
@@ -258,6 +274,7 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
       return withdrawal.promise;
     }
     if (stoppedRef.current) throw new Error('状态查询已暂停；请先刷新状态或重新连接');
+    if (groupRef.current && options.groupToken !== groupRef.current) throw new Error('七轴使能流程尚未结束');
     if (powerRef.current) throw new Error('另一轴电源请求尚未结束');
     if (withdrawalsRef.current.size) throw new Error('失能请求尚未结束，不能使能');
     powerRef.current = id;
@@ -319,15 +336,94 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
     }
   }, [note, selectMotor, send, publishPowerPending]);
 
-  const refresh = React.useCallback(async () => {
-    if (powerRef.current || withdrawalsRef.current.size || busyRef.current || !clientRef.current?.isConnected()) return;
+  // One user action, seven explicitly addressed commands. No target, mode or
+  // parameter writes. Validate the whole machine before enabling any axis.
+  const requestAllPower = React.useCallback(async (op, confirmed = {}, limits = []) => {
+    if (!['enable', 'disable'].includes(op)) throw new Error('只允许七轴使能或失能');
+    if (op === 'disable') {
+      const results = await Promise.allSettled(MACHINE_IDS.map(id => requestPower(id, 'disable', {}, undefined, { emergency: true })));
+      const failed = MACHINE_IDS.filter((_, i) => results[i].status === 'rejected');
+      setPowerGroup({ op, status: failed.length ? 'failed' : 'sent', failed, sent: MACHINE_IDS.filter(id => !failed.includes(id)) });
+      if (failed.length) throw new Error(`J${failed.join('、J')} 失能未确认，请立即独立断电`);
+      return { ok: true };
+    }
+    if (!POWER_CONFIRMATIONS.every(key => confirmed?.[key] === true)) throw new Error('请先确认本次七轴现场条件');
+    const client = clientRef.current;
+    if (!client?.isConnected() || stoppedRef.current) throw new Error('请先连接或刷新状态');
+    if (groupRef.current || powerRef.current || withdrawalsRef.current.size) throw new Error('电源请求尚未结束');
+    const token = {};
+    groupRef.current = token;
+    const epoch = powerEpoch.current;
+    const focus = focusEpoch.current;
+    const sent = [];
+    const check = () => {
+      if (epoch !== powerEpoch.current) throw new Error('七轴使能已被失能或断连中断');
+      if (clientRef.current !== client || !client.isConnected() || stoppedRef.current) throw new Error('网关连接已变化');
+      if (focus !== focusEpoch.current || !document.hasFocus() || document.visibilityState !== 'visible') throw new Error('页面已失去焦点');
+    };
+    let ownsBus = false;
+    setPowerGroup({ op, status: 'checking', sent });
+    try {
+      const deadline = Date.now() + 15000;
+      while (busyRef.current && Date.now() < deadline) { check(); await new Promise(resolve => setTimeout(resolve, 50)); }
+      check();
+      if (busyRef.current) throw new Error('只读查询未结束');
+      busyRef.current = true; ownsBus = true;
+      for (const id of MACHINE_IDS) {
+        check(); await selectMotor(id); check();
+        const position = await send('robstride_read_param', { param_id: MECH_POS, type: 'f32', timeout_ms: 800 }, 3000);
+        const measuredAt = Date.now(); check();
+        const mode = await send('robstride_read_param', { param_id: 0x7005, type: 'i8', timeout_ms: 800 }, 3000); check();
+        const q = position.data?.value;
+        if (!position.ok || !Number.isFinite(q) || Date.now() - measuredAt >= 3000) throw new Error(`J${id} 缺少新鲜位置`);
+        if (!mode.ok || mode.data?.value !== 0) throw new Error(`J${id} 实际模式不是 MIT 或未读到`);
+        const range = limits[id - 1];
+        if (id <= 6 && (!Array.isArray(range) || !range.every(Number.isFinite) || range.length !== 2 || range[0] >= range[1])) throw new Error(`J${id} 模型限位不可用`);
+        if (id <= 6 && (q * DEG < range[0] - START_BOUNDARY_TOLERANCE_DEG || q * DEG > range[1] + START_BOUNDARY_TOLERANCE_DEG)) throw new Error(`J${id} 原始位置超出模型范围及 1° 起点容差`);
+      }
+      // Keep the group reservation while each existing per-axis path refreshes
+      // position/mode immediately before its own enable command.
+      busyRef.current = false; ownsBus = false;
+      for (const id of MACHINE_IDS) {
+        check();
+        setPowerGroup({ op, status: 'sending', axis: id, sent: [...sent] });
+        await requestPower(id, 'enable', confirmed, limits[id - 1], { groupToken: token });
+        check(); sent.push(id);
+      }
+      setPowerGroup({ op, status: 'sent', sent });
+      return { ok: true };
+    } catch (error) {
+      if (epoch === powerEpoch.current) setPowerGroup({ op, status: 'failed', sent, error: error.message });
+      note(`七轴使能中止：${error.message}；已确认发送 ${sent.length}/7，真实出力未知`, 'err');
+      throw error;
+    } finally {
+      if (ownsBus) {
+        try { if (clientRef.current === client && client.isConnected()) await client.send('close_bus', {}, 2000); } catch { /* Request error remains visible. */ }
+        busyRef.current = false;
+      }
+      if (groupRef.current === token) groupRef.current = null;
+    }
+  }, [requestPower, selectMotor, send, note]);
+
+  const refresh = React.useCallback(async (options = {}) => {
+    const client = clientRef.current, epoch = pollEpoch.current, powerEpochAtStart = powerEpoch.current;
+    if (options.waitForIdle === true) {
+      const deadline = Date.now() + 4000;
+      while (busyRef.current && Date.now() < deadline) {
+        if (epoch !== pollEpoch.current || powerEpochAtStart !== powerEpoch.current || client !== clientRef.current ||
+            powerRef.current || groupRef.current || withdrawalsRef.current.size || !client?.isConnected()) return;
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+    }
+    if (epoch !== pollEpoch.current || powerEpochAtStart !== powerEpoch.current || client !== clientRef.current ||
+        powerRef.current || groupRef.current || withdrawalsRef.current.size || busyRef.current || !client?.isConnected()) return;
     stoppedRef.current = false;
     setPollingPaused(false);
-    return runCycle();
+    return runCycle({ full: true });
   }, [runCycle]);
 
   const releaseForTrial = React.useCallback(async () => {
-    if (powerRef.current || withdrawalsRef.current.size) throw new Error('逐轴电源请求尚未结束，请等待结果');
+    if (powerRef.current || groupRef.current || withdrawalsRef.current.size) throw new Error('电源请求尚未结束，请等待结果');
     stoppedRef.current = true;
     pollEpoch.current += 1;
     const deadline = Date.now() + 15000;
@@ -370,7 +466,7 @@ export function useMotorGateway({ url = MACHINE_GATEWAY_URL, intervalMs = 2500 }
   return {
     status, motors, ...meta,
     endpoint, setEndpoint, connect, disconnect, releaseForTrial, refresh,
-    requestPower, powerRequests, powerPending, powerDisabling, pollingPaused,
+    requestPower, requestAllPower, powerGroup, powerRequests, powerPending, powerDisabling, pollingPaused,
     armed: false, arm, disarm, drill: true, setDrill: () => setDrill(true), maxSpd, setMaxSpd,
     write, stopAll, log, note,
   };

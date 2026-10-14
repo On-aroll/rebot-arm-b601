@@ -13,6 +13,8 @@ from rebot_core import Robot, ROOT, URDF, SCENE, HOME
 from rebot_point import PointPlanner, point_capabilities
 from rebot_config import ConfigStore, ConfigAPI
 from rebot_hardware_readiness import readiness
+from rebot_motor_power import MotorPowerAPI
+from rebot_ros_proxy import ros_request
 
 OUT=Path(os.environ.get('REBOT_OUTPUT_DIR', str(ROOT/'outputs')))
 STUDIO_LOCALES=('en','zh','es')
@@ -227,8 +229,13 @@ def serve(port,host='127.0.0.1'):
                                 trace_xyz=[p.tolist() for p in runner.trail.points],
                                 trace_styles=list(runner.trail.styles))
                 return self.send(data)
+            if path=='/ros-control/state':
+                try: return self.send(ros_request())
+                except ValueError as e: return self.send(dict(online=False,backend='ros2-fake',hardware=False,error=str(e)))
+            if path=='/motor-power':
+                return self.send(motor_power.status())
             if path=='/hardware-readiness':
-                return self.send(readiness(config_store))
+                return self.send(dict(readiness(config_store),power_trial=motor_power.status()))
             if path=='/point-capabilities':
                 return self.send(point_capabilities())
             if path=='/machine-state':
@@ -264,12 +271,53 @@ def serve(port,host='127.0.0.1'):
                 if not 0<n<65536:raise ValueError('Invalid payload length')
                 body=json.loads(self.rfile.read(n))
                 if not isinstance(body,dict): raise ValueError('Expected JSON object')
+                if self.path=='/kinematics/fk':
+                    from rebot_kinematics import coordinate_preview
+                    with lock: result=coordinate_preview(r, body.get('q_deg'))
+                    return self.send(result)
+                if self.path.startswith('/motor-power/'):
+                    raise ValueError('自研实发入口暂停；本轮使用 ROS 虚拟控制栈验证，不允许真实使能')
+                if self.path=='/ros-control/action':
+                    if self.client_address[0] not in ('127.0.0.1','::1') or origin != 'http://'+self.headers.get('Host',''):
+                        raise ValueError('只允许本机同源 ROS 验证请求')
+                    op=body.get('action')
+                    if op in ('connect','enable','disable','stop'): return self.send(ros_request(op))
+                    with motor_power.lock, lock:
+                        if runner.active or state['motion'] is not None or state['playing']: raise ValueError('请先结束仿真任务')
+                        current=ros_request()
+                        if not current.get('fresh'): raise ValueError('ROS 反馈过期')
+                        if current.get('job',{}).get('status') in ('starting','running','cancelling'): raise ValueError('请先停止 ROS 任务')
+                        if op=='preview':
+                            # Pure planning from fresh Fake feedback; no enable, sync or motion.
+                            return self.send(point_planner.preview({**body, 'target':'simulation', 'execution_source':'ros2-fake'}, start=current['q_rad']))
+                        if op=='sync':
+                            r.initialize_pose(current['q_rad']);point_planner.plans.clear();runner.trail.clear()
+                            return self.send(dict(ok=True,source='ros2-fake',hardware=False,q_rad=r.q.tolist(),max_error_rad=float(np.max(np.abs(r.q-np.array(current['q_rad']))))))
+                        if op=='execute':
+                            plan=point_planner.plans.get(body.get('plan_id'))
+                            if plan is None: raise ValueError('请先计算 XYZ 预览')
+                            if not current.get('enabled'): raise ValueError('请先使能虚拟电机')
+                            if np.max(np.abs(np.array(current['q_rad'])-plan['start']))>np.deg2rad(.5): raise ValueError('ROS 起点与预演不同，请重新预演')
+                            document=point_planner.take(dict(plan_id=body['plan_id'],target='simulation'), start=current['q_rad'], allowed_sources=('mujoco','ros2-fake'))
+                            step=document['steps'][0]
+                            result=ros_request('execute',start=current['q_rad'],target=np.deg2rad(step['q_deg']).tolist(),seconds=step['seconds'])
+                            state['ros_owned']=True
+                            return self.send(result)
+                        raise ValueError('未知 ROS 操作')
                 if self.path.startswith('/config/'):
                     return self.send(config_api.request('POST', self.path, self.headers, self.client_address[0], body))
                 if self.path not in ('/program','/command'): raise ValueError('Unknown endpoint')
                 action='program' if self.path=='/program' else body['action']
-                with lock:
+                with motor_power.lock, lock:
                     if state['error']: raise ValueError(state['error'])
+                    if state.get('ros_owned') and action not in ('camera','camera_writing','camera_robot'):
+                        # Fail closed if the owner cannot be contacted. Stop remains a separate endpoint.
+                        ros_state=ros_request()
+                        if ros_state.get('job',{}).get('status') in ('starting','running','cancelling'):
+                            raise ValueError('ROS 任务持有控制权，请先停止或等待结束')
+                        state['ros_owned']=False
+                    if motor_power.status()['busy'] and action not in ('camera','camera_writing','camera_robot','program_cancel','pause'):
+                        raise ValueError('单轴实机检查/试验持有控制权，请先停止该试验')
                     if runner.active and action not in ('camera','camera_writing','camera_robot','program_pause','program_resume','program_cancel','pause'):
                         raise ValueError('动作程序持有控制权；请先取消或等待结束')
                     if action == 'sync_hardware_pose':
@@ -338,6 +386,12 @@ def serve(port,host='127.0.0.1'):
                     else:raise ValueError('Unknown action')
                 self.send(dict(ok=True))
             except (ValueError,KeyError,TypeError,OSError) as e:self.send(dict(error=str(e)),status=400)
+    def power_idle():
+        with lock: return not runner.active and state['motion'] is None and not state['playing'] and not state['error']
+    def power_check_pose(q):
+        with lock:
+            if r.contacts(np.asarray(q)): raise ValueError('当前真实姿态在模型中有碰撞，请核对现场与仿真场景')
+    motor_power=MotorPowerAPI(config_store,port,ROOT,list(zip(r.lower,r.upper)),power_check_pose,power_idle)
     worker=threading.Thread(target=animate,daemon=True);worker.start()
     server=ThreadingHTTPServer((host,port),Handler)
     print(f'RS 仿真控制台：http://127.0.0.1:{port}',flush=True)
@@ -347,6 +401,7 @@ def serve(port,host='127.0.0.1'):
     try:server.serve_forever()
     except KeyboardInterrupt:pass
     finally:
+        motor_power.close()
         stop.set();server.server_close();worker.join(timeout=5)
         with lock: runner.fail('仿真服务关闭')
 

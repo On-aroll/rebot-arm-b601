@@ -9,7 +9,7 @@ const valueText = value => value == null ? '未确认' : String(value);
 const OFFICIAL_RS_GAINS = { 1:[50,3], 2:[150,10], 3:[150,10], 4:[50,5], 5:[50,4], 6:[50,4], 7:[50,4] };
 const OFFICIAL_RS_CONFIG = 'https://github.com/Seeed-Projects/reBotArm_control_py/blob/6415d43130d1e143c70dc106096a857ac5556f81/config/rebotarm_rs.yaml';
 
-export function MotorModuleCard({ id, label, motor, status, plannedDeg, expanded = false, onToggle, config, gateway, powerBlocked, limits }) {
+export function MotorModuleCard({ id, label, motor, status, plannedDeg, expanded = false, onToggle, config, gateway, powerBlocked, limits, showPowerControls = true }) {
   const reading = motor || {};
   const [draft, setDraft] = React.useState({});
   const [dirty, setDirty] = React.useState(false);
@@ -53,7 +53,7 @@ export function MotorModuleCard({ id, label, motor, status, plannedDeg, expanded
       <span>{fresh ? '反馈新鲜' : reading.positionUpdatedAt ? '反馈过期' : '未读取'}</span>
       <span>{approved ? `软件批准 v${approved.version}` : '配置待确认'}</span><span>{expanded ? '收起 −' : '展开 +'}</span>
     </button>
-    <AxisPowerControls id={id} gateway={gateway} blocked={powerBlocked} limits={limits} />
+    {showPowerControls && <AxisPowerControls id={id} gateway={gateway} blocked={powerBlocked} limits={limits} />}
     {expanded && <div className="motorDetails" id={`motor-details-${id}`}>
       <details><summary>配置核对与阻断原因</summary><ul>{config?.preparation?.find(row => row.axis_id === id)?.reasons.map(reason => <li key={reason}>{reason}</li>) || <li>配置或设备快照尚不可用；实机锁定</li>}</ul><p>设备模式与 MIT 路线可比较；逐帧 MIT 增益和轨迹约束没有对应设备寄存器读回，不能拿 PP/CSP 数值证明一致。</p></details>
       <h4>只读测量</h4><p>真实出力状态未知。原始多圈角不归一化；模式：{modeLabel(reading.runMode)}。仿真目标：{Number.isFinite(plannedDeg) ? `${plannedDeg.toFixed(2)}°` : '未知'}。</p>
