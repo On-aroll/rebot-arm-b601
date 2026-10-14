@@ -15,13 +15,14 @@ it('shows independent controls for seven axes without sending power commands on 
   expect(screen.queryByRole('checkbox')).toBeNull();
 });
 
-it('requires explicit confirmation for the selected axis and forwards only that operation', async () => {
+it('uses one checkbox for all onsite conditions and forwards only the selected axis operation', async () => {
   const g = gateway();
   render(<AxisPowerControls id={3} gateway={g} limits={[0, 180]} />);
   fireEvent.click(screen.getByRole('button', { name: '使能 J3' }));
   const button = screen.getByRole('button', { name: '确认使能 J3' });
   expect(button.disabled).toBe(true);
-  screen.getAllByRole('checkbox').forEach(box => fireEvent.click(box));
+  expect(screen.getAllByRole('checkbox')).toHaveLength(1);
+  fireEvent.click(screen.getByRole('checkbox'));
   fireEvent.click(button);
   await waitFor(() => expect(g.requestPower).toHaveBeenCalledWith(3, 'enable', { operator_present: true, power_cut_ready: true, supported: true, axis_verified: true }, [0, 180]));
   await waitFor(() => expect(screen.queryByRole('checkbox')).toBeNull());
@@ -33,11 +34,16 @@ it('clears confirmations on disconnect and blocks disconnected or concurrent req
   const g = gateway();
   const view = render(<AxisPowerControls id={1} gateway={g} />);
   fireEvent.click(screen.getByRole('button', { name: '使能 J1' }));
+  fireEvent.click(screen.getByRole('checkbox'));
   view.rerender(<AxisPowerControls id={1} gateway={{ ...g, status: 'offline' }} />);
   expect(screen.queryByRole('checkbox')).toBeNull();
   expect(screen.getByRole('button', { name: '使能 J1' }).disabled).toBe(true);
   view.rerender(<AxisPowerControls id={1} gateway={{ ...g, powerPending: 2 }} />);
   expect(screen.getByRole('button', { name: '立即失能 J1' }).disabled).toBe(false);
+  view.rerender(<AxisPowerControls id={1} gateway={g} />);
+  fireEvent.click(screen.getByRole('button', { name: '使能 J1' }));
+  expect(screen.getByRole('checkbox').checked).toBe(false);
+  expect(screen.getByRole('button', { name: '确认使能 J1' }).disabled).toBe(true);
   expect(g.requestPower).not.toHaveBeenCalled();
 });
 
@@ -66,7 +72,7 @@ it('allows one-click disable during an in-flight enable and removes its confirma
   g.requestPower.mockImplementation((id, op) => op === 'enable' ? new Promise((resolve, reject) => { rejectEnable = reject; }) : Promise.resolve({ ok: true }));
   render(<AxisPowerControls id={1} gateway={g} limits={[-180, 180]} />);
   fireEvent.click(screen.getByRole('button', { name: '使能 J1' }));
-  screen.getAllByRole('checkbox').forEach(box => fireEvent.click(box));
+  fireEvent.click(screen.getByRole('checkbox'));
   fireEvent.click(screen.getByRole('button', { name: '确认使能 J1' }));
   expect(screen.getByRole('button', { name: '立即失能 J1' }).disabled).toBe(false);
   fireEvent.click(screen.getByRole('button', { name: '立即失能 J1' }));

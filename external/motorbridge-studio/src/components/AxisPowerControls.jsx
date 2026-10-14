@@ -1,15 +1,10 @@
 import React from 'react';
 
-const CONDITIONS = [
-  ['operator_present', '我在机械臂旁，周围空间已清空'],
-  ['power_cut_ready', '我能立即切断电机电源'],
-  ['supported', '该轴及承重关节已可靠支撑，撤力不会跌落'],
-  ['axis_verified', '我已确认所选轴、方向、零位与限位'],
-];
+const CONFIRMATION_KEYS = ['operator_present', 'power_cut_ready', 'supported', 'axis_verified'];
 
 export function AxisPowerControls({ id, gateway, blocked = false, limits }) {
   const [operation, setOperation] = React.useState(null);
-  const [confirmed, setConfirmed] = React.useState({});
+  const [confirmed, setConfirmed] = React.useState(false);
   const [error, setError] = React.useState('');
   const [enabling, setEnabling] = React.useState(false);
   const [disabling, setDisabling] = React.useState(false);
@@ -20,26 +15,27 @@ export function AxisPowerControls({ id, gateway, blocked = false, limits }) {
   const disableDisabled = !online || disabling || gateway?.powerDisabling?.includes(id) || !gateway?.requestPower;
   const result = gateway?.powerRequests?.[id];
   React.useEffect(() => {
-    if (!online) { setOperation(null); setConfirmed({}); }
+    if (!online) { setOperation(null); setConfirmed(false); }
   }, [online]);
-  function choose(op) { setOperation(op); setConfirmed({}); setError(''); }
+  function choose(op) { setOperation(op); setConfirmed(false); setError(''); }
   async function submitEnable() {
-    if (disabled || (operation === 'enable' && blocked) || !operation || !CONDITIONS.every(([key]) => confirmed[key])) return;
+    if (disabled || (operation === 'enable' && blocked) || !operation || !confirmed) return;
     const ticket = ++actionEpoch.current;
     setEnabling(true); setError('');
     try {
-      await gateway.requestPower(id, 'enable', confirmed, limits);
-      if (ticket === actionEpoch.current) { setOperation(null); setConfirmed({}); }
+      const evidence = Object.fromEntries(CONFIRMATION_KEYS.map(key => [key, true]));
+      await gateway.requestPower(id, 'enable', evidence, limits);
+      if (ticket === actionEpoch.current) { setOperation(null); setConfirmed(false); }
     } catch (failure) { if (ticket === actionEpoch.current) setError(`请求未确认：${failure.message}。请现场核对出力状态，必要时断电。`); }
     finally { setEnabling(false); }
   }
   async function emergencyDisable() {
     if (disableDisabled) return;
     actionEpoch.current += 1;
-    setDisabling(true); setError(''); setOperation(null); setConfirmed({});
+    setDisabling(true); setError(''); setOperation(null); setConfirmed(false);
     try {
       await gateway.requestPower(id, 'disable', {}, undefined, { emergency: true });
-      setOperation(null); setConfirmed({});
+      setOperation(null); setConfirmed(false);
     } catch (failure) { setError(`失能请求未确认：${failure.message}。请立即断电。`); }
     finally { setDisabling(false); }
   }
@@ -53,8 +49,8 @@ export function AxisPowerControls({ id, gateway, blocked = false, limits }) {
       <strong>J{id} · {operation === 'enable' ? '使能（允许电机出力）' : '失能（撤去电机力矩）'}</strong>
       <p>{operation === 'enable' ? '使能可能产生力矩或动作；不发送新目标，也不保证当前位置保持。' : '失能会撤力，承重关节可能下落。'}{id === 7 ? '夹爪位移与 TCP 尚未标定。' : ''}</p>
       {id <= 6 && <p>起点读数允许 1° 边界偏差，原始角度和运动目标限位不变。使能不等于承重保持，请使用机械支撑，不用手托着试验。</p>}
-      {CONDITIONS.map(([key, label]) => <label key={key}><input type="checkbox" checked={Boolean(confirmed[key])} disabled={pending} onChange={event => setConfirmed(previous => ({ ...previous, [key]: event.target.checked }))} />{label}</label>)}
-      <div className="consoleActions"><button className="primary" disabled={disabled || (operation === 'enable' && blocked) || !CONDITIONS.every(([key]) => confirmed[key])} onClick={submitEnable}>{enabling ? '正在发送…' : '确认使能 J' + id}</button>
+      <label><input type="checkbox" checked={confirmed} disabled={pending} onChange={event => setConfirmed(event.target.checked)} />我已确认：在场且周围空间清空、可立即断电、机械支撑可靠且撤力不会跌落，以及 J{id} 的方向、零位和限位。</label>
+      <div className="consoleActions"><button className="primary" disabled={disabled || (operation === 'enable' && blocked) || !confirmed} onClick={submitEnable}>{enabling ? '正在发送…' : '确认使能 J' + id}</button>
         <button disabled={pending} onClick={() => setOperation(null)}>取消</button></div>
     </div>}
     {error && <p className="motorPowerError" role="alert">{error}</p>}
