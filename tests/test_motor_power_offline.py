@@ -139,10 +139,12 @@ class PowerAPI(unittest.TestCase):
 
     def test_xyz_worker_reuses_executor_with_six_axis_permit_and_never_j7(self):
         raw,_=trial_proposal(self.store.state,self.api.limits)
+        raw['policy']['task_timeout']=83.
         message=dict(operation='move-xyz',config=raw,expected_start=[0.]*6,target=[.001]*6,
                      request_id='virtual-point-test',evidence='synthetic onsite confirmation')
         with patch('rebot_power_worker.HardwareExecutor') as factory, patch('rebot_power_worker.threading.Thread'), \
-             patch('rebot_power_worker.signal.signal'),patch('rebot_power_worker.emit'):
+             patch('rebot_power_worker.signal.signal'),patch('rebot_power_worker.emit'), \
+             patch('rebot_power_worker.time.monotonic',return_value=10.):
             executor=factory.return_value
             executor.worker.is_alive.return_value=False
             run_trial(message,bus=Mock())
@@ -152,6 +154,7 @@ class PowerAPI(unittest.TestCase):
             self.assertEqual(permit.axes,(1,2,3,4,5,6))
             self.assertTrue(permit.coordinated_start_checked)
             self.assertTrue(all((a.kp,a.kd,a.tau_ff)==(3.,1.,0.) for a in factory.call_args.args[0].axes))
+            self.assertEqual(permit.expires_at,103.)
 
     def test_each_confirmation_requires_literal_true(self):
         plan = self.prepare()

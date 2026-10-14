@@ -10,7 +10,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from rebot_core import Robot
 from rebot_mit_hardware import Envelope
 from rebot_mit_mock import Trajectory
-from rebot_xyz_trial import plan_nearby,execute,assess_motion
+from rebot_xyz_trial import plan_nearby,execute,assess_motion,configure_motion,hardware_motion_options
 
 
 class NearbyPlan(unittest.TestCase):
@@ -60,6 +60,58 @@ class NearbyPlan(unittest.TestCase):
         self.assertIn('未启动电机',result['execution_reasons'][0])
         self.assertEqual(result['gravity_check']['status'],'not-evaluated')
         self.assertEqual(self.config.fingerprint,before)
+
+    def test_web_timing_is_bound_to_task_without_changing_gains_or_stop_deadlines(self):
+        import copy
+        from rebot_point import PointPlanner
+        raw=json.loads((Path(__file__).resolve().parents[1]/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        saved=copy.deepcopy(raw)
+        start=np.deg2rad([-1.15,-.37,.02,.98,2.41,2.45])
+        planner=PointPlanner(self.robot)
+        plan=planner.preview(dict(execution_source='hardware-preview',xyz_mm=[300.71,200,224.87],speed_rad_s=.02),start=start)
+        target=np.deg2rad(plan['q_deg'])
+        task,config=configure_motion(raw,start,target,dict(speed_rad_s=.02,timeout_mode='auto'))
+        self.assertEqual(raw,saved)
+        trajectory=Trajectory.create(start.tolist(),[target.tolist()],config,start_tolerance=config.start_boundary_tolerance)
+        self.assertGreater(trajectory.duration,70.)
+        self.assertEqual(config.policy.task_timeout,np.ceil(trajectory.duration+5.))
+        for field in ('feedback_age','command_age','lease_timeout','io_timeout','period'):
+            self.assertEqual(getattr(config.policy,field),getattr(self.config.policy,field))
+        self.assertEqual([a.kp for a in config.axes],[3.]*6)
+        self.assertEqual([a.tau_ff for a in config.axes],[0.]*6)
+        # Correct timing does not override a separate load or tracking check.
+        assessment=assess_motion(self.robot,start,target,config)
+        self.assertFalse(any('时限' in reason for reason in assessment['execution_reasons']))
+        self.assertFalse(assessment['execution_ready'])
+        self.assertIn(3,assessment['static_balance_check']['insufficient_axes'])
+        _,faster=configure_motion(raw,start,target,dict(speed_rad_s=.05,timeout_mode='manual',timeout_s=60.))
+        self.assertEqual([a.v_max for a in faster.axes],[.05]*6)
+        self.assertEqual(faster.policy.task_timeout,60.)
+        self.assertLess(Trajectory.create(start.tolist(),[target.tolist()],faster,start_tolerance=faster.start_boundary_tolerance).duration,trajectory.duration)
+
+    def test_web_timing_rejects_invalid_values_and_keeps_maximum_bounded(self):
+        raw=json.loads((Path(__file__).resolve().parents[1]/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        start=np.deg2rad([-1.15,-.37,.02,.98,2.41,2.45])
+        target=self.robot.ik(np.array([.30071,.200,.22487]),seed=start,position_only=True)
+        for settings in (None,{},dict(speed_rad_s=.02,timeout_mode='unknown'),
+                         dict(speed_rad_s=True,timeout_mode='auto'),dict(speed_rad_s=.2,timeout_mode='auto'),
+                         dict(speed_rad_s=.02,timeout_mode='manual',timeout_s=121.),
+                         dict(speed_rad_s=.02,timeout_mode='manual',timeout_s=0.),
+                         dict(speed_rad_s=.02,timeout_mode='manual',timeout_s=float('nan')),
+                         dict(speed_rad_s=.02,timeout_mode='auto',kp=100.)):
+            with self.subTest(settings=settings),self.assertRaises(ValueError):
+                configure_motion(raw,start,target,settings)
+        _,config=configure_motion(raw,start,target,dict(speed_rad_s=.005,timeout_mode='auto'))
+        self.assertEqual(config.policy.task_timeout,120.)
+        self.assertFalse(assess_motion(self.robot,start,target,config)['execution_ready'])
+        self.assertEqual(hardware_motion_options(raw)['default_speed_rad_s'],.02)
+
+    def test_automatic_duration_does_not_silently_trim_five_second_margin(self):
+        from types import SimpleNamespace
+        raw=json.loads((Path(__file__).resolve().parents[1]/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        with patch('rebot_xyz_trial.Trajectory.create',return_value=SimpleNamespace(duration=117.)):
+            with self.assertRaisesRegex(ValueError,'需 122 秒'):
+                configure_motion(raw,[0.]*6,[0.]*6,dict(speed_rad_s=.02,timeout_mode='auto'))
 
     def test_explicit_tolerance_preserves_raw_start_and_identifies_load_deficit(self):
         start=np.deg2rad([61.96,-.39,.1,.56,-.91,4.46]);before=start.copy()

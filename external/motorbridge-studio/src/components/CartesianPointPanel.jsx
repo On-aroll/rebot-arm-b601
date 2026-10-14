@@ -19,15 +19,26 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
   const [xyz, setXyz] = React.useState(['200', '150', '200']);
   const [orientation, setOrientation] = React.useState('position');
   const [speed, setSpeed] = React.useState('0.15');
+  const [hardwareSpeed, setHardwareSpeed] = React.useState('0.02');
+  const [timeoutMode, setTimeoutMode] = React.useState('auto');
+  const [timeoutSeconds, setTimeoutSeconds] = React.useState('5');
   const [plan, setPlan] = React.useState(null);
   const [submitted, setSubmitted] = React.useState(false);
   const [pending, setPending] = React.useState(false);
   const [message, setMessage] = React.useState('输入 XYZ，先预演，再执行。');
   const [capabilities, setCapabilities] = React.useState(null);
   const running = React.useRef(false);
+  const motionOptions = capabilities?.hardware_motion_options;
+  const currentSpeed = offline ? speed : hardwareSpeed;
   React.useEffect(() => {
     let alive = true;
-    request('/point-capabilities').then(value => { if (alive) setCapabilities(value); })
+    request('/point-capabilities').then(value => { if (alive) {
+      setCapabilities(value);
+      if (value.hardware_motion_options) {
+        setHardwareSpeed(String(value.hardware_motion_options.default_speed_rad_s));
+        setTimeoutSeconds(String(value.hardware_motion_options.default_timeout_s));
+      }
+    } })
       .catch(() => { if (alive) setCapabilities(null); });
     return () => { alive = false; };
   }, []);
@@ -56,10 +67,12 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
       if (xyz.some(value => !value.trim() || !Number.isFinite(Number(value)))) throw new Error('请完整填写 X、Y、Z，单位为毫米。');
       setPlan(null); setSubmitted(false); onPreview(null);
       setMessage('正在从当前反馈计算关节目标并检查模型路径…');
-      const body = { xyz_mm: xyz.map(Number), orientation_mode: orientation, speed_rad_s: Number(speed) };
+      const body = { xyz_mm: xyz.map(Number), orientation_mode: orientation, speed_rad_s: Number(currentSpeed) };
       let result;
       if (offline) result = await request('/ros-control/action', { ...body, action: 'preview' });
       else {
+        body.hardware_motion = { speed_rad_s: Number(hardwareSpeed), timeout_mode: timeoutMode,
+          ...(timeoutMode === 'manual' ? { timeout_s: Number(timeoutSeconds) } : {}) };
         const measured = await onPrepareHardwarePreview();
         result = await request('/command', { ...body, ...measured, action: 'point_plan', target: 'simulation', execution_source: 'hardware-preview' });
       }
@@ -90,14 +103,24 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
         <input id={`point-${axis}`} type="number" step="1" value={xyz[index]} disabled={occupied}
           onChange={e => { setXyz(prev => prev.map((v, i) => i === index ? e.target.value : v)); invalidate(); }} /></label>)}
     </div>
-    <details className="pointOptions"><summary>运动设置 · {orientation === 'hold' ? '保持朝向' : '自动朝向'} · {speed} rad/s</summary><div className="cartesianInputs">
+    <details className="pointOptions" open={!offline}><summary>运动设置 · {orientation === 'hold' ? '保持朝向' : '自动朝向'} · {currentSpeed} rad/s{!offline && ` · ${timeoutMode === 'auto' ? '自动时限' : `${timeoutSeconds} 秒时限`}`}</summary><div className="cartesianInputs">
       <label htmlFor="point-orientation">末端朝向<select id="point-orientation" value={orientation} disabled={occupied}
         onChange={e => { setOrientation(e.target.value); invalidate(); }}>
         <option value="position">自动调整朝向（只指定位置）</option><option value="hold">保持当前朝向</option>
       </select></label>
-      <label htmlFor="point-speed">预演关节速度（rad/s）<input id="point-speed" type="number" min="0.05" max="0.30" step="0.05" value={speed} disabled={occupied}
-        onChange={e => { setSpeed(e.target.value); invalidate(); }} /></label>
+      <label htmlFor="point-speed">{offline ? '虚拟关节速度（rad/s）' : '实机关节速度上限（rad/s）'}<input id="point-speed" type="number"
+        min={offline ? .05 : motionOptions?.speed_min_rad_s ?? .005} max={offline ? .30 : motionOptions?.speed_max_rad_s ?? .15}
+        step={offline ? .05 : .005} value={currentSpeed} disabled={occupied}
+        onChange={e => { if (offline) setSpeed(e.target.value); else setHardwareSpeed(e.target.value); invalidate(); }} /></label>
+      {!offline && <label htmlFor="point-timeout-mode">实机任务时限<select id="point-timeout-mode" value={timeoutMode} disabled={occupied}
+        onChange={e => { setTimeoutMode(e.target.value); invalidate(); }}>
+        <option value="auto">自动：轨迹用时 + 5 秒余量</option><option value="manual">手动指定秒数</option>
+      </select></label>}
+      {!offline && timeoutMode === 'manual' && <label htmlFor="point-timeout">任务时限（秒）<input id="point-timeout" type="number"
+        min={motionOptions?.timeout_min_s ?? 5} max={motionOptions?.timeout_max_s ?? 120} step="1" value={timeoutSeconds} disabled={occupied}
+        onChange={e => { setTimeoutSeconds(e.target.value); invalidate(); }} /></label>}
     </div></details>
+    {!offline && <p className="consoleNote">以上速度用于本次实机轨迹和预演时长；加速度、jerk 与 MIT 3/1/0 沿用已有配置。自动时限最多 120 秒，计算后在下方显示；修改设置须重新预演并由你点击确认执行。反馈超时与失联停止时间保持原值。</p>}
     <div className="consoleActions">
       <button disabled={occupied || !previewReady} onClick={preview}>{pending ? '处理中…' : '计算并预演'}</button>
       {offline ? <button className="primary" disabled={occupied || invalidPlan || submitted || !virtualEnabled} onClick={execute}>执行虚拟动作</button>
@@ -110,8 +133,8 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     {!offline && <p className="consoleNote">使能本身不会保持姿态。实机执行使用既有试验参数 Kp=3、Kd=1、前馈=0；轨迹、出力检查和首帧目标由服务端完成。</p>}
     <p className="consoleNote">预演检查模型内的关节路径与碰撞，末端不保证走直线；不验证真实承重或现场障碍。</p>
     {plan && <div className="pointPlanSummary">
-      <span>{offline ? '预计运动' : '预演动画'} <strong>{plan.seconds.toFixed(1)} s</strong></span>
-      {!offline && Number.isFinite(plan.hardware_preflight?.hardware_seconds) && <span>实机预计 <strong>{plan.hardware_preflight.hardware_seconds.toFixed(1)} s</strong></span>}
+      <span>{offline ? '预计运动' : Number.isFinite(plan.hardware_preflight?.hardware_seconds) ? '实机预计运动' : '模型预演估计'} <strong>{plan.seconds.toFixed(1)} s</strong></span>
+      {!offline && Number.isFinite(plan.hardware_preflight?.task_timeout_s) && <span>任务时限 <strong>{plan.hardware_preflight.task_timeout_s} s</strong></span>}
       <span>求解残差 <strong>{plan.position_error_mm.toFixed(3)} mm</strong></span>
       <span>当前距目标 <strong>{actualError?.toFixed(2) ?? '—'} mm</strong></span>
       <details><summary>查看六轴计算结果</summary><div className="consoleJoints">{plan.q_deg.map((q, i) => <span key={i}>J{i + 1}<strong>{q.toFixed(2)}°</strong></span>)}</div></details>

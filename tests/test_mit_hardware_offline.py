@@ -102,6 +102,21 @@ class HardwareOffline(unittest.TestCase):
         self.run_trial(); self.assertEqual(self.executor.state,'ARRIVED',self.executor.reason)
         self.assertEqual({x[1] for x in self.commands('mit')},set(range(1,7)))
 
+    def test_long_six_axis_task_finishes_with_short_heartbeat_deadline_unchanged(self):
+        from dataclasses import replace
+        self.config=replace(self.config,axes=tuple(replace(a,v_max=.0025) for a in self.config.axes),
+                            policy=replace(self.config.policy,task_timeout=100.))
+        self.executor.config=self.config
+        axes=tuple(range(1,7))
+        self.permit=OnsitePermit(self.config.fingerprint,axes,110.,'synthetic long task',axes,True,True)
+        self.intent=MotionIntent([[.1,.08,-.06,.04,-.02,.1]],'xyz','long-six-mock',expected_start=[0.]*6)
+        self.run_trial()
+        self.assertEqual(self.executor.state,'ARRIVED',self.executor.reason)
+        self.assertGreater(self.clock.t,60.)
+        self.assertLess(self.clock.t,100.)
+        self.assertEqual(self.config.policy.lease_timeout,.1)
+        self.assertEqual({x[1] for x in self.commands('disable')},set(axes))
+
     def test_authorization_missing_expired_wrong_config_or_support(self):
         for field,value in [('expires_at',0),('config_hash','wrong'),('operator_present',False),('independent_power_cut_ready',False),('mechanically_supported_axes',()),('used',True),('evidence','')]:
             with self.subTest(field=field):

@@ -24,6 +24,9 @@ class PointPlanner:
     def preview(self, body, *, start=None):
         if body.get('target', 'simulation') != 'simulation':
             raise ValueError(HARDWARE_REASON)
+        source = body.get('execution_source', 'mujoco')
+        if source not in ('mujoco', 'ros2-fake', 'hardware-preview'):
+            raise ValueError('未知的预演来源')
         try:
             xyz = np.asarray(body['xyz_mm'], dtype=float)
             speed = float(body.get('speed_rad_s', .15))
@@ -31,16 +34,14 @@ class PointPlanner:
             raise ValueError('请输入 X、Y、Z 三个坐标和有效速度') from exc
         if xyz.shape != (3,) or not np.all(np.isfinite(xyz)):
             raise ValueError('X、Y、Z 必须为三个有限数值，单位 mm')
-        if not np.isfinite(speed) or not .05 <= speed <= .3:
-            raise ValueError('关节速度上限必须在 0.05–0.30 rad/s 之间')
+        minimum,maximum=(.005,.15) if source=='hardware-preview' else (.05,.3)
+        if not np.isfinite(speed) or not minimum <= speed <= maximum:
+            raise ValueError(f'关节速度上限必须在 {minimum:g}–{maximum:g} rad/s 之间')
         mode = body.get('orientation_mode', 'position')
         if mode not in ('position', 'hold'):
             raise ValueError('请选择自动调整朝向或保持当前朝向')
         r = self.robot
         configuration = self.configuration()
-        source = body.get('execution_source', 'mujoco')
-        if source not in ('mujoco', 'ros2-fake', 'hardware-preview'):
-            raise ValueError('未知的预演来源')
         start = r.motion_start() if start is None else np.asarray(start, dtype=float)
         tolerance = np.deg2rad(1) if source == 'hardware-preview' else 0.
         if start.shape != (6,) or not np.all(np.isfinite(start)) or np.any(start < r.lower-tolerance) or np.any(start > r.upper+tolerance):
@@ -50,7 +51,7 @@ class PointPlanner:
             raise ValueError('计算结果超出关节限位')
         r.check_path(start, target)
         seconds = max(1., 1.5 * float(np.max(np.abs(target - start))) / speed)
-        if seconds > 60:
+        if source!='hardware-preview' and seconds > 60:
             raise ValueError('预计运动超过 60 秒，请选择更近的目标点')
         now = self.clock()
         self.plans = {key: val for key, val in self.plans.items() if val['expires'] > now}

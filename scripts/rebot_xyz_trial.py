@@ -4,6 +4,7 @@ Read/plan never enable. Execute is a foreground, one-use onsite operation.
 J7 is excluded: opening the gripper is unrelated to moving the TCP.
 """
 import argparse
+import copy
 from dataclasses import asdict
 import json
 import math
@@ -15,6 +16,50 @@ from rebot_mit_hardware import Envelope, HardwareExecutor, MotionIntent, OnsiteP
 from rebot_mit_mock import Trajectory, TrajectoryBudgetError
 
 AXES=tuple(range(1,7))
+
+
+def hardware_motion_options(raw):
+    config=Envelope.parse(raw)
+    return dict(speed_min_rad_s=.005,speed_max_rad_s=.15,default_speed_rad_s=min(a.v_max for a in config.axes),
+                timeout_min_s=5.,timeout_max_s=120.,default_timeout_s=config.policy.task_timeout,
+                automatic_margin_s=5.,default_timeout_mode='auto')
+
+
+def configure_motion(raw, start, target, settings):
+    """Build an in-memory task envelope from visible operator-selected timing.
+
+    Device parameters, saved gains and the original proposal are untouched.
+    Feedback, command and lease deadlines do not follow the motion duration.
+    """
+    from rebot_mit_mock import finite
+    options=hardware_motion_options(raw)
+    if not isinstance(settings,dict) or set(settings) not in ({'speed_rad_s','timeout_mode'}, {'speed_rad_s','timeout_mode','timeout_s'}):
+        raise ValueError('请在运动设置中明确选择实机关节速度和任务时限')
+    speed=settings['speed_rad_s'];mode=settings['timeout_mode']
+    if not finite(speed) or not options['speed_min_rad_s']<=speed<=options['speed_max_rad_s']:
+        raise ValueError('实机关节速度必须在 0.005–0.15 rad/s 之间')
+    if mode not in ('auto','manual'):
+        raise ValueError('任务时限请选择按轨迹自动计算或手动设置')
+    task_raw=copy.deepcopy(raw)
+    for axis in task_raw['axes']: axis['v_max']=speed
+    if mode=='manual':
+        timeout=settings.get('timeout_s')
+        if not finite(timeout) or not options['timeout_min_s']<=timeout<=options['timeout_max_s']:
+            raise ValueError('手动任务时限必须在 5–120 秒之间')
+    else:
+        task_raw['policy']['task_timeout']=options['timeout_max_s']
+        try:
+            trajectory=Trajectory.create([float(v) for v in start],[[float(v) for v in target]],Envelope.parse(task_raw),
+                                         start_tolerance=task_raw.get('start_boundary_tolerance',0.))
+            timeout=math.ceil(trajectory.duration+options['automatic_margin_s'])
+            if timeout>options['timeout_max_s']:
+                raise ValueError(f'自动任务时限需 {timeout} 秒（轨迹 {trajectory.duration:.1f} 秒 + 5 秒余量），'
+                                 '超过当前 120 秒上限；请缩小位移或调整实机速度后重新预演')
+        except TrajectoryBudgetError:
+            # Keep the maximum and let the pure preflight report required time.
+            timeout=options['timeout_max_s']
+    task_raw['policy']['task_timeout']=timeout
+    return task_raw,Envelope.parse(task_raw)
 
 
 def read_start(config, bus):

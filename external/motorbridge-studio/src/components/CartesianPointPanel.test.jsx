@@ -102,4 +102,20 @@ describe('Two-mode XYZ workflow', () => {
     rerender(<CartesianPointPanel {...props} hardwareError={message} />);
     expect(screen.getAllByText(message)).toHaveLength(1);
   });
+  it('uses visible hardware speed and automatic duration in preview, and edits invalidate the task',async()=>{
+    const {fetch}=setup({mode:'hardware'});
+    expect(screen.getByLabelText('实机关节速度上限（rad/s）').value).toBe('0.02');
+    expect(screen.getByLabelText('实机任务时限').value).toBe('auto');
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));
+    await screen.findByText(/预演通过/);
+    expect(posts(fetch)[0].body).toMatchObject({speed_rad_s:.02,hardware_motion:{speed_rad_s:.02,timeout_mode:'auto'}});
+    fireEvent.change(screen.getByLabelText('实机关节速度上限（rad/s）'),{target:{value:'0.05'}});
+    expect(screen.getByRole('button',{name:'确认实机执行'}).disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText('实机任务时限'),{target:{value:'manual'}});
+    fireEvent.change(screen.getByLabelText('任务时限（秒）'),{target:{value:'90'}});
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));
+    await screen.findByText(/预演通过/);
+    expect(posts(fetch)[1].body).toMatchObject({speed_rad_s:.05,hardware_motion:{speed_rad_s:.05,timeout_mode:'manual',timeout_s:90}});
+    expect(posts(fetch)).toHaveLength(2);
+  });
 });

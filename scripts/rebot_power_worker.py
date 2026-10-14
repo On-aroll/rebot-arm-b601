@@ -63,7 +63,8 @@ def run_trial(message, bus=None):
         axes=(1,)
         intent=HoldIntent(message['request_id'],message['expected_start'],seconds=3)
         executor=HardwareExecutor(config,bus or SdkTransport())
-    permit = OnsitePermit(config.fingerprint, axes, time.monotonic()+10,
+    permit_seconds=config.policy.task_timeout+10 if point else 10
+    permit = OnsitePermit(config.fingerprint, axes, time.monotonic()+permit_seconds,
         message['evidence'], axes, True, True,coordinated_start_checked=point)
     executor.heartbeat(executor.session, 0, True)
     for name in (signal.SIGTERM, signal.SIGINT):

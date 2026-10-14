@@ -166,10 +166,16 @@ def serve(port,host='127.0.0.1'):
                 raise ValueError('实机预演不存在、过期或已消费，请重新预演')
             if plan['configuration']!=config_store.fingerprint():
                 raise ValueError('配置已改变，请重新预演')
+            if plan.get('config_revision')!=config_store.status()['state']['revision']:
+                raise ValueError('已保存的软件草稿已改变，请重新预演')
             from rebot_xyz_trial import assess_motion
-            raw,envelope=hardware_configuration()
-            if plan.get('hardware_config_hash')!=envelope.fingerprint:
+            _,base=hardware_configuration()
+            if plan.get('hardware_base_hash')!=base.fingerprint:
                 raise ValueError('实机试验参数已变化或预演未绑定参数，请重新预演')
+            from rebot_mit_hardware import Envelope
+            raw=plan['hardware_config'];envelope=Envelope.parse(raw)
+            if plan.get('hardware_config_hash')!=envelope.fingerprint:
+                raise ValueError('本次任务设置已改变，请重新预演')
             assessment=assess_motion(r,plan['start'],plan['target'],envelope)
             if not assessment['execution_ready']:
                 raise ValueError('；'.join(assessment['execution_reasons']))
@@ -264,7 +270,13 @@ def serve(port,host='127.0.0.1'):
             if path=='/hardware-readiness':
                 return self.send(dict(readiness(config_store),power_trial=motor_power.status()))
             if path=='/point-capabilities':
-                return self.send(point_capabilities())
+                result=point_capabilities()
+                try:
+                    from rebot_xyz_trial import hardware_motion_options
+                    raw=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+                    result['hardware_motion_options']=hardware_motion_options(raw)
+                except (ValueError,OSError) as error: result['hardware_settings_error']=str(error)
+                return self.send(result)
             if path=='/hardware-point/state': return self.send(motor_power.status())
             if path=='/machine-state':
                 # 实机只读关节读数，由 rebot_twin_sync 发布；本服务不开 CAN。
@@ -365,11 +377,22 @@ def serve(port,host='127.0.0.1'):
                                 q,_=feedback_pose(r,body.get('motors'),body.get('mapping'),start_tolerance=np.deg2rad(1))
                                 result=point_planner.preview(body,start=q)
                                 try:
-                                    from rebot_xyz_trial import assess_motion
-                                    raw,envelope=hardware_configuration()
-                                    point_planner.plans[result['plan_id']]['hardware_config_hash']=envelope.fingerprint
-                                    result['hardware_preflight']=dict(assess_motion(r,q,np.deg2rad(result['q_deg']),envelope),
-                                        parameters=raw,parameter_source='existing explicit onsite XYZ trial envelope; not device parameters')
+                                    from rebot_xyz_trial import assess_motion,configure_motion
+                                    base_raw,base=hardware_configuration()
+                                    settings=body.get('hardware_motion')
+                                    if isinstance(settings,dict) and settings.get('speed_rad_s')!=body.get('speed_rad_s'):
+                                        raise ValueError('实机速度与预演速度不同，请重新预演')
+                                    raw,envelope=configure_motion(base_raw,q,np.deg2rad(result['q_deg']),settings)
+                                    plan=point_planner.plans[result['plan_id']]
+                                    plan.update(hardware_config=raw,hardware_config_hash=envelope.fingerprint,
+                                                hardware_base_hash=base.fingerprint,config_revision=config_store.status()['state']['revision'])
+                                    assessment=assess_motion(r,q,np.deg2rad(result['q_deg']),envelope)
+                                    result['hardware_preflight']=dict(assessment,parameters=raw,motion_settings=settings,
+                                        task_timeout_s=envelope.policy.task_timeout,
+                                        parameter_source='existing gains and limits; task speed and duration selected in webpage; not device parameters')
+                                    if np.isfinite(assessment.get('hardware_seconds',np.nan)):
+                                        result['seconds']=assessment['hardware_seconds']
+                                        plan['seconds']=result['seconds']
                                 except (ValueError,OSError) as error:
                                     result['hardware_preflight']=dict(execution_ready=False,execution_reasons=[str(error)])
                                 return self.send(result)
