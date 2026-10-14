@@ -31,6 +31,10 @@ class Sample:
     requested_at: float
     received_at: float
     qd_raw: float | None = None
+    iq_raw_a: float | None = None
+    torque_raw_nm: float | None = None
+    diagnostics_requested_at: float | None = None
+    diagnostics_received_at: float | None = None
     # Host request/response bounds, NOT a drive-provided timestamp or enabled bit.
 
 @dataclass(frozen=True)

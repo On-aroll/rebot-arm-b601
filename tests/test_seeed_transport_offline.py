@@ -46,6 +46,89 @@ class SeeedOffline(unittest.TestCase):
         self.assertFalse(any(self.calls(op) for op in ('enable', 'disable', 'mit')))
         self.assertEqual(len(self.calls('close_motor')), 6)
 
+    def diagnostic_bus(self, *, position_window=False, fault=None):
+        self.bus=SeeedTransport(factory=lambda **_:self.sdk,ownership=Owner(),clock=self.clock,
+                                position_window=position_window,diagnostic_axes=(3,))
+        self.executor.bus=self.bus
+        register=self.sdk.add_robstride_motor
+        def with_diagnostics(i,host,model):
+            motor=register(i,host,model);read=motor.robstride_get_param_f32_host_id
+            def query(index,host,timeout):
+                if index in (0x701A,0x302C):
+                    self.sdk.calls.append(('diagnostic',i,index))
+                    if fault: fault(index)
+                    self.clock.t+=.004
+                    return .25 if index==0x701A else .5
+                self.clock.t+=.001
+                return read(index,host,timeout)
+            motor.robstride_get_param_f32_host_id=query
+            return motor
+        self.sdk.add_robstride_motor=with_diagnostics
+
+    def test_diagnostic_bootstrap_keeps_separate_raw_report_and_position_times(self):
+        self.diagnostic_bus(position_window=True)
+        self.bus.open_readonly();self.sdk.motors[3].q=.12
+        samples=self.bus.read((3,),self.config.policy)
+        self.bus.close()
+        sample=samples[3]
+        self.assertEqual((sample.q,sample.qd),(.12,0.))
+        self.assertEqual((sample.iq_raw_a,sample.torque_raw_nm),(.25,.5))
+        self.assertGreater(sample.diagnostics_received_at,sample.received_at)
+        self.assertAlmostEqual(sample.diagnostics_received_at-sample.diagnostics_requested_at,.008)
+        self.assertEqual(self.calls('diagnostic'),[('diagnostic',3,0x701A),('diagnostic',3,0x302C)])
+        self.assertFalse(any(self.calls(op) for op in ('enable','disable','mit')))
+
+    def run_diagnostic_failure(self, fault):
+        self.diagnostic_bus(fault=fault)
+        self.permit.axes=(3,);self.permit.mechanically_supported_axes=(3,)
+        self.intent=MotionIntent([[0.,0.,.01,0.,0.,0.]],'onsite-single-axis','offline-diagnostic')
+        self.executor.lease_until=100.  # Isolate the command deadline from lease expiry.
+        self.executor.run(self.intent,self.permit)
+        enable=self.sdk.calls.index(('enable',3));disable=self.sdk.calls.index(('disable',3))
+        self.assertFalse(any(c[0]=='mit' for c in self.sdk.calls[enable:disable]))
+        self.assertEqual([c for c in self.sdk.calls[enable:disable] if c[0]=='diagnostic'],[('diagnostic',3,0x701A)])
+        self.assertEqual(self.calls('disable'),[('disable',3)])
+
+    def test_cancel_during_iq_read_preempts_torque_query_and_first_target(self):
+        def cancel(index):
+            if self.bus.active: self.executor.cancel()
+        self.run_diagnostic_failure(cancel)
+        self.assertEqual(self.executor.state,'CANCELLED')
+
+    def test_diagnostic_timeout_after_enable_stops_without_sending_old_target(self):
+        def timeout(index):
+            if self.bus.active: raise TimeoutError('synthetic diagnostic timeout')
+        self.run_diagnostic_failure(timeout)
+        self.assertEqual(self.executor.state,'FAULT')
+        self.assertIn('synthetic diagnostic timeout',self.executor.reason)
+
+    def test_slow_diagnostic_read_does_not_extend_command_deadline(self):
+        def slow(index):
+            if self.bus.active: self.clock.t+=.081
+        self.run_diagnostic_failure(slow)
+        self.assertEqual(self.executor.state,'FAULT')
+        self.assertIn('命令有效期',self.executor.reason)
+
+    def test_diagnostic_invalid_value_rejects_before_enable(self):
+        self.diagnostic_bus();self.bus.open_readonly()
+        self.sdk.motors[3].robstride_get_param_f32_host_id=lambda *args:float('nan') if args[0]==0x302C else 0.
+        with self.assertRaisesRegex(ValueError,'诊断寄存器 0x302c'):
+            self.bus.read((3,),self.config.policy)
+        self.bus.close()
+        self.assertFalse(any(self.calls(op) for op in ('enable','disable','mit')))
+
+    def test_drive_reports_are_logged_without_becoming_feedforward_or_gains(self):
+        self.diagnostic_bus()
+        self.permit.axes=(3,);self.permit.mechanically_supported_axes=(3,)
+        target=[0.,0.,.01,0.,0.,0.]
+        self.executor.run(MotionIntent([target],'onsite-single-axis','offline-drive-reports'),self.permit)
+        self.assertEqual(self.executor.state,'ARRIVED',self.executor.reason)
+        self.assertTrue(all(c[1]==3 and c[4:]==(3.,1.,0.) for c in self.calls('mit')))
+        recorded=[f['feedback']['3'] for f in self.executor.frames if '3' in f['feedback']]
+        self.assertTrue(recorded)
+        self.assertTrue(all(s['iq_raw_a']==.25 and s['torque_raw_nm']==.5 for s in recorded))
+        self.assertEqual(self.calls('disable'),[('disable',3)])
+
     def test_rejected_preparation_keeps_raw_feedback_and_never_enables(self):
         register = self.sdk.add_robstride_motor
         def with_out_of_range_joint(i, host, model):

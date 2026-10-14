@@ -58,7 +58,7 @@ def run_trial(message, bus=None):
         from rebot_seeed_transport import SeeedTransport
         axes=tuple(range(1,7))
         intent=MotionIntent([message['target']],'xyz',message['request_id'],expected_start=message['expected_start'])
-        executor=HardwareExecutor(config,bus or SeeedTransport(position_window=True))
+        executor=HardwareExecutor(config,bus or SeeedTransport(position_window=True,diagnostic_axes=(3,) if config.gain_review else ()))
     else:
         axes=(1,)
         intent=HoldIntent(message['request_id'],message['expected_start'],seconds=3)
@@ -92,6 +92,8 @@ def run_trial(message, bus=None):
     # requests are host-side evidence, not per-frame acknowledgements by drives.
     emit(dict(kind='result', **executor.status(), command_log=executor.frames,
               expected_start=message['expected_start'], target=message.get('target'),
+              drive_feedback_evidence=dict(axis=3,iq_register='0x701a',torque_register='0x302c',
+                  calibrated=False,scope='raw drive reports, not independent torque measurement') if point and config.gain_review else None,
               command_evidence='host MIT requests; no per-frame drive ACK'))
 
 

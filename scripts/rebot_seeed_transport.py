@@ -45,8 +45,11 @@ def official_module():
 
 class SeeedTransport(SdkTransport):
     """The P4 executor supplies permission, timing and feedback checks unchanged."""
-    def __init__(self, *, position_window=False, **kwargs):
+    def __init__(self, *, position_window=False, diagnostic_axes=(), **kwargs):
         super().__init__(**kwargs)
+        if any(type(i) is not int or i not in MODELS for i in diagnostic_axes) or len(set(diagnostic_axes))!=len(diagnostic_axes):
+            raise ValueError('诊断轴必须是明确且不重复的 J1–J6')
+        self.diagnostic_axes=tuple(diagnostic_axes)
         self.arm = None
         self.trial_group = None
         self.trial_groups = {}
@@ -97,11 +100,26 @@ class SeeedTransport(SdkTransport):
     def read(self, axes, policy, check=lambda:None):
         axes=tuple(axes)
         samples=super().read(axes,policy,check)
-        if not self.position_window:
-            return samples
-        if any(i not in self.previous_samples for i in axes):
+        if self.position_window and any(i not in self.previous_samples for i in axes):
             self.previous_samples.update(samples)
             samples=super().read(axes,policy,check)
+        for i in self.diagnostic_axes:
+            if i not in samples: continue
+            # Raw drive reports for identification, not a calibrated torque
+            # sensor. Keep their timestamps separate from mechPos/velocity.
+            requested=self.clock(); values=[]
+            for index in (0x701A,0x302C):
+                check();self.ownership.check()
+                value=self.motors[i].robstride_get_param_f32_host_id(index,0xFD,max(1,int(policy.io_timeout*1000)))
+                check()
+                if not finite(value): raise ValueError(f'J{i} 诊断寄存器 {index:#x} 返回无效数值')
+                values.append(value)
+            received=self.clock()
+            if received-requested>policy.feedback_age: raise TimeoutError(f'J{i} 诊断反馈过期')
+            samples[i]=replace(samples[i],iq_raw_a=values[0],torque_raw_nm=values[1],
+                               diagnostics_requested_at=requested,diagnostics_received_at=received)
+        if not self.position_window:
+            return samples
         result={}
         for i,s in samples.items():
             previous=self.previous_samples[i]

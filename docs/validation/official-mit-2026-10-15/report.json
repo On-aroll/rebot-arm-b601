@@ -175,5 +175,20 @@
     "partial_batch_trace_fix": "implemented after captured 8s trial; no retrospective augmentation",
     "screenshot": "console-official-gains-trace.png",
     "screenshot_sha256": "c626600de6e5034b057f647f36fc9f37fe025352f1e5bd6dd788117841c3f6bd"
+  },
+  "diagnostic_followup": {
+    "type": "read-only-capability-and-next-trial-instrumentation",
+    "record": "diagnostic-register-capability.json",
+    "sha256": "07a8b9f8e833dae28c46918236583f0bc9c082b304392508351381ddb203a3ad",
+    "successful_read_responses": 48,
+    "hardware_control_frames": 0,
+    "device_parameter_writes": 0,
+    "under_load_feedback_verified": false,
+    "sdk_virtual_tests": 119,
+    "virtual_test_log": "diagnostic-virtual-tests.txt",
+    "next_reviewed_task_diagnostic_axes": [
+      3
+    ],
+    "physical_xyz_arrival": false
   }
 }

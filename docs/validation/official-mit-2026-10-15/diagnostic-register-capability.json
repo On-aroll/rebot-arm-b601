@@ -1,0 +1,369 @@
+{
+  "type": "read-only-diagnostic-capability-check",
+  "utc": "2026-10-14T18:16:53Z",
+  "source": "RobStride/Python_Sample protocol.py: torque_fdb=0x302c, iqf=0x701a, zero_sta=0x7029",
+  "hardware_control_frames": 0,
+  "device_parameter_writes": 0,
+  "readings": [
+    {
+      "sweep": 0,
+      "axis": 1,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": -0.018919095396995544,
+          "status": "read-response",
+          "elapsed_s": 0.008216522001021076
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008129472000291571
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008152820002578665
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008134345000144094
+        }
+      }
+    },
+    {
+      "sweep": 0,
+      "axis": 2,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": -0.002727084793150425,
+          "status": "read-response",
+          "elapsed_s": 0.008164309001585934
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.00812010999652557
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008138290999340825
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008193276997189969
+        }
+      }
+    },
+    {
+      "sweep": 0,
+      "axis": 3,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": 0.005795055069029331,
+          "status": "read-response",
+          "elapsed_s": 0.008111281000310555
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008164858998497948
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008148410001012962
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.00817511400236981
+        }
+      }
+    },
+    {
+      "sweep": 0,
+      "axis": 4,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": 0.016068458557128906,
+          "status": "read-response",
+          "elapsed_s": 0.008143815000948962
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008155111994710751
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008092806005151942
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008140780999383423
+        }
+      }
+    },
+    {
+      "sweep": 0,
+      "axis": 5,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": 0.025617480278015137,
+          "status": "read-response",
+          "elapsed_s": 0.008182792000297923
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008195032001822256
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008164637998561375
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008142587001202628
+        }
+      }
+    },
+    {
+      "sweep": 0,
+      "axis": 6,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": 0.042606331408023834,
+          "status": "read-response",
+          "elapsed_s": 0.008176113995432388
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008134496994898655
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008079323997662868
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008153244998538867
+        }
+      }
+    },
+    {
+      "sweep": 1,
+      "axis": 1,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": -0.018876485526561737,
+          "status": "read-response",
+          "elapsed_s": 0.00812844899337506
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008159185999829788
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008137655000609811
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008126715001708362
+        }
+      }
+    },
+    {
+      "sweep": 1,
+      "axis": 2,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": -0.0028122796211391687,
+          "status": "read-response",
+          "elapsed_s": 0.008126441003696527
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008123514999169856
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008174891998351086
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008166767998773139
+        }
+      }
+    },
+    {
+      "sweep": 1,
+      "axis": 3,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": 0.005837652366608381,
+          "status": "read-response",
+          "elapsed_s": 0.008219946997996885
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008132447001116816
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008121065999148414
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008135916999890469
+        }
+      }
+    },
+    {
+      "sweep": 1,
+      "axis": 4,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": 0.01591506041586399,
+          "status": "read-response",
+          "elapsed_s": 0.008110129994747695
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008121485996525735
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008124911997583695
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008132161005050875
+        }
+      }
+    },
+    {
+      "sweep": 1,
+      "axis": 5,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": 0.025617480278015137,
+          "status": "read-response",
+          "elapsed_s": 0.008191515000362415
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008128945002681576
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008135976000630762
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008182511999621056
+        }
+      }
+    },
+    {
+      "sweep": 1,
+      "axis": 6,
+      "readings": {
+        "position_rad": {
+          "register": "0x7019",
+          "raw_value": 0.04241457208991051,
+          "status": "read-response",
+          "elapsed_s": 0.008121819999360014
+        },
+        "iq_filtered_A": {
+          "register": "0x701a",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008124765001412015
+        },
+        "torque_feedback_Nm": {
+          "register": "0x302c",
+          "raw_value": 0.0,
+          "status": "read-response",
+          "elapsed_s": 0.008107162000669632
+        },
+        "zero_state": {
+          "register": "0x7029",
+          "raw_value": 1,
+          "status": "read-response",
+          "elapsed_s": 0.008176024006388616
+        }
+      }
+    }
+  ]
+}
