@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-14",
+  "backend": "seeed-sdk-p4-guarded",
+  "hardware_executed": true,
+  "authorization": "用户明确批准 J1 相对 +0.5 度、3/1/0 和低速试验，并回复：直接开始，我现在就在旁边",
+  "controlled_axes": [1],
+  "device_parameter_writes": 0,
+  "mit_frame_parameters": {"kp": 3.0, "kd": 1.0, "tau_ff": 0.0},
+  "max_reference_speed_rad_s": 0.02,
+  "task_timeout_s": 5.0,
+  "prepared_start_deg": -40.25879128892888,
+  "goal_deg": -39.75879128892888,
+  "last_motion_feedback_deg": -40.283202385022506,
+  "change_from_prepared_start_deg": -0.024411096093625573,
+  "final_goal_error_deg": 0.5244110960936226,
+  "logged_trajectory_samples": 40,
+  "logged_trajectory_span_s": 4.877160227999411,
+  "max_estimated_effort_Nm": 0.03261275383155909,
+  "estimated_effort_is_measured_torque": false,
+  "result": "FAULT",
+  "reason": "任务超时",
+  "motion_arrived_before_stop": false,
+  "stop": {
+    "requested": true,
+    "sent_axes": [1],
+    "sdk_status_ack_axes": [1],
+    "errors": {},
+    "stationary_sample": true,
+    "physical_stop_certified": false,
+    "operator_observation_after_stop": "现在已经安静"
+  },
+  "operator_motion_observation": "用户没有看着机械臂，无法肉眼确认小幅位移；听到声音但无法确定来源",
+  "can_state_after_stop": "UP / 1000000 bps / ERROR-ACTIVE / berr-counter tx=0 rx=0",
+  "gateway_restored": true,
+  "webpage_readonly_feedback_restored": true,
+  "webpage_fresh_axes_after_restore": 7,
+  "webpage_evidence": "outputs/j1-feedback-after-trial.png",
+  "retry_executed": false,
+  "remaining": [
+    "核实电机有效出力、反馈响应与传动阻力；出力偏小只是排查方向，尚未定因",
+    "当前 3/1/0 与 +0.5 度方案未通过真实到点验收",
+    "未批准自动增大增益、前馈或运动幅度",
+    "网页真实 XYZ 和整臂轨迹仍未接通或验收"
+  ],
+  "raw_evidence": [
+    "outputs/seeed_j1_prepare_authorized_current.json",
+    "outputs/seeed_j1_motion_authorized_current.json"
+  ],
+  "notes": "先隔离网页及其他网关客户端的 CAN 查询，再重读起点并执行一次。40 仅为记录的轨迹采样数，首帧原位目标不包含在该计数中。SDK 发送回执不等于驱动器有效出力证明。"
+}

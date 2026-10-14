@@ -118,4 +118,14 @@ describe('Two-mode XYZ workflow', () => {
     expect(posts(fetch)[1].body).toMatchObject({speed_rad_s:.05,hardware_motion:{speed_rad_s:.05,timeout_mode:'manual',timeout_s:90}});
     expect(posts(fetch)).toHaveLength(2);
   });
+  it('selects official gravity per task, invalidates preview, and sends no enable or parameter writes',async()=>{
+    const {fetch}=setup({mode:'hardware'});
+    expect(screen.getByLabelText('轨迹控制方案').value).toBe('none');
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));await screen.findByText(/预演通过/);
+    fireEvent.change(screen.getByLabelText('轨迹控制方案'),{target:{value:'seeed-rs-gravity-v1'}});
+    expect(screen.getByRole('button',{name:'确认实机执行'}).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));await screen.findByText(/预演通过/);
+    expect(posts(fetch)[1].body.hardware_motion.feedforward_mode).toBe('seeed-rs-gravity-v1');
+    expect(posts(fetch).map(p=>p.body.action)).toEqual(['point_plan','point_plan']);
+  });
 });

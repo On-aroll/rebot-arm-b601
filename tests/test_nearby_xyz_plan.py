@@ -113,6 +113,22 @@ class NearbyPlan(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'需 122 秒'):
                 configure_motion(raw,[0.]*6,[0.]*6,dict(speed_rad_s=.02,timeout_mode='auto'))
 
+    def test_visible_official_feedforward_passes_nominal_model_without_changing_saved_values(self):
+        import copy
+        raw=json.loads((Path(__file__).resolve().parents[1]/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        saved=copy.deepcopy(raw)
+        start=np.deg2rad([-1.15,-.37,.02,.98,2.41,2.45])
+        target=self.robot.ik(np.array([.30071,.200,.22487]),seed=start,position_only=True)
+        task,config=configure_motion(raw,start,target,dict(speed_rad_s=.1,timeout_mode='auto',feedforward_mode='seeed-rs-gravity-v1'))
+        result=assess_motion(self.robot,start,target,config)
+        self.assertTrue(result['execution_ready'],result['execution_reasons'])
+        self.assertTrue(result['static_balance_check']['nominal_model_only'])
+        self.assertFalse(result['static_balance_check']['payload_and_friction_validated'])
+        self.assertEqual(result['static_balance_check']['insufficient_axes'],[])
+        self.assertEqual(raw,saved)
+        self.assertEqual([a.tau_ff for a in config.axes],[0.]*6)
+        self.assertIn('feedforward',task)
+
     def test_explicit_tolerance_preserves_raw_start_and_identifies_load_deficit(self):
         start=np.deg2rad([61.96,-.39,.1,.56,-.91,4.46]);before=start.copy()
         plan=plan_nearby(self.robot,start,self.config)

@@ -33,7 +33,7 @@ def configure_motion(raw, start, target, settings):
     """
     from rebot_mit_mock import finite
     options=hardware_motion_options(raw)
-    if not isinstance(settings,dict) or set(settings) not in ({'speed_rad_s','timeout_mode'}, {'speed_rad_s','timeout_mode','timeout_s'}):
+    if not isinstance(settings,dict) or not {'speed_rad_s','timeout_mode'}<=set(settings) or set(settings)-{'speed_rad_s','timeout_mode','timeout_s','feedforward_mode'}:
         raise ValueError('请在运动设置中明确选择实机关节速度和任务时限')
     speed=settings['speed_rad_s'];mode=settings['timeout_mode']
     if not finite(speed) or not options['speed_min_rad_s']<=speed<=options['speed_max_rad_s']:
@@ -41,6 +41,13 @@ def configure_motion(raw, start, target, settings):
     if mode not in ('auto','manual'):
         raise ValueError('任务时限请选择按轨迹自动计算或手动设置')
     task_raw=copy.deepcopy(raw)
+    ff=settings.get('feedforward_mode','none')
+    if ff not in ('none','seeed-rs-gravity-v1'):
+        raise ValueError('请选择无前馈或 Seeed 官方重力前馈')
+    if ff!='none':
+        from rebot_official_motion import policy
+        task_raw['feedforward']=policy()
+    else: task_raw.pop('feedforward',None)
     for axis in task_raw['axes']: axis['v_max']=speed
     if mode=='manual':
         timeout=settings.get('timeout_s')
@@ -163,13 +170,24 @@ def assess_motion(robot, start, target, config):
     # Raising an abort threshold does not produce holding torque. Check whether
     # the actual configured PD/feedforward could balance the model within the
     # existing tracking-error bound. Friction/payload still require site testing.
-    residuals=np.max(np.abs(gravity_samples-np.asarray([a.tau_ff for a in config.axes])),axis=0)
+    feedforward_samples=np.tile([a.tau_ff for a in config.axes],(len(gravity_samples),1))
+    if config.feedforward is not None:
+        from rebot_official_motion import OfficialMIT
+        official=OfficialMIT(config,model=robot.pm)
+        feedforward_samples=np.asarray([np.asarray(official.commands(trajectory.sample(t)[0],trajectory.sample(t)[1],trajectory.sample(t)[0]))[:,4]
+            for t in np.linspace(0,trajectory.duration,51)])
+    residuals=np.max(np.abs(gravity_samples-feedforward_samples),axis=0)
     required_offsets=np.asarray([residuals[i]/a.kp if a.kp>0 else math.inf for i,a in enumerate(config.axes)])
     static_balance_check=dict(source='gravity residual divided by configured MIT Kp; not physical acceptance',
         required_offset_deg=np.rad2deg(required_offsets).tolist(),
         allowed_error_deg=[math.degrees(a.error_max) for a in config.axes],
         insufficient_axes=[i+1 for i,a in enumerate(config.axes) if required_offsets[i]>a.error_max],
         payload_and_friction_validated=False)
+    static_balance_check['nominal_model_only']=True
+    static_balance_check['feedforward_mode']='none' if config.feedforward is None else config.feedforward.mode
+    estimated_effort=peaks+np.asarray([a.kp*a.error_max+a.kd*a.v_max for a in config.axes])
+    reserve_check=dict(estimated_peak_with_tracking_reserve_Nm=estimated_effort.tolist(),
+        insufficient_axes=[i+1 for i,a in enumerate(config.axes) if estimated_effort[i]>a.torque_max] if config.feedforward else [])
     reasons=[]
     if trajectory.duration+config.policy.settle_time>config.policy.task_timeout:
         reasons.append(f'按已确认的 {config.axes[0].v_max:g} rad/s 试验速度需 {trajectory.duration:.1f} 秒，超过本轮 {config.policy.task_timeout:g} 秒时限；请选择更近的目标')
@@ -177,7 +195,11 @@ def assess_motion(robot, start, target, config):
         reasons.append('J'+ '/J'.join(map(str,gravity_check['insufficient_axes']))+' 模型重力估算超过当前软件力矩包络')
     if static_balance_check['insufficient_axes']:
         reasons.append('J'+ '/J'.join(map(str,static_balance_check['insufficient_axes']))+' 的 Kp=3、Kd=1、前馈=0 在现有 1° 跟踪误差内不足以平衡模型重力；未自动改增益或前馈')
+    if reserve_check['insufficient_axes']:
+        reasons.append('J'+ '/J'.join(map(str,reserve_check['insufficient_axes']))+' 官方重力前馈加跟踪余量超过本次软件力矩包络')
     return dict(gravity_check=gravity_check,static_balance_check=static_balance_check,
+                effort_reserve_check=reserve_check,
+                control_source='Seeed RebotArmEndPose._loop_cb: measured q → g(q) → MIT q/dq/kp/kd/tau' if config.feedforward else 'existing zero-feedforward trial',
                 execution_ready=not reasons,execution_reasons=reasons,hardware_seconds=trajectory.duration)
 
 

@@ -70,8 +70,8 @@ class MotorPowerAPI:
     def _new_process(self):
         python=self.root/'.venv/bin/python'
         if not python.is_file(): raise ValueError('缺少已审核 motorbridge 0.5.6 环境 .venv/bin/python；未启动实机')
-        env=dict(os.environ,PYTHONPATH=str(self.root/'.venv/lib/python3.12/site-packages')+':'+str(self.root/'scripts'))
-        return self.popen(['/usr/bin/python3','-u',str(self.root/'scripts/rebot_power_worker.py')],
+        env=dict(os.environ,PYTHONPATH=str(self.root/'scripts'))
+        return self.popen([str(python),'-u',str(self.root/'scripts/rebot_power_worker.py')],
                           stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1,
                           cwd=str(self.root),env=env,start_new_session=True)
 

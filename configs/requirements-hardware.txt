@@ -1,0 +1,4 @@
+# SDK version remains unchanged. Pinocchio runs in the same Python ABI as SDK.
+motorbridge==0.5.6
+pin==4.1.0
+PyYAML==6.0.3

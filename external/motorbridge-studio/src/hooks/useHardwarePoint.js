@@ -79,10 +79,23 @@ export function useHardwarePoint({ beforeExecute, onFinished }) {
     };
     const heartbeat = async () => {
       if (!owned.current || !active.current || beating || starting.current || stopping.current) return;
+      const ticket = generation.current;
       beating = true;
       try { await request('action', { action: 'heartbeat', sequence: ++sequence.current,
         focused: document.hasFocus() && document.visibilityState === 'visible' }, token.current); }
-      catch (failure) { await stop(); if (mounted.current) setError(failure.message); }
+      catch (failure) {
+        if (ticket !== generation.current || !mounted.current) return;
+        // A worker can finish between the last poll and this heartbeat. Keep
+        // its actual terminal reason instead of replacing it with a lease error.
+        try {
+          const latest = await request('state');
+          if (ticket !== generation.current || !mounted.current) return;
+          const status = latest.status || latest;
+          if (status.state && status.busy === false) { accept(latest); return; }
+        } catch { /* Unknown/live task: retain the existing stop-on-failure. */ }
+        if (ticket !== generation.current || !mounted.current || !owned.current || !active.current) return;
+        await stop(); if (mounted.current) setError(failure.message);
+      }
       finally { beating = false; }
     };
     const blur = () => { if (owned.current || starting.current) void stop(); };

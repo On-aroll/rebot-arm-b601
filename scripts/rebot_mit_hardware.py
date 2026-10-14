@@ -48,11 +48,18 @@ class TrialPolicy:
     task_timeout: float
 
 @dataclass(frozen=True)
+class FeedforwardPolicy:
+    mode: str
+    source_commit: str
+    model_sha256: str
+
+@dataclass(frozen=True)
 class Envelope:
     version: str
     axes: tuple
     policy: TrialPolicy
     start_boundary_tolerance: float = 0.
+    feedforward: FeedforwardPolicy | None = None
 
     @classmethod
     def parse(cls, data):
@@ -83,12 +90,21 @@ class Envelope:
         tolerance=data.get('start_boundary_tolerance',0.)
         if not finite(tolerance) or not 0<=tolerance<=math.radians(1):
             raise ValueError('起点边界容差必须明确且不超过 1°')
-        return cls(data['version'],tuple(axes),p,tolerance)
+        ff=data.get('feedforward')
+        if ff is not None:
+            from rebot_official_motion import MODE,COMMIT
+            if not isinstance(ff,dict) or set(ff)!=set(FeedforwardPolicy.__dataclass_fields__):
+                raise ValueError('官方前馈来源和 RS 模型指纹必须完整')
+            if ff['mode']!=MODE or ff['source_commit']!=COMMIT or not isinstance(ff['model_sha256'],str) or len(ff['model_sha256'])!=64:
+                raise ValueError('仅支持已锁定 Seeed RS 官方重力前馈')
+            ff=FeedforwardPolicy(**ff)
+        return cls(data['version'],tuple(axes),p,tolerance,ff)
 
     @property
     def fingerprint(self):
         data=asdict(self)
         if not self.start_boundary_tolerance: data.pop('start_boundary_tolerance')
+        if self.feedforward is None: data.pop('feedforward')
         return hashlib.sha256(json.dumps(data,sort_keys=True,allow_nan=False).encode()).hexdigest()
 
 @dataclass
@@ -240,7 +256,9 @@ class SdkTransport:
                 bounded=max(a.q_min-tolerance,start-self.envelope.policy.arrival_q)<=values[0]<a.q_min and values[1]>=0
             elif start is not None and a.q_max<start<=a.q_max+tolerance:
                 bounded=a.q_max<values[0]<=min(a.q_max+tolerance,start+self.envelope.policy.arrival_q) and values[1]<=0
-        if not bounded or abs(values[1])>a.v_max or tuple(values[2:])!=(a.kp,a.kd,a.tau_ff):
+        dynamic=self.envelope.feedforward is not None
+        matching=tuple(values[2:4])==(a.kp,a.kd) and (abs(values[4])<=a.torque_max if dynamic else values[4]==a.tau_ff)
+        if not bounded or abs(values[1])>a.v_max or not matching:
             raise ValueError('MIT 帧与已确认的范围/增益不一致')
         self.ownership.check()
         self.motors[axis].send_mit(*values)
@@ -305,6 +323,7 @@ class HardwareExecutor:
         self.cancelled=threading.Event(); self.wait=wait or self.cancelled.wait
         self.lock=threading.Lock(); self.lease_until=0.; self.lease_seq=-1; self.session=secrets.token_hex(16)
         self.motion_arrived=False; self.last_axis_command={}; self.consumed=False; self.state='IDLE'; self.reason=''; self.stop_result=None; self.feedback={}; self.frames=[]; self.used=set(); self.worker=None
+        self.official_motion=None
 
     def heartbeat(self, session, sequence, focused):
         with self.lock:
@@ -331,13 +350,19 @@ class HardwareExecutor:
             if not 0<=now-s.requested_at<=p.feedback_age: raise TimeoutError(f'J{i} 反馈过期')
             margin=self.config.start_boundary_tolerance
             if not a.q_min-margin<=s.q<=a.q_max+margin: raise ValueError(f'J{i} 原始位置越限；未归一化或裁剪')
-            if abs(s.qd)>a.v_max: raise ValueError(f'J{i} 实测速度超过试验边界')
+            if abs(s.qd)>a.v_max:
+                raise ValueError(f'J{i} 实测速度超过试验边界：{s.qd:.6f} rad/s，允许 ±{a.v_max:g} rad/s')
             if s.qd_raw is not None and a.kd*abs(s.qd_raw)>a.torque_max:
                 raise ValueError(f'J{i} 原始速度反馈的阻尼估算超过包络')
 
     def _send(self, q, v, samples, permit):
         issued=self.clock(); p=self.config.policy
         self.validate_feedback(samples,permit.axes)
+        commands=None
+        if self.official_motion is not None:
+            # Gravity couples all joints, including axes not yet enabled.
+            self.validate_feedback(samples,tuple(MODELS))
+            commands=self.official_motion.commands(q,v,[samples[i].q for i in MODELS])
         frames=[]
         for i in permit.axes:
             self.check(permit)
@@ -346,9 +371,9 @@ class HardwareExecutor:
             error=q[k]-s.q
             # Conservative absolute software effort envelope, NOT measured torque.
             damping_error=max(abs(v[k]-s.qd), abs(v[k]-s.qd_raw) if s.qd_raw is not None else 0.)
-            estimate=a.kp*abs(error)+a.kd*damping_error+abs(a.tau_ff)
+            values=commands[k] if commands is not None else (q[k],v[k],a.kp,a.kd,a.tau_ff)
+            estimate=a.kp*abs(error)+a.kd*damping_error+abs(values[4])
             if abs(error)>a.error_max or estimate>a.torque_max: raise ValueError(f'J{i} 跟踪误差/软件转矩包络超限')
-            values=(q[k],v[k],a.kp,a.kd,a.tau_ff)
             self.bus.frame(i,values); self.last_axis_command[i]=self.clock(); frames.append(dict(axis=i,values=values,estimated_effort=estimate))
             self.check(permit)
             if self.clock()-issued>p.command_age: raise TimeoutError('SDK 发送完成已超时，停止旧任务')
@@ -369,12 +394,18 @@ class HardwareExecutor:
             self.consumed=True
         permit=replace(permit,axes=tuple(permit.axes),mechanically_supported_axes=tuple(permit.mechanically_supported_axes))
         try:
+            if self.config.feedforward is not None:
+                if permit.axes!=tuple(MODELS) or intent.source!='xyz' or not permit.coordinated_start_checked:
+                    raise ValueError('官方重力前馈仅用于已预演并确认的六轴 XYZ')
+                from rebot_official_motion import OfficialMIT
+                self.official_motion=OfficialMIT(self.config)
             if intent.request_id in self.used: raise ValueError('任务不能重放')
             self.used.add(intent.request_id); permit.validate(self.config,self.clock())
             self.check(permit); self.state='PREPARING'
             self.bus.open_readonly()
             check=lambda:self.check(permit)
             samples=self.bus.read(tuple(MODELS),self.config.policy,check)
+            self.feedback.update(samples)
             # A supported single-axis trial checks only its commanded drive.
             # Other raw positions stay unchanged; XYZ retains all-six checks.
             checked_axes=permit.axes if intent.source=='onsite-single-axis' else tuple(MODELS)
@@ -397,33 +428,44 @@ class HardwareExecutor:
             scoped_axes=permit.axes if intent.source=='onsite-single-axis' else None
             trajectory=Trajectory.create(start,waypoints,self.config,axes=scoped_axes,start_tolerance=self.config.start_boundary_tolerance)
             if trajectory.duration+self.config.policy.settle_time>self.config.policy.task_timeout: raise ValueError('轨迹无法在试验时限内完成')
+            if self.official_motion is not None:
+                commands=self.official_motion.commands(start,(0.,)*6,start)
+                if any(abs(commands[i-1][4])+self.config.axes[i-1].kd*max(abs(samples[i].qd),abs(samples[i].qd_raw or 0.))>self.config.axes[i-1].torque_max for i in permit.axes):
+                    raise ValueError('实测起点的官方重力前馈超过软件力矩包络；未使能')
             self.bus.authorize(self.config,permit)
             # For each enabled axis read position AGAIN before its first frame.
             # Never first target HOME or the previous task's endpoint.
             startup_samples={}
             for i in permit.axes:
                 check(); self.last_axis_command[i]=self.clock(); self.bus.enable(i); check()
-                current=self.bus.read((i,),self.config.policy,check)
-                self.validate_feedback(current,(i,))
+                read_axes=tuple(MODELS) if self.official_motion is not None else (i,)
+                current=self.bus.read(read_axes,self.config.policy,check)
+                self.feedback.update(current)
+                self.validate_feedback(current,read_axes)
                 if abs(current[i].q-start[i-1])>self.config.policy.arrival_q or abs(current[i].qd)>self.config.policy.start_speed:
                     raise ValueError('使能后起点变化，停止并重新预演')
                 values=(current[i].q,0.,self.config.axes[i-1].kp,self.config.axes[i-1].kd,self.config.axes[i-1].tau_ff)
-                if self.config.axes[i-1].kd*max(abs(current[i].qd),abs(current[i].qd_raw or 0.))>self.config.axes[i-1].torque_max:
+                if self.official_motion is not None:
+                    measured=[current[j].q for j in MODELS]
+                    values=self.official_motion.commands(measured,(0.,)*6,measured)[i-1]
+                if abs(values[4])+self.config.axes[i-1].kd*max(abs(current[i].qd),abs(current[i].qd_raw or 0.))>self.config.axes[i-1].torque_max:
                     raise ValueError('首帧阻尼力矩估算超过包络')
+                check()  # Includes computation time in the startup command deadline.
                 issued=self.clock()
                 self.bus.frame(i,values)
                 if self.clock()-issued>self.config.policy.command_age: raise TimeoutError('首帧发送超过有效期')
                 self.last_axis_command[i]=self.clock(); check()
-                startup_samples.update(current)
+                startup_samples[i]=current[i]
                 if len(permit.axes)>1:
                     # Refresh already started axes during sequential SDK setup.
                     # A slow enable/read still faults before any stale target.
                     started=tuple(startup_samples)
                     hold_q=tuple(startup_samples[j].q if j in startup_samples else start[j-1] for j in MODELS)
-                    self._send(hold_q,(0.,)*6,startup_samples,replace(permit,axes=started))
+                    self._send(hold_q,(0.,)*6,current if self.official_motion is not None else startup_samples,replace(permit,axes=started))
             # Rebase all permitted axes on post-enable feedback, so the curve
             # cannot jump back to a pre-enable pose after its first hold frame.
             samples=self.bus.read(permit.axes,self.config.policy,check)
+            self.feedback.update(samples)
             self.validate_feedback(samples,permit.axes)
             if any(abs(samples[i].q-start[i-1])>self.config.policy.arrival_q or abs(samples[i].qd)>self.config.policy.start_speed for i in permit.axes):
                 raise ValueError('使能后实机起点发生变化，需重新规划')
@@ -488,6 +530,10 @@ class HardwareExecutor:
         permit=self.bus.permit
         return dict(state=self.state,reason=self.reason,motion_arrived_before_stop=self.motion_arrived,stop=self.stop_result,frames=len(self.frames),
                     feedback={str(i):asdict(s) for i,s in self.feedback.items()},
+                    control=dict(config_fingerprint=self.config.fingerprint,
+                        feedforward=asdict(self.config.feedforward) if self.config.feedforward else None,
+                        kp=[a.kp for a in self.config.axes],kd=[a.kd for a in self.config.axes],
+                        fixed_tau_ff=[a.tau_ff for a in self.config.axes],speed_limits_rad_s=[a.v_max for a in self.config.axes]),
                     physical_acceptance=False, hardware_permission=bool(permit and self.state in ('PREPARING','RUNNING') and
                         not self.cancelled.is_set() and self.clock()<min(permit.expires_at,self.lease_until)),
                     note='试验执行记录不是动态标定、转矩实测或物理停止验收')

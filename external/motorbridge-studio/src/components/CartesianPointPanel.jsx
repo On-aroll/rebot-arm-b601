@@ -22,6 +22,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
   const [hardwareSpeed, setHardwareSpeed] = React.useState('0.02');
   const [timeoutMode, setTimeoutMode] = React.useState('auto');
   const [timeoutSeconds, setTimeoutSeconds] = React.useState('5');
+  const [feedforwardMode,setFeedforwardMode] = React.useState('none');
   const [plan, setPlan] = React.useState(null);
   const [submitted, setSubmitted] = React.useState(false);
   const [pending, setPending] = React.useState(false);
@@ -72,6 +73,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
       if (offline) result = await request('/ros-control/action', { ...body, action: 'preview' });
       else {
         body.hardware_motion = { speed_rad_s: Number(hardwareSpeed), timeout_mode: timeoutMode,
+          feedforward_mode:feedforwardMode,
           ...(timeoutMode === 'manual' ? { timeout_s: Number(timeoutSeconds) } : {}) };
         const measured = await onPrepareHardwarePreview();
         result = await request('/command', { ...body, ...measured, action: 'point_plan', target: 'simulation', execution_source: 'hardware-preview' });
@@ -119,8 +121,13 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
       {!offline && timeoutMode === 'manual' && <label htmlFor="point-timeout">任务时限（秒）<input id="point-timeout" type="number"
         min={motionOptions?.timeout_min_s ?? 5} max={motionOptions?.timeout_max_s ?? 120} step="1" value={timeoutSeconds} disabled={occupied}
         onChange={e => { setTimeoutSeconds(e.target.value); invalidate(); }} /></label>}
+      {!offline && <label htmlFor="point-feedforward">轨迹控制方案<select id="point-feedforward" value={feedforwardMode} disabled={occupied}
+        onChange={e=>{setFeedforwardMode(e.target.value);invalidate();}}>
+        <option value="none">原方案：Kp=3 / Kd=1 / 前馈=0</option>
+        <option value="seeed-rs-gravity-v1">Seeed 官方：Kp=3 / Kd=1 + 重力前馈</option>
+      </select></label>}
     </div></details>
-    {!offline && <p className="consoleNote">以上速度用于本次实机轨迹和预演时长；加速度、jerk 与 MIT 3/1/0 沿用已有配置。自动时限最多 120 秒，计算后在下方显示；修改设置须重新预演并由你点击确认执行。反馈超时与失联停止时间保持原值。</p>}
+    {!offline && <p className="consoleNote">以上设置只用于本次任务。Kp=3、Kd=1、加速度与 jerk 沿用已有配置；自动时限最多 120 秒。官方方案随实测姿态计算重力前馈，不覆盖保存的前馈草稿或设备参数。修改后须重新预演，现场确认后再执行。</p>}
     <div className="consoleActions">
       <button disabled={occupied || !previewReady} onClick={preview}>{pending ? '处理中…' : '计算并预演'}</button>
       {offline ? <button className="primary" disabled={occupied || invalidPlan || submitted || !virtualEnabled} onClick={execute}>执行虚拟动作</button>
@@ -130,7 +137,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     {!previewReady && <p className="consoleNote">{offline ? '等待完整、新鲜的虚拟电机反馈；请检查虚拟服务。' : '请先连接实机，取得完整、新鲜的六轴位置。'}</p>}
     {offline && !virtualEnabled && <p className="consoleNote">可以先预演；执行前点击上方“使能虚拟电机”。</p>}
     {!offline && !hardwareConfirmed && !executing && <p className="consoleNote">预演通过后，勾选上方一次现场确认即可点击“确认实机执行”。</p>}
-    {!offline && <p className="consoleNote">使能本身不会保持姿态。实机执行使用既有试验参数 Kp=3、Kd=1、前馈=0；轨迹、出力检查和首帧目标由服务端完成。</p>}
+    {!offline && <p className="consoleNote">使能本身不会保持姿态。{feedforwardMode==='none'?'本次使用 Kp=3、Kd=1、前馈=0。':'本次复用 Seeed 官方 MIT 轨迹回调，使用 Kp=3、Kd=1 和随姿态变化的重力前馈。'}首帧目标为实测当前位置；停止不自动回零，沿用已有撤力流程。</p>}
     <p className="consoleNote">预演检查模型内的关节路径与碰撞，末端不保证走直线；不验证真实承重或现场障碍。</p>
     {plan && <div className="pointPlanSummary">
       <span>{offline ? '预计运动' : Number.isFinite(plan.hardware_preflight?.hardware_seconds) ? '实机预计运动' : '模型预演估计'} <strong>{plan.seconds.toFixed(1)} s</strong></span>
@@ -143,6 +150,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     {plan?.hardware_preflight && <div className="consoleNote"><strong>实机执行检查</strong>
       <p>{plan.hardware_preflight.execution_ready ? '当前试验参数的模型检查通过；执行前仍会复读实机起点。' : '路径预演已通过，当前实机试验参数有以下阻挡：'}</p>
       {plan.hardware_preflight.execution_reasons?.map(reason => <p key={reason}>{reason}</p>)}
+      {plan.hardware_preflight.static_balance_check?.feedforward_mode==='seeed-rs-gravity-v1' && <p>已选择官方重力前馈。模型通过仅说明标称补偿与包络相符；首次应在可靠支撑下验收小幅运动和停止，再执行较长轨迹。起始保持使用原始实测角度，不要求手托或把支撑姿态设成零位。</p>}
       <details><summary>本次实机试验参数与重力估算</summary><pre>{JSON.stringify(plan.hardware_preflight,null,2)}</pre></details>
     </div>}
     <p role="status" className="consoleMessage">{submitted && job?.status === 'succeeded' ? `${offline ? '虚拟动作完成' : '实机反馈已到位，任务已结束并撤力'}，当前末端误差 ${actualError?.toFixed(2) ?? '—'} mm。`

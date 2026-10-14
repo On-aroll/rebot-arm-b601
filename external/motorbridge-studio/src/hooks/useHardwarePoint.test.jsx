@@ -16,7 +16,7 @@ beforeEach(()=>{
   });
   vi.stubGlobal('fetch',fetch);
 });
-afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals();});
+afterEach(()=>{cleanup();vi.useRealTimers();vi.restoreAllMocks();vi.unstubAllGlobals();});
 const actions=()=>fetch.mock.calls.filter(([path,o])=>path.endsWith('/action')&&o?.body).map(([,o])=>JSON.parse(o.body));
 
 it('mount is read-only, and only a confirmed click submits a reviewed token after bus release',async()=>{
@@ -82,4 +82,57 @@ it('an uncertain start response sends stop without retrying the motion',async()=
   await act(async()=>{await expect(result.current.execute('plan-token',true)).rejects.toThrow('reply lost');});
   expect(actions().filter(body=>body.action==='execute')).toHaveLength(1);
   expect(actions().some(body=>body.action==='stop')).toBe(true);
+});
+
+it('a heartbeat rejected after worker completion preserves the actual motor fault',async()=>{
+  vi.useFakeTimers();
+  const base=fetch.getMockImplementation();
+  fetch.mockImplementation(async(path,options)=>{
+    if(options?.body&&JSON.parse(options.body).action==='heartbeat') {
+      server={state:'FAULT',busy:false,reason:'J2 实测速度超过试验边界',feedback:{}};
+      return {ok:false,json:async()=>({error:'试验心跳重复、过期或页面不匹配'})};
+    }
+    return base(path,options);
+  });
+  const finished=vi.fn();
+  const {result}=renderHook(()=>useHardwarePoint({beforeExecute:async()=>{},onFinished:finished}));
+  await act(async()=>{await result.current.execute('plan-token',true);});
+  await act(async()=>{await vi.advanceTimersByTimeAsync(250);});
+  expect(result.current.state).toMatchObject({state:'FAULT',busy:false,reason:'J2 实测速度超过试验边界'});
+  expect(result.current.error).toBe('');
+  expect(finished).toHaveBeenCalledOnce();
+  expect(actions().some(body=>body.action==='stop')).toBe(false);
+});
+
+it('a live task still stops when its heartbeat fails',async()=>{
+  vi.useFakeTimers();
+  const base=fetch.getMockImplementation();
+  fetch.mockImplementation(async(path,options)=>{
+    if(options?.body&&JSON.parse(options.body).action==='heartbeat') throw new Error('heartbeat connection lost');
+    return base(path,options);
+  });
+  const {result}=renderHook(()=>useHardwarePoint({beforeExecute:async()=>{}}));
+  await act(async()=>{await result.current.execute('plan-token',true);});
+  await act(async()=>{await vi.advanceTimersByTimeAsync(250);});
+  expect(actions().some(body=>body.action==='stop')).toBe(true);
+  expect(result.current.error).toBe('heartbeat connection lost');
+});
+
+it('a late rejected heartbeat from a completed task cannot stop a new task',async()=>{
+  vi.useFakeTimers();
+  const base=fetch.getMockImplementation();let rejectHeartbeat;
+  fetch.mockImplementation(async(path,options)=>{
+    if(options?.body&&JSON.parse(options.body).action==='heartbeat') return new Promise((_,reject)=>{rejectHeartbeat=reject;});
+    return base(path,options);
+  });
+  const {result}=renderHook(()=>useHardwarePoint({beforeExecute:async()=>{}}));
+  await act(async()=>{await result.current.execute('first-plan',true);});
+  await act(async()=>{await vi.advanceTimersByTimeAsync(250);});
+  expect(rejectHeartbeat).toBeTypeOf('function');
+  server={state:'FAULT',busy:false,reason:'old task fault',feedback:{}};
+  await act(async()=>{await vi.advanceTimersByTimeAsync(250);});
+  await act(async()=>{await result.current.execute('new-plan',true);rejectHeartbeat(new Error('old heartbeat rejected'));});
+  expect(result.current.state).toMatchObject({state:'RUNNING',busy:true});
+  expect(result.current.error).toBe('');
+  expect(actions().some(body=>body.action==='stop')).toBe(false);
 });
