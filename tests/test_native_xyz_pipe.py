@@ -19,6 +19,7 @@ sys.path.insert(0,str(ROOT/'scripts'))
 from rebot_core import Robot
 from rebot_point import PointPlanner
 from rebot_motor_power import MotorPowerAPI,CONFIRMATIONS
+from rebot_mit_hardware import Envelope
 from rebot_xyz_trial import configure_motion,assess_motion
 from test_motor_power_offline import FakeStore
 
@@ -87,7 +88,11 @@ class NativeXYZPipe(unittest.TestCase):
                 self.sequence+=1
                 try:self.action('heartbeat',sequence=self.sequence,focused=True)
                 except ValueError:
-                    if self.api.status()['busy']:raise
+                    # Child exit can precede the reader publishing its final
+                    # snapshot. Only propagate failure while that child lives;
+                    # terminal report loading below still proves completion.
+                    process=self.api.process
+                    if self.api.status()['busy'] and process is not None and process.poll() is None:raise
             time.sleep(.05)
         else:self.fail('virtual pipe worker did not finish')
         # Completion is delivered before the reader finishes writing the report.
@@ -121,6 +126,25 @@ class NativeXYZPipe(unittest.TestCase):
         self.assertGreater(len([s for s in self.observed if len(s.get('motors',{}))==6]),2)
         self.assertTrue(any(s.get('control',{}).get('mode')=='native-csp-xyz-v1' for s in self.observed))
         self.assertTrue(result['motion_arrived_before_stop']);self.assertFalse(result['physical_acceptance'])
+
+    def test_wrist_rotation_reaches_j6_even_when_tcp_position_does_not_change(self):
+        # Test-only joint intent exercises the existing executor below the XYZ
+        # planner. It does not introduce an orientation UI or hardware permit.
+        target=self.trusted['target'];target[5]+=np.deg2rad(.4)
+        before_target=np.asarray(target).copy();before_target[5]-=np.deg2rad(.4)
+        np.testing.assert_allclose(self.robot.fk(target).translation,
+                                   self.robot.fk(before_target).translation,atol=1e-12)
+        self.assertGreater(np.linalg.norm(self.robot.fk(target).rotation-
+                                         self.robot.fk(before_target).rotation),.009)
+        self.assertTrue(assess_motion(self.robot,self.start,np.asarray(target),
+            Envelope.parse(self.trusted['config']))['execution_ready'])
+        result=self.run_trial()
+        self.assertEqual(result['state'],'ARRIVED',result['reason']);self.check_cleanup(result)
+        self.assertAlmostEqual(result['arrival_feedback']['6']['q'],target[5])
+        self.assertGreater(abs(result['arrival_feedback']['6']['q']-self.start[5]),np.deg2rad(.39))
+        writes=[c for c in result['virtual_sdk_calls'] if c[0]=='write' and c[1]==6 and c[2]==0x7016]
+        self.assertAlmostEqual(writes[0][3],self.start[5])
+        self.assertTrue(any(abs(c[3]-target[5])<1e-9 for c in writes))
 
     def check_cancel(self,cancel):
         result=self.run_trial(cancel=cancel)

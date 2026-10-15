@@ -37,7 +37,7 @@ class NativeMotor(Motor):
     def robstride_write_param_f32(self,index,value):
         self.c.calls.append(('write',self.i,index,value,self.c.clock()))
         self.regs[index]=value
-        if index==0x7016 and self.enabled and not self.c.stalled: self.q=value
+        if index==0x7016 and self.enabled and not self.c.stalled and self.i not in self.c.stalled_axes: self.q=value
         if self.c.after_write: self.c.after_write(index)
 
     def robstride_write_param_u8(self,index,value):
@@ -63,6 +63,7 @@ class NativeController(Controller):
     def __init__(self,clock):
         super().__init__(clock)
         self.bad_readback=None; self.bad_stop=False; self.current=0.; self.stalled=False
+        self.stalled_axes=set()
         self.after_write=None; self.after_enable=None
 
     def add_robstride_motor(self,i,host,model):

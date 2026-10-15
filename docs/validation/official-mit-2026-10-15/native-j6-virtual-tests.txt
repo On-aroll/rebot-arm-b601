@@ -1,0 +1,46 @@
+test_cancel_after_partial_runtime_write_disables_before_restore (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_changed_start_and_out_of_limit_goal_never_write (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_current_limit_exceeded_aborts_motion (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_drive_already_lower_limited_is_not_raised (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_enable_uncertainty_still_attempts_disable (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_feedback_sweep_time_is_included_in_cycle_without_widening_deadline (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_firmware_position_readback_resolution_uses_small_explicit_tolerance (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_fixed_profile_cannot_be_widened (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_foreign_can_owner_change_preempts_enable (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_import_construction_and_readonly_probe_never_write (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_lost_lease_cancels_without_automatic_retry (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_nonzero_first_target_is_measured_and_unsafe_old_target_never_restored (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_preload_limits_before_enable_arrive_then_disable_and_restore (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_readback_mismatch_never_enables (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_slow_sdk_and_cancel_preempt_next_target (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_stalled_position_stops_at_approved_fifteen_second_deadline (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_stop_mode_not_disabled_leaves_lower_limits (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_target_cannot_command_another_axis_or_increase_delta (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_timeout_after_enable_stops_and_does_not_send_target (tests.test_native_csp_offline.NativeCspOffline) ... ok
+test_approved_start_tolerance_preserves_raw_negative_j2_and_ends_nominal (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_cancel_during_partial_prepare_restores_without_continuing_enable (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_current_guard_stops_startup_and_attempts_disable_for_all_owned_axes (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_fixed_native_profile_rejects_other_gains_limits_or_duration (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_full_xyz_uses_single_controller_all_axes_preloaded_and_restores_without_pid_writes (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_invalid_numeric_inputs_and_fk_fail_before_can_open (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_joint_arrival_alone_cannot_pass_wrong_tcp (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_no_six_axis_permission_and_larger_delta_rejected_before_open (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_runtime_readback_failure_never_enables_and_restores_every_changed_axis (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_slow_cycle_is_not_hidden_by_longer_trial (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_slow_disabled_configuration_requires_new_position_pair_before_first_enable (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_stalled_drives_and_lost_lease_stop_without_retry (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_stalled_j6_cannot_arrive_even_when_real_model_tcp_is_already_at_goal (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_uncertain_disable_never_restores_higher_limits (tests.test_native_xyz_offline.NativeXYZOffline) ... ok
+test_api_stop_cancels_running_virtual_worker_and_restores (tests.test_native_xyz_pipe.NativeXYZHoldPipe) ... ok
+test_parent_eof_cancels_running_virtual_worker_and_restores (tests.test_native_xyz_pipe.NativeXYZHoldPipe) ... ok
+test_real_worker_reports_fk_arrival_and_live_six_axis_feedback (tests.test_native_xyz_pipe.NativeXYZHoldPipe) ... ok
+test_wrist_rotation_reaches_j6_even_when_tcp_position_does_not_change (tests.test_native_xyz_pipe.NativeXYZHoldPipe) ... ok
+test_api_stop_cancels_running_virtual_worker_and_restores (tests.test_native_xyz_pipe.NativeXYZPipe) ... ok
+test_parent_eof_cancels_running_virtual_worker_and_restores (tests.test_native_xyz_pipe.NativeXYZPipe) ... ok
+test_real_worker_reports_fk_arrival_and_live_six_axis_feedback (tests.test_native_xyz_pipe.NativeXYZPipe) ... ok
+test_wrist_rotation_reaches_j6_even_when_tcp_position_does_not_change (tests.test_native_xyz_pipe.NativeXYZPipe) ... ok
+
+----------------------------------------------------------------------
+Ran 41 tests in 17.571s
+
+OK
