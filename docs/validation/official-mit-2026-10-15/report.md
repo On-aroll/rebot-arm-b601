@@ -121,3 +121,5 @@ J3/J4 改用 SDK YAML 中的 150/10、50/5；任务 Kp 80/75/150/50/40/40、Kd 5
 
 
 最终部署后从网页连接七轴只读反馈并预演 `[300.51,13.09,227.03]` mm，距当时反馈约 2 mm。实际 IK 结果变化约 `[-0.253,+0.334,+0.272,-0.166,+0.176,0.000]°`，轨迹 1.2 秒、时限 15 秒、位置残差约 0.001 mm，模型执行检查通过。仅点击连接和预演，未勾选现场框、未点击实机执行或使能。J6 保持原角度，J7 不控制。记录 [网页预检查](native-xyz-web-preflight.json)、[目标及方案](console-native-xyz-preview.png)、[转角与预演通过](console-native-xyz-preview-result.png)。记录起点仅是该次预演，执行仍须新鲜起点和未过期方案；六轴 CSP 临时参数及实发确认待用户答复。保存的两份 trial 配置 SHA256 与本轮开始相同。
+
+补充 [3 项私有管道集成测试](native-xyz-pipe-tests.txt) 通过：在临时目录中运行现有 `MotorPowerAPI`、真实子进程/标准输入输出、`rebot_power_worker.run_trial` 和实际 Pinocchio FK，仅通过既有进程替换接口注入虚拟 SDK。覆盖六轴反馈持续更新与 TCP 到位、API 停止、父进程管道关闭；逐项检查失能状态、稳定反馈、临时参数恢复，以及保存配置不变、J7/PID/零位/MIT 帧不写。夹具另将真实 `motorbridge.Controller` 构造设为报错，避免意外打开 CAN。全部结果为虚拟电机证据，不改变六轴实发待确认状态；本轮生产执行器和服务无需重启。复现命令：`MUJOCO_GL=egl PYTHONPATH=tests:scripts /home/bonvoyage/.local/share/robotics/envs/rebot-sim/bin/python -m unittest -v tests.test_native_xyz_pipe`。
