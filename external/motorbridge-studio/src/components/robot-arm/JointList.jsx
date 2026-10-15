@@ -1,6 +1,7 @@
 import React from 'react';
 import { useI18n } from '../../i18n';
 import { toHex } from '../../lib/utils';
+import { useConnectionContext } from '../../hooks/useMotorStudioContext';
 
 function numText(v, digits = 3) {
   return Number.isFinite(v) ? Number(v).toFixed(digits) : '-';
@@ -16,6 +17,7 @@ export function JointList({
   zeroMotor,
 }) {
   const { t } = useI18n();
+  const { readOnly = false } = useConnectionContext();
   return (
     <div className="armLeftPane">
       <div className="sectionTitle armPaneTitle">
@@ -42,7 +44,7 @@ export function JointList({
                       : t('online_unknown')}
                 </span>
                 <span className={`chip ${row.control.enabled ? 'chipOk' : ''}`}>
-                  {row.control.enabled ? t('enabled') : t('disabled')}
+                  {row.hit.vendor === 'robstride' ? '真实出力未知' : row.control.enabled ? t('enabled') : t('disabled')}
                 </span>
               </div>
             </div>
@@ -50,6 +52,7 @@ export function JointList({
               <span>
                 {t('esc_id')} {toHex(row.hit.esc_id)}
               </span>
+              <span>{row.hit.model}</span>
               <span>
                 {t('mst_id')} {toHex(row.hit.mst_id)}
               </span>
@@ -88,7 +91,7 @@ export function JointList({
               </button>
               <button
                 className="small ghostBtn"
-                disabled={!connected}
+                disabled={!connected || readOnly}
                 onClick={(e) => {
                   e.stopPropagation();
                   zeroMotor(row.hit);

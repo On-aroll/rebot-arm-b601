@@ -1,0 +1,1 @@
+{"base": "http://127.0.0.1:8765", "success": true, "checks": {"console_route": true, "legacy_writing_alias": true, "locale_deep_links": true, "assets_served": true, "identical_rs_model": true, "traversal_rejected": true, "machine_readonly_endpoints": true, "sim_feedback_coherent": true}, "hardware_motion": false, "hardware_writes": false, "note": "只读 HTTP 验收：不含实机指令，也不写电机参数。"}

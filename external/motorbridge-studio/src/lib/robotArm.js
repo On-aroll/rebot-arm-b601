@@ -462,8 +462,9 @@ export function armVendorForProfile(armModel) {
   return PROFILE_VENDOR[key] || 'damiao';
 }
 
-export function armMotorModelForProfile(armModel) {
+export function armMotorModelForProfile(armModel, jointNumber) {
   const key = normalizeRobotArmModel(armModel);
+  if (key === 'rebot-arm-robstride' && Number(jointNumber) >= 1 && Number(jointNumber) <= 3) return 'rs-06';
   return PROFILE_DEFAULT_MODEL[key] || '4310';
 }
 
@@ -490,7 +491,7 @@ export function isProfileJointHit(hit, armModel, jointCfg) {
 export function buildRobotArmHit(jointCfg, armModel) {
   const profile = normalizeRobotArmModel(armModel);
   const vendor = armVendorForProfile(profile);
-  const motorModel = armMotorModelForProfile(profile);
+  const motorModel = armMotorModelForProfile(profile, jointCfg.joint);
   return {
     vendor,
     model: motorModel,

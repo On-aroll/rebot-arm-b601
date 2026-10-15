@@ -1,0 +1,19 @@
+test_cancel_after_partial_mode_write_restores_without_enable (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_cannot_change_another_axis_or_double_delta (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_current_preload_and_point_two_nm_cap_then_arrival_disable_restore (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_feedback_timeout_after_enable_preserves_lower_limits (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_foreign_axis_motion_stops_wrist (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_j3_plan_and_permit_cannot_be_reused_for_j6 (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_lower_existing_torque_cap_is_not_raised (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_normal_six_axis_permit_never_authorizes_j7 (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_readonly_probe_never_writes_or_enables (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_stalled_wrist_expires_without_false_arrival (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_unwrapped_position_above_pi_and_open_end_rejection (tests.test_gripper_csp_offline.GripperCspOffline) ... ok
+test_actual_worker_j7_arrives_without_touching_other_drives (tests.test_gripper_csp_pipe.GripperCspPipe) ... ok
+test_api_stop_preempts_j7_and_restores (tests.test_gripper_csp_pipe.GripperCspPipe) ... ok
+test_parent_pipe_eof_preempts_j7_and_restores (tests.test_gripper_csp_pipe.GripperCspPipe) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 6.100s
+
+OK

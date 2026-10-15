@@ -1,0 +1,8 @@
+test_collision_and_preserve_gripper (__main__.PoseSync) ... ok
+test_failure_is_atomic (__main__.PoseSync) ... ok
+test_q_ctrl_fk_signs_and_repeat (__main__.PoseSync) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.388s
+
+OK

@@ -1,0 +1,158 @@
+{
+  "stage": "P4-offline",
+  "passed": true,
+  "tests_run": 35,
+  "cases": [
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_adapter_rejects_gain_and_range_mutation",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_authorization_missing_expired_wrong_config_or_support",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_can_busy_and_ownership_change",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_cancel_during_query_stops_before_next_target",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_cancel_preempts_feedback_and_targets",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_constructor_import_does_not_open_or_write",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_failed_post_stop_verification_is_not_arrival_success",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_faults_after_enable_always_attempt_stop_never_continue_target",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_first_frame_after_enable_uses_new_feedback",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_foreign_axis_and_mode_rejected",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_foreign_subscriber_during_claim_rejected",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_heartbeat_session_sequence",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_lease_and_blur_do_not_resume",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_permit_cannot_replay_in_a_new_executor",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_process_lock",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_readonly_lifecycle_no_shutdown_no_defaults",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_real_adapter_rejects_multiaxis_before_authorizing",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_replay_rejected_and_parameters_never_written",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_reviewed_start_moved_is_rejected_before_enable",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_single_axis_success_first_frame_feedback_and_stop_evidence",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_six_axis_common_trajectory",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_slow_enable_and_startup_queries_do_not_send_expired_hold",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_stop_phase_is_visible_before_success",
+      "passed": true
+    },
+    {
+      "id": "test_mit_hardware_offline.HardwareOffline.test_trajectory_timeouts_and_torque_envelope",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_atomic_failure_preserves_approved",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_corruption_missing_head_incompatible",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_explicit_software_recovery_preserves_corrupt_head",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_import_and_mock_do_not_promote_or_replace_approval",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_invalid_fields_units_nan_types",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_local_api_auth_origin_replay_and_direct_hardware",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_provenance_software_approval_is_not_physical_backup",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_read_failure_snapshot_keeps_unknown_and_never_unlocks",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_restart_separation_and_nulls",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_review_conflict_replay_expiry_and_session",
+      "passed": true
+    },
+    {
+      "id": "test_config_protection.Protection.test_user_trial_is_explicit_non_destructive_and_idempotent",
+      "passed": true
+    }
+  ],
+  "source": "fake-SDK-and-virtual-clock",
+  "real_CAN_queries": 0,
+  "real_motion_commands": 0,
+  "physical_acceptance": false,
+  "limitations": [
+    "Not physics or real-time validation",
+    "Real multi-axis authorize is explicitly denied",
+    "No browser hardware execute endpoint",
+    "Supported-release requires explicit onsite permission and mechanical support",
+    "A process crash or blocked SDK requires independent physical stop"
+  ]
+}

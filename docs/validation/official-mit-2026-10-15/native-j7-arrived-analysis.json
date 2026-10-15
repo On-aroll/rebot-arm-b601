@@ -1,0 +1,42 @@
+{
+  "source_runtime": "outputs/mit-p5/runtime/20261015-144621-c36cb17c.json",
+  "raw_sha256": "88a6dcb05fed39ec9bf16e5acb00d7d3b7522dea2ef31c0c2a13ef3b04a12516",
+  "axis": 7,
+  "state": "ARRIVED",
+  "user_authorization": "批准这一次 J7 试验",
+  "onsite_observation": "已安静，无异常",
+  "start_deg": 0.40649393265697514,
+  "preload_deg": 0.41748029193694064,
+  "target_deg": 0.9064939326569751,
+  "arrival_before_disable_deg": 0.9074705657938242,
+  "actual_motion_from_preload_deg": 0.4899902738568836,
+  "target_error_deg": 0.000976633136849208,
+  "after_disable_deg": 0.8789060209937434,
+  "enable_attempt_to_stop_request_s": 2.113477650011191,
+  "host_request_batches": 11,
+  "max_position_difference_velocity_rad_s": 0.016084455359268626,
+  "peak_raw_current_a": 0.2393486052751541,
+  "commanded_axes": [
+    7
+  ],
+  "runtime_restored": {
+    "ok": true,
+    "restored": [
+      "0x7005",
+      "0x7017",
+      "0x7018",
+      "0x700b"
+    ],
+    "old_target_restored": false
+  },
+  "disabled_status": {
+    "arbitration_id": 33556477,
+    "mode_state": 0,
+    "fault_bits": 0,
+    "source": "SDK status after disable; no independent drive timestamp"
+  },
+  "sustained_stationary_feedback": true,
+  "parameter_source": "本次明确批准的临时模式5/10A/0.2Nm；原值来自当次设备快照",
+  "protected_parameter_writes": 0,
+  "calibration_scope": "仅J7电机轴小幅到位；未标定夹爪开口/端点/夹持力，非长期保持或连续路径验收"
+}

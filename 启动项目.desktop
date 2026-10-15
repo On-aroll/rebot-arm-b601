@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=reBot 项目启动
+Comment=启动本地控制台、MuJoCo、网关与 ROS 虚拟验证；不自动使能电机
+Exec=/usr/bin/bash "/home/bonvoyage/Desktop/seeed_Robotics/scripts/launch_project.sh"
+Path=/home/bonvoyage/Desktop/seeed_Robotics
+Icon=applications-engineering
+Terminal=true
+Categories=Science;
+StartupNotify=false
+Actions=WithCAN;
+
+[Desktop Action WithCAN]
+Name=准备 CAN 并启动
+Exec=/usr/bin/bash "/home/bonvoyage/Desktop/seeed_Robotics/scripts/launch_project.sh" --can-up

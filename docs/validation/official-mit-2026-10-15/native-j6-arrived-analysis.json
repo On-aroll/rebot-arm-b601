@@ -1,0 +1,58 @@
+{
+  "type": "authorized-single-axis-native-csp-j6-result",
+  "record": "native-j6-arrived.json",
+  "sha256": "f5867396e908f342e3f86fb8e4cf67594e6d1c7d8b5273bedc1b174d01ad9a7f",
+  "authorization": "用户批准这一次J6试验：+0.5°/0.02rad/s/首次使能起15秒/10A/1Nm，其他轴只读、J7不参与；许可已消费。",
+  "user_stop_observation": "已安静，无异常",
+  "state": "ARRIVED",
+  "prepared_start_deg": 2.065430208548227,
+  "preloaded_measured_start_deg": 2.0742191679061524,
+  "target_deg": 2.565430208548227,
+  "arrival_deg": 2.568603414513896,
+  "measured_delta_from_preload_deg": 0.4943842466077439,
+  "arrival_error_deg": 0.0031732059656694417,
+  "released_deg": 2.5224612178022285,
+  "enable_attempt_to_stop_request_s": 2.160975057995529,
+  "host_command_batches": 13,
+  "max_position_difference_speed_rad_s": 0.011566325892441004,
+  "max_abs_raw_current_a": 0.16041387617588043,
+  "passive_axes_max_change_from_prepared_deg": {
+    "1": 0.007324524111192424,
+    "2": 0.012206306771439825,
+    "3": 0.004884358988926032,
+    "4": 0.01098635927996551,
+    "5": 0.01098635927996551
+  },
+  "register_snapshot": {
+    "0x7005": 0,
+    "0x7017": 1.0,
+    "0x7018": 16.0,
+    "0x700b": 14.0,
+    "0x701e": 30.0,
+    "0x701f": 5.0,
+    "0x7020": 0.019999999552965164,
+    "0x702b": 0.0
+  },
+  "restoration": {
+    "ok": true,
+    "restored": [
+      "0x7005",
+      "0x7017",
+      "0x7018",
+      "0x700b"
+    ],
+    "old_target_restored": false
+  },
+  "stop_sdk_status": {
+    "arbitration_id": 33556221,
+    "mode_state": 0,
+    "fault_bits": 0,
+    "source": "SDK status after disable; no independent drive timestamp"
+  },
+  "trial_config_sha256_unchanged": true,
+  "limitations": [
+    "Only this small J6 motion is accepted; J7 and larger XYZ or continuous paths remain unaccepted.",
+    "Position/velocity from drive registers; no independent joint angle metrology.",
+    "SDK blocking can delay physical stop; do not infer a hardware emergency-stop guarantee."
+  ]
+}

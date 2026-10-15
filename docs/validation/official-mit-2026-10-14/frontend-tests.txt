@@ -1,0 +1,9 @@
+Command: node node_modules/vitest/vitest.mjs run src/components/CartesianPointPanel.test.jsx src/components/ConsoleWorkspace.test.jsx src/hooks/useHardwarePoint.test.jsx
+Working directory: external/motorbridge-studio
+Virtual fetch/WebSocket only; no hardware commands.
+
+RUN v4.1.11
+Test Files 3 passed (3)
+Tests 23 passed (23)
+Start at 23:32:15
+Duration 2.35s

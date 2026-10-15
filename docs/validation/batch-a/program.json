@@ -1,0 +1,124 @@
+{
+  "results": [
+    {
+      "name": "pick_and_return",
+      "status": "succeeded",
+      "error": "",
+      "sim_time_s": 50.13800000001531,
+      "completed_steps": 26,
+      "block_xyz": [
+        0.24930461056878547,
+        4.8582374399332314e-05,
+        0.049957398275963
+      ],
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "job_id": "cfdebe6dc40e47d2824a5d95b36f5154"
+    },
+    {
+      "name": "pause_resume_and_exclusive_writer",
+      "status": "succeeded",
+      "error": "",
+      "sim_time_s": 26.029999999996452,
+      "completed_steps": 13,
+      "block_xyz": [
+        0.2496620697150759,
+        0.0648668456653924,
+        0.04995739827596301
+      ],
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "job_id": "ecae062db0144d6ba4814bf87c3bccac"
+    },
+    {
+      "name": "cancel",
+      "status": "cancelled",
+      "error": "用户取消",
+      "sim_time_s": 2.002000000000001,
+      "completed_steps": 2,
+      "block_xyz": [
+        0.25,
+        0.0,
+        0.0499573982766393
+      ],
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "job_id": "9082f4c27c4949a7af52a243b4c05d0d"
+    },
+    {
+      "name": "wrong_object_location",
+      "status": "failed",
+      "error": "assert_object失败：物体实际位置 [0.25, 0.0, 0.05]",
+      "sim_time_s": 0.002,
+      "completed_steps": 0,
+      "block_xyz": [
+        0.25,
+        0.0,
+        0.05
+      ],
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "job_id": "aaadbfcfa8034c70bd568d70d16ecca6"
+    },
+    {
+      "name": "no_object_grip_timeout",
+      "status": "failed",
+      "error": "gripper等待实际反馈到位超时",
+      "sim_time_s": 3.501999999999836,
+      "completed_steps": 0,
+      "block_xyz": [
+        0.25,
+        0.0,
+        0.04995739827663068
+      ],
+      "warnings": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "job_id": "783ac5326a6b42168df4e65e2ea8a5c2"
+    },
+    {
+      "name": "frozen_feedback_timeout",
+      "status": "failed",
+      "error": "move_joints等待实际反馈到位超时"
+    },
+    {
+      "name": "invalid_program_atomic_rejection",
+      "cases": 4,
+      "status": "passed"
+    }
+  ]
+}

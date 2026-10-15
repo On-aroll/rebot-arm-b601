@@ -1,5 +1,5 @@
 {
-  "note": "第三方依赖仓库及其锁定版本。本仓库不内置这些内容，用 scripts/setup_external.sh 按此处的 commit 重建，保证仿真与实机行为可复现。",
+  "note": "第三方依赖仓库及其锁定版本。本仓库不内置这些内容，用 scripts/setup_external.py 按此处的 commit 重建，保证仿真与实机行为可复现。",
   "captured_at": "2026-10-08",
   "repositories": [
     {
@@ -24,7 +24,9 @@
       "base_commit": "f054586a8e90465d49ee5be15335c4a0c7f57caf",
       "branch": "main",
       "tracked_here": false,
-      "sparse_paths": ["seeed_rebot_devarm"],
+      "sparse_paths": [
+        "seeed_rebot_devarm"
+      ],
       "why": "仿真模型来源，scripts/rebot_core.py 的 SCENE 指向 seeed_rebot_devarm/scene.xml。只拉这一个子目录。"
     },
     {
@@ -34,6 +36,14 @@
       "branch": null,
       "tracked_here": false,
       "why": "官方 ROS 2 接入与 real_to_sim 约定参考。本机当初是用 GitHub trees API 按 commit 下载的，没有 .git。"
+    },
+    {
+      "path": "external/ReBot_Arm_DigitalTwin_RS",
+      "upstream": "https://github.com/Yang-Ci/ReBot_Arm_DigitalTwin_RS.git",
+      "base_commit": "aa807cf2affe85b13b86221159871aae7742c01b",
+      "branch": null,
+      "tracked_here": false,
+      "why": "独立 ROS Fake Driver 与轨迹 Action 验证。禁止直接启动其真实驱动；存在自动使能、回零与高增益默认值。"
     }
   ]
 }

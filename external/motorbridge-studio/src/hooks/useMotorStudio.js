@@ -386,6 +386,7 @@ export function useMotorStudio() {
       wsToken: connectionState.wsToken,
       setWsToken: connectionState.setWsToken,
       connText: connectionState.connText,
+      readOnly: connectionState.readOnly,
       connected: connectionState.connected,
       targetTransport: connectionState.targetTransport,
       targetSerialPort: connectionState.targetSerialPort,

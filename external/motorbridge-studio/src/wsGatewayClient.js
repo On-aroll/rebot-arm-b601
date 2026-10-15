@@ -1,5 +1,16 @@
+// Default clients remain read-only. The console can opt into power commands only.
+// No scan/verify/streams: their vendor-specific side effects have not been audited.
+export const READ_ONLY_OPS = Object.freeze([
+  'capabilities', 'set_target', 'close_bus', 'robstride_read_param',
+  'robstride_ping', 'get_register_u32', 'get_register_f32',
+]);
+
 export class WsGatewayClient {
-  constructor({ onEvent, onState, onParams, onOpen, onClose, onError, onMessage }) {
+  #allowPowerControl;
+
+  constructor({ onEvent, onState, onParams, onOpen, onClose, onError, onMessage, allowPowerControl = false }) {
+    this.#allowPowerControl = allowPowerControl === true;
+    this.readOnly = !this.#allowPowerControl;
     this.ws = null;
     this.pendingByReqId = new Map();
     this.nextReqId = 1;
@@ -28,22 +39,28 @@ export class WsGatewayClient {
 
   connect(url) {
     this.disconnect();
-    this.ws = new WebSocket(url);
+    const socket = new WebSocket(url);
+    this.ws = socket;
 
-    this.ws.onopen = () => {
+    socket.onopen = () => {
+      if (this.ws !== socket) return;
       this.onOpen?.();
     };
 
-    this.ws.onclose = () => {
+    socket.onclose = () => {
+      if (this.ws !== socket) return;
+      this.ws = null;
       this.rejectPending('ws closed');
       this.onClose?.();
     };
 
-    this.ws.onerror = () => {
+    socket.onerror = () => {
+      if (this.ws !== socket) return;
       this.onError?.(new Error('ws error'));
     };
 
-    this.ws.onmessage = (ev) => {
+    socket.onmessage = (ev) => {
+      if (this.ws !== socket) return;
       let msg;
       try {
         msg = JSON.parse(ev.data);
@@ -98,9 +115,11 @@ export class WsGatewayClient {
 
   disconnect() {
     this.rejectPending('ws disconnected');
-    if (this.ws) {
+    const socket = this.ws;
+    this.ws = null;
+    if (socket) {
       try {
-        this.ws.close();
+        socket.close();
       } catch {
         // ignore
       }
@@ -109,6 +128,23 @@ export class WsGatewayClient {
   }
 
   send(op, payload = {}, timeoutMs = 8000, { onProgress } = {}) {
+    // Validate the final op; payload must not override protocol routing fields.
+    const powerOp = this.#allowPowerControl && (op === 'enable' || op === 'disable');
+    if ((!READ_ONLY_OPS.includes(op) && !powerOp) || !payload || typeof payload !== 'object' || Array.isArray(payload) || Object.hasOwn(payload, 'op') || Object.hasOwn(payload, 'req_id')) {
+      return Promise.reject(new Error(`LOCKED：${op} 不在已审计只读白名单；写入、扫描和主动上报配置仍锁定`));
+    }
+    let safePayload;
+    try {
+      safePayload = JSON.parse(JSON.stringify(payload));
+      if (!safePayload || typeof safePayload !== 'object' || Array.isArray(safePayload) || Object.hasOwn(safePayload, 'op') || Object.hasOwn(safePayload, 'req_id')) throw new Error('routing override');
+      if (powerOp) {
+        const fields = Object.keys(safePayload).sort().join(',');
+        const model = safePayload.motor_id <= 3 ? 'rs-06' : 'rs-00';
+        if (!['feedback_id,motor_id,vendor', 'feedback_id,model,motor_id,vendor'].includes(fields) || safePayload.vendor !== 'robstride' || !Number.isInteger(safePayload.motor_id) || safePayload.motor_id < 1 || safePayload.motor_id > 7 || safePayload.feedback_id !== 0xfd || (Object.hasOwn(safePayload, 'model') && safePayload.model !== model)) throw new Error('power routing must match a known axis');
+      }
+    } catch {
+      return Promise.reject(new Error('LOCKED：payload 必须是无协议覆盖的 JSON 对象'));
+    }
     return new Promise((resolve, reject) => {
       if (!this.isConnected()) {
         reject(new Error('ws not connected'));
@@ -116,7 +152,7 @@ export class WsGatewayClient {
       }
 
       const reqId = this.nextReqId++;
-      const req = { op, req_id: reqId, ...payload };
+      const req = { ...safePayload, op, req_id: reqId };
       const pending = {
         resolve,
         reject,

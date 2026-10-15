@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "hardware_commands_sent": false,
+  "target_xyz_mm": [
+    200.0,
+    150.0,
+    200.0
+  ],
+  "actual_xyz_mm": [
+    200.3045364028762,
+    149.87900142105147,
+    200.4569937723617
+  ],
+  "error_mm": 0.5623400970602406,
+  "job_id": "ce1c41a50758484ba8231ee6e9f14eee",
+  "frontend_asset": "/studio/assets/index-B21k_z3t.js",
+  "preview_read_only": true,
+  "hardware_execution_rejected": true,
+  "service_stream_id": "f15f3635218445b78e3c2c7e8a979187"
+}

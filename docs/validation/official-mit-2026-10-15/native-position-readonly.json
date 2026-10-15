@@ -1,0 +1,326 @@
+{
+  "type": "native-position-feasibility-readonly",
+  "time_unix_s": 1792028269.8166237,
+  "control_frames": 0,
+  "device_parameter_writes": 0,
+  "motors": {
+    "1": {
+      "q_rad": -0.07478156685829163,
+      "q_deg": -4.284668166355502,
+      "qd_rad_s": -0.0017251754264468,
+      "mode": 0,
+      "readings": {
+        "limit_torque_nm": {
+          "register": "0x700b",
+          "raw": 36.0,
+          "received_at": 1792028270.2698321
+        },
+        "csp_limit_spd_rad_s": {
+          "register": "0x7017",
+          "raw": 1.0,
+          "received_at": 1792028270.2782128
+        },
+        "limit_cur_a": {
+          "register": "0x7018",
+          "raw": 57.0,
+          "received_at": 1792028270.2865794
+        },
+        "loc_kp": {
+          "register": "0x701e",
+          "raw": 30.0,
+          "received_at": 1792028270.2950144
+        },
+        "spd_kp": {
+          "register": "0x701f",
+          "raw": 6.0,
+          "received_at": 1792028270.303697
+        },
+        "spd_ki": {
+          "register": "0x7020",
+          "raw": 0.019999999552965164,
+          "received_at": 1792028270.312116
+        },
+        "pp_vel_max_rad_s": {
+          "register": "0x7024",
+          "raw": 10.0,
+          "received_at": 1792028270.3205936
+        },
+        "pp_acc_rad_s2": {
+          "register": "0x7025",
+          "raw": 10.0,
+          "received_at": 1792028270.32891
+        },
+        "add_offset_rad": {
+          "register": "0x702b",
+          "raw": 0.0,
+          "received_at": 1792028270.337358
+        }
+      }
+    },
+    "2": {
+      "q_rad": -0.005411519203335047,
+      "q_deg": -0.31005721110509576,
+      "qd_rad_s": -0.000575040994567416,
+      "mode": 0,
+      "readings": {
+        "limit_torque_nm": {
+          "register": "0x700b",
+          "raw": 36.0,
+          "received_at": 1792028270.3457608
+        },
+        "csp_limit_spd_rad_s": {
+          "register": "0x7017",
+          "raw": 1.0,
+          "received_at": 1792028270.3541377
+        },
+        "limit_cur_a": {
+          "register": "0x7018",
+          "raw": 57.0,
+          "received_at": 1792028270.36261
+        },
+        "loc_kp": {
+          "register": "0x701e",
+          "raw": 30.0,
+          "received_at": 1792028270.3712044
+        },
+        "spd_kp": {
+          "register": "0x701f",
+          "raw": 6.0,
+          "received_at": 1792028270.3795815
+        },
+        "spd_ki": {
+          "register": "0x7020",
+          "raw": 0.019999999552965164,
+          "received_at": 1792028270.3879468
+        },
+        "pp_vel_max_rad_s": {
+          "register": "0x7024",
+          "raw": 10.0,
+          "received_at": 1792028270.3963807
+        },
+        "pp_acc_rad_s2": {
+          "register": "0x7025",
+          "raw": 10.0,
+          "received_at": 1792028270.405071
+        },
+        "add_offset_rad": {
+          "register": "0x702b",
+          "raw": 0.0,
+          "received_at": 1792028270.413532
+        }
+      }
+    },
+    "3": {
+      "q_rad": 0.005795055069029331,
+      "q_deg": 0.3320321975012746,
+      "qd_rad_s": 0.0005750469388438443,
+      "mode": 0,
+      "readings": {
+        "limit_torque_nm": {
+          "register": "0x700b",
+          "raw": 36.0,
+          "received_at": 1792028270.4219258
+        },
+        "csp_limit_spd_rad_s": {
+          "register": "0x7017",
+          "raw": 1.0,
+          "received_at": 1792028270.4303477
+        },
+        "limit_cur_a": {
+          "register": "0x7018",
+          "raw": 57.0,
+          "received_at": 1792028270.4386213
+        },
+        "loc_kp": {
+          "register": "0x701e",
+          "raw": 30.0,
+          "received_at": 1792028270.4469335
+        },
+        "spd_kp": {
+          "register": "0x701f",
+          "raw": 6.0,
+          "received_at": 1792028270.455486
+        },
+        "spd_ki": {
+          "register": "0x7020",
+          "raw": 0.019999999552965164,
+          "received_at": 1792028270.4642818
+        },
+        "pp_vel_max_rad_s": {
+          "register": "0x7024",
+          "raw": 10.0,
+          "received_at": 1792028270.472753
+        },
+        "pp_acc_rad_s2": {
+          "register": "0x7025",
+          "raw": 10.0,
+          "received_at": 1792028270.4811428
+        },
+        "add_offset_rad": {
+          "register": "0x702b",
+          "raw": 0.0,
+          "received_at": 1792028270.4895446
+        }
+      }
+    },
+    "4": {
+      "q_rad": 0.015109717845916748,
+      "q_deg": 0.8657230622045312,
+      "qd_rad_s": -0.0005176063932458408,
+      "mode": 0,
+      "readings": {
+        "limit_torque_nm": {
+          "register": "0x700b",
+          "raw": 14.0,
+          "received_at": 1792028270.4980423
+        },
+        "csp_limit_spd_rad_s": {
+          "register": "0x7017",
+          "raw": 1.0,
+          "received_at": 1792028270.5065126
+        },
+        "limit_cur_a": {
+          "register": "0x7018",
+          "raw": 16.0,
+          "received_at": 1792028270.514921
+        },
+        "loc_kp": {
+          "register": "0x701e",
+          "raw": 30.0,
+          "received_at": 1792028270.5235744
+        },
+        "spd_kp": {
+          "register": "0x701f",
+          "raw": 5.0,
+          "received_at": 1792028270.53203
+        },
+        "spd_ki": {
+          "register": "0x7020",
+          "raw": 0.019999999552965164,
+          "received_at": 1792028270.5404224
+        },
+        "pp_vel_max_rad_s": {
+          "register": "0x7024",
+          "raw": 10.0,
+          "received_at": 1792028270.5487657
+        },
+        "pp_acc_rad_s2": {
+          "register": "0x7025",
+          "raw": 10.0,
+          "received_at": 1792028270.5572338
+        },
+        "add_offset_rad": {
+          "register": "0x702b",
+          "raw": 0.0,
+          "received_at": 1792028270.565631
+        }
+      }
+    },
+    "5": {
+      "q_rad": 0.020056800916790962,
+      "q_deg": 1.1491700430662424,
+      "qd_rad_s": 0.0,
+      "mode": 0,
+      "readings": {
+        "limit_torque_nm": {
+          "register": "0x700b",
+          "raw": 14.0,
+          "received_at": 1792028270.573935
+        },
+        "csp_limit_spd_rad_s": {
+          "register": "0x7017",
+          "raw": 1.0,
+          "received_at": 1792028270.5823236
+        },
+        "limit_cur_a": {
+          "register": "0x7018",
+          "raw": 16.0,
+          "received_at": 1792028270.5907145
+        },
+        "loc_kp": {
+          "register": "0x701e",
+          "raw": 30.0,
+          "received_at": 1792028270.5992792
+        },
+        "spd_kp": {
+          "register": "0x701f",
+          "raw": 5.0,
+          "received_at": 1792028270.6077573
+        },
+        "spd_ki": {
+          "register": "0x7020",
+          "raw": 0.019999999552965164,
+          "received_at": 1792028270.6161246
+        },
+        "pp_vel_max_rad_s": {
+          "register": "0x7024",
+          "raw": 10.0,
+          "received_at": 1792028270.6246412
+        },
+        "pp_acc_rad_s2": {
+          "register": "0x7025",
+          "raw": 10.0,
+          "received_at": 1792028270.6331615
+        },
+        "add_offset_rad": {
+          "register": "0x702b",
+          "raw": 0.0,
+          "received_at": 1792028270.641728
+        }
+      }
+    },
+    "6": {
+      "q_rad": 0.04241457208991051,
+      "q_deg": 2.430175970605248,
+      "qd_rad_s": 0.0,
+      "mode": 0,
+      "readings": {
+        "limit_torque_nm": {
+          "register": "0x700b",
+          "raw": 14.0,
+          "received_at": 1792028270.6501641
+        },
+        "csp_limit_spd_rad_s": {
+          "register": "0x7017",
+          "raw": 1.0,
+          "received_at": 1792028270.658652
+        },
+        "limit_cur_a": {
+          "register": "0x7018",
+          "raw": 16.0,
+          "received_at": 1792028270.66703
+        },
+        "loc_kp": {
+          "register": "0x701e",
+          "raw": 30.0,
+          "received_at": 1792028270.6754045
+        },
+        "spd_kp": {
+          "register": "0x701f",
+          "raw": 5.0,
+          "received_at": 1792028270.6837718
+        },
+        "spd_ki": {
+          "register": "0x7020",
+          "raw": 0.019999999552965164,
+          "received_at": 1792028270.6921747
+        },
+        "pp_vel_max_rad_s": {
+          "register": "0x7024",
+          "raw": 10.0,
+          "received_at": 1792028270.7006595
+        },
+        "pp_acc_rad_s2": {
+          "register": "0x7025",
+          "raw": 10.0,
+          "received_at": 1792028270.7093794
+        },
+        "add_offset_rad": {
+          "register": "0x702b",
+          "raw": 0.0,
+          "received_at": 1792028270.717728
+        }
+      }
+    }
+  }
+}

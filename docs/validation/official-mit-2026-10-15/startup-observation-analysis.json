@@ -1,0 +1,66 @@
+{
+  "type": "validation-report",
+  "base_installation": {
+    "source": "user observation 2026-10-15",
+    "upright_on_horizontal_fixed_table": true,
+    "independently_verified": false
+  },
+  "xyz_arrival": false,
+  "device_parameter_writes": 0,
+  "records": [
+    {
+      "file": "web-j3-current-capture.json",
+      "sha256": "617913510c641c059ecd10c9763b5268baab90ee135f63301da2f40ce0fc722f",
+      "state": "FAULT",
+      "reason": "J3 跟踪误差 0.601° 超过 0.6° 边界",
+      "motion_arrived": false,
+      "last_host_command_after_first_s": 6.151527635011007,
+      "j3_iq_raw_range_a": [
+        -0.17866002023220062,
+        3.3425474166870117
+      ],
+      "j3_torque_raw_range_nm": [
+        0.0,
+        0.0
+      ],
+      "drive_torque_validated": false,
+      "stop_ack_axes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "stationary_feedback": true,
+      "physical_stopped": false
+    },
+    {
+      "file": "web-startup-observation-3s.json",
+      "sha256": "631f44685efecd9a83545ff460394507a45959c8caf4fb794b81e8d54aadd940",
+      "state": "CANCELLED",
+      "reason": "3 秒启动采集结束，自动撤力；未执行 XYZ 轨迹",
+      "motion_arrived": false,
+      "last_host_command_after_first_s": 2.9686978300014744,
+      "j3_iq_raw_range_a": [
+        -0.25606414675712585,
+        0.6913632750511169
+      ],
+      "j3_torque_raw_range_nm": [
+        0.0,
+        0.0
+      ],
+      "drive_torque_validated": false,
+      "stop_ack_axes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "stationary_feedback": true,
+      "physical_stopped": false
+    }
+  ]
+}

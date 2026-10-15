@@ -1,0 +1,87 @@
+{
+  "state": "FAULT",
+  "busy": false,
+  "axis": 1,
+  "reason": "J2 实测速度超过试验边界",
+  "physical_acceptance": false,
+  "feedback": {},
+  "axes": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "motion_arrived_before_stop": false,
+  "stop": {
+    "requested": true,
+    "policy": "explicitly-supported-release",
+    "attempted_axes": [
+      1,
+      2,
+      3
+    ],
+    "sent_axes": [
+      1,
+      2,
+      3
+    ],
+    "sdk_status_ack_axes": [
+      1,
+      2,
+      3
+    ],
+    "send_status": {
+      "1": "host-send-complete-and-sdk-status-observed",
+      "2": "host-send-complete-and-sdk-status-observed",
+      "3": "host-send-complete-and-sdk-status-observed"
+    },
+    "errors": {},
+    "physical_stopped": false,
+    "stationary_sample": true
+  },
+  "frames": 2,
+  "hardware_permission": false,
+  "note": "试验执行记录不是动态标定、转矩实测或物理停止验收",
+  "result": {
+    "state": "FAULT",
+    "reason": "J2 实测速度超过试验边界",
+    "motion_arrived_before_stop": false,
+    "stop": {
+      "requested": true,
+      "policy": "explicitly-supported-release",
+      "attempted_axes": [
+        1,
+        2,
+        3
+      ],
+      "sent_axes": [
+        1,
+        2,
+        3
+      ],
+      "sdk_status_ack_axes": [
+        1,
+        2,
+        3
+      ],
+      "send_status": {
+        "1": "host-send-complete-and-sdk-status-observed",
+        "2": "host-send-complete-and-sdk-status-observed",
+        "3": "host-send-complete-and-sdk-status-observed"
+      },
+      "errors": {},
+      "physical_stopped": false,
+      "stationary_sample": true
+    },
+    "frames": 2,
+    "feedback": {},
+    "physical_acceptance": false,
+    "hardware_permission": false,
+    "note": "试验执行记录不是动态标定、转矩实测或物理停止验收"
+  },
+  "enabled_feedback_available": false,
+  "observed_at_ms": 1791990672107.8518,
+  "motors": {}
+}

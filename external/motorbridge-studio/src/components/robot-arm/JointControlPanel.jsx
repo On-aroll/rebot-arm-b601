@@ -42,7 +42,8 @@ export function JointControlPanel({
   runExclusive,
 }) {
   const { t } = useI18n();
-  const { gatewayCapabilities } = useConnectionContext();
+  const { gatewayCapabilities, readOnly = false, connected = true } = useConnectionContext();
+  const writesBlocked = readOnly || !connected || perJointBusy;
   const vendor = String(activeRow?.hit?.vendor || '').toLowerCase();
   const isRobstride = vendor === 'robstride';
   const [sliderWarnOpen, setSliderWarnOpen] = React.useState(false);
@@ -56,6 +57,10 @@ export function JointControlPanel({
   }, [activeRow, isRobstride, patchControl]);
 
   const onSliderDragChange = (e) => {
+    if (readOnly) {
+      onSliderTargetChange(e.target.value);
+      return;
+    }
     if (sliderWarnAcceptedRef.current) {
       onSliderTargetChange(e.target.value);
       return;
@@ -75,7 +80,7 @@ export function JointControlPanel({
   const positionSliderEnabled =
     effectiveMode === 'mit' || effectiveMode === 'pos_vel' || effectiveMode === 'force_pos';
   const liveMoveSupported = effectiveMode === 'pos_vel' || effectiveMode === 'force_pos';
-  const effectiveLiveMove = liveMoveSupported && liveMove;
+  const effectiveLiveMove = !readOnly && liveMoveSupported && liveMove;
   const targetLabelKey = effectiveMode === 'vel' ? 'target_vel' : 'target_pos';
 
   const patchNumber = (field) => (e) => {
@@ -175,12 +180,12 @@ export function JointControlPanel({
             <input
               type="checkbox"
               checked={effectiveLiveMove}
-              disabled={perJointBusy || !liveMoveSupported}
+              disabled={writesBlocked || !liveMoveSupported}
               onChange={(e) => setUiPref('armSliderLiveMove', e.target.checked)}
             />
             <span>{t('arm_live_move')}</span>
           </label>
-          <span>{effectiveLiveMove ? t('arm_live_move_on') : t('arm_live_move_off')}</span>
+          <span>{readOnly ? '角度输入仅预览模型' : effectiveLiveMove ? t('arm_live_move_on') : t('arm_live_move_off')}</span>
         </div>
         <div className="armSliderMeta">
           <span>
@@ -195,7 +200,9 @@ export function JointControlPanel({
             onChange={(e) => onSliderTargetChange(e.target.value)}
           />
         </div>
-        {!positionSliderEnabled ? (
+        {readOnly ? (
+          <div className="tip">编辑角度不会让实机运动；逐轴电源操作请使用上方的现场控制入口。</div>
+        ) : !positionSliderEnabled ? (
           <div className="tip">{t('general_target_slider_disabled')}</div>
         ) : !liveMoveSupported ? (
           <div className="tip">{t('general_target_slider_mit_live_disabled')}</div>
@@ -209,31 +216,31 @@ export function JointControlPanel({
       </div>
 
       <div className="row toolbar compactToolbar">
-        <button disabled={perJointBusy} onClick={() => controlMotor(activeRow.hit, 'enable')}>
+        <button disabled={writesBlocked} onClick={() => controlMotor(activeRow.hit, 'enable')}>
           {t('enable')}
         </button>
         <button
-          disabled={perJointBusy}
+          disabled={writesBlocked}
           onClick={() => runExclusive(() => controlMotor(activeRow.hit, 'disable'))}
         >
           {t('disable')}
         </button>
-        <button className="primary" disabled={perJointBusy} onClick={() => moveOnce(activeRow)}>
+        <button className="primary" disabled={writesBlocked} title={readOnly ? '本地预览不会发送实机目标；运动尚未完成现场验收' : ''} onClick={() => moveOnce(activeRow)}>
           {t('move')}
         </button>
         <button
-          disabled={perJointBusy}
+          disabled={writesBlocked}
           onClick={() => runExclusive(() => controlMotor(activeRow.hit, 'stop'))}
         >
           {t('stop')}
         </button>
         <button
-          disabled={perJointBusy}
+          disabled={writesBlocked}
           onClick={() => runExclusive(() => controlMotor(activeRow.hit, 'clear_error'))}
         >
           {t('clear_error')}
         </button>
-        <button disabled={perJointBusy} onClick={() => refreshMotorState(activeRow.hit)}>
+        <button disabled={perJointBusy || !connected} onClick={() => refreshMotorState(activeRow.hit)}>
           {t('refresh_state')}
         </button>
       </div>

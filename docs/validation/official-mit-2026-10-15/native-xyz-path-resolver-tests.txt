@@ -1,0 +1,13 @@
+$ /home/bonvoyage/.local/share/robotics/envs/rebot-sim/bin/python -m unittest -v tests.test_native_xyz_plan_resolver_offline
+MUJOCO_GL=egl PYTHONPATH=tests:scripts
+test_changed_base_fingerprint_rejects_before_consuming_plan (tests.test_native_xyz_plan_resolver_offline.NativeXYZPlanResolverOffline) ... ok
+test_changed_task_fingerprint_rejects_before_consuming_plan (tests.test_native_xyz_plan_resolver_offline.NativeXYZPlanResolverOffline) ... ok
+test_expired_plan_rejects_at_exact_deadline_without_consuming_it (tests.test_native_xyz_plan_resolver_offline.NativeXYZPlanResolverOffline) ... ok
+test_extended_plan_resolves_once_with_real_model_and_preserves_saved_state (tests.test_native_xyz_plan_resolver_offline.NativeXYZPlanResolverOffline) ... ok
+test_old_profile_hash_and_permit_cannot_authorize_extended_plan (tests.test_native_xyz_plan_resolver_offline.NativeXYZPlanResolverOffline) ... ok
+test_saved_revision_change_and_wrong_source_each_reject_before_consumption (tests.test_native_xyz_plan_resolver_offline.NativeXYZPlanResolverOffline) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.597s
+
+OK

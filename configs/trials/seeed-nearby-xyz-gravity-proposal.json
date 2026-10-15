@@ -1,0 +1,68 @@
+{
+  "operation": "offline-gravity-control-proposal",
+  "approval": "pending-explicit-MIT-gain-and-feedforward-change",
+  "source": "engineering trial proposal based on locked Seeed RS gravity helper, not a device backup",
+  "official_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+  "official_reference": "https://github.com/Seeed-Projects/reBotArm_control_py/blob/6415d43130d1e143c70dc106096a857ac5556f81/reBotArm_control_py/controllers/gravity_compensation.py",
+  "software_envelope_file": "configs/trials/seeed-nearby-xyz-pending.json",
+  "axes": [
+    {
+      "id": 1,
+      "proposed_kp": 3.0,
+      "proposed_kd": 1.0,
+      "software_effort_limit_Nm": 1.0
+    },
+    {
+      "id": 2,
+      "proposed_kp": 3.0,
+      "proposed_kd": 2.0,
+      "software_effort_limit_Nm": 3.0
+    },
+    {
+      "id": 3,
+      "proposed_kp": 3.0,
+      "proposed_kd": 2.0,
+      "software_effort_limit_Nm": 9.0
+    },
+    {
+      "id": 4,
+      "proposed_kp": 3.0,
+      "proposed_kd": 1.0,
+      "software_effort_limit_Nm": 3.0
+    },
+    {
+      "id": 5,
+      "proposed_kp": 3.0,
+      "proposed_kd": 1.0,
+      "software_effort_limit_Nm": 1.0
+    },
+    {
+      "id": 6,
+      "proposed_kp": 3.0,
+      "proposed_kd": 1.0,
+      "software_effort_limit_Nm": 1.0
+    }
+  ],
+  "feedforward": "Seeed compute_generalized_gravity with explicit RS model and fresh joint feedback; identity direction; not an EEPROM write",
+  "initial_test": "Supported current-pose hold only; first position target equals fresh feedback, no homing or new XYZ target",
+  "following_test": "Only after observed holding and stopping: the prepared 5 mm nearby XYZ; J7 unchanged",
+  "unchanged": {
+    "velocity_limit_rad_s": 0.02,
+    "acceleration_limit_rad_s2": 0.04,
+    "jerk_limit_rad_s3": 0.2,
+    "tracking_error_deg": 1,
+    "start_tolerance_deg": 1
+  },
+  "not_applied": [
+    "MIT Kp/Kd remain 3/1 in the active trial envelope",
+    "MIT feedforward remains zero",
+    "No motor enable, mode change, parameter write or movement"
+  ],
+  "remaining": [
+    "Model gravity and friction are not calibrated on this arm",
+    "Holding/termination support must be established before XYZ movement",
+    "Live gravity integration needs separate ABI-compatible transport/runtime validation"
+  ],
+  "hardware_writes": 0,
+  "kp_source": "User explicitly requires all Kp values to be 3; damping/feedforward changes remain pending."
+}

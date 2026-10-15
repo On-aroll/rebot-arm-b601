@@ -1,4 +1,5 @@
 """Validate actual physics feedback tracing one continuous 国庆快乐 path."""
+import os
 import json,sys,time
 from pathlib import Path
 import numpy as np
@@ -7,10 +8,12 @@ from PIL import Image
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from rebot_core import Robot,ROOT
 from grasp_demo import build_scene
+OUT=Path(os.environ.get('REBOT_OUTPUT_DIR', str(ROOT/'outputs')))
+OUT.mkdir(parents=True, exist_ok=True)
 from rebot_program import ProgramRunner
 from rebot_writing import writing_program,print_camera,CENTER,RIGHT,UP,NORMAL
 
-r=Robot(build_scene());runner=ProgramRunner(r,ROOT/'outputs/writing-tests')
+r=Robot(build_scene());runner=ProgramRunner(r,OUT/'writing-tests')
 start=time.monotonic();runner.submit(writing_program());trace=runner.steps[4]['trace']
 errors=[];max_q_error=0.
 while runner.active and r.d.time<600:
@@ -44,10 +47,10 @@ assert np.max(np.linalg.norm(np.diff(points,axis=0),axis=1))<.003
 renderer=mj.Renderer(r.m,height=720,width=960,max_geom=10000)
 cam=print_camera();cam.lookat[:]=CENTER;cam.distance=.48;cam.azimuth=180;cam.elevation=-30
 renderer.update_scene(r.d,camera=cam);runner.trail.render(renderer.scene,r,ghost_robot=True)
-Image.fromarray(renderer.render()).save(ROOT/'outputs/national_day_one_stroke.png')
+Image.fromarray(renderer.render()).save(OUT/'national_day_one_stroke.png')
 cam.azimuth=140;cam.elevation=-17;cam.distance=.90;cam.lookat[:]=[.29,0,.36]
 renderer.update_scene(r.d,camera=cam);runner.trail.render(renderer.scene,r)
-Image.fromarray(renderer.render()).save(ROOT/'outputs/national_day_3d.png');renderer.close()
+Image.fromarray(renderer.render()).save(OUT/'national_day_3d.png');renderer.close()
 report=dict(success=True,text='国庆快乐',continuous_path=True,pen_lifts_within_text=0,
             actual_trace_points=len(points),actual_path_length_m=runner.trail.length,
             simulated_seconds=float(r.d.time),wall_seconds=time.monotonic()-start,
@@ -56,5 +59,5 @@ report=dict(success=True,text='国庆快乐',continuous_path=True,pen_lifts_with
             writing_plane_tilt_deg=60,connector_depth_m=.012,
             actual_depth_range_m=float(np.ptp((points-CENTER)@NORMAL)),
             warnings=r.d.warning.number.tolist(),job_id=runner.job['id'])
-(ROOT/'outputs/writing_verification.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+(OUT/'writing_verification.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,ensure_ascii=False,indent=2))

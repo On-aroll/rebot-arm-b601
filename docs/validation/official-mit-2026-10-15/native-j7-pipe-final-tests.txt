@@ -1,0 +1,9 @@
+test_actual_worker_j7_arrives_without_touching_other_drives (tests.test_gripper_csp_pipe.GripperCspPipe) ... ok
+test_api_stop_preempts_j7_and_restores (tests.test_gripper_csp_pipe.GripperCspPipe) ... ok
+test_j7_plan_cannot_execute_through_arm_action (tests.test_gripper_csp_pipe.GripperCspPipe) ... ok
+test_parent_pipe_eof_preempts_j7_and_restores (tests.test_gripper_csp_pipe.GripperCspPipe) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 8.462s
+
+OK

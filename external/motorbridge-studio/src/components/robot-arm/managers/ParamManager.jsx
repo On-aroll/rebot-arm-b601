@@ -30,6 +30,7 @@ export function ParamManager({
   askZeroConfirm,
   canAction,
   armToolbarBusy,
+  readOnly = false,
   children,
 }) {
   const { t } = useI18n();
@@ -472,6 +473,7 @@ export function ParamManager({
           // and report through the event log; only the inline panel is hidden.
           open={paramPanelOpen && devMode}
           canAction={canAction}
+          readOnly={readOnly}
           armToolbarBusy={armToolbarBusy}
           paramBusy={paramBusy}
           paramInfo={paramInfo}

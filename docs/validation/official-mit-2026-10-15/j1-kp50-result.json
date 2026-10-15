@@ -1,0 +1,437 @@
+{
+  "state": "FAULT",
+  "reason": "使能后实机起点发生变化，需重新规划",
+  "motion_arrived_before_stop": false,
+  "stop": {
+    "requested": true,
+    "policy": "explicitly-supported-release",
+    "attempted_axes": [
+      1
+    ],
+    "sent_axes": [
+      1
+    ],
+    "sdk_status_ack_axes": [
+      1
+    ],
+    "send_status": {
+      "1": "host-send-complete-and-sdk-status-observed"
+    },
+    "errors": {},
+    "physical_stopped": false,
+    "stationary_sample": true
+  },
+  "frames": 0,
+  "feedback": {
+    "1": {
+      "axis": 1,
+      "q": -0.019813919439911842,
+      "qd": 0.013398939804386445,
+      "mode": 0,
+      "requested_at": 43050.954394475,
+      "received_at": 43050.97880949,
+      "qd_raw": 0.0
+    },
+    "2": {
+      "axis": 2,
+      "q": -0.002258353866636753,
+      "qd": -0.0002853644288056389,
+      "mode": 0,
+      "requested_at": 43050.795715344,
+      "received_at": 43050.820322928,
+      "qd_raw": 0.0
+    },
+    "3": {
+      "axis": 3,
+      "q": 0.0012783474521711469,
+      "qd": 0.0002852609629847674,
+      "mode": 0,
+      "requested_at": 43050.820561836,
+      "received_at": 43050.84503256,
+      "qd_raw": 0.0
+    },
+    "4": {
+      "axis": 4,
+      "q": 0.015569913201034069,
+      "qd": 0.0002573633794996914,
+      "mode": 0,
+      "requested_at": 43050.845291782,
+      "received_at": 43050.869707783,
+      "qd_raw": 0.05544070526957512
+    },
+    "5": {
+      "axis": 5,
+      "q": 0.036815542727708817,
+      "qd": 0.0002581015416758852,
+      "mode": 0,
+      "requested_at": 43050.869976334,
+      "received_at": 43050.894396747,
+      "qd_raw": -0.0008707074448466301
+    },
+    "6": {
+      "axis": 6,
+      "q": 0.04256796836853027,
+      "qd": 0.000516455090041444,
+      "mode": 0,
+      "requested_at": 43050.894718222,
+      "received_at": 43050.919026664,
+      "qd_raw": -0.00915859267115593
+    }
+  },
+  "control": {
+    "config_fingerprint": "e0bcef06a581acbd406eaca5b6aa09d98fb5f09e99c69aa2bbaa1b2b585877e9",
+    "feedforward": null,
+    "gain_review": {
+      "mode": "seeed-rs-bounded-gains-v1",
+      "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+      "config_sha256": "ff8d04f47da57906edf61510a512bbb40c9d0309927af4acf7081568392c8def"
+    },
+    "kp": [
+      50.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0
+    ],
+    "kd": [
+      3.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "fixed_tau_ff": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "speed_limits_rad_s": [
+      0.02,
+      0.02,
+      0.02,
+      0.02,
+      0.02,
+      0.02
+    ]
+  },
+  "physical_acceptance": false,
+  "hardware_permission": false,
+  "note": "试验执行记录不是动态标定、转矩实测或物理停止验收",
+  "plan": {
+    "operation": "onsite-single-axis",
+    "axis": 1,
+    "relative_degrees": 0.5,
+    "envelope": {
+      "source": "explicit-onsite-trial-proposal",
+      "version": "seeed-nearby-xyz-per-axis-effort-v3",
+      "axes": [
+        {
+          "q_min": -2.6179938779914944,
+          "q_max": 2.6179938779914944,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 50.0,
+          "kd": 3.0,
+          "tau_ff": 0.0,
+          "kp_max": 50.0,
+          "kd_max": 3.0,
+          "torque_max": 1.0,
+          "error_max": 0.017453292519943295
+        },
+        {
+          "q_min": -0.0,
+          "q_max": 3.14,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 3.0,
+          "kd": 1.0,
+          "tau_ff": 0.0,
+          "kp_max": 3.0,
+          "kd_max": 1.0,
+          "torque_max": 3.0,
+          "error_max": 0.017453292519943295
+        },
+        {
+          "q_min": -0.0,
+          "q_max": 3.14,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 3.0,
+          "kd": 1.0,
+          "tau_ff": 0.0,
+          "kp_max": 3.0,
+          "kd_max": 1.0,
+          "torque_max": 9.0,
+          "error_max": 0.017453292519943295
+        },
+        {
+          "q_min": -1.57,
+          "q_max": 1.57,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 3.0,
+          "kd": 1.0,
+          "tau_ff": 0.0,
+          "kp_max": 3.0,
+          "kd_max": 1.0,
+          "torque_max": 3.0,
+          "error_max": 0.017453292519943295
+        },
+        {
+          "q_min": -1.57,
+          "q_max": 1.57,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 3.0,
+          "kd": 1.0,
+          "tau_ff": 0.0,
+          "kp_max": 3.0,
+          "kd_max": 1.0,
+          "torque_max": 1.0,
+          "error_max": 0.017453292519943295
+        },
+        {
+          "q_min": -3.14,
+          "q_max": 3.14,
+          "v_max": 0.02,
+          "a_max": 0.04,
+          "jerk_max": 0.2,
+          "kp": 3.0,
+          "kd": 1.0,
+          "tau_ff": 0.0,
+          "kp_max": 3.0,
+          "kd_max": 1.0,
+          "torque_max": 1.0,
+          "error_max": 0.017453292519943295
+        }
+      ],
+      "policy": {
+        "period": 0.1,
+        "io_timeout": 0.05,
+        "feedback_age": 0.6,
+        "command_age": 0.3,
+        "jitter_max": 0.15,
+        "lease_timeout": 0.75,
+        "start_speed": 0.01,
+        "arrival_q": 0.0017453292519943296,
+        "arrival_qd": 0.01,
+        "settle_time": 0.3,
+        "task_timeout": 5.0
+      },
+      "start_boundary_tolerance": 0.017453292519943295,
+      "gain_review": {
+        "mode": "seeed-rs-bounded-gains-v1",
+        "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+        "config_sha256": "ff8d04f47da57906edf61510a512bbb40c9d0309927af4acf7081568392c8def"
+      }
+    },
+    "read": {
+      "ok": true,
+      "expected_start": [
+        -0.020240023732185364,
+        -0.0020453135948628187,
+        0.0012783474521711469,
+        0.015531564131379128,
+        0.03666214272379875,
+        0.042644668370485306
+      ],
+      "readings": [
+        {
+          "1": {
+            "axis": 1,
+            "q": -0.020197413861751556,
+            "qd": -0.0002861149517487739,
+            "mode": 0,
+            "requested_at": 43021.470309366,
+            "received_at": 43021.494750929,
+            "qd_raw": 0.0
+          },
+          "2": {
+            "axis": 2,
+            "q": -0.0020879108924418688,
+            "qd": -0.00028570432860545205,
+            "mode": 0,
+            "requested_at": 43021.495489381,
+            "received_at": 43021.519899387,
+            "qd_raw": 0.0
+          },
+          "3": {
+            "axis": 3,
+            "q": 0.001235750038176775,
+            "qd": -0.0008556287215214806,
+            "mode": 0,
+            "requested_at": 43021.52053314,
+            "received_at": 43021.544997831,
+            "qd_raw": 0.0
+          },
+          "4": {
+            "axis": 4,
+            "q": 0.015531564131379128,
+            "qd": 0.0,
+            "mode": 0,
+            "requested_at": 43021.545432538,
+            "received_at": 43021.569796503,
+            "qd_raw": -0.024320729076862335
+          },
+          "5": {
+            "axis": 5,
+            "q": 0.036853890866041183,
+            "qd": 0.000769695640037076,
+            "mode": 0,
+            "requested_at": 43021.570392237,
+            "received_at": 43021.594738393,
+            "qd_raw": 0.012842854484915733
+          },
+          "6": {
+            "axis": 6,
+            "q": 0.04249126836657524,
+            "qd": -0.001024445618643365,
+            "mode": 0,
+            "requested_at": 43021.5953335,
+            "received_at": 43021.619813551,
+            "qd_raw": -0.0069493139162659645
+          }
+        },
+        {
+          "1": {
+            "axis": 1,
+            "q": -0.0201548021286726,
+            "qd": 0.0002840588325615143,
+            "mode": 0,
+            "requested_at": 43021.620315745,
+            "received_at": 43021.644765026,
+            "qd_raw": 0.0
+          },
+          "2": {
+            "axis": 2,
+            "q": -0.0021305084228515625,
+            "qd": -0.0002845850673024461,
+            "mode": 0,
+            "requested_at": 43021.645124205,
+            "received_at": 43021.669630449,
+            "qd_raw": 0.0
+          },
+          "3": {
+            "axis": 3,
+            "q": 0.0013209448661655188,
+            "qd": 0.0005700725365014552,
+            "mode": 0,
+            "requested_at": 43021.67001185,
+            "received_at": 43021.694410306,
+            "qd_raw": 0.0
+          },
+          "4": {
+            "axis": 4,
+            "q": 0.015569913201034069,
+            "qd": 0.00025698265727096655,
+            "mode": 0,
+            "requested_at": 43021.694673436,
+            "received_at": 43021.719012085,
+            "qd_raw": -0.030112380161881447
+          },
+          "5": {
+            "axis": 5,
+            "q": 0.036738842725753784,
+            "qd": -0.0007722955687834467,
+            "mode": 0,
+            "requested_at": 43021.719282467,
+            "received_at": 43021.743786271,
+            "qd_raw": 0.07262493669986725
+          },
+          "6": {
+            "axis": 6,
+            "q": 0.04272136837244034,
+            "qd": 0.001547222952005399,
+            "mode": 0,
+            "requested_at": 43021.744045497,
+            "received_at": 43021.768537687,
+            "qd_raw": -0.02557283267378807
+          }
+        },
+        {
+          "1": {
+            "axis": 1,
+            "q": -0.020240023732185364,
+            "qd": -0.0005731199906411415,
+            "mode": 0,
+            "requested_at": 43021.768928722,
+            "received_at": 43021.793547376,
+            "qd_raw": 0.0
+          },
+          "2": {
+            "axis": 2,
+            "q": -0.0020453135948628187,
+            "qd": 0.0005729251765865127,
+            "mode": 0,
+            "requested_at": 43021.793779963,
+            "received_at": 43021.818377673,
+            "qd_raw": 0.0
+          },
+          "3": {
+            "axis": 3,
+            "q": 0.0012783474521711469,
+            "qd": -0.00028658908035095323,
+            "mode": 0,
+            "requested_at": 43021.818643562,
+            "received_at": 43021.843050311,
+            "qd_raw": 0.0
+          },
+          "4": {
+            "axis": 4,
+            "q": 0.015531564131379128,
+            "qd": -0.0002580292945631696,
+            "mode": 0,
+            "requested_at": 43021.843317286,
+            "received_at": 43021.867614094,
+            "qd_raw": 0.0015515023842453957
+          },
+          "5": {
+            "axis": 5,
+            "q": 0.03666214272379875,
+            "qd": -0.0005167247786347118,
+            "mode": 0,
+            "requested_at": 43021.867784915,
+            "received_at": 43021.892153666,
+            "qd_raw": -0.00962800346314907
+          },
+          "6": {
+            "axis": 6,
+            "q": 0.042644668370485306,
+            "qd": -0.0005167346809889362,
+            "mode": 0,
+            "requested_at": 43021.892427308,
+            "received_at": 43021.91702003,
+            "qd_raw": 0.0039311861619353294
+          }
+        }
+      ],
+      "config_hash": "e0bcef06a581acbd406eaca5b6aa09d98fb5f09e99c69aa2bbaa1b2b585877e9",
+      "read_at": 1791994337.8158185,
+      "hardware_writes": 0,
+      "velocity_source": "host position differences; raw mechVel preserved for effort checks"
+    },
+    "planned_at": 1791994337.8163068,
+    "device_parameter_writes": 0,
+    "target": [
+      -0.011513377472213716,
+      -0.0020453135948628187,
+      0.0012783474521711469,
+      0.015531564131379128,
+      0.03666214272379875,
+      0.042644668370485306
+    ]
+  },
+  "command_log": [],
+  "device_parameter_writes": 0,
+  "trial": "J1 +0.5 degrees with pinned official bounded 50/3 gains"
+}

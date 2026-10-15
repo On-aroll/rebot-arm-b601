@@ -1,0 +1,29 @@
+
+ RUN  v4.1.11 /home/bonvoyage/Desktop/seeed_Robotics/external/motorbridge-studio
+
+ ❯ src/components/CartesianPointPanel.test.jsx (19 tests | 1 failed) 2509ms
+     × selects official gravity per task, invalidates preview, and sends no enable or parameter writes 23ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/CartesianPointPanel.test.jsx > Two-mode XYZ workflow > selects official gravity per task, invalidates preview, and sends no enable or parameter writes
+AssertionError: expected 'native-csp-xyz-v1' to be 'none' // Object.is equality
+
+Expected: "none"
+Received: "native-csp-xyz-v1"
+
+ ❯ src/components/CartesianPointPanel.test.jsx:194:51
+    192|   it('selects official gravity per task, invalidates preview, and send…
+    193|     const {fetch}=setup({mode:'hardware'});
+    194|     expect(screen.getByLabelText('轨迹控制方案').value).toBe('none');
+       |                                                   ^
+    195|     fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));await s…
+    196|     fireEvent.change(screen.getByLabelText('轨迹控制方案'),{target:{value:'s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 34 passed (35)
+      Tests  1 failed | 215 passed (216)
+   Start at  14:22:50
+   Duration  6.98s (transform 12.65s, setup 0ms, import 27.01s, tests 19.59s, environment 50.62s)

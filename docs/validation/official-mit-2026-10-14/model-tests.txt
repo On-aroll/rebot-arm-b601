@@ -1,0 +1,18 @@
+test_gravity_sign_matches_potential_energy_gradient_with_rs_coordinates (test_official_gravity_offline.OfficialGravityOffline) ... ok
+test_official_transition_is_bounded_monotonic_and_has_zero_endpoint_slope (test_official_gravity_offline.OfficialGravityOffline) ... ok
+test_pure_controller_uses_rs_model_and_keeps_explicit_gains_without_hardware (test_official_gravity_offline.OfficialGravityOffline) ... ok
+test_automatic_duration_does_not_silently_trim_five_second_margin (test_nearby_xyz_plan.NearbyPlan) ... ok
+test_current_seed_selects_feasible_five_mm_point_with_small_angles (test_nearby_xyz_plan.NearbyPlan) ... ok
+test_explicit_tolerance_preserves_raw_start_and_identifies_load_deficit (test_nearby_xyz_plan.NearbyPlan) ... ok
+test_far_xyz_preview_reports_trial_time_instead_of_generic_exception (test_nearby_xyz_plan.NearbyPlan) ... ok
+test_pending_gravity_profile_has_capacity_in_model_but_is_not_the_active_config (test_nearby_xyz_plan.NearbyPlan) ... ok
+test_raising_effort_ceiling_alone_does_not_authorize_unbalanced_motion (test_nearby_xyz_plan.NearbyPlan) ... ok
+test_raw_negative_j2_is_rejected_without_clipping (test_nearby_xyz_plan.NearbyPlan) ... ok
+test_visible_official_feedforward_passes_nominal_model_without_changing_saved_values (test_nearby_xyz_plan.NearbyPlan) ... ok
+test_web_timing_is_bound_to_task_without_changing_gains_or_stop_deadlines (test_nearby_xyz_plan.NearbyPlan) ... ok
+test_web_timing_rejects_invalid_values_and_keeps_maximum_bounded (test_nearby_xyz_plan.NearbyPlan) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.226s
+
+OK

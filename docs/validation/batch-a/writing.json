@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "text": "国庆快乐",
+  "continuous_path": true,
+  "pen_lifts_within_text": 0,
+  "actual_trace_points": 2352,
+  "actual_path_length_m": 1.961356868145517,
+  "simulated_seconds": 73.73200000000956,
+  "wall_seconds": 33.8937117409987,
+  "max_time_aligned_tracking_error_m": 0.003094231963260833,
+  "max_shape_error_m": 0.001119663925975552,
+  "max_text_coverage_error_m": 0.0014985912756924772,
+  "max_joint_tracking_error_deg": 1.5569580268843564,
+  "writing_plane_tilt_deg": 60,
+  "connector_depth_m": 0.012,
+  "actual_depth_range_m": 0.012102497120615886,
+  "warnings": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "job_id": "80a763a58df24007921641f04fea48f2"
+}

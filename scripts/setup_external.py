@@ -12,7 +12,7 @@ clone 完再跑一次本脚本即可复现开发环境。
 """
 import argparse
 import json
-import shutil
+import time
 import subprocess
 import sys
 from pathlib import Path
@@ -50,7 +50,9 @@ def clone(entry):
     path = ROOT / entry['path']
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists():
-        shutil.rmtree(path)
+        backup=path.with_name(path.name+'.backup-'+str(time.time_ns()))
+        path.rename(backup)
+        print(f'  原目录保留于 {backup}')
     sparse = entry.get('sparse_paths')
     print(f'  clone {entry["upstream"]}')
     run(['git', 'clone', '--filter=blob:none', entry['upstream'], str(path)])
@@ -84,6 +86,8 @@ def main():
         if args.check:
             todo.append(entry)
             continue
+        if state == 'drift' and not args.force:
+            raise RuntimeError(f'保留现有目录 {path}：请先核对版本差异；显式 --force 会备份后重建')
         clone(entry)
 
     if args.check and todo:

@@ -1,0 +1,8 @@
+test_actual_worker_j6_arrives_without_touching_other_drives (tests.test_native_j6_pipe.NativeJ6Pipe) ... ok
+test_api_stop_preempts_j6_and_restores (tests.test_native_j6_pipe.NativeJ6Pipe) ... ok
+test_parent_pipe_eof_preempts_j6_and_restores (tests.test_native_j6_pipe.NativeJ6Pipe) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 5.793s
+
+OK

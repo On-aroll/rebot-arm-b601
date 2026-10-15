@@ -184,7 +184,9 @@ async function readRobstrideStateParams(sendCmd) {
     ['vbus', 0x701c, 'f32'],
     ['run_mode', 0x7005, 'i8'],
   ];
-  const patch = {};
+  const patch = Object.fromEntries(specs.map(([key]) => [key, Number.NaN]));
+  patch.run_mode_name = 'unknown';
+  patch.feedback_source = 'explicit_robstride_parameter_reads';
   for (const [key, paramId, type] of specs) {
     try {
       const ret = await sendCmd(
@@ -193,7 +195,8 @@ async function readRobstrideStateParams(sendCmd) {
         CMD_TIMEOUTS.registerMs
       );
       if (!ret?.ok) continue;
-      const value = Number(getResponseValue(ret));
+      const raw = getResponseValue(ret);
+      const value = typeof raw === 'number' ? raw : NaN;
       if (Number.isFinite(value)) patch[key] = value;
     } catch {
       // Keep refresh useful even if one optional RobStride telemetry read misses.
@@ -649,11 +652,10 @@ export async function zeroMotorOp({
 export async function refreshMotorStateOp({ h, vendors, setTargetFor, sendCmd, setHits, pushLog }) {
   try {
     await setTargetFor(h.vendor, modelForHit(h, vendors), h.esc_id, h.mst_id);
-    const ret = await sendCmd(
-      'state_once',
-      { vendor: h.vendor, motor_id: h.esc_id, feedback_id: h.mst_id },
-      CMD_TIMEOUTS.stateMs
-    );
+    // B601 RobStride telemetry is obtained by safe explicit parameter queries.
+    // Do not depend on state_once, which fails on the recorded RS firmware.
+    const ret = ['robstride', 'damiao'].includes(String(h.vendor)) ? { ok: true, data: {} } : await sendCmd(
+      'state_once', { vendor: h.vendor, motor_id: h.esc_id, feedback_id: h.mst_id }, CMD_TIMEOUTS.stateMs);
     if (!ret.ok) throw new Error(ret.error || 'state_once failed');
 
     const damiaoParamPatch = {};
@@ -670,18 +672,23 @@ export async function refreshMotorStateOp({ h, vendors, setTargetFor, sendCmd, s
           );
           if (!regRet?.ok) continue;
           const rawValue = getResponseValue(regRet);
-          const value = Number(rawValue ?? Number.NaN);
-          damiaoParamPatch[def.key] = Number.isFinite(value) ? value : rawValue;
+          if (typeof rawValue === 'number' && Number.isFinite(rawValue)) damiaoParamPatch[def.key] = rawValue;
         } catch {
           // Keep refresh resilient: runtime state should still update even if one register read fails.
         }
       }
     }
+    if (String(h.vendor) === 'damiao') {
+      if (!Object.keys(damiaoParamPatch).length) throw new Error('未读到 DM 寄存器');
+      // Register diagnostics do not establish live joint position/velocity.
+      Object.assign(damiaoParamPatch, { pos: Number.NaN, vel: Number.NaN, torq: Number.NaN, feedback_source: 'explicit_damiao_register_reads' });
+    }
     if (String(h.vendor) === 'robstride') {
       robstrideParamPatch = await readRobstrideStateParams(sendCmd);
+      if (!Number.isFinite(robstrideParamPatch.pos)) throw new Error('mechPos 未读到，不能沿用旧位置');
     }
 
-    const nextHit = mapResponseToHit(h, ret.data, { ...damiaoParamPatch, ...robstrideParamPatch });
+    const nextHit = mapResponseToHit(h, ret.data, { ...damiaoParamPatch, ...robstrideParamPatch, online: true });
     setHits((prev) => mergeHitsByVendor(prev, [nextHit]));
 
     pushLog(
@@ -714,14 +721,20 @@ export async function checkOnlineOnceOp({
 }) {
   try {
     await setTargetFor(h.vendor, modelForHit(h, vendors), h.esc_id, h.mst_id);
-    const ret = await sendCmd(
-      'state_once',
-      { vendor: h.vendor, motor_id: h.esc_id, feedback_id: h.mst_id },
-      1200
-    );
-    if (!ret.ok) throw new Error(ret.error || 'state_once failed');
+    const ret = String(h.vendor) === 'robstride'
+      ? await sendCmd('robstride_read_param', { param_id:0x7019, type:'f32', timeout_ms:800 }, 1200)
+      : String(h.vendor) === 'damiao'
+        ? await sendCmd('get_register_u32', { rid:10, timeout_ms:800 }, 1200)
+        : await sendCmd('state_once', { vendor:h.vendor, motor_id:h.esc_id, feedback_id:h.mst_id }, 1200);
+    if (!ret.ok) throw new Error(ret.error || 'read failed');
+    if (String(h.vendor) === 'robstride') {
+      const value = getResponseValue(ret);
+      if (typeof value !== 'number' || !Number.isFinite(value)) throw new Error('mechPos 未读到');
+      ret.data = { ...ret.data, pos: Number(value) };
+    }
 
-    setHits((prev) => mergeHitsByVendor(prev, [mapResponseToHit(h, ret.data)]));
+    if (String(h.vendor) === 'damiao' && (typeof getResponseValue(ret) !== 'number' || !Number.isFinite(getResponseValue(ret)))) throw new Error('DM register unavailable');
+    setHits((prev) => mergeHitsByVendor(prev, [mapResponseToHit(h, ret.data, { online: true })]));
 
     if (!silent) pushLog(`online check ${h.vendor} ${toHex(h.esc_id)} online`, 'ok');
     return true;
@@ -751,6 +764,16 @@ export async function probeMotorOp({
   pushLog,
   options = {},
 }) {
+  // Known RS joints are queried individually. The old scan op is not in the
+  // audited allowlist and cannot establish feedback on this B601 firmware.
+  if (String(h?.vendor) === 'robstride') {
+    try {
+      const next = await refreshMotorStateOp({ h, vendors, setTargetFor, sendCmd, setHits, pushLog });
+      return next.online === true;
+    } finally {
+      if (options?.closeBusAfter !== false) await closeBusQuietly();
+    }
+  }
   try {
     const model = modelForHit(h, vendors);
     await setTargetFor(h.vendor, model, h.esc_id, h.mst_id);

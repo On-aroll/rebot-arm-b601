@@ -6,9 +6,10 @@ import { I18nProvider } from '../../i18n';
 import { MotorStudioProvider } from '../../hooks/useMotorStudioContext';
 import { JointControlPanel } from './JointControlPanel';
 
-function renderWithStudio(ui) {
+function renderWithStudio(ui, connectionOverrides = {}) {
   const studio = {
     connection: {
+      ...connectionOverrides,
       gatewayCapabilities: {
         vendors: {
           damiao: { modes: ['mit', 'pos_vel', 'vel', 'force_pos'] },
@@ -55,6 +56,7 @@ function createRow(vendor = 'damiao', mode = 'pos_vel', target = 0) {
 }
 
 function renderPanel(overrides = {}) {
+  const { connectionOverrides, ...panelOverrides } = overrides;
   const props = {
     activeRow: createRow(),
     perJointBusy: false,
@@ -70,11 +72,11 @@ function renderPanel(overrides = {}) {
     refreshMotorState: vi.fn(),
     moveOnce: vi.fn(),
     runExclusive: vi.fn((fn) => fn()),
-    ...overrides,
+    ...panelOverrides,
   };
 
   return {
-    ...renderWithStudio(<JointControlPanel {...props} />),
+    ...renderWithStudio(<JointControlPanel {...props} />, connectionOverrides),
     props,
   };
 }
@@ -85,6 +87,23 @@ afterEach(() => {
 });
 
 describe('JointControlPanel', () => {
+  it('keeps preview and refresh available while explicitly disabling locked real controls', () => {
+    const { props } = renderPanel({ activeRow: createRow('robstride', 'mit'), connectionOverrides: { readOnly: true, connected: true } });
+    for (const name of ['Enable', 'Disable', 'Move', 'Stop', 'Clear Fault']) {
+      const button = screen.getByRole('button', { name, exact: true });
+      expect(button.disabled).toBe(true);
+      fireEvent.click(button);
+    }
+    expect(props.controlMotor).not.toHaveBeenCalled();
+    expect(props.moveOnce).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: 'Refresh State', exact: true }).disabled).toBe(false);
+    fireEvent.change(screen.getByLabelText('Target Pos'), { target: { value: '.5' } });
+    expect(props.onSliderTargetChange).toHaveBeenCalledWith('.5');
+    fireEvent.change(screen.getByRole('slider'), { target: { value: '.6' } });
+    expect(props.onSliderTargetChange).toHaveBeenCalledWith('.6');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.queryByText('Manual mode (click Move to send)')).toBeNull();
+  });
   it('shows Target Vel in vel mode', () => {
     renderPanel({ activeRow: createRow('damiao', 'vel') });
 

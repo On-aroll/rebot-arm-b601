@@ -1,0 +1,3921 @@
+{
+  "state": "CANCELLED",
+  "busy": false,
+  "axis": 1,
+  "reason": "3 秒启动采集结束，自动撤力；未执行 XYZ 轨迹",
+  "physical_acceptance": false,
+  "feedback": {
+    "1": {
+      "axis": 1,
+      "q": -0.01870604231953621,
+      "qd": -0.0001599582683537443,
+      "mode": 0,
+      "requested_at": 75881.636796077,
+      "received_at": 75881.661291967,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "2": {
+      "axis": 2,
+      "q": -0.0025140445213764906,
+      "qd": 0.00016000844168851866,
+      "mode": 0,
+      "requested_at": 75881.661606366,
+      "received_at": 75881.686124154,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "3": {
+      "axis": 3,
+      "q": 0.007925616577267647,
+      "qd": -0.0004803191106176838,
+      "mode": 0,
+      "requested_at": 75881.686410827,
+      "received_at": 75881.710921264,
+      "qd_raw": 0.0,
+      "iq_raw_a": 0.0,
+      "torque_raw_nm": 0.0,
+      "diagnostics_requested_at": 75881.785266292,
+      "diagnostics_received_at": 75881.802097739
+    },
+    "4": {
+      "axis": 4,
+      "q": 0.01603010855615139,
+      "qd": 0.00014410027531582345,
+      "mode": 0,
+      "requested_at": 75881.71129633,
+      "received_at": 75881.735753381,
+      "qd_raw": -0.03191006928682327,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "5": {
+      "axis": 5,
+      "q": 0.025195633992552757,
+      "qd": -0.0001440797781348923,
+      "mode": 0,
+      "requested_at": 75881.736083689,
+      "received_at": 75881.760562094,
+      "qd_raw": -0.016083065420389175,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "6": {
+      "axis": 6,
+      "q": 0.04241457208991051,
+      "qd": 0.00028819910987761005,
+      "mode": 0,
+      "requested_at": 75881.760882653,
+      "received_at": 75881.785244232,
+      "qd_raw": 0.05238272249698639,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    }
+  },
+  "axes": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "motion_arrived_before_stop": false,
+  "stop": {
+    "requested": true,
+    "policy": "explicitly-supported-release",
+    "attempted_axes": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "sent_axes": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "sdk_status_ack_axes": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "send_status": {
+      "1": "host-send-complete-and-sdk-status-observed",
+      "2": "host-send-complete-and-sdk-status-observed",
+      "3": "host-send-complete-and-sdk-status-observed",
+      "4": "host-send-complete-and-sdk-status-observed",
+      "5": "host-send-complete-and-sdk-status-observed",
+      "6": "host-send-complete-and-sdk-status-observed"
+    },
+    "errors": {},
+    "physical_stopped": false,
+    "observations": [
+      {
+        "time": 75881.269918409,
+        "feedback": {
+          "1": {
+            "axis": 1,
+            "q": -0.01870604231953621,
+            "qd": -0.00040005498102773653,
+            "mode": 0,
+            "requested_at": 75881.10311082,
+            "received_at": 75881.127509726,
+            "qd_raw": 0.0,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "2": {
+            "axis": 2,
+            "q": -0.002769682090729475,
+            "qd": -0.00013337032824096653,
+            "mode": 0,
+            "requested_at": 75881.128147152,
+            "received_at": 75881.152528279,
+            "qd_raw": 0.0,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "3": {
+            "axis": 3,
+            "q": 0.008010811172425747,
+            "qd": 0.0024014494484456686,
+            "mode": 0,
+            "requested_at": 75881.15311917,
+            "received_at": 75881.177670388,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 75881.252415172,
+            "diagnostics_received_at": 75881.269854156
+          },
+          "4": {
+            "axis": 4,
+            "q": 0.016106808558106422,
+            "qd": -0.0022797737751812336,
+            "mode": 0,
+            "requested_at": 75881.178303142,
+            "received_at": 75881.202901254,
+            "qd_raw": -0.020524868741631508,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "5": {
+            "axis": 5,
+            "q": 0.025233983993530273,
+            "qd": 0.00012004173413642365,
+            "mode": 0,
+            "requested_at": 75881.203267437,
+            "received_at": 75881.227676922,
+            "qd_raw": 0.025797594338655472,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "6": {
+            "axis": 6,
+            "q": 0.042337872087955475,
+            "qd": 0.0003604790459122923,
+            "mode": 0,
+            "requested_at": 75881.227940859,
+            "received_at": 75881.252367591,
+            "qd_raw": 0.02896089106798172,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          }
+        }
+      },
+      {
+        "time": 75881.536246471,
+        "feedback": {
+          "1": {
+            "axis": 1,
+            "q": -0.0186634324491024,
+            "qd": 0.000159377068113243,
+            "mode": 0,
+            "requested_at": 75881.370389338,
+            "received_at": 75881.394936369,
+            "qd_raw": 0.0,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "2": {
+            "axis": 2,
+            "q": -0.0025566418189555407,
+            "qd": 0.0007969828393842299,
+            "mode": 0,
+            "requested_at": 75881.395216351,
+            "received_at": 75881.420076041,
+            "qd_raw": 0.0,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "3": {
+            "axis": 3,
+            "q": 0.008053408935666084,
+            "qd": 0.00015941437529133105,
+            "mode": 0,
+            "requested_at": 75881.420328277,
+            "received_at": 75881.444889411,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 75881.519182049,
+            "diagnostics_received_at": 75881.536188259
+          },
+          "4": {
+            "axis": 4,
+            "q": 0.015991760417819023,
+            "qd": -0.00043121256458004194,
+            "mode": 0,
+            "requested_at": 75881.445202567,
+            "received_at": 75881.469604742,
+            "qd_raw": -0.007024987600743771,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "5": {
+            "axis": 5,
+            "q": 0.025233983993530273,
+            "qd": 0.0,
+            "mode": 0,
+            "requested_at": 75881.469887532,
+            "received_at": 75881.494414275,
+            "qd_raw": 0.01563861034810543,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "6": {
+            "axis": 6,
+            "q": 0.042337872087955475,
+            "qd": 0.0,
+            "mode": 0,
+            "requested_at": 75881.494695422,
+            "received_at": 75881.519160548,
+            "qd_raw": -0.02440671995282173,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          }
+        }
+      },
+      {
+        "time": 75881.802197455,
+        "feedback": {
+          "1": {
+            "axis": 1,
+            "q": -0.01870604231953621,
+            "qd": -0.0001599582683537443,
+            "mode": 0,
+            "requested_at": 75881.636796077,
+            "received_at": 75881.661291967,
+            "qd_raw": 0.0,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "2": {
+            "axis": 2,
+            "q": -0.0025140445213764906,
+            "qd": 0.00016000844168851866,
+            "mode": 0,
+            "requested_at": 75881.661606366,
+            "received_at": 75881.686124154,
+            "qd_raw": 0.0,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "3": {
+            "axis": 3,
+            "q": 0.007925616577267647,
+            "qd": -0.0004803191106176838,
+            "mode": 0,
+            "requested_at": 75881.686410827,
+            "received_at": 75881.710921264,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 75881.785266292,
+            "diagnostics_received_at": 75881.802097739
+          },
+          "4": {
+            "axis": 4,
+            "q": 0.01603010855615139,
+            "qd": 0.00014410027531582345,
+            "mode": 0,
+            "requested_at": 75881.71129633,
+            "received_at": 75881.735753381,
+            "qd_raw": -0.03191006928682327,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "5": {
+            "axis": 5,
+            "q": 0.025195633992552757,
+            "qd": -0.0001440797781348923,
+            "mode": 0,
+            "requested_at": 75881.736083689,
+            "received_at": 75881.760562094,
+            "qd_raw": -0.016083065420389175,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "6": {
+            "axis": 6,
+            "q": 0.04241457208991051,
+            "qd": 0.00028819910987761005,
+            "mode": 0,
+            "requested_at": 75881.760882653,
+            "received_at": 75881.785244232,
+            "qd_raw": 0.05238272249698639,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          }
+        }
+      }
+    ],
+    "stationary_sample": true,
+    "observation_duration_s": 0.6996677769930102
+  },
+  "frames": 25,
+  "failure_feedback": {
+    "1": {
+      "axis": 1,
+      "q": -0.018578210845589638,
+      "qd": 0.0003182035020549238,
+      "mode": 0,
+      "requested_at": 75880.783482273,
+      "received_at": 75880.808068745,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "2": {
+      "axis": 2,
+      "q": -0.002727084793150425,
+      "qd": 0.0009546224109714441,
+      "mode": 0,
+      "requested_at": 75880.808428903,
+      "received_at": 75880.833464302,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "3": {
+      "axis": 3,
+      "q": 0.007243845146149397,
+      "qd": 0.004291821035096683,
+      "mode": 0,
+      "requested_at": 75880.833759029,
+      "received_at": 75880.85827794,
+      "qd_raw": 0.0,
+      "iq_raw_a": 0.31631797552108765,
+      "torque_raw_nm": 0.0,
+      "diagnostics_requested_at": 75880.933293,
+      "diagnostics_received_at": 75880.950653528
+    },
+    "4": {
+      "axis": 4,
+      "q": 0.016835451126098633,
+      "qd": 0.0008575817935943367,
+      "mode": 0,
+      "requested_at": 75880.858731349,
+      "received_at": 75880.883249475,
+      "qd_raw": 0.07150319963693619,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "5": {
+      "axis": 5,
+      "q": 0.025195633992552757,
+      "qd": -0.0001427703740765168,
+      "mode": 0,
+      "requested_at": 75880.883690915,
+      "received_at": 75880.908308976,
+      "qd_raw": -0.03878289833664894,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "6": {
+      "axis": 6,
+      "q": 0.04222283512353897,
+      "qd": -0.0005703459672953827,
+      "mode": 0,
+      "requested_at": 75880.908790027,
+      "received_at": 75880.933273478,
+      "qd_raw": -0.012495096772909164,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    }
+  },
+  "control": {
+    "config_fingerprint": "7c67afa111b3ebe3e601a2ad5d4e5121c393c10b2640b168f72df3116e191569",
+    "startup_observation_seconds": 3.0,
+    "feedforward": {
+      "mode": "seeed-rs-gravity-v1",
+      "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+      "model_sha256": "3838ca8f9d586be22a89b33c7cbdd4abd43d4a92a2de377b294eef4c5bd7654d"
+    },
+    "gain_review": {
+      "mode": "seeed-rs-bounded-gains-v1",
+      "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+      "config_sha256": "ff8d04f47da57906edf61510a512bbb40c9d0309927af4acf7081568392c8def",
+      "reference_commit": "aa807cf2affe85b13b86221159871aae7742c01b",
+      "reference_config_sha256": "2b487458a5f243229eb9b1fe52c4f93e413b70e5fcf2c056df6b0d5401e8fe30",
+      "startup_gravity_ramp_s": 8.0
+    },
+    "kp": [
+      80.0,
+      75.0,
+      150.0,
+      50.0,
+      40.0,
+      40.0
+    ],
+    "kd": [
+      5.0,
+      6.0,
+      10.0,
+      5.0,
+      4.0,
+      4.0
+    ],
+    "fixed_tau_ff": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "speed_limits_rad_s": [
+      0.02,
+      0.02,
+      0.02,
+      0.02,
+      0.02,
+      0.02
+    ]
+  },
+  "hardware_permission": false,
+  "note": "试验执行记录不是动态标定、转矩实测或物理停止验收",
+  "expected_start": [
+    -0.018620822578668594,
+    -0.0024287966080009937,
+    0.005922900512814522,
+    0.01603010855615139,
+    0.025195633992552757,
+    0.04241457208991051
+  ],
+  "target": [
+    -0.03018229077265289,
+    0.001276006770740285,
+    0.006062340245261365,
+    0.018978646606363978,
+    0.03287882282530258,
+    0.04241457208991051
+  ],
+  "drive_feedback_evidence": {
+    "axis": 3,
+    "iq_register": "0x701a",
+    "torque_register": "0x302c",
+    "calibrated": false,
+    "scope": "raw drive reports, not independent torque measurement"
+  },
+  "command_evidence": "host MIT requests; no per-frame drive ACK",
+  "result": {
+    "state": "CANCELLED",
+    "reason": "3 秒启动采集结束，自动撤力；未执行 XYZ 轨迹",
+    "motion_arrived_before_stop": false,
+    "stop": {
+      "requested": true,
+      "policy": "explicitly-supported-release",
+      "attempted_axes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "sent_axes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "sdk_status_ack_axes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "send_status": {
+        "1": "host-send-complete-and-sdk-status-observed",
+        "2": "host-send-complete-and-sdk-status-observed",
+        "3": "host-send-complete-and-sdk-status-observed",
+        "4": "host-send-complete-and-sdk-status-observed",
+        "5": "host-send-complete-and-sdk-status-observed",
+        "6": "host-send-complete-and-sdk-status-observed"
+      },
+      "errors": {},
+      "physical_stopped": false,
+      "observations": [
+        {
+          "time": 75881.269918409,
+          "feedback": {
+            "1": {
+              "axis": 1,
+              "q": -0.01870604231953621,
+              "qd": -0.00040005498102773653,
+              "mode": 0,
+              "requested_at": 75881.10311082,
+              "received_at": 75881.127509726,
+              "qd_raw": 0.0,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "2": {
+              "axis": 2,
+              "q": -0.002769682090729475,
+              "qd": -0.00013337032824096653,
+              "mode": 0,
+              "requested_at": 75881.128147152,
+              "received_at": 75881.152528279,
+              "qd_raw": 0.0,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "3": {
+              "axis": 3,
+              "q": 0.008010811172425747,
+              "qd": 0.0024014494484456686,
+              "mode": 0,
+              "requested_at": 75881.15311917,
+              "received_at": 75881.177670388,
+              "qd_raw": 0.0,
+              "iq_raw_a": 0.0,
+              "torque_raw_nm": 0.0,
+              "diagnostics_requested_at": 75881.252415172,
+              "diagnostics_received_at": 75881.269854156
+            },
+            "4": {
+              "axis": 4,
+              "q": 0.016106808558106422,
+              "qd": -0.0022797737751812336,
+              "mode": 0,
+              "requested_at": 75881.178303142,
+              "received_at": 75881.202901254,
+              "qd_raw": -0.020524868741631508,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "5": {
+              "axis": 5,
+              "q": 0.025233983993530273,
+              "qd": 0.00012004173413642365,
+              "mode": 0,
+              "requested_at": 75881.203267437,
+              "received_at": 75881.227676922,
+              "qd_raw": 0.025797594338655472,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "6": {
+              "axis": 6,
+              "q": 0.042337872087955475,
+              "qd": 0.0003604790459122923,
+              "mode": 0,
+              "requested_at": 75881.227940859,
+              "received_at": 75881.252367591,
+              "qd_raw": 0.02896089106798172,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            }
+          }
+        },
+        {
+          "time": 75881.536246471,
+          "feedback": {
+            "1": {
+              "axis": 1,
+              "q": -0.0186634324491024,
+              "qd": 0.000159377068113243,
+              "mode": 0,
+              "requested_at": 75881.370389338,
+              "received_at": 75881.394936369,
+              "qd_raw": 0.0,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "2": {
+              "axis": 2,
+              "q": -0.0025566418189555407,
+              "qd": 0.0007969828393842299,
+              "mode": 0,
+              "requested_at": 75881.395216351,
+              "received_at": 75881.420076041,
+              "qd_raw": 0.0,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "3": {
+              "axis": 3,
+              "q": 0.008053408935666084,
+              "qd": 0.00015941437529133105,
+              "mode": 0,
+              "requested_at": 75881.420328277,
+              "received_at": 75881.444889411,
+              "qd_raw": 0.0,
+              "iq_raw_a": 0.0,
+              "torque_raw_nm": 0.0,
+              "diagnostics_requested_at": 75881.519182049,
+              "diagnostics_received_at": 75881.536188259
+            },
+            "4": {
+              "axis": 4,
+              "q": 0.015991760417819023,
+              "qd": -0.00043121256458004194,
+              "mode": 0,
+              "requested_at": 75881.445202567,
+              "received_at": 75881.469604742,
+              "qd_raw": -0.007024987600743771,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "5": {
+              "axis": 5,
+              "q": 0.025233983993530273,
+              "qd": 0.0,
+              "mode": 0,
+              "requested_at": 75881.469887532,
+              "received_at": 75881.494414275,
+              "qd_raw": 0.01563861034810543,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "6": {
+              "axis": 6,
+              "q": 0.042337872087955475,
+              "qd": 0.0,
+              "mode": 0,
+              "requested_at": 75881.494695422,
+              "received_at": 75881.519160548,
+              "qd_raw": -0.02440671995282173,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            }
+          }
+        },
+        {
+          "time": 75881.802197455,
+          "feedback": {
+            "1": {
+              "axis": 1,
+              "q": -0.01870604231953621,
+              "qd": -0.0001599582683537443,
+              "mode": 0,
+              "requested_at": 75881.636796077,
+              "received_at": 75881.661291967,
+              "qd_raw": 0.0,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "2": {
+              "axis": 2,
+              "q": -0.0025140445213764906,
+              "qd": 0.00016000844168851866,
+              "mode": 0,
+              "requested_at": 75881.661606366,
+              "received_at": 75881.686124154,
+              "qd_raw": 0.0,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "3": {
+              "axis": 3,
+              "q": 0.007925616577267647,
+              "qd": -0.0004803191106176838,
+              "mode": 0,
+              "requested_at": 75881.686410827,
+              "received_at": 75881.710921264,
+              "qd_raw": 0.0,
+              "iq_raw_a": 0.0,
+              "torque_raw_nm": 0.0,
+              "diagnostics_requested_at": 75881.785266292,
+              "diagnostics_received_at": 75881.802097739
+            },
+            "4": {
+              "axis": 4,
+              "q": 0.01603010855615139,
+              "qd": 0.00014410027531582345,
+              "mode": 0,
+              "requested_at": 75881.71129633,
+              "received_at": 75881.735753381,
+              "qd_raw": -0.03191006928682327,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "5": {
+              "axis": 5,
+              "q": 0.025195633992552757,
+              "qd": -0.0001440797781348923,
+              "mode": 0,
+              "requested_at": 75881.736083689,
+              "received_at": 75881.760562094,
+              "qd_raw": -0.016083065420389175,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            },
+            "6": {
+              "axis": 6,
+              "q": 0.04241457208991051,
+              "qd": 0.00028819910987761005,
+              "mode": 0,
+              "requested_at": 75881.760882653,
+              "received_at": 75881.785244232,
+              "qd_raw": 0.05238272249698639,
+              "iq_raw_a": null,
+              "torque_raw_nm": null,
+              "diagnostics_requested_at": null,
+              "diagnostics_received_at": null
+            }
+          }
+        }
+      ],
+      "stationary_sample": true,
+      "observation_duration_s": 0.6996677769930102
+    },
+    "frames": 25,
+    "feedback": {
+      "1": {
+        "axis": 1,
+        "q": -0.01870604231953621,
+        "qd": -0.0001599582683537443,
+        "mode": 0,
+        "requested_at": 75881.636796077,
+        "received_at": 75881.661291967,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "2": {
+        "axis": 2,
+        "q": -0.0025140445213764906,
+        "qd": 0.00016000844168851866,
+        "mode": 0,
+        "requested_at": 75881.661606366,
+        "received_at": 75881.686124154,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "3": {
+        "axis": 3,
+        "q": 0.007925616577267647,
+        "qd": -0.0004803191106176838,
+        "mode": 0,
+        "requested_at": 75881.686410827,
+        "received_at": 75881.710921264,
+        "qd_raw": 0.0,
+        "iq_raw_a": 0.0,
+        "torque_raw_nm": 0.0,
+        "diagnostics_requested_at": 75881.785266292,
+        "diagnostics_received_at": 75881.802097739
+      },
+      "4": {
+        "axis": 4,
+        "q": 0.01603010855615139,
+        "qd": 0.00014410027531582345,
+        "mode": 0,
+        "requested_at": 75881.71129633,
+        "received_at": 75881.735753381,
+        "qd_raw": -0.03191006928682327,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "5": {
+        "axis": 5,
+        "q": 0.025195633992552757,
+        "qd": -0.0001440797781348923,
+        "mode": 0,
+        "requested_at": 75881.736083689,
+        "received_at": 75881.760562094,
+        "qd_raw": -0.016083065420389175,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "6": {
+        "axis": 6,
+        "q": 0.04241457208991051,
+        "qd": 0.00028819910987761005,
+        "mode": 0,
+        "requested_at": 75881.760882653,
+        "received_at": 75881.785244232,
+        "qd_raw": 0.05238272249698639,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      }
+    },
+    "failure_feedback": {
+      "1": {
+        "axis": 1,
+        "q": -0.018578210845589638,
+        "qd": 0.0003182035020549238,
+        "mode": 0,
+        "requested_at": 75880.783482273,
+        "received_at": 75880.808068745,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "2": {
+        "axis": 2,
+        "q": -0.002727084793150425,
+        "qd": 0.0009546224109714441,
+        "mode": 0,
+        "requested_at": 75880.808428903,
+        "received_at": 75880.833464302,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "3": {
+        "axis": 3,
+        "q": 0.007243845146149397,
+        "qd": 0.004291821035096683,
+        "mode": 0,
+        "requested_at": 75880.833759029,
+        "received_at": 75880.85827794,
+        "qd_raw": 0.0,
+        "iq_raw_a": 0.31631797552108765,
+        "torque_raw_nm": 0.0,
+        "diagnostics_requested_at": 75880.933293,
+        "diagnostics_received_at": 75880.950653528
+      },
+      "4": {
+        "axis": 4,
+        "q": 0.016835451126098633,
+        "qd": 0.0008575817935943367,
+        "mode": 0,
+        "requested_at": 75880.858731349,
+        "received_at": 75880.883249475,
+        "qd_raw": 0.07150319963693619,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "5": {
+        "axis": 5,
+        "q": 0.025195633992552757,
+        "qd": -0.0001427703740765168,
+        "mode": 0,
+        "requested_at": 75880.883690915,
+        "received_at": 75880.908308976,
+        "qd_raw": -0.03878289833664894,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "6": {
+        "axis": 6,
+        "q": 0.04222283512353897,
+        "qd": -0.0005703459672953827,
+        "mode": 0,
+        "requested_at": 75880.908790027,
+        "received_at": 75880.933273478,
+        "qd_raw": -0.012495096772909164,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      }
+    },
+    "control": {
+      "config_fingerprint": "7c67afa111b3ebe3e601a2ad5d4e5121c393c10b2640b168f72df3116e191569",
+      "startup_observation_seconds": 3.0,
+      "feedforward": {
+        "mode": "seeed-rs-gravity-v1",
+        "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+        "model_sha256": "3838ca8f9d586be22a89b33c7cbdd4abd43d4a92a2de377b294eef4c5bd7654d"
+      },
+      "gain_review": {
+        "mode": "seeed-rs-bounded-gains-v1",
+        "source_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+        "config_sha256": "ff8d04f47da57906edf61510a512bbb40c9d0309927af4acf7081568392c8def",
+        "reference_commit": "aa807cf2affe85b13b86221159871aae7742c01b",
+        "reference_config_sha256": "2b487458a5f243229eb9b1fe52c4f93e413b70e5fcf2c056df6b0d5401e8fe30",
+        "startup_gravity_ramp_s": 8.0
+      },
+      "kp": [
+        80.0,
+        75.0,
+        150.0,
+        50.0,
+        40.0,
+        40.0
+      ],
+      "kd": [
+        5.0,
+        6.0,
+        10.0,
+        5.0,
+        4.0,
+        4.0
+      ],
+      "fixed_tau_ff": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speed_limits_rad_s": [
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02,
+        0.02
+      ]
+    },
+    "physical_acceptance": false,
+    "hardware_permission": false,
+    "note": "试验执行记录不是动态标定、转矩实测或物理停止验收",
+    "expected_start": [
+      -0.018620822578668594,
+      -0.0024287966080009937,
+      0.005922900512814522,
+      0.01603010855615139,
+      0.025195633992552757,
+      0.04241457208991051
+    ],
+    "target": [
+      -0.03018229077265289,
+      0.001276006770740285,
+      0.006062340245261365,
+      0.018978646606363978,
+      0.03287882282530258,
+      0.04241457208991051
+    ],
+    "drive_feedback_evidence": {
+      "axis": 3,
+      "iq_register": "0x701a",
+      "torque_register": "0x302c",
+      "calibrated": false,
+      "scope": "raw drive reports, not independent torque measurement"
+    },
+    "command_evidence": "host MIT requests; no per-frame drive ACK"
+  },
+  "enabled_feedback_available": false,
+  "observed_at_ms": 1792027197739.9297,
+  "motors": {
+    "1": {
+      "id": 1,
+      "model": "rs-06",
+      "mechPosRad": -0.01870604231953621,
+      "positionUpdatedAt": 1792027197535.4072,
+      "error": ""
+    },
+    "2": {
+      "id": 2,
+      "model": "rs-06",
+      "mechPosRad": -0.0025140445213764906,
+      "positionUpdatedAt": 1792027197560.2175,
+      "error": ""
+    },
+    "3": {
+      "id": 3,
+      "model": "rs-06",
+      "mechPosRad": 0.007925616577267647,
+      "positionUpdatedAt": 1792027197585.0222,
+      "error": ""
+    },
+    "4": {
+      "id": 4,
+      "model": "rs-00",
+      "mechPosRad": 0.01603010855615139,
+      "positionUpdatedAt": 1792027197609.9077,
+      "error": ""
+    },
+    "5": {
+      "id": 5,
+      "model": "rs-00",
+      "mechPosRad": 0.025195633992552757,
+      "positionUpdatedAt": 1792027197634.695,
+      "error": ""
+    },
+    "6": {
+      "id": 6,
+      "model": "rs-00",
+      "mechPosRad": 0.04241457208991051,
+      "positionUpdatedAt": 1792027197659.494,
+      "error": ""
+    }
+  },
+  "command_log": [
+    {
+      "time": 75877.98470462,
+      "phase": "enable-hold",
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.018748652189970016,
+            0.0,
+            80.0,
+            5.0,
+            0.0
+          ],
+          "estimated_effort": 0.0012201159433796152,
+          "requested_at": 75877.98474824,
+          "send_status": "host-send-complete",
+          "completed_at": 75877.98533338
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018748652189970016,
+          "qd": -0.00024402318867592303,
+          "mode": 0,
+          "requested_at": 75877.954987279,
+          "received_at": 75877.97960177,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.152706812,
+      "phase": "first-hold",
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.018748652189970016,
+            0.0,
+            80.0,
+            5.0,
+            -0.0
+          ],
+          "estimated_effort": 0.0,
+          "requested_at": 75878.152750715,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.153261008
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018748652189970016,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75877.985693311,
+          "received_at": 75878.010253041,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0023861990775913,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75878.010602246,
+          "received_at": 75878.035149194,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005922900512814522,
+          "qd": -0.0002081657587137787,
+          "mode": 0,
+          "requested_at": 75878.035453805,
+          "received_at": 75878.059877074,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.134962959,
+          "diagnostics_received_at": 75878.152409161
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016068458557128906,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75878.060184751,
+          "received_at": 75878.084736488,
+          "qd_raw": -0.0038740611635148525,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.02527233399450779,
+          "qd": 0.0003750797754470981,
+          "mode": 0,
+          "requested_at": 75878.085334923,
+          "received_at": 75878.109813637,
+          "qd_raw": 0.04273468628525734,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04249126836657524,
+          "qd": -0.00018758851035703979,
+          "mode": 0,
+          "requested_at": 75878.110312592,
+          "received_at": 75878.134935608,
+          "qd_raw": -0.04114336520433426,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.153285447,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.018748652189970016,
+            0.0,
+            80.0,
+            5.0,
+            -0.0
+          ],
+          "estimated_effort": 0.0,
+          "requested_at": 75878.153471866,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.153877423
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018748652189970016,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75877.985693311,
+          "received_at": 75878.010253041,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0023861990775913,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75878.010602246,
+          "received_at": 75878.035149194,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005922900512814522,
+          "qd": -0.0002081657587137787,
+          "mode": 0,
+          "requested_at": 75878.035453805,
+          "received_at": 75878.059877074,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.134962959,
+          "diagnostics_received_at": 75878.152409161
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016068458557128906,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75878.060184751,
+          "received_at": 75878.084736488,
+          "qd_raw": -0.0038740611635148525,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.02527233399450779,
+          "qd": 0.0003750797754470981,
+          "mode": 0,
+          "requested_at": 75878.085334923,
+          "received_at": 75878.109813637,
+          "qd_raw": 0.04273468628525734,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04249126836657524,
+          "qd": -0.00018758851035703979,
+          "mode": 0,
+          "requested_at": 75878.110312592,
+          "received_at": 75878.134935608,
+          "qd_raw": -0.04114336520433426,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.183375366,
+      "phase": "enable-hold",
+      "commands": [
+        {
+          "axis": 2,
+          "values": [
+            -0.0023861990775913,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.0,
+          "requested_at": 75878.183402567,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.183965411
+        }
+      ],
+      "feedback": {
+        "2": {
+          "axis": 2,
+          "q": -0.0023861990775913,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75878.154235843,
+          "received_at": 75878.17869897,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.352595147,
+      "phase": "first-hold",
+      "commands": [
+        {
+          "axis": 2,
+          "values": [
+            -0.002641836879774928,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.0278173867992848,
+          "requested_at": 75878.35265799,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.353474556
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.0186634324491024,
+          "qd": 0.00042921915548749007,
+          "mode": 0,
+          "requested_at": 75878.1843067,
+          "received_at": 75878.208731626,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.002641836879774928,
+          "qd": -0.0046362311332141335,
+          "mode": 0,
+          "requested_at": 75878.209284399,
+          "received_at": 75878.233928696,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005880302749574184,
+          "qd": -0.00021376082571312476,
+          "mode": 0,
+          "requested_at": 75878.234648917,
+          "received_at": 75878.259237339,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.334703084,
+          "diagnostics_received_at": 75878.352204822
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.01603010855615139,
+          "qd": -0.00019203577380510218,
+          "mode": 0,
+          "requested_at": 75878.259887807,
+          "received_at": 75878.284438191,
+          "qd_raw": -0.05501732602715492,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.02515728585422039,
+          "qd": -0.0005760513698863978,
+          "mode": 0,
+          "requested_at": 75878.285027658,
+          "received_at": 75878.309557988,
+          "qd_raw": 0.039538778364658356,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04241457208991051,
+          "qd": -0.000383844166935599,
+          "mode": 0,
+          "requested_at": 75878.31018683,
+          "received_at": 75878.334683317,
+          "qd_raw": 0.020919516682624817,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.353514264,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.018748652189970016,
+            0.0,
+            80.0,
+            5.0,
+            -0.0
+          ],
+          "estimated_effort": 0.00896367504684663,
+          "requested_at": 75878.353747802,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.354305992
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.002641836879774928,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.0278173867992848,
+          "requested_at": 75878.354321705,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.354810745
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.0186634324491024,
+          "qd": 0.00042921915548749007,
+          "mode": 0,
+          "requested_at": 75878.1843067,
+          "received_at": 75878.208731626,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.002641836879774928,
+          "qd": -0.0046362311332141335,
+          "mode": 0,
+          "requested_at": 75878.209284399,
+          "received_at": 75878.233928696,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005880302749574184,
+          "qd": -0.00021376082571312476,
+          "mode": 0,
+          "requested_at": 75878.234648917,
+          "received_at": 75878.259237339,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.334703084,
+          "diagnostics_received_at": 75878.352204822
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.01603010855615139,
+          "qd": -0.00019203577380510218,
+          "mode": 0,
+          "requested_at": 75878.259887807,
+          "received_at": 75878.284438191,
+          "qd_raw": -0.05501732602715492,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.02515728585422039,
+          "qd": -0.0005760513698863978,
+          "mode": 0,
+          "requested_at": 75878.285027658,
+          "received_at": 75878.309557988,
+          "qd_raw": 0.039538778364658356,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04241457208991051,
+          "qd": -0.000383844166935599,
+          "mode": 0,
+          "requested_at": 75878.31018683,
+          "received_at": 75878.334683317,
+          "qd_raw": 0.020919516682624817,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.40183276,
+      "phase": "enable-hold",
+      "commands": [
+        {
+          "axis": 3,
+          "values": [
+            0.005837652366608381,
+            0.0,
+            150.0,
+            10.0,
+            0.0
+          ],
+          "estimated_effort": 0.0035350139420836165,
+          "requested_at": 75878.401885277,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.402713793
+        }
+      ],
+      "feedback": {
+        "3": {
+          "axis": 3,
+          "q": 0.005837652366608381,
+          "qd": -0.00035350139420836163,
+          "mode": 0,
+          "requested_at": 75878.355355343,
+          "received_at": 75878.379833401,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.379852306,
+          "diagnostics_received_at": 75878.39708096
+        }
+      }
+    },
+    {
+      "time": 75878.570441348,
+      "phase": "first-hold",
+      "commands": [
+        {
+          "axis": 3,
+          "values": [
+            0.005326324142515659,
+            0.0,
+            150.0,
+            10.0,
+            0.0
+          ],
+          "estimated_effort": 0.05226344323070127,
+          "requested_at": 75878.570478736,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.571247279
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.01870604231953621,
+          "qd": -0.00019474901240526703,
+          "mode": 0,
+          "requested_at": 75878.403089717,
+          "received_at": 75878.427536147,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0030253727454692125,
+          "qd": -0.0017534374347008479,
+          "mode": 0,
+          "requested_at": 75878.428098265,
+          "received_at": 75878.452582239,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005326324142515659,
+          "qd": -0.005226344323070127,
+          "mode": 0,
+          "requested_at": 75878.453202743,
+          "received_at": 75878.477659379,
+          "qd_raw": 0.0,
+          "iq_raw_a": -0.1913844347000122,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.552848675,
+          "diagnostics_received_at": 75878.57014614
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.015991760417819023,
+          "qd": -0.000175677468194596,
+          "mode": 0,
+          "requested_at": 75878.478220571,
+          "received_at": 75878.502679778,
+          "qd_raw": 0.05778161808848381,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025195633992552757,
+          "qd": 0.00017579943491575342,
+          "mode": 0,
+          "requested_at": 75878.50318892,
+          "received_at": 75878.527668189,
+          "qd_raw": 0.014782935380935669,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04245293140411377,
+          "qd": 0.00017586570007732945,
+          "mode": 0,
+          "requested_at": 75878.528281187,
+          "received_at": 75878.552823134,
+          "qd_raw": 0.014951138757169247,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.57128842,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.018748652189970016,
+            0.0,
+            80.0,
+            5.0,
+            -0.0
+          ],
+          "estimated_effort": 0.004382534696730925,
+          "requested_at": 75878.571625793,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.572217266
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.002641836879774928,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.03928581453527642,
+          "requested_at": 75878.57222999,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.572686351
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005326324142515659,
+            0.0,
+            150.0,
+            10.0,
+            0.0
+          ],
+          "estimated_effort": 0.05226344323070127,
+          "requested_at": 75878.572698013,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.57318486
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.01870604231953621,
+          "qd": -0.00019474901240526703,
+          "mode": 0,
+          "requested_at": 75878.403089717,
+          "received_at": 75878.427536147,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0030253727454692125,
+          "qd": -0.0017534374347008479,
+          "mode": 0,
+          "requested_at": 75878.428098265,
+          "received_at": 75878.452582239,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005326324142515659,
+          "qd": -0.005226344323070127,
+          "mode": 0,
+          "requested_at": 75878.453202743,
+          "received_at": 75878.477659379,
+          "qd_raw": 0.0,
+          "iq_raw_a": -0.1913844347000122,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.552848675,
+          "diagnostics_received_at": 75878.57014614
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.015991760417819023,
+          "qd": -0.000175677468194596,
+          "mode": 0,
+          "requested_at": 75878.478220571,
+          "received_at": 75878.502679778,
+          "qd_raw": 0.05778161808848381,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025195633992552757,
+          "qd": 0.00017579943491575342,
+          "mode": 0,
+          "requested_at": 75878.50318892,
+          "received_at": 75878.527668189,
+          "qd_raw": 0.014782935380935669,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04245293140411377,
+          "qd": 0.00017586570007732945,
+          "mode": 0,
+          "requested_at": 75878.528281187,
+          "received_at": 75878.552823134,
+          "qd_raw": 0.014951138757169247,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.602665798,
+      "phase": "enable-hold",
+      "commands": [
+        {
+          "axis": 4,
+          "values": [
+            0.015991760417819023,
+            0.0,
+            50.0,
+            5.0,
+            0.0
+          ],
+          "estimated_effort": 0.12482650578022003,
+          "requested_at": 75878.602695292,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.603225694
+        }
+      ],
+      "feedback": {
+        "4": {
+          "axis": 4,
+          "q": 0.015991760417819023,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75878.573518016,
+          "received_at": 75878.597964493,
+          "qd_raw": 0.024965301156044006,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.770959787,
+      "phase": "first-hold",
+      "commands": [
+        {
+          "axis": 4,
+          "values": [
+            0.016260206699371338,
+            0.0,
+            50.0,
+            5.0,
+            0.0
+          ],
+          "estimated_effort": 0.12340018525719643,
+          "requested_at": 75878.771010119,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.771558985
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018620822578668594,
+          "qd": 0.00042512098559905926,
+          "mode": 0,
+          "requested_at": 75878.603548449,
+          "received_at": 75878.627997359,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0030253727454692125,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75878.628481745,
+          "received_at": 75878.652935375,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005113283637911081,
+          "qd": -0.0010632330698769374,
+          "mode": 0,
+          "requested_at": 75878.6535339,
+          "received_at": 75878.678069152,
+          "qd_raw": 0.0,
+          "iq_raw_a": -0.25606414675712585,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.753171278,
+          "diagnostics_received_at": 75878.770655454
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016260206699371338,
+          "qd": 0.002552370726391141,
+          "mode": 0,
+          "requested_at": 75878.678664474,
+          "received_at": 75878.703168576,
+          "qd_raw": 0.024680037051439285,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025118935853242874,
+          "qd": -0.0003825168078036203,
+          "mode": 0,
+          "requested_at": 75878.703666139,
+          "received_at": 75878.728209371,
+          "qd_raw": 0.0011380808427929878,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04241457208991051,
+          "qd": -0.00019143130573200906,
+          "mode": 0,
+          "requested_at": 75878.728718065,
+          "received_at": 75878.753149486,
+          "qd_raw": 0.02155386097729206,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.771582586,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.018748652189970016,
+            0.0,
+            80.0,
+            5.0,
+            -0.0
+          ],
+          "estimated_effort": 0.012351973832109066,
+          "requested_at": 75878.771755988,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.772211956
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.002641836879774928,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.028765189927071333,
+          "requested_at": 75878.772224078,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.772634463
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005326324142515659,
+            0.0,
+            150.0,
+            10.0,
+            0.0
+          ],
+          "estimated_effort": 0.042588406389456074,
+          "requested_at": 75878.772645569,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.773049269
+        },
+        {
+          "axis": 4,
+          "values": [
+            0.016260206699371338,
+            0.0,
+            50.0,
+            5.0,
+            0.0
+          ],
+          "estimated_effort": 0.12340018525719643,
+          "requested_at": 75878.773060616,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.773513573
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018620822578668594,
+          "qd": 0.00042512098559905926,
+          "mode": 0,
+          "requested_at": 75878.603548449,
+          "received_at": 75878.627997359,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0030253727454692125,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75878.628481745,
+          "received_at": 75878.652935375,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005113283637911081,
+          "qd": -0.0010632330698769374,
+          "mode": 0,
+          "requested_at": 75878.6535339,
+          "received_at": 75878.678069152,
+          "qd_raw": 0.0,
+          "iq_raw_a": -0.25606414675712585,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.753171278,
+          "diagnostics_received_at": 75878.770655454
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016260206699371338,
+          "qd": 0.002552370726391141,
+          "mode": 0,
+          "requested_at": 75878.678664474,
+          "received_at": 75878.703168576,
+          "qd_raw": 0.024680037051439285,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025118935853242874,
+          "qd": -0.0003825168078036203,
+          "mode": 0,
+          "requested_at": 75878.703666139,
+          "received_at": 75878.728209371,
+          "qd_raw": 0.0011380808427929878,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04241457208991051,
+          "qd": -0.00019143130573200906,
+          "mode": 0,
+          "requested_at": 75878.728718065,
+          "received_at": 75878.753149486,
+          "qd_raw": 0.02155386097729206,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.803014919,
+      "phase": "enable-hold",
+      "commands": [
+        {
+          "axis": 5,
+          "values": [
+            0.025310683995485306,
+            0.0,
+            40.0,
+            4.0,
+            0.0
+          ],
+          "estimated_effort": 0.013844616711139679,
+          "requested_at": 75878.803040594,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.803536121
+        }
+      ],
+      "feedback": {
+        "5": {
+          "axis": 5,
+          "q": 0.025310683995485306,
+          "qd": 0.002732748207007188,
+          "mode": 0,
+          "requested_at": 75878.773872763,
+          "received_at": 75878.798336307,
+          "qd_raw": -0.0034611541777849197,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.97105816,
+      "phase": "first-hold",
+      "commands": [
+        {
+          "axis": 5,
+          "values": [
+            0.02515728585422039,
+            0.0,
+            40.0,
+            4.0,
+            -0.0
+          ],
+          "estimated_effort": 0.06788898259401321,
+          "requested_at": 75878.971083738,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.971421752
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018791263923048973,
+          "qd": -0.00085060623184162,
+          "mode": 0,
+          "requested_at": 75878.803880536,
+          "received_at": 75878.828417907,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.00315316510386765,
+          "qd": -0.0006364374788974365,
+          "mode": 0,
+          "requested_at": 75878.829245348,
+          "received_at": 75878.853758299,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005113283637911081,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75878.854297055,
+          "received_at": 75878.878753872,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.17418360710144043,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.954033916,
+          "diagnostics_received_at": 75878.970825767
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.01633690670132637,
+          "qd": 0.00038217522421759176,
+          "mode": 0,
+          "requested_at": 75878.879356931,
+          "received_at": 75878.903862693,
+          "qd_raw": 0.05607565492391586,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.02515728585422039,
+          "qd": -0.0011746773801474375,
+          "mode": 0,
+          "requested_at": 75878.904476986,
+          "received_at": 75878.928907014,
+          "qd_raw": 0.016972245648503304,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04245293140411377,
+          "qd": 0.0001910401798989562,
+          "mode": 0,
+          "requested_at": 75878.929434328,
+          "received_at": 75878.954016955,
+          "qd_raw": -0.031132839620113373,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75878.971440592,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.018748652189970016,
+            0.0,
+            80.0,
+            5.0,
+            -0.0
+          ],
+          "estimated_effort": 0.007661969805524628,
+          "requested_at": 75878.971534156,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.971700882
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.002641836879774928,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.04216824168033877,
+          "requested_at": 75878.971706566,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.971846296
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005326324142515659,
+            0.0,
+            150.0,
+            10.0,
+            0.0
+          ],
+          "estimated_effort": 0.0319560756906867,
+          "requested_at": 75878.971851803,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.971989539
+        },
+        {
+          "axis": 4,
+          "values": [
+            0.016260206699371338,
+            0.0,
+            50.0,
+            5.0,
+            0.0
+          ],
+          "estimated_effort": 0.28421327471733093,
+          "requested_at": 75878.971994312,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.972132886
+        },
+        {
+          "axis": 5,
+          "values": [
+            0.02515728585422039,
+            0.0,
+            40.0,
+            4.0,
+            -0.0
+          ],
+          "estimated_effort": 0.06788898259401321,
+          "requested_at": 75878.972137251,
+          "send_status": "host-send-complete",
+          "completed_at": 75878.972262653
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018791263923048973,
+          "qd": -0.00085060623184162,
+          "mode": 0,
+          "requested_at": 75878.803880536,
+          "received_at": 75878.828417907,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.00315316510386765,
+          "qd": -0.0006364374788974365,
+          "mode": 0,
+          "requested_at": 75878.829245348,
+          "received_at": 75878.853758299,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005113283637911081,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75878.854297055,
+          "received_at": 75878.878753872,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.17418360710144043,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75878.954033916,
+          "diagnostics_received_at": 75878.970825767
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.01633690670132637,
+          "qd": 0.00038217522421759176,
+          "mode": 0,
+          "requested_at": 75878.879356931,
+          "received_at": 75878.903862693,
+          "qd_raw": 0.05607565492391586,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.02515728585422039,
+          "qd": -0.0011746773801474375,
+          "mode": 0,
+          "requested_at": 75878.904476986,
+          "received_at": 75878.928907014,
+          "qd_raw": 0.016972245648503304,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04245293140411377,
+          "qd": 0.0001910401798989562,
+          "mode": 0,
+          "requested_at": 75878.929434328,
+          "received_at": 75878.954016955,
+          "qd_raw": -0.031132839620113373,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75879.001220632,
+      "phase": "enable-hold",
+      "commands": [
+        {
+          "axis": 6,
+          "values": [
+            0.04249126836657524,
+            0.0,
+            40.0,
+            4.0,
+            0.0
+          ],
+          "estimated_effort": 0.14546196162700653,
+          "requested_at": 75879.001243741,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.001597316
+        }
+      ],
+      "feedback": {
+        "6": {
+          "axis": 6,
+          "q": 0.04249126836657524,
+          "qd": 0.0008942858158983458,
+          "mode": 0,
+          "requested_at": 75878.972380696,
+          "received_at": 75878.996808193,
+          "qd_raw": 0.03636549040675163,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75879.167881895,
+      "phase": "first-hold",
+      "commands": [
+        {
+          "axis": 6,
+          "values": [
+            0.04241457208991051,
+            0.0,
+            40.0,
+            4.0,
+            -0.0
+          ],
+          "estimated_effort": 0.274714857339859,
+          "requested_at": 75879.167924629,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.168588124
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.0186634324491024,
+          "qd": 0.000646417646716676,
+          "mode": 0,
+          "requested_at": 75879.001721176,
+          "received_at": 75879.026084644,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.003195815719664097,
+          "qd": -0.00021615529397099882,
+          "mode": 0,
+          "requested_at": 75879.026530362,
+          "received_at": 75879.051102674,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005113283637911081,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75879.051497811,
+          "received_at": 75879.076020106,
+          "qd_raw": 0.0,
+          "iq_raw_a": -0.013303050771355629,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75879.150610574,
+          "diagnostics_received_at": 75879.16754627
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016298556700348854,
+          "qd": -0.00019464959428600062,
+          "mode": 0,
+          "requested_at": 75879.076326728,
+          "received_at": 75879.100934313,
+          "qd_raw": -0.03766685351729393,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025042235851287842,
+          "qd": -0.0005845127026865136,
+          "mode": 0,
+          "requested_at": 75879.101286043,
+          "received_at": 75879.125759215,
+          "qd_raw": 0.008282636292278767,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04241457208991051,
+          "qd": -0.0004987278419286648,
+          "mode": 0,
+          "requested_at": 75879.12616383,
+          "received_at": 75879.150592715,
+          "qd_raw": -0.06867871433496475,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75879.168615812,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.018748652189970016,
+            0.0,
+            80.0,
+            5.0,
+            -0.0
+          ],
+          "estimated_effort": 0.010049667502992559,
+          "requested_at": 75879.168823119,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.169430167
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.002641836879774928,
+            0.0,
+            75.0,
+            6.0,
+            0.0
+          ],
+          "estimated_effort": 0.042845344755513645,
+          "requested_at": 75879.169443304,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.169846569
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005326324142515659,
+            0.0,
+            150.0,
+            10.0,
+            0.0
+          ],
+          "estimated_effort": 0.0319560756906867,
+          "requested_at": 75879.169858032,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.170287739
+        },
+        {
+          "axis": 4,
+          "values": [
+            0.016260206699371338,
+            0.0,
+            50.0,
+            5.0,
+            0.0
+          ],
+          "estimated_effort": 0.19025176763534546,
+          "requested_at": 75879.170300021,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.170836529
+        },
+        {
+          "axis": 5,
+          "values": [
+            0.02515728585422039,
+            0.0,
+            40.0,
+            4.0,
+            -0.0
+          ],
+          "estimated_effort": 0.03773254528641701,
+          "requested_at": 75879.1708488,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.171132438
+        },
+        {
+          "axis": 6,
+          "values": [
+            0.04241457208991051,
+            0.0,
+            40.0,
+            4.0,
+            -0.0
+          ],
+          "estimated_effort": 0.274714857339859,
+          "requested_at": 75879.171140332,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.171318817
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.0186634324491024,
+          "qd": 0.000646417646716676,
+          "mode": 0,
+          "requested_at": 75879.001721176,
+          "received_at": 75879.026084644,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.003195815719664097,
+          "qd": -0.00021615529397099882,
+          "mode": 0,
+          "requested_at": 75879.026530362,
+          "received_at": 75879.051102674,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005113283637911081,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75879.051497811,
+          "received_at": 75879.076020106,
+          "qd_raw": 0.0,
+          "iq_raw_a": -0.013303050771355629,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75879.150610574,
+          "diagnostics_received_at": 75879.16754627
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016298556700348854,
+          "qd": -0.00019464959428600062,
+          "mode": 0,
+          "requested_at": 75879.076326728,
+          "received_at": 75879.100934313,
+          "qd_raw": -0.03766685351729393,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025042235851287842,
+          "qd": -0.0005845127026865136,
+          "mode": 0,
+          "requested_at": 75879.101286043,
+          "received_at": 75879.125759215,
+          "qd_raw": 0.008282636292278767,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04241457208991051,
+          "qd": -0.0004987278419286648,
+          "mode": 0,
+          "requested_at": 75879.12616383,
+          "received_at": 75879.150592715,
+          "qd_raw": -0.06867871433496475,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75879.337892904,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.01870604231953621,
+            0.0,
+            80.0,
+            5.0,
+            -6.032566764607133e-30
+          ],
+          "estimated_effort": 0.008071612116657589,
+          "requested_at": 75879.338028414,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.338316582
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.0023861990775913,
+            0.0,
+            75.0,
+            6.0,
+            3.3165029011134257e-13
+          ],
+          "estimated_effort": 0.06072124815579141,
+          "requested_at": 75879.33832504,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.338477615
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005965497810393572,
+            0.0,
+            150.0,
+            10.0,
+            1.427003379527123e-12
+          ],
+          "estimated_effort": 0.17232494297176862,
+          "requested_at": 75879.338484863,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.338629092
+        },
+        {
+          "axis": 4,
+          "values": [
+            0.016068458557128906,
+            0.0,
+            50.0,
+            5.0,
+            4.22148361319724e-13
+          ],
+          "estimated_effort": 0.18494354561013474,
+          "requested_at": 75879.338634539,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.338779845
+        },
+        {
+          "axis": 5,
+          "values": [
+            0.025195633992552757,
+            0.0,
+            40.0,
+            4.0,
+            -1.1622815139554467e-16
+          ],
+          "estimated_effort": 0.06507907062768947,
+          "requested_at": 75879.338784945,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.338909347
+        },
+        {
+          "axis": 6,
+          "values": [
+            0.0425296314060688,
+            0.0,
+            40.0,
+            4.0,
+            -1.7299563848842644e-16
+          ],
+          "estimated_effort": 0.19939373433589952,
+          "requested_at": 75879.338914127,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.339055209
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018620822578668594,
+          "qd": 0.0002508065694496819,
+          "mode": 0,
+          "requested_at": 75879.171464403,
+          "received_at": 75879.196124147,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.003195815719664097,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75879.196484199,
+          "received_at": 75879.221107418,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.004900243598967791,
+          "qd": -0.0012536811256474438,
+          "mode": 0,
+          "requested_at": 75879.221443452,
+          "received_at": 75879.245937664,
+          "qd_raw": 0.0,
+          "iq_raw_a": -0.06741774827241898,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75879.320829343,
+          "diagnostics_received_at": 75879.337770808
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.01645195484161377,
+          "qd": 0.0009029627252742377,
+          "mode": 0,
+          "requested_at": 75879.246235517,
+          "received_at": 75879.2707918,
+          "qd_raw": 0.03315374627709389,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025195633992552757,
+          "qd": 0.0009020800354640791,
+          "mode": 0,
+          "requested_at": 75879.271342445,
+          "received_at": 75879.295801552,
+          "qd_raw": -0.01626976765692234,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04245293140411377,
+          "qd": 0.00022543088565171455,
+          "mode": 0,
+          "requested_at": 75879.296266621,
+          "received_at": 75879.320809877,
+          "qd_raw": -0.049081433564424515,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75879.606022485,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.01870604231953621,
+            0.0,
+            80.0,
+            5.0,
+            -3.056442790028106e-20
+          ],
+          "estimated_effort": 0.0015903988154144612,
+          "requested_at": 75879.606205005,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.606675097
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.0023861990775913,
+            0.0,
+            75.0,
+            6.0,
+            0.005163132798845258
+          ],
+          "estimated_effort": 0.06364163815826585,
+          "requested_at": 75879.606690541,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.606864123
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005965497810393572,
+            0.0,
+            150.0,
+            10.0,
+            0.0222102262846932
+          ],
+          "estimated_effort": 0.16279701221713294,
+          "requested_at": 75879.606870443,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.607048835
+        },
+        {
+          "axis": 4,
+          "values": [
+            0.016068458557128906,
+            0.0,
+            50.0,
+            5.0,
+            0.00657053355265324
+          ],
+          "estimated_effort": 0.06822559440646236,
+          "requested_at": 75879.607055577,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.607209016
+        },
+        {
+          "axis": 5,
+          "values": [
+            0.025195633992552757,
+            0.0,
+            40.0,
+            4.0,
+            -1.8292714897280727e-06
+          ],
+          "estimated_effort": 0.05302052215235864,
+          "requested_at": 75879.607215538,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.607394335
+        },
+        {
+          "axis": 6,
+          "values": [
+            0.0425296314060688,
+            0.0,
+            40.0,
+            4.0,
+            -2.6926801704695908e-06
+          ],
+          "estimated_effort": 0.2769844636724495,
+          "requested_at": 75879.607405593,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.607591137
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.01870604231953621,
+          "qd": -0.00031807976308289226,
+          "mode": 0,
+          "requested_at": 75879.439459141,
+          "received_at": 75879.463968219,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.00315316510386765,
+          "qd": 0.000159342231449055,
+          "mode": 0,
+          "requested_at": 75879.464248362,
+          "received_at": 75879.488676737,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005070686340332031,
+          "qd": 0.0006365065423208671,
+          "mode": 0,
+          "requested_at": 75879.489116475,
+          "received_at": 75879.51382156,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.036981694400310516,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75879.588805452,
+          "diagnostics_received_at": 75879.605880741
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016528654843568802,
+          "qd": 0.00028628346440147406,
+          "mode": 0,
+          "requested_at": 75879.514172262,
+          "received_at": 75879.538687623,
+          "qd_raw": -0.007729049306362867,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.02527233399450779,
+          "qd": 0.0002864007271141215,
+          "mode": 0,
+          "requested_at": 75879.539074124,
+          "received_at": 75879.563683052,
+          "qd_raw": -0.012487673200666904,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.042299535125494,
+          "qd": -0.0005726884153407546,
+          "mode": 0,
+          "requested_at": 75879.564038818,
+          "received_at": 75879.58874357,
+          "qd_raw": -0.06694447994232178,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75879.874202582,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.01870604231953621,
+            0.0,
+            80.0,
+            5.0,
+            -2.188372798980406e-19
+          ],
+          "estimated_effort": 0.004201979316668258,
+          "requested_at": 75879.874378314,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.874743687
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.0023861990775913,
+            0.0,
+            75.0,
+            6.0,
+            0.02018608530195008
+          ],
+          "estimated_effort": 0.07322178899257571,
+          "requested_at": 75879.874755128,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.874959607
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005965497810393572,
+            0.0,
+            150.0,
+            10.0,
+            0.08683528092353872
+          ],
+          "estimated_effort": 0.21145335199967386,
+          "requested_at": 75879.874966846,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.875156714
+        },
+        {
+          "axis": 4,
+          "values": [
+            0.016068458557128906,
+            0.0,
+            50.0,
+            5.0,
+            0.02568890393138821
+          ],
+          "estimated_effort": 0.1050934666431039,
+          "requested_at": 75879.875163243,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.87533268
+        },
+        {
+          "axis": 5,
+          "values": [
+            0.025195633992552757,
+            0.0,
+            40.0,
+            4.0,
+            -7.130609933015384e-06
+          ],
+          "estimated_effort": 0.01155630167025673,
+          "requested_at": 75879.875339036,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.875508254
+        },
+        {
+          "axis": 6,
+          "values": [
+            0.0425296314060688,
+            0.0,
+            40.0,
+            4.0,
+            -1.0527510081161907e-05
+          ],
+          "estimated_effort": 0.19205381705227934,
+          "requested_at": 75879.875514372,
+          "send_status": "host-send-complete",
+          "completed_at": 75879.875686694
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.0186634324491024,
+          "qd": 0.00015863793639273374,
+          "mode": 0,
+          "requested_at": 75879.708031453,
+          "received_at": 75879.732592386,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0030679702758789062,
+          "qd": 0.00031714396984252664,
+          "mode": 0,
+          "requested_at": 75879.732920744,
+          "received_at": 75879.757267151,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005155881401151419,
+          "qd": 0.00031756096898121535,
+          "mode": 0,
+          "requested_at": 75879.757533388,
+          "received_at": 75879.781963413,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.29172444343566895,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75879.856740655,
+          "diagnostics_received_at": 75879.874068215
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016490304842591286,
+          "qd": -0.00014288206157733697,
+          "mode": 0,
+          "requested_at": 75879.782543386,
+          "received_at": 75879.807122877,
+          "qd_raw": 0.011662449687719345,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025233983993530273,
+          "qd": -0.00014292070135672193,
+          "mode": 0,
+          "requested_at": 75879.807489782,
+          "received_at": 75879.831928642,
+          "qd_raw": -0.002503792755305767,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04237623140215874,
+          "qd": 0.0002860780421761873,
+          "mode": 0,
+          "requested_at": 75879.83226226,
+          "received_at": 75879.856711414,
+          "qd_raw": -0.0464768223464489,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75880.141891529,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.01870604231953621,
+            0.0,
+            80.0,
+            5.0,
+            -1.724186281308192e-19
+          ],
+          "estimated_effort": 0.004997654351881708,
+          "requested_at": 75880.142141858,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.142506385
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.0023861990775913,
+            0.0,
+            75.0,
+            6.0,
+            0.04430995357269909
+          ],
+          "estimated_effort": 0.10373844302302292,
+          "requested_at": 75880.14251566,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.14267356
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005965497810393572,
+            0.0,
+            150.0,
+            10.0,
+            0.1905683992488491
+          ],
+          "estimated_effort": 0.3072031898545475,
+          "requested_at": 75880.142678787,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.142814213
+        },
+        {
+          "axis": 4,
+          "values": [
+            0.016068458557128906,
+            0.0,
+            50.0,
+            5.0,
+            0.05637842242824446
+          ],
+          "estimated_effort": 0.3225292359780015,
+          "requested_at": 75880.142819033,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.142951138
+        },
+        {
+          "axis": 5,
+          "values": [
+            0.025195633992552757,
+            0.0,
+            40.0,
+            4.0,
+            -1.568273501682549e-05
+          ],
+          "estimated_effort": 0.19061896876292514,
+          "requested_at": 75880.142956551,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.143094652
+        },
+        {
+          "axis": 6,
+          "values": [
+            0.0425296314060688,
+            0.0,
+            40.0,
+            4.0,
+            -2.3104470004599443e-05
+          ],
+          "estimated_effort": 0.09543667010568575,
+          "requested_at": 75880.143099076,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.14323689
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018748652189970016,
+          "qd": -0.00031777294343542355,
+          "mode": 0,
+          "requested_at": 75879.976217324,
+          "received_at": 75880.000762694,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.00315316510386765,
+          "qd": -0.0003176729132662627,
+          "mode": 0,
+          "requested_at": 75880.00106356,
+          "received_at": 75880.025492558,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.005198531784117222,
+          "qd": 0.00015898866642458743,
+          "mode": 0,
+          "requested_at": 75880.025778329,
+          "received_at": 75880.05023952,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.3598083257675171,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75880.124830687,
+          "diagnostics_received_at": 75880.141720529
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.01645195484161377,
+          "qd": -0.00014303743200852918,
+          "mode": 0,
+          "requested_at": 75880.05062093,
+          "received_at": 75880.07526862,
+          "qd_raw": 0.04939519986510277,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025195633992552757,
+          "qd": -0.00014305547110216564,
+          "mode": 0,
+          "requested_at": 75880.075553235,
+          "received_at": 75880.100020859,
+          "qd_raw": 0.04765082150697708,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04241457208991051,
+          "qd": 0.00014302882433505604,
+          "mode": 0,
+          "requested_at": 75880.100285275,
+          "received_at": 75880.124813728,
+          "qd_raw": -0.02270279824733734,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75880.41290467,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.01870604231953621,
+            0.0,
+            80.0,
+            5.0,
+            -9.6252390022947e-19
+          ],
+          "estimated_effort": 0.0034087896347045907,
+          "requested_at": 75880.413143787,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.413462278
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.0023861990775913,
+            0.0,
+            75.0,
+            6.0,
+            0.07731058568651135
+          ],
+          "estimated_effort": 0.12809926750482656,
+          "requested_at": 75880.413473374,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.413658011
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005965497810393572,
+            0.0,
+            150.0,
+            10.0,
+            0.3324677880210748
+          ],
+          "estimated_effort": 0.42824121257839515,
+          "requested_at": 75880.413665005,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.413804408
+        },
+        {
+          "axis": 4,
+          "values": [
+            0.016068458557128906,
+            0.0,
+            50.0,
+            5.0,
+            0.09835851876979577
+          ],
+          "estimated_effort": 0.2713639059567999,
+          "requested_at": 75880.413809676,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.41412167
+        },
+        {
+          "axis": 5,
+          "values": [
+            0.025195633992552757,
+            0.0,
+            40.0,
+            4.0,
+            -2.7530756417734637e-05
+          ],
+          "estimated_effort": 0.14139380392116688,
+          "requested_at": 75880.414126645,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.414283467
+        },
+        {
+          "axis": 6,
+          "values": [
+            0.0425296314060688,
+            0.0,
+            40.0,
+            4.0,
+            -4.030869576349098e-05
+          ],
+          "estimated_effort": 0.0767256330070199,
+          "requested_at": 75880.414290672,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.414463108
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018748652189970016,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75880.243722504,
+          "received_at": 75880.268161465,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0030253727454692125,
+          "qd": 0.00047510945457862917,
+          "mode": 0,
+          "requested_at": 75880.268459054,
+          "received_at": 75880.296046192,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.0053689745254814625,
+          "qd": 0.0006294931820503944,
+          "mode": 0,
+          "requested_at": 75880.296433987,
+          "received_at": 75880.321107571,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.5579783320426941,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75880.395852169,
+          "diagnostics_received_at": 75880.412745418
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016528654843568802,
+          "qd": 0.00028325526115518065,
+          "mode": 0,
+          "requested_at": 75880.321395744,
+          "received_at": 75880.346054811,
+          "qd_raw": 0.02999911457300186,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025233983993530273,
+          "qd": 0.00014157833942020722,
+          "mode": 0,
+          "requested_at": 75880.346370291,
+          "received_at": 75880.370953355,
+          "qd_raw": 0.034958068281412125,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04249126836657524,
+          "qd": 0.0002830112900080059,
+          "mode": 0,
+          "requested_at": 75880.371269005,
+          "received_at": 75880.395831532,
+          "qd_raw": 0.018787700682878494,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75880.681543033,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.01870604231953621,
+            0.0,
+            80.0,
+            5.0,
+            -2.862513218918588e-19
+          ],
+          "estimated_effort": 0.0049752572827135395,
+          "requested_at": 75880.681699894,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.682089978
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.0023861990775913,
+            0.0,
+            75.0,
+            6.0,
+            0.11792258257456678
+          ],
+          "estimated_effort": 0.1636064497647633,
+          "requested_at": 75880.682101694,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.682271359
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005965497810393572,
+            0.0,
+            150.0,
+            10.0,
+            0.506499949236079
+          ],
+          "estimated_effort": 0.5525870407850912,
+          "requested_at": 75880.682277233,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.682417037
+        },
+        {
+          "axis": 4,
+          "values": [
+            0.016068458557128906,
+            0.0,
+            50.0,
+            5.0,
+            0.14986392748792823
+          ],
+          "estimated_effort": 0.279449025963146,
+          "requested_at": 75880.68242244,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.682566785
+        },
+        {
+          "axis": 5,
+          "values": [
+            0.025195633992552757,
+            0.0,
+            40.0,
+            4.0,
+            -4.321365315484233e-05
+          ],
+          "estimated_effort": 0.3024924251313882,
+          "requested_at": 75880.682571392,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.682736981
+        },
+        {
+          "axis": 6,
+          "values": [
+            0.0425296314060688,
+            0.0,
+            40.0,
+            4.0,
+            -6.14218107316049e-05
+          ],
+          "estimated_effort": 0.19418731254254312,
+          "requested_at": 75880.682743185,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.682886073
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.0186634324491024,
+          "qd": 0.00031329352960178996,
+          "mode": 0,
+          "requested_at": 75880.515666012,
+          "received_at": 75880.540242859,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0029827223625034094,
+          "qd": 0.00015743680363138299,
+          "mode": 0,
+          "requested_at": 75880.540875233,
+          "received_at": 75880.565439577,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.0060933432541787624,
+          "qd": 0.0026910274981233684,
+          "mode": 0,
+          "requested_at": 75880.565740947,
+          "received_at": 75880.590159085,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.6913632750511169,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75880.664328817,
+          "diagnostics_received_at": 75880.681439179
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016605352982878685,
+          "qd": 0.00028517121718051454,
+          "mode": 0,
+          "requested_at": 75880.590463203,
+          "received_at": 75880.614896753,
+          "qd_raw": -0.020548075437545776,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025233983993530273,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 75880.615192172,
+          "received_at": 75880.639581404,
+          "qd_raw": 0.07522880285978317,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04237623140215874,
+          "qd": -0.0004283976786440639,
+          "mode": 0,
+          "requested_at": 75880.639850561,
+          "received_at": 75880.664306875,
+          "qd_raw": 0.046997472643852234,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    },
+    {
+      "time": 75880.950797989,
+      "commands": [
+        {
+          "axis": 1,
+          "values": [
+            -0.01870604231953621,
+            0.0,
+            80.0,
+            5.0,
+            -6.365437851413448e-19
+          ],
+          "estimated_effort": 0.011817535426000328,
+          "requested_at": 75880.95101567,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.95153634
+        },
+        {
+          "axis": 2,
+          "values": [
+            -0.0023861990775913,
+            0.0,
+            75.0,
+            6.0,
+            0.1658413293086703
+          ],
+          "estimated_effort": 0.19713549244143333,
+          "requested_at": 75880.951548927,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.951948613
+        },
+        {
+          "axis": 3,
+          "values": [
+            0.005965497810393572,
+            0.0,
+            150.0,
+            10.0,
+            0.7111653842601828
+          ],
+          "estimated_effort": 0.9458356949745235,
+          "requested_at": 75880.951959039,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.952321371
+        },
+        {
+          "axis": 4,
+          "values": [
+            0.016068458557128906,
+            0.0,
+            50.0,
+            5.0,
+            0.21045323571660332
+          ],
+          "estimated_effort": 0.6063188623497706,
+          "requested_at": 75880.952331244,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.952675663
+        },
+        {
+          "axis": 5,
+          "values": [
+            0.025195633992552757,
+            0.0,
+            40.0,
+            4.0,
+            -6.323159765266274e-05
+          ],
+          "estimated_effort": 0.15519482494424844,
+          "requested_at": 75880.952684525,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.95304595
+        },
+        {
+          "axis": 6,
+          "values": [
+            0.0425296314060688,
+            0.0,
+            40.0,
+            4.0,
+            -8.626566026884383e-05
+          ],
+          "estimated_effort": 0.06233850405309874,
+          "requested_at": 75880.953055582,
+          "send_status": "host-send-complete",
+          "completed_at": 75880.95340245
+        }
+      ],
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": -0.018578210845589638,
+          "qd": 0.0003182035020549238,
+          "mode": 0,
+          "requested_at": 75880.783482273,
+          "received_at": 75880.808068745,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.002727084793150425,
+          "qd": 0.0009546224109714441,
+          "mode": 0,
+          "requested_at": 75880.808428903,
+          "received_at": 75880.833464302,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.007243845146149397,
+          "qd": 0.004291821035096683,
+          "mode": 0,
+          "requested_at": 75880.833759029,
+          "received_at": 75880.85827794,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.31631797552108765,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 75880.933293,
+          "diagnostics_received_at": 75880.950653528
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.016835451126098633,
+          "qd": 0.0008575817935943367,
+          "mode": 0,
+          "requested_at": 75880.858731349,
+          "received_at": 75880.883249475,
+          "qd_raw": 0.07150319963693619,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.025195633992552757,
+          "qd": -0.0001427703740765168,
+          "mode": 0,
+          "requested_at": 75880.883690915,
+          "received_at": 75880.908308976,
+          "qd_raw": -0.03878289833664894,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.04222283512353897,
+          "qd": -0.0005703459672953827,
+          "mode": 0,
+          "requested_at": 75880.908790027,
+          "received_at": 75880.933273478,
+          "qd_raw": -0.012495096772909164,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        }
+      }
+    }
+  ]
+}

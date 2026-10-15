@@ -1,178 +1,60 @@
 // @vitest-environment jsdom
-import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, renderHook } from '@testing-library/react';
+import React from 'react';
 import { I18nProvider } from '../i18n';
 import { useGatewayBridge } from './useGatewayBridge';
 
 class FakeWebSocket {
   static OPEN = 1;
-
-  constructor(url) {
-    this.url = url;
-    this.readyState = 0;
-    this.onopen = null;
-    this.onclose = null;
-    this.onerror = null;
-    this.onmessage = null;
-    FakeWebSocket.instances.push(this);
+  static instances = [];
+  constructor(url) { this.url=url; this.readyState=0; this.sent=[]; FakeWebSocket.instances.push(this); }
+  close() { this.readyState=3; this.onclose?.(); }
+  send(raw) {
+    const request=JSON.parse(raw); this.sent.push(request);
+    this.onmessage?.({data:JSON.stringify({ok:true,req_id:request.req_id,data:{}})});
   }
-
-  close() {
-    this.readyState = 2;
-  }
-
-  send() {}
-
-  emitOpen() {
-    this.readyState = FakeWebSocket.OPEN;
-    this.onopen?.();
-  }
+  emitOpen() { this.readyState=1; this.onopen?.(); }
 }
-
-FakeWebSocket.instances = [];
-
-function Harness({ wsUrl = 'ws://example.com:9002', wsTokenEnabled = false, wsToken = '' }) {
-  const bridge = useGatewayBridge({
-    wsUrl,
-    channel: 'can0',
-    wsTokenEnabled,
-    wsToken,
-    pushLog: vi.fn(),
-    setStateSnapshot: vi.fn(),
-    onGatewayState: vi.fn(),
-    onGatewayParams: vi.fn(),
-  });
-
-  return (
-    <>
-      <div data-testid="status">{bridge.connText}</div>
-      <button onClick={bridge.connectWs}>Connect</button>
-      <button onClick={bridge.disconnectWs}>Disconnect</button>
-    </>
-  );
+function setup(extra={}) {
+  vi.stubGlobal('WebSocket',FakeWebSocket);
+  return renderHook(props=>useGatewayBridge({wsUrl:'ws://example.test:9002',channel:'can0',
+    pushLog:vi.fn(),setStateSnapshot:vi.fn(),onGatewayState:vi.fn(),onGatewayParams:vi.fn(),...props}),
+    {initialProps:extra,wrapper:({children})=><I18nProvider>{children}</I18nProvider>});
 }
+afterEach(()=>{cleanup();vi.useRealTimers();vi.unstubAllGlobals();FakeWebSocket.instances=[];});
 
-afterEach(() => {
-  cleanup();
-  vi.useRealTimers();
-  vi.restoreAllMocks();
-  vi.unstubAllGlobals();
-  FakeWebSocket.instances = [];
-});
-
-describe('useGatewayBridge token auth', () => {
-  it('connects without query token when disabled', () => {
-    vi.stubGlobal('WebSocket', FakeWebSocket);
-
-    render(
-      <I18nProvider>
-        <Harness />
-      </I18nProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
-    expect(FakeWebSocket.instances[0].url).toBe('ws://example.com:9002');
-  });
-
-  it('appends query token when enabled', () => {
-    vi.stubGlobal('WebSocket', FakeWebSocket);
-
-    render(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="secret-token" />
-      </I18nProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
-    expect(FakeWebSocket.instances[0].url).toBe(
-      'ws://example.com:9002/?motorbridge_ws_token=secret-token'
-    );
-  });
-
-  it('does not create a websocket when token auth is enabled without a token', () => {
-    vi.stubGlobal('WebSocket', FakeWebSocket);
-
-    render(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="" />
-      </I18nProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
+describe('legacy explicit read-only connections',()=>{
+  it.each([false,true])('allows manual connection and preserves token setting %s',async enabled=>{
+    const {result}=setup({wsTokenEnabled:enabled,wsToken:'test-token'});
     expect(FakeWebSocket.instances).toHaveLength(0);
-    expect(screen.getByTestId('status').textContent).toBe('ws: disconnected');
+    act(()=>result.current.connectWs()); const socket=FakeWebSocket.instances[0];
+    expect(new URL(socket.url).searchParams.get('motorbridge_ws_token')).toBe(enabled?'test-token':null);
+    await act(async()=>socket.emitOpen());
+    expect(result.current.connected).toBe(true);
+    expect(socket.sent.map(x=>x.op)).toEqual(['capabilities']);
+    await act(async()=>result.current.setTargetFor('robstride','rs-06',1,253));
+    expect(socket.sent.map(x=>x.op)).toEqual(['capabilities','set_target']);
+    await act(async()=>result.current.sendCmd('robstride_read_param',{param_id:0x7019,type:'f32'}));
+    expect(socket.sent.at(-1).op).toBe('robstride_read_param');
+    await expect(result.current.sendCmd('mit',{kp:1})).rejects.toThrow('LOCKED');
+    expect(socket.sent).toHaveLength(3);
   });
-
-
-  it('reconnects with the updated token when connect is clicked again', () => {
-    vi.stubGlobal('WebSocket', FakeWebSocket);
-
-    const { rerender } = render(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="secret-token" />
-      </I18nProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
-    act(() => {
-      FakeWebSocket.instances[0].emitOpen();
-    });
-
-    rerender(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="next-token" />
-      </I18nProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
-    expect(FakeWebSocket.instances).toHaveLength(2);
-    expect(FakeWebSocket.instances[1].url).toBe(
-      'ws://example.com:9002/?motorbridge_ws_token=next-token'
-    );
+  it('does not auto-connect/reconnect on mount, timer, close or remount',async()=>{
+    vi.useFakeTimers();const {result,unmount}=setup();
+    await act(async()=>vi.advanceTimersByTime(60000));expect(FakeWebSocket.instances).toHaveLength(0);
+    act(()=>result.current.connectWs()); const socket=FakeWebSocket.instances[0];
+    await act(async()=>socket.emitOpen());act(()=>socket.close());
+    await act(async()=>vi.advanceTimersByTime(60000));expect(FakeWebSocket.instances).toHaveLength(1);
+    expect(result.current.connected).toBe(false);
+    unmount();setup();await act(async()=>vi.advanceTimersByTime(60000));
+    expect(FakeWebSocket.instances).toHaveLength(1);
   });
-
-  it('uses the latest token during auto reconnect', async () => {
-    vi.useFakeTimers();
-    vi.stubGlobal('WebSocket', FakeWebSocket);
-
-    const { rerender } = render(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="secret-token" />
-      </I18nProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
-
-    act(() => {
-      FakeWebSocket.instances[0].emitOpen();
-    });
-
-    rerender(
-      <I18nProvider>
-        <Harness wsTokenEnabled wsToken="next-token" />
-      </I18nProvider>
-    );
-
-    act(() => {
-      FakeWebSocket.instances[0].onclose?.();
-    });
-
-    await act(async () => {
-      vi.runOnlyPendingTimers();
-      await Promise.resolve();
-    });
-
-    expect(FakeWebSocket.instances).toHaveLength(2);
-    expect(FakeWebSocket.instances[1].url).toBe(
-      'ws://example.com:9002/?motorbridge_ws_token=next-token'
-    );
-
-    vi.useRealTimers();
+  it('cleans up the socket and ignores late close events from an old connection',async()=>{
+    const {result,unmount}=setup();act(()=>result.current.connectWs());const first=FakeWebSocket.instances[0];
+    await act(async()=>first.emitOpen());act(()=>result.current.disconnectWs());act(()=>result.current.connectWs());
+    const second=FakeWebSocket.instances[1];await act(async()=>second.emitOpen());
+    act(()=>first.onclose?.());expect(result.current.connected).toBe(true);
+    unmount();expect(second.readyState).toBe(3);
   });
 });

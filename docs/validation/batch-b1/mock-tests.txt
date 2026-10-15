@@ -1,0 +1,30 @@
+test_ack_alone_does_not_confirm_arrival_and_task_timeout (b1_tests.MitMockTests.test_ack_alone_does_not_confirm_arrival_and_task_timeout) ... ok
+test_bad_waypoint_limits_nonfinite_and_seventh_axis (b1_tests.MitMockTests.test_bad_waypoint_limits_nonfinite_and_seventh_axis) ... ok
+test_cancel_during_read_prevents_next_frame (b1_tests.MitMockTests.test_cancel_during_read_prevents_next_frame) ... ok
+test_cancel_preempts_missing_feedback_and_motion_ack (b1_tests.MitMockTests.test_cancel_preempts_missing_feedback_and_motion_ack) ... ok
+test_clock_reverse_early_tick_and_cycle_stall (b1_tests.MitMockTests.test_clock_reverse_early_tick_and_cycle_stall) ... ok
+test_config_changes_invalidate_preview_and_stop_active_task (b1_tests.MitMockTests.test_config_changes_invalidate_preview_and_stop_active_task) ... ok
+test_configuration_is_explicit_mock_only_and_immutable (b1_tests.MitMockTests.test_configuration_is_explicit_mock_only_and_immutable) ... ok
+test_connection_read_write_and_negative_ack_errors (b1_tests.MitMockTests.test_connection_read_write_and_negative_ack_errors) ... ok
+test_continuity_and_bounds_independent_numerical_derivatives (b1_tests.MitMockTests.test_continuity_and_bounds_independent_numerical_derivatives) ... ok
+test_delayed_ack_does_not_create_catchup_burst (b1_tests.MitMockTests.test_delayed_ack_does_not_create_catchup_burst) ... ok
+test_expired_command_is_not_replayed (b1_tests.MitMockTests.test_expired_command_is_not_replayed) ... ok
+test_expired_replayed_changed_task_and_copied_plan (b1_tests.MitMockTests.test_expired_replayed_changed_task_and_copied_plan) ... ok
+test_extreme_finite_duration_is_rejected_without_frames (b1_tests.MitMockTests.test_extreme_finite_duration_is_rejected_without_frames) ... ok
+test_feedback_nonfinite_mode_identity_validity_speed (b1_tests.MitMockTests.test_feedback_nonfinite_mode_identity_validity_speed) ... ok
+test_feedback_timeout_each_axis (b1_tests.MitMockTests.test_feedback_timeout_each_axis) ... ok
+test_feedback_timestamp_and_sequence_order (b1_tests.MitMockTests.test_feedback_timestamp_and_sequence_order) ... ok
+test_first_pose_drift_and_moving_start_rejected (b1_tests.MitMockTests.test_first_pose_drift_and_moving_start_rejected) ... ok
+test_first_target_raw_feedback_and_complete_six_axes (b1_tests.MitMockTests.test_first_target_raw_feedback_and_complete_six_axes) ... ok
+test_invalid_replacement_preview_invalidates_previous_token (b1_tests.MitMockTests.test_invalid_replacement_preview_invalidates_previous_token) ... ok
+test_missing_ack_no_extra_motion_and_fault (b1_tests.MitMockTests.test_missing_ack_no_extra_motion_and_fault) ... ok
+test_no_hardware_transport_or_subclass_adapter (b1_tests.MitMockTests.test_no_hardware_transport_or_subclass_adapter) ... ok
+test_reset_and_process_restart_never_replay_frames (b1_tests.MitMockTests.test_reset_and_process_restart_never_replay_frames) ... ok
+test_six_axis_feedback_skew_is_not_hidden_by_freshest_axis (b1_tests.MitMockTests.test_six_axis_feedback_skew_is_not_hidden_by_freshest_axis) ... ok
+test_stop_ack_delayed_missing_negative_and_send_failure (b1_tests.MitMockTests.test_stop_ack_delayed_missing_negative_and_send_failure) ... ok
+test_tracking_error_and_estimated_torque_rejection (b1_tests.MitMockTests.test_tracking_error_and_estimated_torque_rejection) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.190s
+
+OK

@@ -1,0 +1,6 @@
+test_historical_query_latency_keeps_startup_and_cycle_within_existing_guards (tests.test_native_xyz_timing.NativeXYZTiming) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.174s
+
+OK

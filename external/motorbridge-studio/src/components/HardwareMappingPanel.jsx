@@ -1,7 +1,7 @@
 import React from 'react';
 import { defaultMapping, MAPPING_KEY, validateMapping } from '../lib/hardwareMapping';
 
-export function HardwareMappingPanel({ profile, onChange, mapped, source, onSource }) {
+export function HardwareMappingPanel({ profile, onChange, mapped, source, onSource, showSourceControls = true }) {
   const [message, setMessage] = React.useState('官方基准为同向、零修正；首次使用仍需要逐轴与实物核对。');
   const confirmed = profile.axes.filter(axis => axis.confirmed).length;
   function update(index, patch) {
@@ -15,12 +15,12 @@ export function HardwareMappingPanel({ profile, onChange, mapped, source, onSour
       setMessage(`映射已保存到本浏览器，已人工核对 ${confirmed}/6 轴；不会因此开放实机运动。`);
     } catch (error) { setMessage(`保存失败：${error.message}`); }
   }
-  return <section className="card glass hardwareMapping" aria-label="实机与模型对应">
-    <h3>实机与模型对应 <small>设备 {profile.deviceId}</small></h3>
-    <p>选择「实机姿态」后，三维模型跟随电机反馈显示。方向与零位修正只改变软件换算，不向电机写入零位、位置或使能。</p>
+  return <section className="card glass hardwareMapping" aria-label="关节映射（首次验收/高级调试）">
+    <h3>关节映射（首次验收/高级调试） <small>设备 {profile.deviceId}</small></h3>
+    <p>实机模式的三维模型跟随电机反馈显示。方向与零位修正只改变软件换算，不向电机写入零位、位置或使能。</p>
     <div className="consoleActions">
-      <button aria-pressed={source === 'simulation'} onClick={() => onSource('simulation')}>显示仿真姿态</button>
-      <button aria-pressed={source === 'hardware'} disabled={!mapped.complete && source !== 'hardware'} onClick={() => onSource('hardware')}>显示实机姿态（只读）</button>
+      {showSourceControls && <><button aria-pressed={source === 'simulation'} onClick={() => onSource('simulation')}>显示仿真姿态</button>
+      <button aria-pressed={source === 'hardware'} disabled={!mapped.complete && source !== 'hardware'} onClick={() => onSource('hardware')}>显示实机姿态（只读）</button></>}
       <button onClick={save}>保存映射到本机</button>
       <button onClick={() => { onChange(defaultMapping()); setMessage('已恢复官方基准草稿，全部核对标记清除；保存后才替换本机记录。'); }}>恢复官方基准草稿</button>
     </div>

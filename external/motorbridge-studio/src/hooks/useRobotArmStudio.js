@@ -67,7 +67,6 @@ export function useRobotArmStudio({
 
   const ensureRobotArmCards = () => {
     const profile = normalizeRobotArmModel(robotArmModel);
-    const defaultMotorModel = armMotorModelForProfile(profile);
     const armHits = ROBOT_ARM_JOINTS.map((j) => buildRobotArmHit(j, profile));
 
     setHits((prev) => {
@@ -78,20 +77,20 @@ export function useRobotArmStudio({
         if (idx >= 0) {
           const old = merged[idx];
           const keepModel = String(old.model || '').trim();
-          const resolvedModel = keepModel && keepModel !== 'auto' ? keepModel : defaultMotorModel;
+          const resolvedModel = armVendorForProfile(profile) === 'robstride' ? h.model : keepModel && keepModel !== 'auto' ? keepModel : h.model;
           merged[idx] = {
             ...old,
             ...h,
             model: resolvedModel,
-            model_guess: old.model_guess || resolvedModel,
+            model_guess: armVendorForProfile(profile) === 'robstride' ? resolvedModel : old.model_guess || resolvedModel,
             arm_profile: profile,
             online: old.online ?? false,
           };
         } else {
           merged.push({
             ...h,
-            model: defaultMotorModel,
-            model_guess: defaultMotorModel,
+            model: h.model,
+            model_guess: h.model,
             arm_profile: profile,
           });
         }
@@ -115,7 +114,9 @@ export function useRobotArmStudio({
     () =>
       ROBOT_ARM_JOINTS.map((j) => {
         const found = hits.find((h) => isProfileJointHit(h, robotArmModel, j));
-        const hit = found || buildRobotArmHit(j, robotArmModel);
+        const hit = found && armVendorForProfile(robotArmModel) === 'robstride'
+          ? { ...found, model: armMotorModelForProfile(robotArmModel, j.joint) }
+          : found || buildRobotArmHit(j, robotArmModel);
         const key = motorKey(hit);
         const control = normalizeControlForHit(hit, controls[key]);
         return { joint: j.joint, hit, control, key };

@@ -26,10 +26,16 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-PIDFILE="$ROOT/outputs/dashboard.pid"
-LOGFILE="$ROOT/outputs/dashboard.log"
-PYTHON="/home/bonvoyage/.local/share/robotics/envs/rebot-sim/bin/python"
-[ -x "$PYTHON" ] || PYTHON="$HOME/.local/share/robotics/envs/rebot-sim/bin/python"
+if [ "$PORT" = 8765 ]; then
+  RUN_OUTPUT="${REBOT_OUTPUT_DIR:-$ROOT/outputs}"
+else
+  RUN_OUTPUT="${REBOT_OUTPUT_DIR:-$ROOT/outputs/instances/$PORT}"
+fi
+PIDFILE="$RUN_OUTPUT/dashboard.pid"
+LOGFILE="$RUN_OUTPUT/dashboard.log"
+PYTHON="${REBOT_PYTHON:-$HOME/.local/share/robotics/envs/rebot-sim/bin/python}"
+if [ ! -x "$PYTHON" ] && [ -x "$ROOT/.venv-sim/bin/python" ]; then PYTHON="$ROOT/.venv-sim/bin/python"; fi
+if [ ! -x "$PYTHON" ]; then echo "找不到仿真 Python，请设置 REBOT_PYTHON 或按 README 安装 .venv-sim" >&2; exit 1; fi
 
 listening_pid() {
   # 端口没在监听时返回空；调用方用 [ -z ] 判断。
@@ -68,9 +74,9 @@ else
   echo "端口 $PORT 当前无服务"
 fi
 
-mkdir -p "$ROOT/outputs"
+mkdir -p "$RUN_OUTPUT"
 cd "$ROOT"
-MUJOCO_GL=egl PYOPENGL_PLATFORM=egl setsid nohup "$PYTHON" scripts/rebot_sim.py serve --port "$PORT" --host "$HOST" \
+REBOT_OUTPUT_DIR="$RUN_OUTPUT" MUJOCO_GL=egl PYOPENGL_PLATFORM=egl setsid nohup "$PYTHON" scripts/rebot_sim.py serve --port "$PORT" --host "$HOST" \
   >> "$LOGFILE" 2>&1 < /dev/null &
 
 for _ in $(seq 1 120); do

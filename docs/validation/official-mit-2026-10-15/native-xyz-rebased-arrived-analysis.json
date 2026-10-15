@@ -1,0 +1,210 @@
+{
+  "type": "authorized-six-axis-native-csp-held-orientation-xyz-result",
+  "record": "native-xyz-rebased-arrived.json",
+  "sha256": "7ec22b73ca71975d1fc110249d254fc99651c1d75c32800cf7730689e7a70b79",
+  "authorization": "用户答复：批准这一次新目标试验；[293.98,64.31,226.04] mm，保持朝向，六轴≤0.5°/0.02 rad/s/15秒，临时10 A及1/3/9/3/1/1 N·m，结束失能恢复，PID/零位/草稿不改，J7不参与。该次许可已消费。",
+  "user_stop_observation": "已安静，无异常",
+  "state": "ARRIVED",
+  "requested_xyz_mm": [
+    293.98,
+    64.31,
+    226.04
+  ],
+  "arrival_xyz_mm": [
+    294.0001795032912,
+    64.37908729622549,
+    225.86966014331878
+  ],
+  "model_tcp_error_mm": 0.18443023403025563,
+  "enable_attempt_to_stop_request_s": 9.144174271001248,
+  "host_command_batches": 51,
+  "axis_results": [
+    {
+      "axis": 1,
+      "start_deg": -11.315918468739564,
+      "target_deg": -11.320745243612029,
+      "commanded_delta_deg": -0.004826774872465648,
+      "arrived_deg": -11.32568393170539,
+      "measured_movement_deg": -0.009765462965825731,
+      "arrival_error_deg": -0.004938688093360082,
+      "max_position_difference_speed_rad_s": 0.0025389248392926013,
+      "max_abs_raw_current_a": 0.49636685848236084,
+      "released_deg": -11.335449394671215
+    },
+    {
+      "axis": 2,
+      "start_deg": -0.10009718267869055,
+      "target_deg": 0.26846682279143813,
+      "commanded_delta_deg": 0.3685640054701287,
+      "arrived_deg": 0.2661132680891146,
+      "measured_movement_deg": 0.36621045076780523,
+      "arrival_error_deg": -0.00235355470232348,
+      "max_position_difference_speed_rad_s": 0.002122715156022173,
+      "max_abs_raw_current_a": 2.596144914627075,
+      "released_deg": -0.01953130612772831
+    },
+    {
+      "axis": 3,
+      "start_deg": 0.29052892653566237,
+      "target_deg": 0.6729451250295236,
+      "commanded_delta_deg": 0.3824161984938612,
+      "arrived_deg": 0.6445330955449275,
+      "measured_movement_deg": 0.3540041690092652,
+      "arrival_error_deg": -0.028412029484596053,
+      "max_position_difference_speed_rad_s": 0.0038071652946696133,
+      "max_abs_raw_current_a": 3.3352699279785156,
+      "released_deg": 0.2661132680891146
+    },
+    {
+      "axis": 4,
+      "start_deg": 0.7229010852560671,
+      "target_deg": 0.6992588945111683,
+      "commanded_delta_deg": -0.02364219074489881,
+      "arrived_deg": 0.7141120191764359,
+      "measured_movement_deg": -0.008789066079631251,
+      "arrival_error_deg": 0.014853124665267559,
+      "max_position_difference_speed_rad_s": 0.0012597807228994942,
+      "max_abs_raw_current_a": 0.3670078217983246,
+      "released_deg": 0.7778321879648071
+    },
+    {
+      "axis": 5,
+      "start_deg": 1.4853517405708585,
+      "target_deg": 1.4878481725419823,
+      "commanded_delta_deg": 0.002496431971123989,
+      "arrived_deg": 1.4985352863294523,
+      "measured_movement_deg": 0.013183545758593988,
+      "arrival_error_deg": 0.010687113787469999,
+      "max_position_difference_speed_rad_s": 0.0015171130761634254,
+      "max_abs_raw_current_a": 0.14671437442302704,
+      "released_deg": 1.4809571541701898
+    },
+    {
+      "axis": 6,
+      "start_deg": 2.054442995494615,
+      "target_deg": 2.065382096596587,
+      "commanded_delta_deg": 0.01093910110197187,
+      "arrived_deg": 2.0588375818952835,
+      "measured_movement_deg": 0.004394586400668516,
+      "arrival_error_deg": -0.0065445147013033535,
+      "max_position_difference_speed_rad_s": 0.002297665225171062,
+      "max_abs_raw_current_a": 0.16173329949378967,
+      "released_deg": 2.069824581505484
+    }
+  ],
+  "stop_sdk_status_and_quiet_confirmed": true,
+  "runtime_restoration": {
+    "ok": true,
+    "restored": {
+      "1": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "2": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "3": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "4": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "5": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "6": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ]
+    },
+    "errors": {},
+    "old_target_restored": false
+  },
+  "protected_register_snapshots": {
+    "1": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 57.0,
+      "0x700b": 36.0,
+      "0x701e": 30.0,
+      "0x701f": 6.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "2": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 57.0,
+      "0x700b": 36.0,
+      "0x701e": 30.0,
+      "0x701f": 6.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "3": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 57.0,
+      "0x700b": 36.0,
+      "0x701e": 30.0,
+      "0x701f": 6.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "4": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 16.0,
+      "0x700b": 14.0,
+      "0x701e": 30.0,
+      "0x701f": 5.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "5": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 16.0,
+      "0x700b": 14.0,
+      "0x701e": 30.0,
+      "0x701f": 5.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "6": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 16.0,
+      "0x700b": 14.0,
+      "0x701e": 30.0,
+      "0x701f": 5.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    }
+  },
+  "parameter_writes_scope": "declared temporary runtime registers, measured-position preload and loc_ref; no PID/zero/flash/draft/J7 writes",
+  "source_timing": "host monotonic timestamps and synchronous SDK reads, not independently timestamped drive telemetry",
+  "physical_acceptance": false,
+  "limits": [
+    "第二次邻近XYZ反馈到位，保持朝向来自模型和关节目标，非独立空间/朝向标定",
+    "J6目标基本保持；未验收主动转动，J7未参与",
+    "任务结束自动失能，释放后约1.9mm目标距离不作为到位误差；不是长期通电保持",
+    "SDK同步阻塞仍可延迟软件撤力，主机曲线不保证驱动器内部加速度或jerk"
+  ]
+}

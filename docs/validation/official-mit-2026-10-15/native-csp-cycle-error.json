@@ -1,0 +1,895 @@
+{
+  "state": "FAULT",
+  "busy": false,
+  "axis": 3,
+  "reason": "CSP 反馈周期延迟超限",
+  "feedback": {
+    "1": {
+      "axis": 1,
+      "q": -0.024032363668084145,
+      "qd": -0.000159099775089445,
+      "mode": 0,
+      "requested_at": 79156.061563322,
+      "received_at": 79156.086066221,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "2": {
+      "axis": 2,
+      "q": -0.005837652366608381,
+      "qd": -0.0003184292666815202,
+      "mode": 0,
+      "requested_at": 79156.086526332,
+      "received_at": 79156.110934533,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "3": {
+      "axis": 3,
+      "q": 0.005241129081696272,
+      "qd": -0.0006017434090410043,
+      "mode": 5,
+      "requested_at": 79156.673704671,
+      "received_at": 79156.698112041,
+      "qd_raw": 0.0,
+      "iq_raw_a": 0.0,
+      "torque_raw_nm": 0.0,
+      "diagnostics_requested_at": 79156.698128553,
+      "diagnostics_received_at": 79156.714884202
+    },
+    "4": {
+      "axis": 4,
+      "q": 0.01503301877528429,
+      "qd": 0.0,
+      "mode": 0,
+      "requested_at": 79156.136118003,
+      "received_at": 79156.160507111,
+      "qd_raw": 0.00037699565291404724,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "5": {
+      "axis": 5,
+      "q": 0.019289808347821236,
+      "qd": 0.0005751983732686721,
+      "mode": 0,
+      "requested_at": 79156.160798323,
+      "received_at": 79156.185284277,
+      "qd_raw": -0.007394053041934967,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "6": {
+      "axis": 6,
+      "q": 0.0425296314060688,
+      "qd": 0.0,
+      "mode": 0,
+      "requested_at": 79156.185549092,
+      "received_at": 79156.210049789,
+      "qd_raw": 0.09189320355653763,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    }
+  },
+  "physical_acceptance": false,
+  "axes": [
+    3
+  ],
+  "motion_arrived_before_stop": false,
+  "stop": {
+    "requested": true,
+    "policy": "explicitly-supported-release",
+    "attempted_axes": [
+      3
+    ],
+    "sent_axes": [
+      3
+    ],
+    "sdk_status_ack_axes": [
+      3
+    ],
+    "send_status": {
+      "3": "host-send-complete-and-sdk-status-observed"
+    },
+    "errors": {},
+    "physical_stopped": false,
+    "disabled_status": {
+      "arbitration_id": 33555453,
+      "mode_state": 0,
+      "fault_bits": 0,
+      "source": "SDK status after disable; no independent drive timestamp"
+    },
+    "observations": [
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.0053689745254814625,
+          "qd": 0.0013301179503385505,
+          "mode": 5,
+          "requested_at": 79156.231372816,
+          "received_at": 79156.271974515,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 79156.272058368,
+          "diagnostics_received_at": 79156.289397699
+        }
+      },
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.0054115718230605125,
+          "qd": 0.0002830863674450766,
+          "mode": 5,
+          "requested_at": 79156.389947278,
+          "received_at": 79156.41434918,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 79156.414376362,
+          "diagnostics_received_at": 79156.431459115
+        }
+      },
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.005326324142515659,
+          "qd": -0.0005995768218643023,
+          "mode": 5,
+          "requested_at": 79156.532101649,
+          "received_at": 79156.556554302,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 79156.556581219,
+          "diagnostics_received_at": 79156.573278851
+        }
+      },
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.005241129081696272,
+          "qd": -0.0006017434090410043,
+          "mode": 5,
+          "requested_at": 79156.673704671,
+          "received_at": 79156.698112041,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 79156.698128553,
+          "diagnostics_received_at": 79156.714884202
+        }
+      }
+    ],
+    "stationary_sample": true
+  },
+  "frames": 1,
+  "failure_feedback": {
+    "1": {
+      "axis": 1,
+      "q": -0.024032363668084145,
+      "qd": -0.000159099775089445,
+      "mode": 0,
+      "requested_at": 79156.061563322,
+      "received_at": 79156.086066221,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "2": {
+      "axis": 2,
+      "q": -0.005837652366608381,
+      "qd": -0.0003184292666815202,
+      "mode": 0,
+      "requested_at": 79156.086526332,
+      "received_at": 79156.110934533,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "3": {
+      "axis": 3,
+      "q": 0.005198531784117222,
+      "qd": 0.0,
+      "mode": 5,
+      "requested_at": 79156.111301331,
+      "received_at": 79156.135763854,
+      "qd_raw": 0.0,
+      "iq_raw_a": 0.3279058635234833,
+      "torque_raw_nm": 0.0,
+      "diagnostics_requested_at": 79156.210085956,
+      "diagnostics_received_at": 79156.226908941
+    },
+    "4": {
+      "axis": 4,
+      "q": 0.01503301877528429,
+      "qd": 0.0,
+      "mode": 0,
+      "requested_at": 79156.136118003,
+      "received_at": 79156.160507111,
+      "qd_raw": 0.00037699565291404724,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "5": {
+      "axis": 5,
+      "q": 0.019289808347821236,
+      "qd": 0.0005751983732686721,
+      "mode": 0,
+      "requested_at": 79156.160798323,
+      "received_at": 79156.185284277,
+      "qd_raw": -0.007394053041934967,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "6": {
+      "axis": 6,
+      "q": 0.0425296314060688,
+      "qd": 0.0,
+      "mode": 0,
+      "requested_at": 79156.185549092,
+      "received_at": 79156.210049789,
+      "qd_raw": 0.09189320355653763,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    }
+  },
+  "control": {
+    "mode": "native-csp-j3-v1",
+    "axis": 3,
+    "delta_deg": 0.5,
+    "speed_limit_rad_s": 0.02,
+    "task_timeout_s": 5.0,
+    "runtime_registers": {
+      "0x7005": 5,
+      "0x7017": 0.02,
+      "0x7018": 10.0,
+      "0x700b": 9.0
+    },
+    "pid_source": "live drive parameters, not overwritten",
+    "config_fingerprint": "ad8624898ceb1a033b6bf8c4d1f500d73f45e70c43cbb038ef7ba70cad08f4d9"
+  },
+  "hardware_permission": false,
+  "note": "试验执行记录不是动态标定、转矩实测或物理停止验收",
+  "register_snapshot": {
+    "0x7005": 0,
+    "0x7017": 1.0,
+    "0x7018": 57.0,
+    "0x700b": 36.0,
+    "0x701e": 30.0,
+    "0x701f": 6.0,
+    "0x7020": 0.019999999552965164,
+    "0x702b": 0.0
+  },
+  "restoration": {
+    "ok": true,
+    "restored": [
+      "0x7005",
+      "0x7017",
+      "0x7018",
+      "0x700b"
+    ],
+    "old_target_restored": false
+  },
+  "arrival_feedback": {},
+  "expected_start": [
+    -0.024202806875109673,
+    -0.005795055069029331,
+    0.005795055069029331,
+    0.015148067846894264,
+    0.019098063930869102,
+    0.04249126836657524
+  ],
+  "target": [
+    -0.024202806875109673,
+    -0.005795055069029331,
+    0.014521701329000979,
+    0.015148067846894264,
+    0.019098063930869102,
+    0.04249126836657524
+  ],
+  "drive_feedback_evidence": null,
+  "command_evidence": "host CSP register requests; explicit readbacks separately recorded",
+  "result": {
+    "state": "FAULT",
+    "reason": "CSP 反馈周期延迟超限",
+    "motion_arrived_before_stop": false,
+    "stop": {
+      "requested": true,
+      "policy": "explicitly-supported-release",
+      "attempted_axes": [
+        3
+      ],
+      "sent_axes": [
+        3
+      ],
+      "sdk_status_ack_axes": [
+        3
+      ],
+      "send_status": {
+        "3": "host-send-complete-and-sdk-status-observed"
+      },
+      "errors": {},
+      "physical_stopped": false,
+      "disabled_status": {
+        "arbitration_id": 33555453,
+        "mode_state": 0,
+        "fault_bits": 0,
+        "source": "SDK status after disable; no independent drive timestamp"
+      },
+      "observations": [
+        {
+          "3": {
+            "axis": 3,
+            "q": 0.0053689745254814625,
+            "qd": 0.0013301179503385505,
+            "mode": 5,
+            "requested_at": 79156.231372816,
+            "received_at": 79156.271974515,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 79156.272058368,
+            "diagnostics_received_at": 79156.289397699
+          }
+        },
+        {
+          "3": {
+            "axis": 3,
+            "q": 0.0054115718230605125,
+            "qd": 0.0002830863674450766,
+            "mode": 5,
+            "requested_at": 79156.389947278,
+            "received_at": 79156.41434918,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 79156.414376362,
+            "diagnostics_received_at": 79156.431459115
+          }
+        },
+        {
+          "3": {
+            "axis": 3,
+            "q": 0.005326324142515659,
+            "qd": -0.0005995768218643023,
+            "mode": 5,
+            "requested_at": 79156.532101649,
+            "received_at": 79156.556554302,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 79156.556581219,
+            "diagnostics_received_at": 79156.573278851
+          }
+        },
+        {
+          "3": {
+            "axis": 3,
+            "q": 0.005241129081696272,
+            "qd": -0.0006017434090410043,
+            "mode": 5,
+            "requested_at": 79156.673704671,
+            "received_at": 79156.698112041,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 79156.698128553,
+            "diagnostics_received_at": 79156.714884202
+          }
+        }
+      ],
+      "stationary_sample": true
+    },
+    "frames": 1,
+    "feedback": {
+      "1": {
+        "axis": 1,
+        "q": -0.024032363668084145,
+        "qd": -0.000159099775089445,
+        "mode": 0,
+        "requested_at": 79156.061563322,
+        "received_at": 79156.086066221,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "2": {
+        "axis": 2,
+        "q": -0.005837652366608381,
+        "qd": -0.0003184292666815202,
+        "mode": 0,
+        "requested_at": 79156.086526332,
+        "received_at": 79156.110934533,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "3": {
+        "axis": 3,
+        "q": 0.005241129081696272,
+        "qd": -0.0006017434090410043,
+        "mode": 5,
+        "requested_at": 79156.673704671,
+        "received_at": 79156.698112041,
+        "qd_raw": 0.0,
+        "iq_raw_a": 0.0,
+        "torque_raw_nm": 0.0,
+        "diagnostics_requested_at": 79156.698128553,
+        "diagnostics_received_at": 79156.714884202
+      },
+      "4": {
+        "axis": 4,
+        "q": 0.01503301877528429,
+        "qd": 0.0,
+        "mode": 0,
+        "requested_at": 79156.136118003,
+        "received_at": 79156.160507111,
+        "qd_raw": 0.00037699565291404724,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "5": {
+        "axis": 5,
+        "q": 0.019289808347821236,
+        "qd": 0.0005751983732686721,
+        "mode": 0,
+        "requested_at": 79156.160798323,
+        "received_at": 79156.185284277,
+        "qd_raw": -0.007394053041934967,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "6": {
+        "axis": 6,
+        "q": 0.0425296314060688,
+        "qd": 0.0,
+        "mode": 0,
+        "requested_at": 79156.185549092,
+        "received_at": 79156.210049789,
+        "qd_raw": 0.09189320355653763,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      }
+    },
+    "failure_feedback": {
+      "1": {
+        "axis": 1,
+        "q": -0.024032363668084145,
+        "qd": -0.000159099775089445,
+        "mode": 0,
+        "requested_at": 79156.061563322,
+        "received_at": 79156.086066221,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "2": {
+        "axis": 2,
+        "q": -0.005837652366608381,
+        "qd": -0.0003184292666815202,
+        "mode": 0,
+        "requested_at": 79156.086526332,
+        "received_at": 79156.110934533,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "3": {
+        "axis": 3,
+        "q": 0.005198531784117222,
+        "qd": 0.0,
+        "mode": 5,
+        "requested_at": 79156.111301331,
+        "received_at": 79156.135763854,
+        "qd_raw": 0.0,
+        "iq_raw_a": 0.3279058635234833,
+        "torque_raw_nm": 0.0,
+        "diagnostics_requested_at": 79156.210085956,
+        "diagnostics_received_at": 79156.226908941
+      },
+      "4": {
+        "axis": 4,
+        "q": 0.01503301877528429,
+        "qd": 0.0,
+        "mode": 0,
+        "requested_at": 79156.136118003,
+        "received_at": 79156.160507111,
+        "qd_raw": 0.00037699565291404724,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "5": {
+        "axis": 5,
+        "q": 0.019289808347821236,
+        "qd": 0.0005751983732686721,
+        "mode": 0,
+        "requested_at": 79156.160798323,
+        "received_at": 79156.185284277,
+        "qd_raw": -0.007394053041934967,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "6": {
+        "axis": 6,
+        "q": 0.0425296314060688,
+        "qd": 0.0,
+        "mode": 0,
+        "requested_at": 79156.185549092,
+        "received_at": 79156.210049789,
+        "qd_raw": 0.09189320355653763,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      }
+    },
+    "control": {
+      "mode": "native-csp-j3-v1",
+      "axis": 3,
+      "delta_deg": 0.5,
+      "speed_limit_rad_s": 0.02,
+      "task_timeout_s": 5.0,
+      "runtime_registers": {
+        "0x7005": 5,
+        "0x7017": 0.02,
+        "0x7018": 10.0,
+        "0x700b": 9.0
+      },
+      "pid_source": "live drive parameters, not overwritten",
+      "config_fingerprint": "ad8624898ceb1a033b6bf8c4d1f500d73f45e70c43cbb038ef7ba70cad08f4d9"
+    },
+    "physical_acceptance": false,
+    "hardware_permission": false,
+    "note": "试验执行记录不是动态标定、转矩实测或物理停止验收",
+    "register_snapshot": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 57.0,
+      "0x700b": 36.0,
+      "0x701e": 30.0,
+      "0x701f": 6.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "restoration": {
+      "ok": true,
+      "restored": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "old_target_restored": false
+    },
+    "arrival_feedback": {},
+    "expected_start": [
+      -0.024202806875109673,
+      -0.005795055069029331,
+      0.005795055069029331,
+      0.015148067846894264,
+      0.019098063930869102,
+      0.04249126836657524
+    ],
+    "target": [
+      -0.024202806875109673,
+      -0.005795055069029331,
+      0.014521701329000979,
+      0.015148067846894264,
+      0.019098063930869102,
+      0.04249126836657524
+    ],
+    "drive_feedback_evidence": null,
+    "command_evidence": "host CSP register requests; explicit readbacks separately recorded"
+  },
+  "proposal": {
+    "title": "J3 原生 CSP +0.5° 小幅试验",
+    "seconds": 5.0,
+    "axes": [
+      3
+    ],
+    "delta_deg": 0.5,
+    "summary": "只控制 J3：从新鲜实测起点增加 0.5°，最高 0.02 rad/s；首次使能起最多 5 秒，完成或异常均失能。",
+    "runtime_registers": {
+      "0x7005": 5,
+      "0x7017": 0.02,
+      "0x7018": 10.0,
+      "0x700b": 9.0
+    },
+    "parameter_source": "本次明确授权的临时运行参数；PID、零位、保存草稿及掉电保存不写入",
+    "stop_policy": "先失能并观察稳定反馈，再恢复非目标运行参数；不恢复旧位置目标。停止未确认则保留低限制并报告。",
+    "limitations": "原生位置环内的加速度/力矩不由主机轨迹保证；SDK 阻塞可能延迟停止，网页不是物理急停。",
+    "start_deg": [
+      -1.3867186863139969,
+      -0.3320321975012746,
+      0.3320321975012746,
+      0.8679203554048655,
+      1.0942384601098263,
+      2.4345703435625046
+    ],
+    "target_deg": [
+      -1.3867186863139969,
+      -0.3320321975012746,
+      0.8320321975012747,
+      0.8679203554048655,
+      1.0942384601098263,
+      2.4345703435625046
+    ],
+    "curve_seconds": 1.4000000000000001
+  },
+  "enabled_feedback_available": false,
+  "observed_at_ms": 1792030472717.1572,
+  "motors": {
+    "1": {
+      "id": 1,
+      "model": "rs-06",
+      "mechPosRad": -0.024032363668084145,
+      "positionUpdatedAt": 1792030471960.1738,
+      "error": ""
+    },
+    "2": {
+      "id": 2,
+      "model": "rs-06",
+      "mechPosRad": -0.005837652366608381,
+      "positionUpdatedAt": 1792030471985.1367,
+      "error": ""
+    },
+    "3": {
+      "id": 3,
+      "model": "rs-06",
+      "mechPosRad": 0.005241129081696272,
+      "positionUpdatedAt": 1792030472572.3152,
+      "error": ""
+    },
+    "4": {
+      "id": 4,
+      "model": "rs-00",
+      "mechPosRad": 0.01503301877528429,
+      "positionUpdatedAt": 1792030472034.7285,
+      "error": ""
+    },
+    "5": {
+      "id": 5,
+      "model": "rs-00",
+      "mechPosRad": 0.019289808347821236,
+      "positionUpdatedAt": 1792030472059.4087,
+      "error": ""
+    },
+    "6": {
+      "id": 6,
+      "model": "rs-00",
+      "mechPosRad": 0.0425296314060688,
+      "positionUpdatedAt": 1792030472084.1597,
+      "error": ""
+    }
+  },
+  "command_log": {
+    "frames": [
+      {
+        "time": 79155.960938116,
+        "phase": "hold",
+        "target_rad": 0.005837652366608381,
+        "feedback": {
+          "1": {
+            "axis": 1,
+            "q": -0.023989753797650337,
+            "qd": -0.00023708698384605523,
+            "mode": 0,
+            "requested_at": 79155.793749926,
+            "received_at": 79155.818242525,
+            "qd_raw": 0.0,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "2": {
+            "axis": 2,
+            "q": -0.005752404686063528,
+            "qd": -0.00023651489747854586,
+            "mode": 0,
+            "requested_at": 79155.818736409,
+            "received_at": 79155.843298291,
+            "qd_raw": 0.0,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "3": {
+            "axis": 3,
+            "q": 0.005198531784117222,
+            "qd": -0.003538922028063906,
+            "mode": 5,
+            "requested_at": 79155.843935743,
+            "received_at": 79155.868396046,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.33192431926727295,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 79155.94345754,
+            "diagnostics_received_at": 79155.960777913
+          },
+          "4": {
+            "axis": 4,
+            "q": 0.01503301877528429,
+            "qd": 0.0,
+            "mode": 0,
+            "requested_at": 79155.868884835,
+            "received_at": 79155.893547915,
+            "qd_raw": 0.08033335208892822,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "5": {
+            "axis": 5,
+            "q": 0.01913641206920147,
+            "qd": -0.0008471951493527847,
+            "mode": 0,
+            "requested_at": 79155.894124805,
+            "received_at": 79155.918589532,
+            "qd_raw": 0.016646506264805794,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          },
+          "6": {
+            "axis": 6,
+            "q": 0.0425296314060688,
+            "qd": 0.00042391172312942555,
+            "mode": 0,
+            "requested_at": 79155.918959062,
+            "received_at": 79155.943435819,
+            "qd_raw": -0.014534716494381428,
+            "iq_raw_a": null,
+            "torque_raw_nm": null,
+            "diagnostics_requested_at": null,
+            "diagnostics_received_at": null
+          }
+        }
+      }
+    ],
+    "registers": [
+      {
+        "index": "0x7005",
+        "value": 5,
+        "phase": "prepare",
+        "requested_at": 79155.57946457,
+        "status": "readback-matched",
+        "readback": 5,
+        "completed_at": 79155.58778712
+      },
+      {
+        "index": "0x700b",
+        "value": 9.0,
+        "phase": "prepare",
+        "requested_at": 79155.588022044,
+        "status": "readback-matched",
+        "readback": 9.0,
+        "completed_at": 79155.596319304
+      },
+      {
+        "index": "0x7018",
+        "value": 10.0,
+        "phase": "prepare",
+        "requested_at": 79155.596642355,
+        "status": "readback-matched",
+        "readback": 10.0,
+        "completed_at": 79155.605059041
+      },
+      {
+        "index": "0x7017",
+        "value": 0.02,
+        "phase": "prepare",
+        "requested_at": 79155.605285379,
+        "status": "readback-matched",
+        "readback": 0.019999999552965164,
+        "completed_at": 79155.613611407
+      },
+      {
+        "index": "0x7016",
+        "value": 0.005837652366608381,
+        "phase": "preload-current",
+        "requested_at": 79155.780303703,
+        "status": "readback-matched",
+        "readback": 0.005752457771450281,
+        "completed_at": 79155.788598806
+      },
+      {
+        "index": "0x7016",
+        "value": 0.005837652366608381,
+        "phase": "hold",
+        "requested_at": 79155.961447034,
+        "status": "host-send-complete",
+        "completed_at": 79155.961499755
+      },
+      {
+        "index": "0x7016",
+        "value": 0.005241129081696272,
+        "phase": "disabled-current",
+        "requested_at": 79156.715175721,
+        "status": "readback-matched",
+        "readback": 0.005283726844936609,
+        "completed_at": 79156.723453566
+      },
+      {
+        "index": "0x7005",
+        "value": 0,
+        "phase": "restore",
+        "requested_at": 79156.72379485,
+        "status": "readback-matched",
+        "readback": 0,
+        "completed_at": 79156.732226318
+      },
+      {
+        "index": "0x7017",
+        "value": 1.0,
+        "phase": "restore",
+        "requested_at": 79156.73257846,
+        "status": "readback-matched",
+        "readback": 1.0,
+        "completed_at": 79156.740861151
+      },
+      {
+        "index": "0x7018",
+        "value": 57.0,
+        "phase": "restore",
+        "requested_at": 79156.741141735,
+        "status": "readback-matched",
+        "readback": 57.0,
+        "completed_at": 79156.749448859
+      },
+      {
+        "index": "0x700b",
+        "value": 36.0,
+        "phase": "restore",
+        "requested_at": 79156.74980691,
+        "status": "readback-matched",
+        "readback": 36.0,
+        "completed_at": 79156.758116908
+      }
+    ]
+  }
+}

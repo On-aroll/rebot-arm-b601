@@ -1,0 +1,720 @@
+{
+  "state": "FAULT",
+  "busy": false,
+  "axis": 3,
+  "reason": "robstride_write_param_u8 failed: type mismatch for parameter 0x7005；清理未完全确认：J3 0x7016 写后读回不一致：0.005752457771450281 != 0.005880302749574184",
+  "feedback": {
+    "1": {
+      "axis": 1,
+      "q": -0.023989753797650337,
+      "qd": -0.0005698514497325121,
+      "mode": 0,
+      "requested_at": 79047.421212603,
+      "received_at": 79047.4458205,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "2": {
+      "axis": 2,
+      "q": -0.005752404686063528,
+      "qd": 0.0,
+      "mode": 0,
+      "requested_at": 79047.446102543,
+      "received_at": 79047.470586938,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "3": {
+      "axis": 3,
+      "q": 0.005880302749574184,
+      "qd": 0.0,
+      "mode": 0,
+      "requested_at": 79048.091192218,
+      "received_at": 79048.115649687,
+      "qd_raw": 0.0,
+      "iq_raw_a": 0.0,
+      "torque_raw_nm": 0.0,
+      "diagnostics_requested_at": 79048.115679388,
+      "diagnostics_received_at": 79048.132673958
+    },
+    "4": {
+      "axis": 4,
+      "q": 0.01503301877528429,
+      "qd": -0.0005141995332551857,
+      "mode": 0,
+      "requested_at": 79047.495727253,
+      "received_at": 79047.520227353,
+      "qd_raw": -0.014575754292309284,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "5": {
+      "axis": 5,
+      "q": 0.019098063930869102,
+      "qd": -0.0012871500447898304,
+      "mode": 0,
+      "requested_at": 79047.520478037,
+      "received_at": 79047.545099793,
+      "qd_raw": 0.04596314579248428,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "6": {
+      "axis": 6,
+      "q": 0.04237623140215874,
+      "qd": -0.0007714783579017142,
+      "mode": 0,
+      "requested_at": 79047.545486443,
+      "received_at": 79047.570140085,
+      "qd_raw": -0.02800583839416504,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    }
+  },
+  "physical_acceptance": false,
+  "axes": [
+    3
+  ],
+  "motion_arrived_before_stop": false,
+  "stop": {
+    "requested": true,
+    "policy": "explicitly-supported-release",
+    "attempted_axes": [
+      3
+    ],
+    "sent_axes": [
+      3
+    ],
+    "sdk_status_ack_axes": [
+      3
+    ],
+    "send_status": {
+      "3": "host-send-complete-and-sdk-status-observed"
+    },
+    "errors": {},
+    "physical_stopped": false,
+    "disabled_status": {
+      "arbitration_id": 33555453,
+      "mode_state": 0,
+      "fault_bits": 0,
+      "source": "SDK status after disable; no independent drive timestamp"
+    },
+    "observations": [
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.005752457771450281,
+          "qd": -0.00043842915919825457,
+          "mode": 0,
+          "requested_at": 79047.665148043,
+          "received_at": 79047.689785944,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 79047.68985263,
+          "diagnostics_received_at": 79047.707121732
+        }
+      },
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.005795055069029331,
+          "qd": 0.0002989626840839146,
+          "mode": 0,
+          "requested_at": 79047.807740827,
+          "received_at": 79047.832160481,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 79047.83217785,
+          "diagnostics_received_at": 79047.848923419
+        }
+      },
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.005880302749574184,
+          "qd": 0.0006020837442079636,
+          "mode": 0,
+          "requested_at": 79047.949289935,
+          "received_at": 79047.973786866,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 79047.973811844,
+          "diagnostics_received_at": 79047.990689478
+        }
+      },
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.005880302749574184,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 79048.091192218,
+          "received_at": 79048.115649687,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 79048.115679388,
+          "diagnostics_received_at": 79048.132673958
+        }
+      }
+    ],
+    "stationary_sample": true
+  },
+  "frames": 0,
+  "failure_feedback": {
+    "1": {
+      "axis": 1,
+      "q": -0.023989753797650337,
+      "qd": -0.0005698514497325121,
+      "mode": 0,
+      "requested_at": 79047.421212603,
+      "received_at": 79047.4458205,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "2": {
+      "axis": 2,
+      "q": -0.005752404686063528,
+      "qd": 0.0,
+      "mode": 0,
+      "requested_at": 79047.446102543,
+      "received_at": 79047.470586938,
+      "qd_raw": 0.0,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "3": {
+      "axis": 3,
+      "q": 0.005837652366608381,
+      "qd": 0.0005707745070414053,
+      "mode": 0,
+      "requested_at": 79047.470843459,
+      "received_at": 79047.495454903,
+      "qd_raw": 0.0,
+      "iq_raw_a": 0.0,
+      "torque_raw_nm": 0.0,
+      "diagnostics_requested_at": 79047.570175988,
+      "diagnostics_received_at": 79047.587351258
+    },
+    "4": {
+      "axis": 4,
+      "q": 0.01503301877528429,
+      "qd": -0.0005141995332551857,
+      "mode": 0,
+      "requested_at": 79047.495727253,
+      "received_at": 79047.520227353,
+      "qd_raw": -0.014575754292309284,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "5": {
+      "axis": 5,
+      "q": 0.019098063930869102,
+      "qd": -0.0012871500447898304,
+      "mode": 0,
+      "requested_at": 79047.520478037,
+      "received_at": 79047.545099793,
+      "qd_raw": 0.04596314579248428,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    },
+    "6": {
+      "axis": 6,
+      "q": 0.04237623140215874,
+      "qd": -0.0007714783579017142,
+      "mode": 0,
+      "requested_at": 79047.545486443,
+      "received_at": 79047.570140085,
+      "qd_raw": -0.02800583839416504,
+      "iq_raw_a": null,
+      "torque_raw_nm": null,
+      "diagnostics_requested_at": null,
+      "diagnostics_received_at": null
+    }
+  },
+  "control": {
+    "mode": "native-csp-j3-v1",
+    "axis": 3,
+    "delta_deg": 0.5,
+    "speed_limit_rad_s": 0.02,
+    "task_timeout_s": 5.0,
+    "runtime_registers": {
+      "0x7005": 5,
+      "0x7017": 0.02,
+      "0x7018": 10.0,
+      "0x700b": 9.0
+    },
+    "pid_source": "live drive parameters, not overwritten",
+    "config_fingerprint": "ad8624898ceb1a033b6bf8c4d1f500d73f45e70c43cbb038ef7ba70cad08f4d9"
+  },
+  "hardware_permission": false,
+  "note": "试验执行记录不是动态标定、转矩实测或物理停止验收",
+  "register_snapshot": {
+    "0x7005": 0,
+    "0x7017": 1.0,
+    "0x7018": 57.0,
+    "0x700b": 36.0,
+    "0x701e": 30.0,
+    "0x701f": 6.0,
+    "0x7020": 0.019999999552965164,
+    "0x702b": 0.0
+  },
+  "restoration": {
+    "ok": false,
+    "restored": [],
+    "old_target_restored": false,
+    "error": "J3 0x7016 写后读回不一致：0.005752457771450281 != 0.005880302749574184"
+  },
+  "arrival_feedback": {},
+  "expected_start": [
+    -0.024032363668084145,
+    -0.005837652366608381,
+    0.005837652366608381,
+    0.015109717845916748,
+    0.019098063930869102,
+    0.04245293140411377
+  ],
+  "target": [
+    -0.024032363668084145,
+    -0.005837652366608381,
+    0.014564298626580029,
+    0.015109717845916748,
+    0.019098063930869102,
+    0.04245293140411377
+  ],
+  "drive_feedback_evidence": null,
+  "command_evidence": "host CSP register requests; explicit readbacks separately recorded",
+  "result": {
+    "state": "FAULT",
+    "reason": "robstride_write_param_u8 failed: type mismatch for parameter 0x7005；清理未完全确认：J3 0x7016 写后读回不一致：0.005752457771450281 != 0.005880302749574184",
+    "motion_arrived_before_stop": false,
+    "stop": {
+      "requested": true,
+      "policy": "explicitly-supported-release",
+      "attempted_axes": [
+        3
+      ],
+      "sent_axes": [
+        3
+      ],
+      "sdk_status_ack_axes": [
+        3
+      ],
+      "send_status": {
+        "3": "host-send-complete-and-sdk-status-observed"
+      },
+      "errors": {},
+      "physical_stopped": false,
+      "disabled_status": {
+        "arbitration_id": 33555453,
+        "mode_state": 0,
+        "fault_bits": 0,
+        "source": "SDK status after disable; no independent drive timestamp"
+      },
+      "observations": [
+        {
+          "3": {
+            "axis": 3,
+            "q": 0.005752457771450281,
+            "qd": -0.00043842915919825457,
+            "mode": 0,
+            "requested_at": 79047.665148043,
+            "received_at": 79047.689785944,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 79047.68985263,
+            "diagnostics_received_at": 79047.707121732
+          }
+        },
+        {
+          "3": {
+            "axis": 3,
+            "q": 0.005795055069029331,
+            "qd": 0.0002989626840839146,
+            "mode": 0,
+            "requested_at": 79047.807740827,
+            "received_at": 79047.832160481,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 79047.83217785,
+            "diagnostics_received_at": 79047.848923419
+          }
+        },
+        {
+          "3": {
+            "axis": 3,
+            "q": 0.005880302749574184,
+            "qd": 0.0006020837442079636,
+            "mode": 0,
+            "requested_at": 79047.949289935,
+            "received_at": 79047.973786866,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 79047.973811844,
+            "diagnostics_received_at": 79047.990689478
+          }
+        },
+        {
+          "3": {
+            "axis": 3,
+            "q": 0.005880302749574184,
+            "qd": 0.0,
+            "mode": 0,
+            "requested_at": 79048.091192218,
+            "received_at": 79048.115649687,
+            "qd_raw": 0.0,
+            "iq_raw_a": 0.0,
+            "torque_raw_nm": 0.0,
+            "diagnostics_requested_at": 79048.115679388,
+            "diagnostics_received_at": 79048.132673958
+          }
+        }
+      ],
+      "stationary_sample": true
+    },
+    "frames": 0,
+    "feedback": {
+      "1": {
+        "axis": 1,
+        "q": -0.023989753797650337,
+        "qd": -0.0005698514497325121,
+        "mode": 0,
+        "requested_at": 79047.421212603,
+        "received_at": 79047.4458205,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "2": {
+        "axis": 2,
+        "q": -0.005752404686063528,
+        "qd": 0.0,
+        "mode": 0,
+        "requested_at": 79047.446102543,
+        "received_at": 79047.470586938,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "3": {
+        "axis": 3,
+        "q": 0.005880302749574184,
+        "qd": 0.0,
+        "mode": 0,
+        "requested_at": 79048.091192218,
+        "received_at": 79048.115649687,
+        "qd_raw": 0.0,
+        "iq_raw_a": 0.0,
+        "torque_raw_nm": 0.0,
+        "diagnostics_requested_at": 79048.115679388,
+        "diagnostics_received_at": 79048.132673958
+      },
+      "4": {
+        "axis": 4,
+        "q": 0.01503301877528429,
+        "qd": -0.0005141995332551857,
+        "mode": 0,
+        "requested_at": 79047.495727253,
+        "received_at": 79047.520227353,
+        "qd_raw": -0.014575754292309284,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "5": {
+        "axis": 5,
+        "q": 0.019098063930869102,
+        "qd": -0.0012871500447898304,
+        "mode": 0,
+        "requested_at": 79047.520478037,
+        "received_at": 79047.545099793,
+        "qd_raw": 0.04596314579248428,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "6": {
+        "axis": 6,
+        "q": 0.04237623140215874,
+        "qd": -0.0007714783579017142,
+        "mode": 0,
+        "requested_at": 79047.545486443,
+        "received_at": 79047.570140085,
+        "qd_raw": -0.02800583839416504,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      }
+    },
+    "failure_feedback": {
+      "1": {
+        "axis": 1,
+        "q": -0.023989753797650337,
+        "qd": -0.0005698514497325121,
+        "mode": 0,
+        "requested_at": 79047.421212603,
+        "received_at": 79047.4458205,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "2": {
+        "axis": 2,
+        "q": -0.005752404686063528,
+        "qd": 0.0,
+        "mode": 0,
+        "requested_at": 79047.446102543,
+        "received_at": 79047.470586938,
+        "qd_raw": 0.0,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "3": {
+        "axis": 3,
+        "q": 0.005837652366608381,
+        "qd": 0.0005707745070414053,
+        "mode": 0,
+        "requested_at": 79047.470843459,
+        "received_at": 79047.495454903,
+        "qd_raw": 0.0,
+        "iq_raw_a": 0.0,
+        "torque_raw_nm": 0.0,
+        "diagnostics_requested_at": 79047.570175988,
+        "diagnostics_received_at": 79047.587351258
+      },
+      "4": {
+        "axis": 4,
+        "q": 0.01503301877528429,
+        "qd": -0.0005141995332551857,
+        "mode": 0,
+        "requested_at": 79047.495727253,
+        "received_at": 79047.520227353,
+        "qd_raw": -0.014575754292309284,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "5": {
+        "axis": 5,
+        "q": 0.019098063930869102,
+        "qd": -0.0012871500447898304,
+        "mode": 0,
+        "requested_at": 79047.520478037,
+        "received_at": 79047.545099793,
+        "qd_raw": 0.04596314579248428,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      },
+      "6": {
+        "axis": 6,
+        "q": 0.04237623140215874,
+        "qd": -0.0007714783579017142,
+        "mode": 0,
+        "requested_at": 79047.545486443,
+        "received_at": 79047.570140085,
+        "qd_raw": -0.02800583839416504,
+        "iq_raw_a": null,
+        "torque_raw_nm": null,
+        "diagnostics_requested_at": null,
+        "diagnostics_received_at": null
+      }
+    },
+    "control": {
+      "mode": "native-csp-j3-v1",
+      "axis": 3,
+      "delta_deg": 0.5,
+      "speed_limit_rad_s": 0.02,
+      "task_timeout_s": 5.0,
+      "runtime_registers": {
+        "0x7005": 5,
+        "0x7017": 0.02,
+        "0x7018": 10.0,
+        "0x700b": 9.0
+      },
+      "pid_source": "live drive parameters, not overwritten",
+      "config_fingerprint": "ad8624898ceb1a033b6bf8c4d1f500d73f45e70c43cbb038ef7ba70cad08f4d9"
+    },
+    "physical_acceptance": false,
+    "hardware_permission": false,
+    "note": "试验执行记录不是动态标定、转矩实测或物理停止验收",
+    "register_snapshot": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 57.0,
+      "0x700b": 36.0,
+      "0x701e": 30.0,
+      "0x701f": 6.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "restoration": {
+      "ok": false,
+      "restored": [],
+      "old_target_restored": false,
+      "error": "J3 0x7016 写后读回不一致：0.005752457771450281 != 0.005880302749574184"
+    },
+    "arrival_feedback": {},
+    "expected_start": [
+      -0.024032363668084145,
+      -0.005837652366608381,
+      0.005837652366608381,
+      0.015109717845916748,
+      0.019098063930869102,
+      0.04245293140411377
+    ],
+    "target": [
+      -0.024032363668084145,
+      -0.005837652366608381,
+      0.014564298626580029,
+      0.015109717845916748,
+      0.019098063930869102,
+      0.04245293140411377
+    ],
+    "drive_feedback_evidence": null,
+    "command_evidence": "host CSP register requests; explicit readbacks separately recorded"
+  },
+  "proposal": {
+    "title": "J3 原生 CSP +0.5° 小幅试验",
+    "seconds": 5.0,
+    "axes": [
+      3
+    ],
+    "delta_deg": 0.5,
+    "summary": "只控制 J3：从新鲜实测起点增加 0.5°，最高 0.02 rad/s；首次使能起最多 5 秒，完成或异常均失能。",
+    "runtime_registers": {
+      "0x7005": 5,
+      "0x7017": 0.02,
+      "0x7018": 10.0,
+      "0x700b": 9.0
+    },
+    "parameter_source": "本次明确授权的临时运行参数；PID、零位、保存草稿及掉电保存不写入",
+    "stop_policy": "先失能并观察稳定反馈，再恢复非目标运行参数；不恢复旧位置目标。停止未确认则保留低限制并报告。",
+    "limitations": "原生位置环内的加速度/力矩不由主机轨迹保证；SDK 阻塞可能延迟停止，网页不是物理急停。",
+    "start_deg": [
+      -1.3769530099047596,
+      -0.33447284287121704,
+      0.33447284287121704,
+      0.8657230622045312,
+      1.0942384601098263,
+      2.432373797414111
+    ],
+    "target_deg": [
+      -1.3769530099047596,
+      -0.33447284287121704,
+      0.834472842871217,
+      0.8657230622045312,
+      1.0942384601098263,
+      2.432373797414111
+    ],
+    "curve_seconds": 1.4000000000000001
+  },
+  "enabled_feedback_available": false,
+  "observed_at_ms": 1792030364074.2834,
+  "motors": {
+    "1": {
+      "id": 1,
+      "model": "rs-06",
+      "mechPosRad": -0.023989753797650337,
+      "positionUpdatedAt": 1792030363319.8235,
+      "error": ""
+    },
+    "2": {
+      "id": 2,
+      "model": "rs-06",
+      "mechPosRad": -0.005752404686063528,
+      "positionUpdatedAt": 1792030363344.7134,
+      "error": ""
+    },
+    "3": {
+      "id": 3,
+      "model": "rs-06",
+      "mechPosRad": 0.005880302749574184,
+      "positionUpdatedAt": 1792030363989.803,
+      "error": ""
+    },
+    "4": {
+      "id": 4,
+      "model": "rs-00",
+      "mechPosRad": 0.01503301877528429,
+      "positionUpdatedAt": 1792030363394.3381,
+      "error": ""
+    },
+    "5": {
+      "id": 5,
+      "model": "rs-00",
+      "mechPosRad": 0.019098063930869102,
+      "positionUpdatedAt": 1792030363419.0889,
+      "error": ""
+    },
+    "6": {
+      "id": 6,
+      "model": "rs-00",
+      "mechPosRad": 0.04237623140215874,
+      "positionUpdatedAt": 1792030363444.0972,
+      "error": ""
+    }
+  },
+  "command_log": {
+    "frames": [],
+    "registers": [
+      {
+        "index": "0x7005",
+        "value": 5,
+        "phase": "prepare",
+        "requested_at": 79047.660758927,
+        "status": "unknown-may-have-reached-drive",
+        "error": "robstride_write_param_u8 failed: type mismatch for parameter 0x7005"
+      },
+      {
+        "index": "0x7016",
+        "value": 0.005880302749574184,
+        "phase": "disabled-current",
+        "requested_at": 79048.132972531,
+        "status": "unknown-may-have-reached-drive",
+        "readback": 0.005752457771450281,
+        "error": "J3 0x7016 写后读回不一致：0.005752457771450281 != 0.005880302749574184"
+      }
+    ]
+  }
+}
