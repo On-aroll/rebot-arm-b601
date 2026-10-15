@@ -1,0 +1,180 @@
+{
+  "captured_at": "2026-10-15T07:44:21.328Z",
+  "source": "read-only DOM of existing console",
+  "status": "HISTORICAL_EXPIRED_HARDWARE_DISCONNECTED",
+  "execution_authorized": false,
+  "replay_token_saved": false,
+  "hardware_can_present": false,
+  "note": "来自USB-CAN断开前的旧预演，仅用于历史审查；执行需重新连接、读取起点、预演和当次许可。",
+  "execution_button_disabled": true,
+  "historical_model_check": {
+    "control_source": "motorbridge typed CSP registers and existing drive position/velocity/current loops; no host MIT gravity PD",
+    "delta_deg": [
+      0.003643808879855025,
+      0.4115562717457227,
+      0.34678718427077404,
+      0.7796711192948845,
+      -0.01048084646986312,
+      0
+    ],
+    "execution_ready": true,
+    "execution_reasons": [],
+    "gravity_check": {
+      "limits_Nm": [
+        1,
+        3,
+        9,
+        3,
+        1,
+        1
+      ],
+      "sampled_peak_Nm": [
+        4.17270745137633e-17,
+        1.5598872289012455,
+        6.7491678208585215,
+        1.9962347815556751,
+        0.0004844624627862823,
+        0.0008145187416859637
+      ],
+      "source": "official RS model, nominal estimate only"
+    },
+    "hardware_seconds": 1.6,
+    "max_axis_delta_deg": 0.7796711192948845,
+    "motion_settings": {
+      "feedforward_mode": "native-csp-xyz-path-v1",
+      "speed_rad_s": 0.02,
+      "timeout_mode": "auto"
+    },
+    "native_position_control": true,
+    "parameter_source": "live drive PID preserved; temporary CSP/runtime ceilings restored after verified release; saved drafts and zero unchanged",
+    "parameters": {
+      "axes": [
+        {
+          "a_max": 0.04,
+          "error_max": 0.010471975511965976,
+          "jerk_max": 0.2,
+          "kd": 1,
+          "kd_max": 1,
+          "kp": 3,
+          "kp_max": 3,
+          "q_max": 2.6179938779914944,
+          "q_min": -2.6179938779914944,
+          "tau_ff": 0,
+          "torque_max": 1,
+          "v_max": 0.02
+        },
+        {
+          "a_max": 0.04,
+          "error_max": 0.010471975511965976,
+          "jerk_max": 0.2,
+          "kd": 1,
+          "kd_max": 1,
+          "kp": 3,
+          "kp_max": 3,
+          "q_max": 3.14,
+          "q_min": 0,
+          "tau_ff": 0,
+          "torque_max": 3,
+          "v_max": 0.02
+        },
+        {
+          "a_max": 0.04,
+          "error_max": 0.010471975511965976,
+          "jerk_max": 0.2,
+          "kd": 1,
+          "kd_max": 1,
+          "kp": 3,
+          "kp_max": 3,
+          "q_max": 3.14,
+          "q_min": 0,
+          "tau_ff": 0,
+          "torque_max": 9,
+          "v_max": 0.02
+        },
+        {
+          "a_max": 0.04,
+          "error_max": 0.010471975511965976,
+          "jerk_max": 0.2,
+          "kd": 1,
+          "kd_max": 1,
+          "kp": 3,
+          "kp_max": 3,
+          "q_max": 1.57,
+          "q_min": -1.57,
+          "tau_ff": 0,
+          "torque_max": 3,
+          "v_max": 0.02
+        },
+        {
+          "a_max": 0.04,
+          "error_max": 0.010471975511965976,
+          "jerk_max": 0.2,
+          "kd": 1,
+          "kd_max": 1,
+          "kp": 3,
+          "kp_max": 3,
+          "q_max": 1.57,
+          "q_min": -1.57,
+          "tau_ff": 0,
+          "torque_max": 1,
+          "v_max": 0.02
+        },
+        {
+          "a_max": 0.04,
+          "error_max": 0.010471975511965976,
+          "jerk_max": 0.2,
+          "kd": 1,
+          "kd_max": 1,
+          "kp": 3,
+          "kp_max": 3,
+          "q_max": 3.14,
+          "q_min": -3.14,
+          "tau_ff": 0,
+          "torque_max": 1,
+          "v_max": 0.02
+        }
+      ],
+      "policy": {
+        "arrival_q": 0.0017453292519943296,
+        "arrival_qd": 0.01,
+        "command_age": 0.3,
+        "feedback_age": 0.6,
+        "io_timeout": 0.05,
+        "jitter_max": 0.15,
+        "lease_timeout": 0.75,
+        "period": 0.1,
+        "settle_time": 0.3,
+        "start_speed": 0.01,
+        "task_timeout": 30
+      },
+      "source": "explicit-onsite-trial-proposal",
+      "start_boundary_tolerance": 0.017453292519943295,
+      "version": "native-csp-xyz-path-v1"
+    },
+    "physical_acceptance": false,
+    "start_deg": [
+      5.39062520336866,
+      -0.036621956880354294,
+      0.26367262271917224,
+      0.733886750844945,
+      1.0173340518717735,
+      4.871338727377284
+    ],
+    "target_deg": [
+      5.394269012248515,
+      0.3749343148653684,
+      0.6104598069899463,
+      1.5135578701398296,
+      1.0068532054019104,
+      4.871338727377284
+    ],
+    "task_timeout_s": 30
+  },
+  "orientation_mode": "position",
+  "profile": "native-csp-xyz-path-v1",
+  "target_mm": [
+    300.34,
+    -24.81,
+    229.07
+  ]
+}

@@ -223,3 +223,16 @@ XYZ 默认预演方案改为已实测的小幅原生 CSP，避免刷新回到不
 [13项新增虚拟测试](native-xyz-path-final-tests.txt)、[162项相关后端回归](native-xyz-path-regression-tests.txt)、[25项前端回归](native-xyz-path-frontend-regression.txt)和[生产构建](native-xyz-path-build.txt)通过。新增检查覆盖3°虚拟到位与恢复、5°主机轨迹连续性和速度/加速度/jerk、旧许可指纹拒绝、超5°及篡改时限拒绝、失联、卡住跟踪保护、30秒绝对期限，以及生产API→子进程→虚拟SDK→官方模型FK的5 mm保持朝向目标、取消和父管道EOF；禁止真实Controller构造。主机曲线检查不证明驱动器内部加速度或jerk。
 
 保留[首轮失败记录](native-xyz-path-first-tests.txt)：扩展方案漏入旧MIT承重分支，修复分派后继续调用既有CSP模型检查；卡住3°目标正确提前触发原跟踪保护，测试现分开验证该保护和0.4°卡住的30秒期限，未放宽保护。前端另有[首轮20项通过记录](native-xyz-path-frontend-tests.txt)。本阶段没有追加真实使能或运动；先在原网页只读准备具体目标，实发须新一次明确确认。同步SDK阻塞仍可能延迟停止；较大工作空间、连续路径、工具/TCP独立精度和长期保持仍未验收。
+
+
+## 扩展预演归档及 USB-CAN 断开（15:44，只读核对）
+
+用户再次确认J7试验结束后“已安静，无异常”，沿用已经归档的真实J7到位与撤力结果，不追加试验。现有网页中的扩展目标实际为 `[300.34,-24.81,229.07]` mm，末端模式为**自动调整朝向（只指定位置）**，不是保持朝向。此前回复把Y写为−24.76 mm属于误写，−24.76 mm来自后续反馈，不能替代目标输入。历史模型预演预计1.6秒、求解残差约0.001 mm、最大关节变化0.779671°（J4），仅说明当时模型路径可行，不是新的实机起点或许可。
+
+[历史预演归档](native-xyz-path-historical-preview.json)来自现有页面只读DOM，明确标记`HISTORICAL_EXPIRED_HARDWARE_DISCONNECTED`及`execution_authorized=false`，不保存可重放令牌。[当前页面截图](console-native-xyz-path-disconnected.png)显示0/7轴、反馈过期、旧预演超过60秒和执行按钮禁用。
+
+[系统只读状态](native-xyz-path-disconnected-state.json)记录内核于2026-10-15 15:32:12报告`usb 3-9: USB disconnect`与`peak_usb ... can0 removed`；15:44时系统没有can0，lsusb也没有USB-CAN设备。8765网页与9002网关仍运行，实机任务IDLE/busy=false；这些服务状态不能表示机械臂仍在线。当前不能通过单独把can0置UP恢复一个已经不存在的USB设备。需重新接回USB-CAN，再获取新鲜反馈、重新预演并取得对应一次性许可。没有发送新的使能、运动或参数写入。
+
+独立只读审查未发现扩展方案绕过旧指纹、首目标装载、停止或恢复的新回归。现有API→worker管道测试替换了生产resolver，因此报告中的管道覆盖**不包含HTTP /command与生产预演令牌解析**；不把它称为完整HTTP端到端验收。新增的纯离线生产resolver检查及准确覆盖范围在下方补记，不需要追加实机试验。
+
+补充[6项生产解析边界离线检查](native-xyz-path-resolver-tests.txt)全部通过：从`rebot_sim.serve`提取原始AST直接执行`hardware_configuration`和`resolve_hardware_point`，配合真实模型及PointPlanner；覆盖有效扩展预演的一次性消费、基础/任务指纹变化、到期边界、草稿版本和来源变化、旧0.5°方案指纹与旧OnsitePermit隔离。Controller、CAN打开、子进程和网络均有禁止调用守卫；未运行服务器或电机执行器，HTTP传输层仍不在覆盖内。测试代码为`tests/test_native_xyz_plan_resolver_offline.py`。
