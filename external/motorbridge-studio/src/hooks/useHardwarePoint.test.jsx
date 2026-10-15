@@ -149,3 +149,51 @@ it('a late rejected heartbeat from a completed task cannot stop a new task',asyn
   expect(result.current.error).toBe('');
   expect(actions().some(body=>body.action==='stop')).toBe(false);
 });
+
+it('CSP uses the freshly prepared server token and one confirmed start after bus release',async()=>{
+  const base=fetch.getMockImplementation();
+  fetch.mockImplementation(async(path,options)=>{
+    const body=options?.body ? JSON.parse(options.body) : {};
+    if(body.action==='prepare-csp-j3') return {ok:true,json:async()=>({plan_id:'fixed-j3-plan',status:{state:'READY',busy:false}})};
+    if(body.action==='csp-j3-trial') server={state:'RUNNING',busy:true,feedback:{}};
+    return base(path,options);
+  });
+  const release=vi.fn(async()=>{});
+  const {result}=renderHook(()=>useHardwarePoint({beforeExecute:release}));
+  await act(async()=>{await expect(result.current.executeCspJ3(false)).rejects.toThrow('现场确认');});
+  expect(release).not.toHaveBeenCalled();
+  await act(async()=>{await result.current.executeCspJ3(true);});
+  expect(actions().filter(b=>b.action!=='heartbeat')).toEqual([
+    {action:'prepare-csp-j3'},expect.objectContaining({action:'csp-j3-trial',plan_id:'fixed-j3-plan'}),
+  ]);
+  expect(actions().at(-1).target).toBeUndefined();
+  expect(result.current.busy).toBe(true);
+});
+
+it('stop or focus loss during CSP preparation cannot send a late start',async()=>{
+  let finish;
+  const base=fetch.getMockImplementation();
+  fetch.mockImplementation(async(path,options)=>{
+    if(options?.body&&JSON.parse(options.body).action==='prepare-csp-j3')
+      return new Promise(resolve=>{finish=()=>resolve({ok:true,json:async()=>({plan_id:'late-plan'})});});
+    return base(path,options);
+  });
+  const {result}=renderHook(()=>useHardwarePoint({beforeExecute:async()=>{}}));
+  let attempt;
+  act(()=>{attempt=result.current.executeCspJ3(true).catch(e=>e);});
+  await waitFor(()=>expect(finish).toBeTypeOf('function'));
+  await act(async()=>{await result.current.stop();finish();await attempt;});
+  expect(actions().some(b=>b.action==='csp-j3-trial')).toBe(false);
+});
+
+it('failed CSP preparation preserves its actual reason without starting',async()=>{
+  const base=fetch.getMockImplementation();
+  fetch.mockImplementation(async(path,options)=>{
+    if(options?.body&&JSON.parse(options.body).action==='prepare-csp-j3')
+      return {ok:true,json:async()=>({status:{state:'FAULT',busy:false,reason:'J3 起点变化'}})};
+    return base(path,options);
+  });
+  const {result}=renderHook(()=>useHardwarePoint({beforeExecute:async()=>{}}));
+  await act(async()=>{await expect(result.current.executeCspJ3(true)).rejects.toThrow('J3 起点变化');});
+  expect(actions().some(b=>b.action==='csp-j3-trial')).toBe(false);
+});

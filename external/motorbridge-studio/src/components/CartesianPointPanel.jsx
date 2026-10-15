@@ -13,8 +13,8 @@ async function request(path, body) {
 }
 
 export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, virtualEnabled, locked, active, moving, now,
-  onPreview, onBusy, onExecuted, onPrepareHardwarePreview, onExecuteHardware, onObserveStartup, hardwareConfirmed = false, hardwareError,
-  onStop, resetKey, readiness, currentXyz }) {
+  onPreview, onBusy, onExecuted, onPrepareHardwarePreview, onExecuteHardware, onObserveStartup, onExecuteCspJ3, hardwareConfirmed = false, hardwareError,
+  onStop, resetKey, readiness, currentXyz, hardwareState }) {
   const offline = mode === 'offline';
   const [xyz, setXyz] = React.useState(['200', '150', '200']);
   const [orientation, setOrientation] = React.useState('position');
@@ -25,6 +25,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
   const [feedforwardMode,setFeedforwardMode] = React.useState('none');
   const [plan, setPlan] = React.useState(null);
   const [submitted, setSubmitted] = React.useState(false);
+  const [nativeTrial, setNativeTrial] = React.useState(false);
   const [pending, setPending] = React.useState(false);
   const [message, setMessage] = React.useState('输入 XYZ，先预演，再执行。');
   const [capabilities, setCapabilities] = React.useState(null);
@@ -44,7 +45,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     return () => { alive = false; };
   }, []);
   React.useEffect(() => {
-    setPlan(null); setSubmitted(false); onPreview(null);
+    setPlan(null); setSubmitted(false); setNativeTrial(false); onPreview(null);
     setMessage(offline ? '从虚拟电机当前反馈开始预演，无需手动同步姿态。' : '预演读取实机当前姿态；确认执行后交给 Seeed SDK，模型跟随真实反馈。');
   }, [mode, resetKey]);
   const occupied = pending || locked || active || moving;
@@ -56,9 +57,13 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
   const job = feedback?.job;
   const executing = ['starting', 'running', 'cancelling'].includes(job?.status);
   const hardwareReason = capabilities?.hardware_reason || '实机同步能力尚未确认，不能下发。';
+  const cspResult = !offline && hardwareState?.control?.mode === 'native-csp-j3-v1'
+    && hardwareState.busy === false ? hardwareState : null;
+  const cspBeforeStop = cspResult?.arrival_feedback?.['3'] ?? cspResult?.failure_feedback?.['3'];
+  const degrees = value => Number.isFinite(value) ? `${(value * 180 / Math.PI).toFixed(3)}°` : '—';
 
   function invalidate() {
-    setPlan(null); setSubmitted(false); onPreview(null);
+    setPlan(null); setSubmitted(false); setNativeTrial(false); onPreview(null);
     setMessage('坐标或设置已变化，请重新预演。');
   }
   async function preview() {
@@ -66,7 +71,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     running.current = true; setPending(true); onBusy(true);
     try {
       if (xyz.some(value => !value.trim() || !Number.isFinite(Number(value)))) throw new Error('请完整填写 X、Y、Z，单位为毫米。');
-      setPlan(null); setSubmitted(false); onPreview(null);
+      setPlan(null); setSubmitted(false); setNativeTrial(false); onPreview(null);
       setMessage('正在从当前反馈计算关节目标并检查模型路径…');
       const body = { xyz_mm: xyz.map(Number), orientation_mode: orientation, speed_rad_s: Number(currentSpeed) };
       let result;
@@ -94,6 +99,19 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
       setMessage(offline ? '虚拟动作已提交，三维模型持续跟随执行反馈。' : observeStartup
         ? '启动采集已提交：首次使能起 3 秒结束并请求撤力，不执行 XYZ 轨迹。' : '实机任务已提交；模型跟随执行器读取的真实关节反馈。');
     } catch (error) { setMessage(error.message); setPlan(null); onPreview(null); }
+    finally { running.current = false; setPending(false); onBusy(false); }
+  }
+
+  async function executeCspJ3() {
+    if (running.current || occupied || !previewReady || !hardwareConfirmed || !onExecuteCspJ3) return;
+    running.current = true; setPending(true); onBusy(true);
+    setPlan(null); onPreview(null); setSubmitted(false); setNativeTrial(true);
+    setMessage('正在只读检查起点和 J3 +0.5° 模型路径，通过后执行本次 CSP 小幅试验…');
+    try {
+      const result = await onExecuteCspJ3();
+      setSubmitted(true); onExecuted(result);
+      setMessage('J3 CSP 小幅试验已提交；模型跟随实测反馈，首次使能起最多 5 秒后自动撤力。');
+    } catch (error) { setMessage(error.message); }
     finally { running.current = false; setPending(false); onBusy(false); }
   }
 
@@ -141,6 +159,29 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
       <p>复用本次启动保持与前馈渐变；首次使能起 3 秒结束并请求撤力，不执行 XYZ。用于记录 J3 电流、位置与原始转矩响应，不是自动标定。SDK 阻塞仍可能延迟撤力。</p>
       <button disabled={occupied || invalidPlan || submitted || !hardwareConfirmed || !onObserveStartup} onClick={()=>execute(true)}>启动采集 · 3 秒自动撤力</button>
     </details>}
+    {!offline && <details className="consoleNote"><summary>原生位置闭环 · J3 小幅试验</summary>
+      <p>仅 J3 增加 0.5°，最高 0.02 rad/s，首次使能起最多 5 秒自动失能。先检查当前姿态与模型路径，再装载当前位置并使能；不执行上面的 XYZ 目标。</p>
+      <p>当次临时使用 CSP 模式、0.02 rad/s、10 A、9 N·m 上限。PID、零位与保存草稿不改；失能及稳定反馈确认后恢复原运行参数，不恢复旧位置目标。SDK 阻塞可能延迟停止。</p>
+      <button disabled={occupied || !previewReady || !hardwareConfirmed || !onExecuteCspJ3} onClick={executeCspJ3}>执行 J3 CSP +0.5°</button>
+    </details>}
+    {cspResult && <div className="consoleNote" role="group" aria-label="上次 J3 CSP 试验记录">
+      <strong>上次 J3 CSP 试验：{cspResult.motion_arrived_before_stop ? '反馈到位' : '未到位'}</strong>
+      <p>{cspResult.reason}</p>
+      <div className="pointPlanSummary">
+        <span>准备时起点 <strong>{degrees(cspResult.expected_start?.[2])}</strong></span>
+        <span>目标 <strong>{degrees(cspResult.target?.[2])}</strong></span>
+        <span>撤力前读数 <strong>{degrees(cspBeforeStop?.q)}</strong></span>
+        <span>剩余误差 <strong>{Number.isFinite(cspResult.target?.[2]) && Number.isFinite(cspBeforeStop?.q)
+          ? degrees(Math.abs(cspResult.target[2] - cspBeforeStop.q)) : '—'}</strong></span>
+        <span>撤力后读数 <strong>{degrees(cspResult.feedback?.['3']?.q)}</strong></span>
+      </div>
+      <p>{cspResult.stop?.disabled_status?.mode_state === 0 && cspResult.stop?.disabled_status?.fault_bits === 0
+        ? 'SDK 失能状态已确认' : '失能状态未完全确认'}；{cspResult.restoration?.ok === true
+        ? ['0x7005','0x7017','0x7018','0x700b'].every(index => cspResult.restoration.restored?.includes(index))
+          ? '四项临时运行参数已恢复并读回核对。' : '运行参数清理检查通过。'
+        : '运行参数恢复未完全确认，请查看停止记录。'}</p>
+      <p>以上为该次任务记录，实时位置以反馈坐标为准；尚未通过六轴 XYZ 到位验收。</p>
+    </div>}
     {!previewReady && <p className="consoleNote">{offline ? '等待完整、新鲜的虚拟电机反馈；请检查虚拟服务。' : '请先连接实机，取得完整、新鲜的六轴位置。'}</p>}
     {offline && !virtualEnabled && <p className="consoleNote">可以先预演；执行前点击上方“使能虚拟电机”。</p>}
     {!offline && !hardwareConfirmed && !executing && <p className="consoleNote">预演通过后，勾选上方一次现场确认即可点击“确认实机执行”。</p>}
@@ -160,7 +201,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
       {plan.hardware_preflight.static_balance_check?.feedforward_mode==='seeed-rs-gravity-v1' && <p>已选择官方重力前馈。模型通过仅说明标称补偿与包络相符；首次应在可靠支撑下验收小幅运动和停止，再执行较长轨迹。起始保持使用原始实测角度，不要求手托或把支撑姿态设成零位。</p>}
       <details><summary>本次实机试验参数与重力估算</summary><pre>{JSON.stringify(plan.hardware_preflight,null,2)}</pre></details>
     </div>}
-    <p role="status" className="consoleMessage">{submitted && job?.status === 'succeeded' ? `${offline ? '虚拟动作完成' : '实机反馈已到位，任务已结束并撤力'}，当前末端误差 ${actualError?.toFixed(2) ?? '—'} mm。`
+    <p role="status" className="consoleMessage">{submitted && job?.status === 'succeeded' ? nativeTrial ? 'J3 CSP 反馈已到位并稳定，任务已结束并撤力；六轴 XYZ 尚未验收。' : `${offline ? '虚拟动作完成' : '实机反馈已到位，任务已结束并撤力'}，当前末端误差 ${actualError?.toFixed(2) ?? '—'} mm。`
       : submitted && job?.status === 'failed' ? `执行失败：${job.error}` : submitted && job?.status === 'cancelled'
         ? `任务已结束${job.error ? `：${job.error}` : '，请确认现场状态。'}` : message}</p>
     {hardwareError && !offline && hardwareError !== message && <p role="alert">{hardwareError}</p>}

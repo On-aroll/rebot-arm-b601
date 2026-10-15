@@ -51,9 +51,16 @@ def probe(config, bus):
 def run_trial(message, bus=None):
     config = Envelope.parse(message['config'])
     point=message['operation'] in ('move-xyz','probe-startup')
-    if not point and (message['operation'] != 'hold-j1' or message.get('seconds') != 3):
+    native=message['operation']=='csp-j3-trial'
+    if not point and not native and (message['operation'] != 'hold-j1' or message.get('seconds') != 3):
         raise ValueError('仅支持 J1 当次 3 秒保持试验')
-    if point:
+    if native:
+        from rebot_native_csp import CspJ3Trial,CspTransport
+        from rebot_mit_hardware import MotionIntent
+        axes=(3,)
+        intent=MotionIntent([message['target']],'native-csp-j3',message['request_id'],expected_start=message['expected_start'])
+        executor=CspJ3Trial(config,bus or CspTransport())
+    elif point:
         from rebot_mit_hardware import MotionIntent, StartupObservationIntent
         from rebot_seeed_transport import SeeedTransport
         axes=tuple(range(1,7))
@@ -64,7 +71,7 @@ def run_trial(message, bus=None):
         axes=(1,)
         intent=HoldIntent(message['request_id'],message['expected_start'],seconds=3)
         executor=HardwareExecutor(config,bus or SdkTransport())
-    permit_seconds=config.policy.task_timeout+10 if point else 10
+    permit_seconds=config.policy.task_timeout+10 if point or native else 10
     permit = OnsitePermit(config.fingerprint, axes, time.monotonic()+permit_seconds,
         message['evidence'], axes, True, True,coordinated_start_checked=point)
     executor.heartbeat(executor.session, 0, True)
@@ -91,17 +98,20 @@ def run_trial(message, bus=None):
         executor.worker.join(.1)
     # Emit the trace once, after cleanup. Polling carries only the small status;
     # requests are host-side evidence, not per-frame acknowledgements by drives.
-    emit(dict(kind='result', **executor.status(), command_log=executor.frames,
+    emit(dict(kind='result', **executor.status(), command_log=dict(frames=executor.frames,registers=executor.bus.register_log) if native else executor.frames,
               expected_start=message['expected_start'], target=message.get('target'),
               drive_feedback_evidence=dict(axis=3,iq_register='0x701a',torque_register='0x302c',
                   calibrated=False,scope='raw drive reports, not independent torque measurement') if point and config.gain_review else None,
-              command_evidence='host MIT requests; no per-frame drive ACK'))
+              command_evidence='host CSP register requests; explicit readbacks separately recorded' if native else 'host MIT requests; no per-frame drive ACK'))
 
 
 def main():
     message = json.loads(sys.stdin.readline())
     if message.get('operation') == 'probe':
         emit(dict(kind='probe', **probe(Envelope.parse(message['config']), SdkTransport())))
+    elif message.get('operation') == 'probe-csp-j3':
+        from rebot_native_csp import CspTransport,probe as csp_probe
+        emit(dict(kind='probe', **csp_probe(Envelope.parse(message['config']),CspTransport())))
     else:
         run_trial(message)
 

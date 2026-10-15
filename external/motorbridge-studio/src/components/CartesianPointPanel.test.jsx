@@ -18,6 +18,41 @@ function setup(overrides = {}) {
 const posts = fetch => fetch.mock.calls.filter(([,o]) => o?.body).map(([url,o]) => ({url,body:JSON.parse(o.body)}));
 
 describe('Two-mode XYZ workflow', () => {
+  it('keeps the last CSP fault and pre-release evidence visible after reload without claiming XYZ arrival', () => {
+    const rad = value => value * Math.PI / 180;
+    setup({mode:'hardware',hardwareState:{control:{mode:'native-csp-j3-v1'},busy:false,motion_arrived_before_stop:false,
+      reason:'CSP 首次使能起 5 秒时限已到，撤力',expected_start:[0,0,rad(.313)],target:[0,0,rad(.813)],
+      failure_feedback:{3:{q:rad(.454)}},feedback:{3:{q:rad(.317)}},
+      stop:{disabled_status:{mode_state:0,fault_bits:0}},restoration:{ok:true,restored:['0x7005','0x7017','0x7018','0x700b']}}});
+    const record=screen.getByRole('group',{name:'上次 J3 CSP 试验记录'});
+    expect(record.textContent).toContain('未到位');
+    expect(record.textContent).toContain('撤力前读数 0.454°');
+    expect(record.textContent).toContain('撤力后读数 0.317°');
+    expect(record.textContent).toContain('剩余误差 0.359°');
+    expect(record.textContent).toContain('四项临时运行参数已恢复并读回核对');
+    expect(screen.queryByText(/实机反馈已到位，任务已结束/)).toBeNull();
+  });
+  it('does not infer stopped or restored status from missing CSP cleanup evidence', () => {
+    setup({mode:'hardware',hardwareState:{control:{mode:'native-csp-j3-v1'},busy:false}});
+    const record=screen.getByRole('group',{name:'上次 J3 CSP 试验记录'});
+    expect(record.textContent).toContain('失能状态未完全确认');
+    expect(record.textContent).toContain('运行参数恢复未完全确认');
+    expect(record.textContent).not.toContain('NaN');
+  });
+  it('offers the fixed CSP trial with shared confirmation without requiring a MIT XYZ plan', async () => {
+    const native = vi.fn(async () => ({status:{state:'PREPARING',busy:true}}));
+    const {props,rerender,fetch}=setup({mode:'hardware',onExecuteCspJ3:native});
+    fireEvent.click(screen.getByText('原生位置闭环 · J3 小幅试验'));
+    expect(screen.getByRole('button',{name:'执行 J3 CSP +0.5°'}).disabled).toBe(true);
+    rerender(<CartesianPointPanel {...props} hardwareConfirmed />);
+    fireEvent.click(screen.getByRole('button',{name:'执行 J3 CSP +0.5°'}));
+    await waitFor(()=>expect(native).toHaveBeenCalledOnce());
+    expect(posts(fetch)).toEqual([]);
+    expect(props.onExecuted).toHaveBeenCalledOnce();
+    rerender(<CartesianPointPanel {...props} hardwareConfirmed feedback={{job:{status:'succeeded'}}} />);
+    await screen.findByText(/J3 CSP 反馈已到位并稳定/);
+    expect(screen.queryByText(/当前末端误差/)).toBeNull();
+  });
   it('previews from virtual feedback and submits only the reviewed token to ROS', async () => {
     const { fetch } = setup();
     expect(screen.getByRole('button',{name:'执行虚拟动作'}).disabled).toBe(true);

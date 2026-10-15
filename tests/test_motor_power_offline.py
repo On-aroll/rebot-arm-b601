@@ -158,6 +158,41 @@ class PowerAPI(unittest.TestCase):
         self.assertEqual(message['seconds'],3)
         self.assertEqual(message['target'],trusted['target'])
 
+    def test_native_csp_prepares_and_runs_only_fixed_j3_plan(self):
+        import math
+        headers=dict(self.base_headers,**{'X-Motor-Session':self.token})
+        before=copy.deepcopy(self.store.state)
+        result=self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='prepare-csp-j3'))
+        self.api._readonly_probe.assert_called_once_with(self.api.plan['config'],native=True)
+        self.assertEqual(self.pose.call_count,102)
+        self.assertFalse(self.popen.called)
+        self.assertAlmostEqual(self.api.plan['target'][2],math.radians(.5))
+        plan_id=result['plan_id']
+        with self.assertRaises(ValueError): self.start(plan_id)
+        self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='csp-j3-trial',
+            plan_id=plan_id,confirmed={k:True for k in CONFIRMATIONS},target=[99]*6,seconds=500))
+        message=self.process.messages()[0]
+        self.assertEqual(message['operation'],'csp-j3-trial')
+        self.assertEqual(message['seconds'],5)
+        self.assertEqual(message['target'],[0,0,math.radians(.5),0,0,0])
+        self.assertEqual(self.store.state,before)
+        with self.assertRaises(ValueError):
+            self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='csp-j3-trial',plan_id=plan_id,confirmed={k:True for k in CONFIRMATIONS}))
+
+    def test_native_csp_model_collision_and_cancel_never_produce_a_plan(self):
+        headers=dict(self.base_headers,**{'X-Motor-Session':self.token})
+        self.pose.side_effect=ValueError('synthetic collision')
+        result=self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='prepare-csp-j3'))
+        self.assertNotIn('plan_id',result)
+        self.assertEqual(result['status']['state'],'FAULT')
+        self.pose.side_effect=None
+        probe=self.api._readonly_probe.return_value
+        def cancel(*args,**kwargs): self.api.stop(); return probe
+        self.api._readonly_probe.side_effect=cancel
+        result=self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='prepare-csp-j3'))
+        self.assertNotIn('plan_id',result)
+        self.popen.assert_not_called()
+
     def test_failed_trial_trace_is_saved_once_and_excluded_from_status_polling(self):
         self.start()
         trace=[dict(time=1.,commands=[dict(axis=3,values=[.01,0.,150.,10.,1.])])]

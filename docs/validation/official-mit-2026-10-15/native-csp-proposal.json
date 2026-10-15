@@ -1,0 +1,129 @@
+{
+  "type": "reviewed-native-position-trial",
+  "status": "authorized-and-executed-not-arrived",
+  "authorization": "用户明确允许接入原生 CSP 并进行上述 J3 +0.5°、0.02 rad/s、5 秒及四项临时运行参数试验",
+  "source_snapshot": "native-position-readonly.json",
+  "controlled_axes": [
+    3
+  ],
+  "gripper_commanded": false,
+  "delta_deg": 0.5,
+  "speed_max_rad_s": 0.02,
+  "acceleration_max_rad_s2": 0.04,
+  "jerk_max_rad_s3": 0.2,
+  "nominal_curve_s": 1.4000000000000001,
+  "trial_seconds": 5.0,
+  "recorded_start_rad": [
+    -0.07478156685829163,
+    -0.005411519203335047,
+    0.005795055069029331,
+    0.015109717845916748,
+    0.020056800916790962,
+    0.04241457208991051
+  ],
+  "recorded_target_rad": [
+    -0.07478156685829163,
+    -0.005411519203335047,
+    0.014521701329000979,
+    0.015109717845916748,
+    0.020056800916790962,
+    0.04241457208991051
+  ],
+  "start_xyz_mm": [
+    299.52403346627045,
+    26.546304811664097,
+    226.6421822764794
+  ],
+  "target_xyz_mm": [
+    298.7828362497782,
+    26.490789966546114,
+    231.14836951746832
+  ],
+  "model_path_check": {
+    "samples": 101,
+    "collision_free": true,
+    "max_axis_displacement_deg": [
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "execution_start": "must re-read stable position; archived values are not execution authority",
+  "proposed_runtime_registers": {
+    "0x7005": {
+      "name": "run_mode",
+      "before": 0,
+      "trial": 5
+    },
+    "0x7017": {
+      "name": "limit_spd",
+      "before": 1.0,
+      "trial": 0.02
+    },
+    "0x7018": {
+      "name": "limit_cur",
+      "before": 57.0,
+      "trial": 10.0
+    },
+    "0x700b": {
+      "name": "limit_torque",
+      "before": 36.0,
+      "trial": 9.0
+    },
+    "0x7016": {
+      "name": "loc_ref",
+      "trial": "fresh initial position before enable; then existing bounded trajectory"
+    }
+  },
+  "preserved": [
+    "loc_kp",
+    "spd_kp",
+    "spd_ki",
+    "zero",
+    "offset",
+    "nominal joint limits",
+    "saved MIT drafts"
+  ],
+  "current_limit_note": "10 A is a proposed runtime current ceiling, not an independently calibrated 9 Nm guarantee",
+  "required_sequence": [
+    "explicit runtime permission received for this fixed five-second scope",
+    "fresh stable start and stopped-state check",
+    "snapshot and verify runtime writes",
+    "preload fresh position before enable",
+    "bounded trajectory with current feedback and existing web stop/lease",
+    "disable and observe",
+    "restore non-target runtime settings only after confirmed supported release; never restore an old position target"
+  ],
+  "forbidden_calls": [
+    "generic send_pos_vel",
+    "upstream example main on hardware",
+    "automatic mode switch on page load",
+    "store_parameters",
+    "set_zero",
+    "home"
+  ],
+  "software_integration": "current console -> prepare-csp-j3 -> csp-j3-trial -> existing private worker; this archived JSON is not executable",
+  "actual_result": {
+    "report": "native-csp-analysis.json",
+    "latest_host_position_requests": 29,
+    "movement_before_release_deg": 0.13427850419426235,
+    "remaining_error_deg": 0.35839651812729567,
+    "arrived": false,
+    "runtime_parameters_restored_and_readback_matched": true,
+    "physical_acceptance": false
+  },
+  "proposed_followup": {
+    "status": "not-authorized-not-implemented-not-executed",
+    "trial_seconds": 15,
+    "axis": 3,
+    "delta_deg": 0.5,
+    "speed_max_rad_s": 0.02,
+    "changes_from_approved_trial": "only first-enable duration ceiling from 5 to 15 seconds",
+    "unchanged": "10 A, 9 Nm, live PID, nominal limits, feedback guards, cancel/lease/stop and verified restoration",
+    "question_to_resolve": "whether the existing drive position loop can settle within 0.1 degree with more bounded time",
+    "arrival_guaranteed": false
+  }
+}

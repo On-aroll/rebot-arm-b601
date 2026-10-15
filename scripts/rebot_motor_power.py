@@ -82,10 +82,10 @@ class MotorPowerAPI:
             self.process.stdin.write(json.dumps(body,ensure_ascii=False,allow_nan=False)+'\n')
             self.process.stdin.flush()
 
-    def _readonly_probe(self, raw):
+    def _readonly_probe(self, raw, *, native=False):
         p=self._new_process()
         try:
-            output,_=p.communicate(json.dumps(dict(operation='probe',config=raw))+'\n',timeout=12)
+            output,_=p.communicate(json.dumps(dict(operation='probe-csp-j3' if native else 'probe',config=raw))+'\n',timeout=12)
         except subprocess.TimeoutExpired:
             # This process has only ever received operation=probe; it cannot enable.
             p.kill(); p.communicate(); raise ValueError('只读检查超时；未发送使能')
@@ -93,19 +93,31 @@ class MotorPowerAPI:
         if not records: raise ValueError('SDK 检查进程未返回结果；未发送使能')
         return records[-1]
 
-    def prepare(self, token):
+    def prepare(self, token, *, native=False):
         with self.lock:
             if self.closed or self.snapshot['busy']: raise ValueError('已有试验/检查，请先停止或等待')
             if not self.idle(): raise ValueError('请先结束仿真任务，再检查单轴试验')
             self.plan=None; self.proposal=None; self.generation+=1; generation=self.generation
-            self.snapshot=dict(state='CHECKING',busy=True,axis=1,reason='正在只读检查六轴位置、速度和模式；未使能',feedback={},physical_acceptance=False)
+            self.snapshot=dict(state='CHECKING',busy=True,axis=3 if native else 1,reason='正在只读检查六轴位置、速度和模式；未使能',feedback={},physical_acceptance=False)
         try:
-            state=self.store.status()['state']; raw,public=trial_proposal(state,self.limits)
+            state=self.store.status()['state']
+            if native:
+                from rebot_native_csp import proposal,DELTA
+                raw,public=proposal(self.limits)
+            else: raw,public=trial_proposal(state,self.limits)
             with self.lock: self.proposal=public
-            result=self._readonly_probe(raw)
+            result=self._readonly_probe(raw,native=True) if native else self._readonly_probe(raw)
             with self.lock: self.snapshot['feedback']=result.get('feedback',{})
             if result.get('ok'):
                 self.check_pose(result['expected_start'])
+                if native:
+                    from rebot_mit_mock import Trajectory
+                    target=list(result['expected_start']); target[2]+=DELTA
+                    trajectory=Trajectory.create(result['expected_start'],[target],Envelope.parse(raw),axes=(3,))
+                    for n in range(101):
+                        self.check_pose(trajectory.sample(trajectory.duration*n/100)[0])
+                    public.update(start_deg=[math.degrees(v) for v in result['expected_start']],
+                                  target_deg=[math.degrees(v) for v in target],curve_seconds=trajectory.duration)
                 if state['revision']!=self.store.status()['state']['revision']:
                     raise ValueError('检查期间软件配置发生变化，请重新检查')
             with self.lock:
@@ -115,7 +127,8 @@ class MotorPowerAPI:
                 if result.get('ok'):
                     plan_id=secrets.token_urlsafe(24)
                     self.plan=dict(id=plan_id,session=token,expires=self.clock()+60,config=raw,revision=state['revision'],
-                                   expected_start=result['expected_start'])
+                                   expected_start=result['expected_start'],operation='csp-j3-trial' if native else 'hold-j1')
+                    if native: self.plan['target']=target
                     self.snapshot.update(state='READY',busy=False,reason='检查通过；尚未使能。请核对并确认本次方案。',feedback=result['feedback'])
                     return dict(plan_id=plan_id,proposal=public,status=self.status())
                 self.snapshot.update(state='FAULT',busy=False,reason=result.get('reason') or '只读检查失败；未使能',feedback=result.get('feedback',{}))
@@ -124,7 +137,7 @@ class MotorPowerAPI:
             with self.lock: self.snapshot.update(state='FAULT',busy=False,reason=str(e))
             return dict(status=self.status())
 
-    def start(self, token, body, *, point=False, diagnostic=False):
+    def start(self, token, body, *, point=False, diagnostic=False, native=False):
         with self.lock:
             if self.closed or self.snapshot['busy']: raise ValueError('已有试验或服务正在关闭')
             if not isinstance(body.get('confirmed'),dict) or any(body['confirmed'].get(k) is not True for k in CONFIRMATIONS):
@@ -136,6 +149,8 @@ class MotorPowerAPI:
             else: plan=self.plan
             if not plan or plan['id']!=body.get('plan_id') or plan['session']!=token or self.clock()>=plan['expires']:
                 raise ValueError('准备方案已过期、已消费或不属于当前页面，请重新检查')
+            if not point and plan.get('operation','hold-j1')!=('csp-j3-trial' if native else 'hold-j1'):
+                raise ValueError('准备方案与执行类型不一致')
             if not self.idle(): raise ValueError('仿真任务尚未结束')
             if plan['revision']!=self.store.status()['state']['revision']:
                 self.plan=None; raise ValueError('软件配置已变化，请重新检查；没有覆盖修改')
@@ -144,15 +159,16 @@ class MotorPowerAPI:
                 if not point or config.gain_review is None or config.feedforward is None:
                     raise ValueError('启动采集仅支持已审核的官方范围增益方案')
             self.plan=None; self.owner=token; self.sequence=0; self.stop_requested=False
-            self.snapshot.update(state='PREPARING',busy=True,axes=list(range(1,7)) if point else [1],
-                                 reason='正在复读真实起点；仅做 3 秒启动采集，不执行 XYZ' if diagnostic else
+            self.snapshot.update(state='PREPARING',busy=True,axes=[3] if native else list(range(1,7)) if point else [1],
+                                 reason='正在复读起点，准备当次 J3 CSP +0.5° 试验' if native else '正在复读真实起点；仅做 3 秒启动采集，不执行 XYZ' if diagnostic else
                                  '正在复读真实起点；仅执行本次已确认目标' if point else '正在复读真实起点；随后仅尝试使能 J1',feedback={})
             try:
                 self.process=self._new_process()
-                message=dict(operation='probe-startup' if diagnostic else 'move-xyz' if point else 'hold-j1',seconds=3,config=plan['config'],expected_start=plan['expected_start'],
+                message=dict(operation='csp-j3-trial' if native else 'probe-startup' if diagnostic else 'move-xyz' if point else 'hold-j1',seconds=5 if native else 3,config=plan['config'],expected_start=plan['expected_start'],
                              request_id=secrets.token_hex(16),evidence='本机用户点击确认执行已预演 XYZ，沿用七轴现场确认' if point else '当前本机页面明确确认 J1 3 秒保持、机械支撑及撤力方案')
-                if point: message['target']=plan['target']
+                if point or native: message['target']=plan['target']
                 if diagnostic: message['evidence']='本机用户明确点击启动采集：首次使能起最多 3 秒自动撤力，不执行 XYZ；沿用现场确认'
+                if native: message['evidence']='已明确批准 J3 CSP +0.5°、0.02 rad/s、5 秒试验及临时四项运行参数；PID/零位/保存草稿不写入'
                 self._send(message)
                 threading.Thread(target=self._read_worker,args=(self.process,),daemon=True,name='j1-power-status').start()
             except Exception as e:
@@ -227,12 +243,14 @@ class MotorPowerAPI:
             token=headers.get('X-Motor-Session')
             if path!='/motor-power/action' or token not in self.sessions: raise ValueError('单轴操作会话失效，请重新打开操作入口')
         action=body.get('action')
-        if point and action not in ('execute','probe-startup','stop','heartbeat'):
+        if point and action not in ('execute','probe-startup','prepare-csp-j3','csp-j3-trial','stop','heartbeat'):
             raise ValueError('XYZ 入口只接受已预演任务、启动采集、停止和会话心跳')
         if action=='prepare': return self.prepare(token)
         if action=='start': return self.start(token,body)
         if action=='execute' and point: return self.start(token,body,point=True)
         if action=='probe-startup' and point: return self.start(token,body,point=True,diagnostic=True)
+        if action=='prepare-csp-j3' and point: return self.prepare(token,native=True)
+        if action=='csp-j3-trial' and point: return self.start(token,body,native=True)
         if action=='stop': return self.stop()
         if action=='heartbeat':
             with self.lock:
