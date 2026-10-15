@@ -94,7 +94,7 @@ export function InitialStateCheck({ gateway, mapping, limits, now, blocked, onBu
     {!online && <p className="consoleNote">先连接实机只读反馈，再点击检测；不需要每次重新校准。</p>}
     {report && <><small>检测快照：{new Date(report.capturedAt).toLocaleTimeString()} · 以下检查结果属于该次读取</small><div className="initialCheckSummary"><span>位置反馈：{report.rows.filter(row => row.fresh).length}/7</span>
       <span>六轴模式：{report.rows.slice(0,6).every(row => row.modeOk) ? 'MIT' : '待处理'}</span>
-      <span>模型起点：{report.startOk ? '检查通过' : '待处理'}</span><span>实机轨迹：待验收</span></div>
+      <span>模型起点：{report.startOk ? '检查通过' : '待处理'}</span><span>实机轨迹：另见任务记录</span></div>
       {!feedbackLive && <p role="alert">当前反馈已不新鲜，以上仅是检测时的记录。</p>}
       <details><summary>七轴角度、起点范围与已有核对记录</summary><div className="mappingTableScroll"><table className="compareTable"><thead><tr><th>轴</th><th>原始角度</th><th>模型角度</th><th>起点范围</th><th>模式</th><th>人工核对记录</th></tr></thead><tbody>
         {report.rows.map(row => <tr key={row.id}><td>J{row.id}</td><td>{row.rawDeg == null ? '未读到' : `${row.rawDeg.toFixed(2)}°`}</td><td>{row.modelDeg == null ? '—' : `${row.modelDeg.toFixed(2)}°`}</td>
@@ -112,6 +112,6 @@ export function InitialStateCheck({ gateway, mapping, limits, now, blocked, onBu
         <p className="consoleNote">只记录反馈与人工观察；不据此自动改方向、零位或限位。静止姿态、手动变化都不能自动确定机械零位或完整可动范围。</p>
       </details>
       <button disabled={checking || observing} onClick={download}>导出检测记录</button>
-      <p className="consoleNote">下一步仍需有支撑的小幅动作、承重与停止验收，之后才能开放 XYZ 实机执行。检测通过不自动使能或启动运动。</p></>}
+      <p className="consoleNote">本检测只确认当前反馈与起点；实际到位、承重和停止结果以对应任务记录为准。执行仍需当次方案及现场确认，检测通过不自动使能或启动运动。</p></>}
   </section>;
 }

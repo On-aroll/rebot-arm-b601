@@ -199,18 +199,18 @@ it('failed CSP preparation preserves its actual reason without starting',async()
 });
 
 
-it('J6 uses its own fixed preparation and start, never the J3 action',async()=>{
+it.each([6,7])('J%s uses its own fixed preparation and start, never another axis',async(axis)=>{
   const base=fetch.getMockImplementation();
   fetch.mockImplementation(async(path,options)=>{
     const body=options?.body?JSON.parse(options.body):{};
-    if(body.action==='prepare-csp-j6') return {ok:true,json:async()=>({plan_id:'fixed-j6-plan'})};
-    if(body.action==='csp-j6-trial') server={state:'RUNNING',busy:true,feedback:{}};
+    if(body.action===`prepare-csp-j${axis}`) return {ok:true,json:async()=>({plan_id:`fixed-j${axis}-plan`})};
+    if(body.action===`csp-j${axis}-trial`) server={state:'RUNNING',busy:true,feedback:{}};
     return base(path,options);
   });
   const {result}=renderHook(()=>useHardwarePoint({beforeExecute:async()=>{}}));
-  await act(async()=>{await expect(result.current.executeCspJ6(false)).rejects.toThrow('现场确认');});
-  await act(async()=>{await result.current.executeCspJ6(true);});
+  await act(async()=>{await expect(result.current[`executeCspJ${axis}`](false)).rejects.toThrow('现场确认');});
+  await act(async()=>{await result.current[`executeCspJ${axis}`](true);});
   expect(actions().filter(b=>b.action!=='heartbeat')).toEqual([
-    {action:'prepare-csp-j6'},expect.objectContaining({action:'csp-j6-trial',plan_id:'fixed-j6-plan'}),
+    {action:`prepare-csp-j${axis}`},expect.objectContaining({action:`csp-j${axis}-trial`,plan_id:`fixed-j${axis}-plan`}),
   ]);
 });

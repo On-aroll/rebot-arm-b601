@@ -151,13 +151,16 @@ class OnsitePermit:
     used: bool = False
     coordinated_start_checked: bool = False
 
+    def allowed_axes(self, config):
+        return tuple(MODELS)
+
     def validate(self, config, now):
         if self.used or self.token in _CONSUMED_PERMITS or self.config_hash!=config.fingerprint or not now<self.expires_at:
             raise PermissionError('现场确认已过期、已使用或配置已变化')
         if not self.evidence.strip() or not self.operator_present or not self.independent_power_cut_ready:
             raise PermissionError('缺少当次现场确认及独立断电条件')
-        if not self.axes or any(type(i) is not int or i not in MODELS for i in self.axes) or len(set(self.axes))!=len(self.axes):
-            raise PermissionError('试验轴必须明确且不包含 J7')
+        if not self.axes or any(type(i) is not int or i not in self.allowed_axes(config) for i in self.axes) or len(set(self.axes))!=len(self.axes):
+            raise PermissionError('试验轴必须在对应执行器的明确许可范围内')
         if not set(self.axes)<=set(self.mechanically_supported_axes):
             raise PermissionError('仅支持已机械支撑轴的去使能停止，禁止承重轴自动掉落')
 

@@ -13,7 +13,7 @@ async function request(path, body) {
 }
 
 export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, virtualEnabled, locked, active, moving, now,
-  onPreview, onBusy, onExecuted, onPrepareHardwarePreview, onExecuteHardware, onObserveStartup, onExecuteCspJ3, onExecuteCspJ6, hardwareConfirmed = false, hardwareError,
+  onPreview, onBusy, onExecuted, onPrepareHardwarePreview, onExecuteHardware, onObserveStartup, onExecuteCspJ3, onExecuteCspJ6, onExecuteCspJ7, hardwareConfirmed = false, hardwareError,
   onStop, resetKey, readiness, currentXyz, hardwareState }) {
   const offline = mode === 'offline';
   const [xyz, setXyz] = React.useState(['200', '150', '200']);
@@ -22,12 +22,12 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
   const [hardwareSpeed, setHardwareSpeed] = React.useState('0.02');
   const [timeoutMode, setTimeoutMode] = React.useState('auto');
   const [timeoutSeconds, setTimeoutSeconds] = React.useState('5');
-  const [feedforwardMode,setFeedforwardMode] = React.useState('none');
+  const [feedforwardMode,setFeedforwardMode] = React.useState('native-csp-xyz-v1');
   const [plan, setPlan] = React.useState(null);
   const [submitted, setSubmitted] = React.useState(false);
   const [nativeTrial, setNativeTrial] = React.useState(false);
   const [nativeAxis, setNativeAxis] = React.useState(3);
-  const nativeCallback = nativeAxis === 3 ? onExecuteCspJ3 : onExecuteCspJ6;
+  const nativeCallback = nativeAxis === 3 ? onExecuteCspJ3 : nativeAxis === 6 ? onExecuteCspJ6 : onExecuteCspJ7;
   const [pending, setPending] = React.useState(false);
   const [message, setMessage] = React.useState('输入 XYZ，先预演，再执行。');
   const [capabilities, setCapabilities] = React.useState(null);
@@ -60,7 +60,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
   const job = feedback?.job;
   const executing = ['starting', 'running', 'cancelling'].includes(job?.status);
   const hardwareReason = capabilities?.hardware_reason || '实机同步能力尚未确认，不能下发。';
-  const cspResult = !offline && ['native-csp-j3-v1','native-csp-j6-v1'].includes(hardwareState?.control?.mode)
+  const cspResult = !offline && ['native-csp-j3-v1','native-csp-j6-v1','native-csp-j7-v1'].includes(hardwareState?.control?.mode)
     && hardwareState.busy === false ? hardwareState : null;
   const cspAxis = cspResult?.control?.axis ?? (cspResult?.control?.mode === 'native-csp-j6-v1' ? 6 : 3);
   const cspBeforeStop = cspResult?.arrival_feedback?.[String(cspAxis)] ?? cspResult?.failure_feedback?.[String(cspAxis)];
@@ -168,10 +168,11 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     {!offline && <details className="consoleNote"><summary>原生位置闭环 · J{nativeAxis} 小幅试验</summary>
       <label htmlFor="csp-trial-axis">单轴试验轴<select id="csp-trial-axis" value={nativeAxis} disabled={occupied}
         onChange={e=>{setNativeAxis(Number(e.target.value));invalidate();}}>
-        <option value="3">J3 · 已验证位置环</option><option value="6">J6 · 末端主动转动验证</option>
+        <option value="3">J3 · 已验证位置环</option><option value="6">J6 · 末端主动转动验证</option><option value="7">J7 · 夹爪电机轴小幅验证</option>
       </select></label>
       <p>仅 J{nativeAxis} 增加 0.5°，最高 0.02 rad/s，首次使能起最多 15 秒自动失能。先检查当前姿态与模型路径，再装载当前位置并使能；不执行上面的 XYZ 目标。</p>
-      <p>当次临时使用 CSP 模式、0.02 rad/s、10 A、{nativeAxis === 3 ? 9 : 1} N·m 上限。PID、零位与保存草稿不改；失能及稳定反馈确认后恢复原运行参数，不恢复旧位置目标。SDK 阻塞可能延迟停止。</p>
+      <p>当次临时使用 CSP 模式、0.02 rad/s、10 A、{nativeAxis === 3 ? 9 : nativeAxis === 6 ? 1 : 0.2} N·m 上限。PID、零位与保存草稿不改；失能及稳定反馈确认后恢复原运行参数，不恢复旧位置目标。SDK 阻塞可能延迟停止。</p>
+      {nativeAxis === 7 && <p>0.5° 指 J7 电机轴角度，非夹爪开口角或毫米。采用官方 RS 电机位置 0–5 rad 作为软件边界；本机开口/夹持力尚未标定，其他六轴只读。本次模型检查仅覆盖六轴支撑姿态。</p>}
       <button disabled={occupied || !previewReady || !hardwareConfirmed || !nativeCallback} onClick={executeCspAxis}>执行 J{nativeAxis} CSP +0.5°</button>
     </details>}
     {cspResult && <div className="consoleNote" role="group" aria-label={`上次 J${cspAxis} CSP 试验记录`}>
@@ -190,7 +191,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
         ? ['0x7005','0x7017','0x7018','0x700b'].every(index => cspResult.restoration.restored?.includes(index))
           ? '四项临时运行参数已恢复并读回核对。' : '运行参数清理检查通过。'
         : '运行参数恢复未完全确认，请查看停止记录。'}</p>
-      <p>以上为该次任务记录，实时位置以反馈坐标为准；尚未通过六轴 XYZ 到位验收。</p>
+      <p>以上为该次单轴任务记录，实时位置以反馈坐标为准；六轴 XYZ 与夹爪动作分别按各自试验记录验收。</p>
     </div>}
     {!previewReady && <p className="consoleNote">{offline ? '等待完整、新鲜的虚拟电机反馈；请检查虚拟服务。' : '请先连接实机，取得完整、新鲜的六轴位置。'}</p>}
     {offline && !virtualEnabled && <p className="consoleNote">可以先预演；执行前点击上方“使能虚拟电机”。</p>}

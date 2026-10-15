@@ -45,9 +45,12 @@ def official_module():
 
 class SeeedTransport(SdkTransport):
     """The P4 executor supplies permission, timing and feedback checks unchanged."""
-    def __init__(self, *, position_window=False, diagnostic_axes=(), **kwargs):
+    def __init__(self, *, position_window=False, diagnostic_axes=(), include_gripper=False, **kwargs):
         super().__init__(**kwargs)
-        if any(type(i) is not int or i not in MODELS for i in diagnostic_axes) or len(set(diagnostic_axes))!=len(diagnostic_axes):
+        self.models = dict(MODELS)
+        if include_gripper:
+            self.models[7] = 'rs-00'
+        if any(type(i) is not int or i not in self.models for i in diagnostic_axes) or len(set(diagnostic_axes))!=len(diagnostic_axes):
             raise ValueError('诊断轴必须是明确且不重复的 J1–J6')
         self.diagnostic_axes=tuple(diagnostic_axes)
         self.arm = None
@@ -79,16 +82,17 @@ class SeeedTransport(SdkTransport):
         # The official RS YAML is read, never modified. Its gain defaults are
         # never sent: trial frames below always carry explicit approved gains.
         self.arm = Arm(hw_yaml=str(OFFICIAL / 'config/rebotarm_rs.yaml'))
-        # Register J1-J6 only; no gripper/group-wide lifecycle in this trial.
-        self.arm._all_joints = [j for j in self.arm._all_joints if j.name in {f'joint{i}' for i in MODELS}]
+        # J7 is registered only for the explicit, separate gripper transport.
+        names = {i: ('gripper' if i == 7 else f'joint{i}') for i in self.models}
+        self.arm._all_joints = [j for j in self.arm._all_joints if j.name in set(names.values())]
         actual = [(j.name, j.motor_id, j.feedback_id, j.model, j.vendor) for j in self.arm._all_joints]
-        expected = [(f'joint{i}', i, 0xFD, model, 'robstride') for i, model in MODELS.items()]
+        expected = [(names[i], i, 0xFD, model, 'robstride') for i, model in self.models.items()]
         if actual != expected:
             raise RuntimeError('Seeed RS 电机映射不符；未连接')
         self.ownership.acquire()
         try:
             self.arm.connect()  # Upstream connect only registers motors.
-            self.motors = {i: self.arm._motor_map[f'joint{i}'] for i in MODELS}
+            self.motors = {i: self.arm._motor_map[names[i]] for i in self.models}
             self.ownership.claim()
         except Exception:
             # Registration can fail partway; close every created handle without

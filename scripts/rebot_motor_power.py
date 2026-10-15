@@ -103,19 +103,25 @@ class MotorPowerAPI:
             state=self.store.status()['state']
             if native:
                 from rebot_native_csp import proposal,DELTA
+                if native_axis == 7:
+                    from rebot_gripper_csp import proposal
                 raw,public=proposal(self.limits,axis=native_axis)
             else: raw,public=trial_proposal(state,self.limits)
             with self.lock: self.proposal=public
             result=self._readonly_probe(raw,native=True,native_axis=native_axis) if native else self._readonly_probe(raw)
             with self.lock: self.snapshot['feedback']=result.get('feedback',{})
             if result.get('ok'):
-                self.check_pose(result['expected_start'])
+                self.check_pose(result['expected_start'][:6])
                 if native:
                     from rebot_mit_mock import Trajectory
                     target=list(result['expected_start']); target[native_axis-1]+=DELTA
-                    trajectory=Trajectory.create(result['expected_start'],[target],Envelope.parse(raw),axes=(native_axis,))
+                    if native_axis == 7:
+                        from rebot_gripper_csp import GripperEnvelope,GripperTrajectory
+                        parsed=GripperEnvelope.parse(raw);curve=GripperTrajectory
+                    else: parsed=Envelope.parse(raw);curve=Trajectory
+                    trajectory=curve.create(result['expected_start'],[target],parsed,axes=(native_axis,))
                     for n in range(101):
-                        self.check_pose(trajectory.sample(trajectory.duration*n/100)[0])
+                        self.check_pose(trajectory.sample(trajectory.duration*n/100)[0][:6])
                     public.update(start_deg=[math.degrees(v) for v in result['expected_start']],
                                   target_deg=[math.degrees(v) for v in target],curve_seconds=trajectory.duration)
                 if state['revision']!=self.store.status()['state']['revision']:
@@ -154,7 +160,10 @@ class MotorPowerAPI:
             if not self.idle(): raise ValueError('仿真任务尚未结束')
             if plan['revision']!=self.store.status()['state']['revision']:
                 self.plan=None; raise ValueError('软件配置已变化，请重新检查；没有覆盖修改')
-            config=Envelope.parse(plan['config'])
+            if native and native_axis == 7:
+                from rebot_gripper_csp import GripperEnvelope
+                config=GripperEnvelope.parse(plan['config'])
+            else: config=Envelope.parse(plan['config'])
             native_xyz=point and config.version=='native-csp-xyz-v1'
             if diagnostic:
                 if not point or config.gain_review is None or config.feedforward is None:
@@ -245,7 +254,7 @@ class MotorPowerAPI:
             token=headers.get('X-Motor-Session')
             if path!='/motor-power/action' or token not in self.sessions: raise ValueError('单轴操作会话失效，请重新打开操作入口')
         action=body.get('action')
-        if point and action not in ('execute','probe-startup','prepare-csp-j3','csp-j3-trial','prepare-csp-j6','csp-j6-trial','stop','heartbeat'):
+        if point and action not in ('execute','probe-startup','prepare-csp-j3','csp-j3-trial','prepare-csp-j6','csp-j6-trial','prepare-csp-j7','csp-j7-trial','stop','heartbeat'):
             raise ValueError('XYZ 入口只接受已预演任务、启动采集、停止和会话心跳')
         if action=='prepare': return self.prepare(token)
         if action=='start': return self.start(token,body)
@@ -255,6 +264,8 @@ class MotorPowerAPI:
         if action=='csp-j3-trial' and point: return self.start(token,body,native=True)
         if action=='prepare-csp-j6' and point: return self.prepare(token,native=True,native_axis=6)
         if action=='csp-j6-trial' and point: return self.start(token,body,native=True,native_axis=6)
+        if action=='prepare-csp-j7' and point: return self.prepare(token,native=True,native_axis=7)
+        if action=='csp-j7-trial' and point: return self.start(token,body,native=True,native_axis=7)
         if action=='stop': return self.stop()
         if action=='heartbeat':
             with self.lock:

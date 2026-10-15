@@ -36,7 +36,7 @@ it('reads seven axes only on click without enabling, moving, connecting or editi
   expect(p.gateway.requestAllPower).not.toHaveBeenCalled();
   expect(p.gateway.connect).not.toHaveBeenCalled();
   expect(JSON.stringify(p.mapping)).toBe(before);
-  expect(screen.getByText('实机轨迹：待验收')).toBeTruthy();
+  expect(screen.getByText('实机轨迹：另见任务记录')).toBeTruthy();
   expect(screen.getByRole('button',{name:'已确认撤力与支撑，开始记录'}).disabled).toBe(false);
 });
 

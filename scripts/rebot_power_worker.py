@@ -49,10 +49,14 @@ def probe(config, bus):
 
 
 def run_trial(message, bus=None):
-    config = Envelope.parse(message['config'])
+    gripper=message['operation']=='csp-j7-trial'
+    if gripper:
+        from rebot_gripper_csp import GripperEnvelope
+        config=GripperEnvelope.parse(message['config'])
+    else: config = Envelope.parse(message['config'])
     native_xyz=message['operation']=='native-xyz'
     point=message['operation'] in ('move-xyz','probe-startup') or native_xyz
-    native=message['operation'] in ('csp-j3-trial','csp-j6-trial')
+    native=message['operation'] in ('csp-j3-trial','csp-j6-trial','csp-j7-trial')
     if not point and not native and (message['operation'] != 'hold-j1' or message.get('seconds') != 3):
         raise ValueError('仅支持 J1 当次 3 秒保持试验')
     if native_xyz:
@@ -64,11 +68,16 @@ def run_trial(message, bus=None):
     elif native:
         from rebot_native_csp import CspJ3Trial,CspJ6Trial,CspTransport,runtime_for_axis
         from rebot_mit_hardware import MotionIntent
-        axis=3 if message['operation']=='csp-j3-trial' else 6
+        axis={'csp-j3-trial':3,'csp-j6-trial':6,'csp-j7-trial':7}[message['operation']]
         axes=(axis,)
-        intent=MotionIntent([message['target']],f'native-csp-j{axis}',message['request_id'],expected_start=message['expected_start'])
-        cls=CspJ3Trial if axis==3 else CspJ6Trial
-        executor=cls(config,bus or CspTransport(axis=axis,runtime=runtime_for_axis(axis)))
+        if gripper:
+            from rebot_gripper_csp import GripperIntent,GripperTrial,GripperTransport
+            intent=GripperIntent([message['target']],'native-csp-j7',message['request_id'],expected_start=message['expected_start'])
+            executor=GripperTrial(config,bus or GripperTransport())
+        else:
+            intent=MotionIntent([message['target']],f'native-csp-j{axis}',message['request_id'],expected_start=message['expected_start'])
+            cls=CspJ3Trial if axis==3 else CspJ6Trial
+            executor=cls(config,bus or CspTransport(axis=axis,runtime=runtime_for_axis(axis)))
     elif point:
         from rebot_mit_hardware import MotionIntent, StartupObservationIntent
         from rebot_seeed_transport import SeeedTransport
@@ -81,7 +90,11 @@ def run_trial(message, bus=None):
         intent=HoldIntent(message['request_id'],message['expected_start'],seconds=3)
         executor=HardwareExecutor(config,bus or SdkTransport())
     permit_seconds=config.policy.task_timeout+10 if point or native else 10
-    permit = OnsitePermit(config.fingerprint, axes, time.monotonic()+permit_seconds,
+    permit_class=OnsitePermit
+    if gripper:
+        from rebot_gripper_csp import GripperPermit
+        permit_class=GripperPermit
+    permit = permit_class(config.fingerprint, axes, time.monotonic()+permit_seconds,
         message['evidence'], axes, True, True,coordinated_start_checked=point)
     executor.heartbeat(executor.session, 0, True)
     for name in (signal.SIGTERM, signal.SIGINT):
@@ -118,6 +131,10 @@ def main():
     message = json.loads(sys.stdin.readline())
     if message.get('operation') == 'probe':
         emit(dict(kind='probe', **probe(Envelope.parse(message['config']), SdkTransport())))
+    elif message.get('operation') == 'probe-csp-j7':
+        from rebot_gripper_csp import GripperEnvelope,GripperTransport
+        from rebot_native_csp import probe as csp_probe
+        emit(dict(kind='probe', **csp_probe(GripperEnvelope.parse(message['config']),GripperTransport())))
     elif message.get('operation') in ('probe-csp-j3','probe-csp-j6'):
         from rebot_native_csp import CspTransport,probe as csp_probe,runtime_for_axis
         axis=3 if message['operation']=='probe-csp-j3' else 6

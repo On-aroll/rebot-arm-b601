@@ -18,10 +18,10 @@ function setup(overrides = {}) {
 const posts = fetch => fetch.mock.calls.filter(([,o]) => o?.body).map(([url,o]) => ({url,body:JSON.parse(o.body)}));
 
 describe('Two-mode XYZ workflow', () => {
-  it('sends an explicit native XYZ preview choice and distinguishes arrival-time error from post-release coordinates', async () => {
+  it('defaults hardware preview to validated native CSP and distinguishes arrival-time error from post-release coordinates', async () => {
     const execute=vi.fn(async()=>({status:{state:'PREPARING',busy:true}}));
     const {fetch,props,rerender}=setup({mode:'hardware',hardwareConfirmed:true,onExecuteHardware:execute});
-    fireEvent.change(screen.getByLabelText('轨迹控制方案'),{target:{value:'native-csp-xyz-v1'}});
+    expect(screen.getByLabelText('轨迹控制方案').value).toBe('native-csp-xyz-v1');
     expect(screen.getByText(/六轴保留设备现有 PID/)).toBeTruthy();
     expect(screen.getByLabelText('实机关节速度上限（rad/s）').disabled).toBe(true);
     expect(screen.getByLabelText('实机任务时限').disabled).toBe(true);
@@ -69,14 +69,14 @@ describe('Two-mode XYZ workflow', () => {
     await screen.findByText(/J3 CSP 反馈已到位并稳定/);
     expect(screen.queryByText(/当前末端误差/)).toBeNull();
   });
-  it('selects J6 explicitly without starting or writing anything on selection',async()=>{
+  it.each([6,7])('selects J%s explicitly without starting or writing on selection',async(axis)=>{
     const j3=vi.fn(),j6=vi.fn(async()=>({status:{state:'PREPARING',busy:true}}));
-    const {fetch}=setup({mode:'hardware',hardwareConfirmed:true,onExecuteCspJ3:j3,onExecuteCspJ6:j6});
+    const {fetch}=setup({mode:'hardware',hardwareConfirmed:true,onExecuteCspJ3:j3,onExecuteCspJ6:j6,onExecuteCspJ7:j6});
     fireEvent.click(screen.getByText('原生位置闭环 · J3 小幅试验'));
-    fireEvent.change(screen.getByLabelText('单轴试验轴'),{target:{value:'6'}});
+    fireEvent.change(screen.getByLabelText('单轴试验轴'),{target:{value:String(axis)}});
     expect(j3).not.toHaveBeenCalled();expect(j6).not.toHaveBeenCalled();expect(posts(fetch)).toEqual([]);
-    expect(screen.getByText(/10 A、1 N·m 上限/)).toBeTruthy();
-    fireEvent.click(screen.getByRole('button',{name:'执行 J6 CSP +0.5°'}));
+    expect(screen.getByText(axis===6?/10 A、1 N·m 上限/:/10 A、0.2 N·m 上限/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:`执行 J${axis} CSP +0.5°`}));
     await waitFor(()=>expect(j6).toHaveBeenCalledOnce());expect(j3).not.toHaveBeenCalled();
   });
   it('shows J6 feedback rather than J3 values in the saved single-axis result',()=>{
@@ -191,7 +191,7 @@ describe('Two-mode XYZ workflow', () => {
   });
   it('selects official gravity per task, invalidates preview, and sends no enable or parameter writes',async()=>{
     const {fetch}=setup({mode:'hardware'});
-    expect(screen.getByLabelText('轨迹控制方案').value).toBe('none');
+    expect(screen.getByLabelText('轨迹控制方案').value).toBe('native-csp-xyz-v1');
     fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));await screen.findByText(/预演通过/);
     fireEvent.change(screen.getByLabelText('轨迹控制方案'),{target:{value:'seeed-rs-gravity-v1'}});
     expect(screen.getByRole('button',{name:'确认实机执行'}).disabled).toBe(true);

@@ -46,7 +46,7 @@ def proposal(limits, *, axis=AXIS):
     return raw, public
 
 
-def validate_samples(config, samples, clock, *, csp=False, quiet=False, axis=AXIS):
+def validate_samples(config, samples, clock, *, csp=False, quiet=False, axis=AXIS, current_limit=None):
     for i,s in samples.items():
         a=config.axes[i-1]; p=config.policy
         if s.mode != (5 if csp and i==axis else 0):
@@ -59,7 +59,7 @@ def validate_samples(config, samples, clock, *, csp=False, quiet=False, axis=AXI
         limit=p.start_speed if quiet else a.v_max
         if abs(s.qd)>limit:
             raise ValueError(f'J{i} 实测速度 {s.qd:.6f} rad/s 超过 {limit:g} rad/s')
-        if i==axis and s.iq_raw_a is not None and abs(s.iq_raw_a)>runtime_for_axis(axis)[0x7018]:
+        if i==axis and s.iq_raw_a is not None and abs(s.iq_raw_a)>(runtime_for_axis(axis)[0x7018] if current_limit is None else current_limit):
             raise ValueError(f'J{axis} 电流反馈 {s.iq_raw_a:.3f} A 超过本次 10 A 限制')
 
 
@@ -68,12 +68,12 @@ def probe(config, bus):
     try:
         bus.open_readonly()
         for _ in range(3):
-            samples=bus.read(tuple(MODELS),config.policy)
+            samples=bus.read(bus.feedback_axes,config.policy)
             readings.append({str(i):asdict(s) for i,s in samples.items()})
-            validate_samples(config,samples,bus.clock,quiet=True,axis=bus.axis)
+            validate_samples(config,samples,bus.clock,quiet=True,axis=bus.axis,current_limit=bus.runtime[0x7018])
             if any(abs(s.q-readings[0][str(i)]['q'])>config.policy.arrival_q for i,s in samples.items()):
                 raise ValueError('只读检查期间起点发生变化')
-        return dict(ok=True,expected_start=[samples[i].q for i in MODELS],
+        return dict(ok=True,expected_start=[samples[i].q for i in bus.feedback_axes],
                     feedback=readings[-1],readings=readings,hardware_writes=0)
     except Exception as e:
         return dict(ok=False,reason=str(e),feedback=readings[-1] if readings else {},readings=readings,hardware_writes=0)
@@ -82,9 +82,11 @@ def probe(config, bus):
 
 
 class CspTransport(SeeedTransport):
-    def __init__(self, *, axis=AXIS, runtime=None, **kwargs):
-        if type(axis) is not int or axis not in MODELS: raise ValueError('需要明确的 J1–J6 轴编号')
-        super().__init__(position_window=True, diagnostic_axes=(axis,), **kwargs)
+    feedback_axes = tuple(MODELS)
+    def __init__(self, *, axis=AXIS, runtime=None, include_gripper=False, **kwargs):
+        if type(axis) is not int or axis not in MODELS and not (axis == 7 and include_gripper): raise ValueError('需要对应执行器明确的电机轴编号')
+        if include_gripper != (axis == 7): raise ValueError('J7 必须通过独立夹爪执行器接入')
+        super().__init__(position_window=True, diagnostic_axes=(axis,), include_gripper=include_gripper, **kwargs)
         self.axis=axis; self.runtime=dict(RUNTIME if runtime is None else runtime)
         self.coordinated=False; self.last_boundary_target=None
         self.original={}; self.register_log=[]; self.changed=set()
@@ -204,13 +206,22 @@ class CspTransport(SeeedTransport):
 
 
 class CspAxisTrial(HardwareExecutor):
+    feedback_axes = tuple(MODELS)
+    runtime_for_axis = staticmethod(runtime_for_axis)
+    proposal = staticmethod(proposal)
+    parse_envelope = staticmethod(Envelope.parse)
+    trajectory_type = Trajectory
+
+    def validate_samples(self, samples, **kwargs):
+        validate_samples(self.config, samples, self.clock, axis=self.axis, current_limit=self.runtime[0x7018], **kwargs)
+
     def __init__(self, config, transport, *, axis=AXIS, **kwargs):
         super().__init__(config,transport,**kwargs)
-        self.axis=axis; self.runtime=runtime_for_axis(axis)
+        self.axis=axis; self.runtime=self.runtime_for_axis(axis)
         if transport.axis!=axis or transport.runtime!=self.runtime or transport.coordinated:
             raise ValueError(f'本入口仅允许既定 J{axis} 单轴运行参数')
-        expected,_=proposal([(a.q_min,a.q_max) for a in config.axes],axis=axis)
-        if config.fingerprint!=Envelope.parse(expected).fingerprint:
+        expected,_=self.proposal([(a.q_min,a.q_max) for a in config.axes],axis=axis)
+        if config.fingerprint!=self.parse_envelope(expected).fingerprint:
             raise ValueError(f'CSP 试验只能使用已确认的固定 0.5°/0.02 rad/s/{TASK_TIMEOUT:g} 秒方案')
         self.restore_result=None; self.power_deadline=None; self.arrival_feedback={}
         self.enable_attempted_at=None; self.stop_requested_at=None; self.stop_call_completed_at=None
@@ -221,7 +232,7 @@ class CspAxisTrial(HardwareExecutor):
             raise TimeoutError(f'CSP 首次使能起 {TASK_TIMEOUT:g} 秒时限已到，撤力')
 
     def send_position(self, q, samples, permit, phase):
-        self.check(permit); validate_samples(self.config,samples,self.clock,csp=True,axis=self.axis)
+        self.check(permit); self.validate_samples(samples,csp=True)
         s=samples[self.axis]; a=self.config.axes[self.axis-1]
         if not a.q_min<=q<=a.q_max or abs(q-s.q)>a.error_max:
             raise ValueError(f'J{self.axis} CSP 跟踪误差或目标越界：误差 {math.degrees(q-s.q):.3f}°')
@@ -238,29 +249,29 @@ class CspAxisTrial(HardwareExecutor):
             if permit.axes!=(self.axis,) or intent.source!=f'native-csp-j{self.axis}' or len(intent.waypoints)!=1:
                 raise ValueError(f'只允许当次已确认的 J{self.axis} CSP 小幅试验')
             expected=intent.expected_start; target=intent.waypoints[0]
-            if expected is None or len(expected)!=6 or any(not finite(v) for v in expected):
+            if expected is None or len(expected)!=len(self.feedback_axes) or any(not finite(v) for v in expected):
                 raise ValueError('缺少已检查的六轴起点')
             if any(abs(b-a-(DELTA if i==self.axis-1 else 0.))>1e-9 for i,(a,b) in enumerate(zip(expected,target))):
                 raise ValueError(f'目标必须为 J{self.axis} +0.5°，其他轴不改变')
             check=lambda:self.check(permit)
             check(); self.bus.open_readonly()
-            samples=self.bus.read(tuple(MODELS),p,check); self.feedback.update(samples)
-            validate_samples(self.config,samples,self.clock,quiet=True,axis=self.axis)
-            if any(abs(samples[i].q-expected[i-1])>p.arrival_q for i in MODELS):
+            samples=self.bus.read(self.feedback_axes,p,check); self.feedback.update(samples)
+            self.validate_samples(samples,quiet=True)
+            if any(abs(samples[i].q-expected[i-1])>p.arrival_q for i in self.feedback_axes):
                 raise ValueError('实测起点已改变，请重新检查')
             self.bus.authorize(self.config,permit)
             self.bus.quiesce(); check()
             self.bus.snapshot_registers(check)
             for index in (0x7005,0x700B,0x7018,0x7017):
                 self.bus.write_register(index,self.runtime[index],check,phase='prepare')
-            samples=self.bus.read(tuple(MODELS),p,check); self.feedback.update(samples)
-            validate_samples(self.config,samples,self.clock,csp=True,quiet=True,axis=self.axis)
-            if any(abs(samples[i].q-expected[i-1])>p.arrival_q for i in MODELS):
+            samples=self.bus.read(self.feedback_axes,p,check); self.feedback.update(samples)
+            self.validate_samples(samples,csp=True,quiet=True)
+            if any(abs(samples[i].q-expected[i-1])>p.arrival_q for i in self.feedback_axes):
                 raise ValueError('使能前起点发生变化；不自动追赶旧目标')
-            start=tuple(samples[i].q for i in MODELS)
+            start=tuple(samples[i].q for i in self.feedback_axes)
             # Keep passive slots at the measured start; command only the selected axis.
-            goal=tuple(target[self.axis-1] if i==self.axis else start[i-1] for i in MODELS)
-            trajectory=Trajectory.create(start,[goal],self.config,axes=(self.axis,))
+            goal=tuple(target[self.axis-1] if i==self.axis else start[i-1] for i in self.feedback_axes)
+            trajectory=self.trajectory_type.create(start,[goal],self.config,axes=(self.axis,))
             self.bus.write_register(0x7016,start[self.axis-1],check,phase='preload-current')
             if self.clock()-samples[self.axis].requested_at>p.command_age:
                 raise TimeoutError('首个位置目标已过期；未使能')
@@ -270,9 +281,9 @@ class CspAxisTrial(HardwareExecutor):
             began=self.clock(); last=began; settled=None; self.state='RUNNING'
             while True:
                 cycle_started=self.clock()
-                check(); samples=self.bus.read(tuple(MODELS),p,check); self.feedback.update(samples)
-                validate_samples(self.config,samples,self.clock,csp=True,axis=self.axis); check()
-                if any(abs(samples[i].q-start[i-1])>p.arrival_q for i in MODELS if i!=self.axis):
+                check(); samples=self.bus.read(self.feedback_axes,p,check); self.feedback.update(samples)
+                self.validate_samples(samples,csp=True); check()
+                if any(abs(samples[i].q-start[i-1])>p.arrival_q for i in self.feedback_axes if i!=self.axis):
                     raise ValueError(f'未控制轴发生位移，停止 J{self.axis} 小幅试验')
                 now=self.clock()
                 if now-last>p.period+p.jitter_max: raise TimeoutError('CSP 反馈周期延迟超限')

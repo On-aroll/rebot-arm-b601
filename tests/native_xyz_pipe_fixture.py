@@ -27,12 +27,12 @@ class WallClock:
 def main():
     message=json.loads(worker.sys.stdin.readline())
     operation=message.get('operation')
-    if operation not in ('native-xyz','probe-csp-j6','csp-j6-trial'):
-        raise ValueError('fixture permits only existing native XYZ or fixed J6')
+    if operation not in ('native-xyz','probe-csp-j6','csp-j6-trial','probe-csp-j7','csp-j7-trial'):
+        raise ValueError('fixture permits only existing native XYZ or fixed J6/J7')
     sdk=NativeController(WallClock())
     register=sdk.add_robstride_motor
     def initialized_motor(i,host,model):
-        motor=register(i,host,model);motor.q=message.get('expected_start',[0.]*6)[i-1]
+        motor=register(i,host,model);motor.q=message.get('expected_start',[0.]*7)[i-1]
         return motor
     sdk.add_robstride_motor=initialized_motor
     transport=native.NativeXYZTransport
@@ -44,7 +44,13 @@ def main():
     with patch('motorbridge.Controller',side_effect=AssertionError('real CAN forbidden')), \
          patch.object(native,'NativeXYZTransport',lambda:transport(factory=lambda **_:sdk,ownership=Owner())), \
          patch.object(worker,'emit',marked_emit):
-        if operation=='probe-csp-j6':
+        if operation in ('probe-csp-j7','csp-j7-trial'):
+            from rebot_gripper_csp import GripperEnvelope,GripperTransport
+            bus=GripperTransport(factory=lambda **_:sdk,ownership=Owner())
+            if operation=='probe-csp-j7':
+                emit(dict(kind='probe',**probe(GripperEnvelope.parse(message['config']),bus)))
+            else:worker.run_trial(message,bus=bus)
+        elif operation=='probe-csp-j6':
             from rebot_mit_hardware import Envelope
             emit(dict(kind='probe',**probe(Envelope.parse(message['config']),
                 CspTransport(axis=6,runtime=runtime_for_axis(6),factory=lambda **_:sdk,ownership=Owner()))))

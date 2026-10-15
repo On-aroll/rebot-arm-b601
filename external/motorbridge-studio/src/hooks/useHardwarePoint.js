@@ -44,7 +44,7 @@ export function useHardwarePoint({ beforeExecute, onFinished }) {
   }, [accept, session]);
   const execute = React.useCallback(async (planId, confirmed, observeStartup = false, nativeAxis = 0) => {
     if (!confirmed) throw new Error('请勾选上方一次现场确认');
-    if (![0, 3, 6].includes(nativeAxis)) throw new Error('请选择既定 J3 或 J6 小幅试验');
+    if (![0, 3, 6, 7].includes(nativeAxis)) throw new Error('请选择既定 J3、J6 或 J7 小幅试验');
     if (starting.current || active.current) throw new Error('实机任务尚未结束');
     const ticket = ++generation.current;
     starting.current = true; setPending(true); setError('');
@@ -121,5 +121,6 @@ export function useHardwarePoint({ beforeExecute, onFinished }) {
   }, [accept, stop]);
   return { state, pending, busy: Boolean(pending || state?.busy), execute,
     executeCspJ3: confirmed => execute(null, confirmed, false, 3),
-    executeCspJ6: confirmed => execute(null, confirmed, false, 6), stop, error };
+    executeCspJ6: confirmed => execute(null, confirmed, false, 6),
+    executeCspJ7: confirmed => execute(null, confirmed, false, 7), stop, error };
 }

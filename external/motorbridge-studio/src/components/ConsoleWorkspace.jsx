@@ -329,7 +329,7 @@ export function ConsoleWorkspace() {
       <div className="consoleHeading card glass">
         <div><span className="consoleEyebrow">reBot B601-RS · 虚实联调控制台</span>
           <h2>机械臂工作台 <small>输入 XYZ → 预演 → 执行 → 查看反馈</small></h2>
-          <p>{workMode === 'offline' ? '离线验证：无需机械臂，模型跟随虚拟电机反馈。' : '实机操作：模型跟随真实位置读数，实机轨迹执行待验收。'}</p></div>
+          <p>{workMode === 'offline' ? '离线验证：无需机械臂，模型跟随虚拟电机反馈。' : '实机操作：模型跟随真实位置读数，从当前起点预演并执行当次确认的任务。'}</p></div>
         <div className="consoleBadges">
           <span className={`badge ${problem ? 'err' : 'ok'}`}>{problem ? '模型预演不可用' : '模型预演在线'}</span>
           {(workMode === 'hardware' || gatewayOnline) && <span className={`badge ${gatewayOnline ? 'ok' : (gateway.status === 'offline' ? 'err' : '')}`}>
@@ -393,7 +393,8 @@ export function ConsoleWorkspace() {
         hardwareConfirmed={onsiteConfirmed} onExecuteHardware={planId => hardware.execute(planId, onsiteConfirmed)} hardwareError={hardware.error}
         onObserveStartup={planId => hardware.execute(planId, onsiteConfirmed, true)}
         onExecuteCspJ3={() => hardware.executeCspJ3(onsiteConfirmed)}
-        onExecuteCspJ6={() => hardware.executeCspJ6(onsiteConfirmed)} hardwareState={hardware.state}
+        onExecuteCspJ6={() => hardware.executeCspJ6(onsiteConfirmed)}
+        onExecuteCspJ7={() => hardware.executeCspJ7(onsiteConfirmed)} hardwareState={hardware.state}
         currentXyz={!diagnosticSimulation && coordinateFresh ? displayedXyz : null} readiness={hardwareReadiness} resetKey={syncVersion} locked={locked||syncing} active={active} moving={moving} now={now}
         onPrepareHardwarePreview={prepareHardwarePreview} onStop={() => workMode === 'offline' ? ros.action('stop') : hardware.stop()}
         onPreview={(plan) => { setPointPlan(plan); if (plan) { setDiagnosticSimulation(false); setCameraView('overview'); setShowPlan(true); setGhost(false); } }} onBusy={(value) => { commandBusy.current = value; setBusy(value); }}
@@ -507,7 +508,7 @@ export function ConsoleWorkspace() {
             缺的是执行层与手柄映射：摇杆 → 末端 XYZ 增量 → 自动求各关节运动。</p>
         </section>
 
-        <section className="card glass consoleCard"><h3>接入边界</h3><p>J1–J6 保留 MIT，夹爪单独核实。软件批准不授予实机权限；本地服务没有 CAN 执行实现。旧控制页恢复已审计的只读连接；真实写入仍锁定。</p><p>MIT 的 Kp、Kd、前馈及轨迹速度/加速度/jerk 须独立验证；PP/CSP 寄存器不提供 MIT 限速证明。现场动态映射、TCP、出力和停止行为未验收。</p></section>
+        <section className="card glass consoleCard"><h3>接入边界</h3><p>实机任务使用独立 CAN 执行器。默认 CSP 小幅到点已取得实机反馈记录；MIT 方案与 J7 夹爪分别核实。软件配置批准不代替当次实机确认，旧控制页保持已审计的只读连接。</p><p>MIT 的 Kp、Kd、前馈及轨迹速度/加速度/jerk 须独立验证；PP/CSP 寄存器不提供 MIT 限速证明。小幅任务的到位、失能状态及现场观察按任务记录验收；TCP 独立标定、长期保持与完整路径尚未验收。</p></section>
       </div>
       </details>
     </section>
