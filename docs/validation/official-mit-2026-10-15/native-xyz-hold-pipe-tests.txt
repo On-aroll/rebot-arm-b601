@@ -1,0 +1,8 @@
+test_api_stop_cancels_running_virtual_worker_and_restores (tests.test_native_xyz_pipe.NativeXYZHoldPipe) ... ok
+test_parent_eof_cancels_running_virtual_worker_and_restores (tests.test_native_xyz_pipe.NativeXYZHoldPipe) ... ok
+test_real_worker_reports_fk_arrival_and_live_six_axis_feedback (tests.test_native_xyz_pipe.NativeXYZHoldPipe) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 5.293s
+
+OK

@@ -32,10 +32,7 @@ class NativeXYZPipe(unittest.TestCase):
         self.root=Path(self.temp.name)
         marker=self.root/'.venv/bin/python';marker.parent.mkdir(parents=True);marker.touch()
         self.processes=[];self.observed=[];self.store=FakeStore();self.before=copy.deepcopy(self.store.state)
-        record=json.loads((ROOT/'docs/validation/official-mit-2026-10-15/native-xyz-web-preflight.json').read_text())
-        self.start=np.deg2rad(record['preview']['start_deg'])
-        planner=PointPlanner(self.robot)
-        preview=planner.preview(dict(execution_source='hardware-preview',xyz_mm=record['target_xyz_mm'],speed_rad_s=.02),start=self.start)
+        self.start,planner,preview=self.make_preview()
         plan=planner.plans.pop(preview['plan_id'])
         base=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
         raw,config=configure_motion(base,plan['start'],plan['target'],dict(speed_rad_s=.02,timeout_mode='auto',feedforward_mode='native-csp-xyz-v1'))
@@ -48,6 +45,12 @@ class NativeXYZPipe(unittest.TestCase):
         self.headers={'Host':'127.0.0.1:8765','Origin':'http://127.0.0.1:8765','Sec-Fetch-Site':'same-origin'}
         token=self.api.request('/hardware-point/session',self.headers,'127.0.0.1',{})['token']
         self.headers['X-Motor-Session']=token;self.sequence=0
+
+    def make_preview(self):
+        record=json.loads((ROOT/'docs/validation/official-mit-2026-10-15/native-xyz-web-preflight.json').read_text())
+        start=np.deg2rad(record['preview']['start_deg']);planner=PointPlanner(self.robot)
+        preview=planner.preview(dict(execution_source='hardware-preview',xyz_mm=record['target_xyz_mm'],speed_rad_s=.02),start=start)
+        return start,planner,preview
 
     def take(self,key):
         if self.trusted is None or key!=self.trusted['id']:raise ValueError('consumed/unknown preview')
@@ -129,6 +132,20 @@ class NativeXYZPipe(unittest.TestCase):
 
     def test_parent_eof_cancels_running_virtual_worker_and_restores(self):
         self.check_cancel('eof')
+
+
+class NativeXYZHoldPipe(NativeXYZPipe):
+    """Same production pipeline with the recorded lift and raw held orientation."""
+    def make_preview(self):
+        proposal=json.loads((ROOT/'docs/validation/official-mit-2026-10-15/native-xyz-hold-proposal.json').read_text())
+        start=np.deg2rad(proposal['assessment']['start_deg'])
+        planner=PointPlanner(self.robot)
+        preview=planner.preview(dict(execution_source='hardware-preview',xyz_mm=proposal['target_xyz_mm'],
+            speed_rad_s=.02,orientation_mode='hold'),start=start)
+        self.assertLess(preview['position_error_mm'],.001)
+        np.testing.assert_allclose(self.robot.fk(np.deg2rad(preview['q_deg'])).rotation,
+                                   self.robot.fk(start).rotation,atol=1e-6)
+        return start,planner,preview
 
 
 if __name__=='__main__':unittest.main()

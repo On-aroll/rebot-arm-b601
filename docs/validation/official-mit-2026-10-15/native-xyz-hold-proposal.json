@@ -1,0 +1,321 @@
+{
+  "type": "pending-native-csp-held-orientation-xyz-proposal",
+  "hardware_executed": false,
+  "execution_authorized": false,
+  "target_xyz_mm": [
+    300.28,
+    16.65,
+    228.53
+  ],
+  "start_xyz_mm": [
+    300.28060898711794,
+    16.647042214449687,
+    227.0252031057556
+  ],
+  "snapshot": {
+    "schemaVersion": 1,
+    "report": {
+      "source": "explicit-gateway-read",
+      "capturedAt": 1792037617911,
+      "rows": [
+        {
+          "id": 1,
+          "fresh": true,
+          "rawDeg": -2.1264647789714606,
+          "modelDeg": -2.1264647789714606,
+          "nominal": true,
+          "tolerated": true,
+          "range": [
+            -150,
+            150
+          ],
+          "mode": 0,
+          "modeOk": true,
+          "previouslyConfirmed": true,
+          "measuredAt": 1792037617548,
+          "modeMeasuredAt": 1792037617557
+        },
+        {
+          "id": 2,
+          "fresh": true,
+          "rawDeg": -0.19286936099851268,
+          "modelDeg": -0.19286936099851268,
+          "nominal": false,
+          "tolerated": true,
+          "range": [
+            0,
+            179.9087476710785
+          ],
+          "mode": 0,
+          "modeOk": true,
+          "previouslyConfirmed": true,
+          "measuredAt": 1792037617601,
+          "modeMeasuredAt": 1792037617610
+        },
+        {
+          "id": 3,
+          "fresh": true,
+          "rawDeg": 0.4345730537783091,
+          "modelDeg": 0.4345730537783091,
+          "nominal": true,
+          "tolerated": true,
+          "range": [
+            0,
+            179.9087476710785
+          ],
+          "mode": 0,
+          "modeOk": true,
+          "previouslyConfirmed": true,
+          "measuredAt": 1792037617653,
+          "modeMeasuredAt": 1792037617662
+        },
+        {
+          "id": 4,
+          "fresh": true,
+          "rawDeg": 0.8723148884446811,
+          "modelDeg": 0.8723148884446811,
+          "nominal": true,
+          "tolerated": true,
+          "range": [
+            -89.95437383553924,
+            89.95437383553924
+          ],
+          "mode": 0,
+          "modeOk": true,
+          "previouslyConfirmed": true,
+          "measuredAt": 1792037617707,
+          "modeMeasuredAt": 1792037617716
+        },
+        {
+          "id": 5,
+          "fresh": true,
+          "rawDeg": 1.5490722828852,
+          "modelDeg": 1.5490722828852,
+          "nominal": true,
+          "tolerated": true,
+          "range": [
+            -89.95437383553924,
+            89.95437383553924
+          ],
+          "mode": 0,
+          "modeOk": true,
+          "previouslyConfirmed": true,
+          "measuredAt": 1792037617761,
+          "modeMeasuredAt": 1792037617770
+        },
+        {
+          "id": 6,
+          "fresh": true,
+          "rawDeg": 2.425781384204579,
+          "modelDeg": 2.425781384204579,
+          "nominal": true,
+          "tolerated": true,
+          "range": [
+            -179.9087476710785,
+            179.9087476710785
+          ],
+          "mode": 0,
+          "modeOk": true,
+          "previouslyConfirmed": true,
+          "measuredAt": 1792037617814,
+          "modeMeasuredAt": 1792037617822
+        },
+        {
+          "id": 7,
+          "fresh": true,
+          "rawDeg": 0.39550757337700965,
+          "modelDeg": null,
+          "nominal": false,
+          "tolerated": false,
+          "range": null,
+          "mode": 0,
+          "modeOk": true,
+          "previouslyConfirmed": false,
+          "measuredAt": 1792037617866,
+          "modeMeasuredAt": 1792037617875
+        }
+      ],
+      "positionsOk": true,
+      "modesOk": true,
+      "startOk": true,
+      "identityStatus": "not-independently-verified",
+      "hardwareExecutionAllowed": false
+    },
+    "observations": [
+      {
+        "id": 1,
+        "baselineDeg": -2.1264647789714606,
+        "minDeg": -2.1264647789714606,
+        "maxDeg": -2.1264647789714606,
+        "deltaDeg": 0,
+        "spanDeg": 0,
+        "samples": 1,
+        "lastMeasuredAt": 1792037617548
+      },
+      {
+        "id": 2,
+        "baselineDeg": -0.19286936099851268,
+        "minDeg": -0.19286936099851268,
+        "maxDeg": -0.19286936099851268,
+        "deltaDeg": 0,
+        "spanDeg": 0,
+        "samples": 1,
+        "lastMeasuredAt": 1792037617601
+      },
+      {
+        "id": 3,
+        "baselineDeg": 0.4345730537783091,
+        "minDeg": 0.4345730537783091,
+        "maxDeg": 0.4345730537783091,
+        "deltaDeg": 0,
+        "spanDeg": 0,
+        "samples": 1,
+        "lastMeasuredAt": 1792037617653
+      },
+      {
+        "id": 4,
+        "baselineDeg": 0.8723148884446811,
+        "minDeg": 0.8723148884446811,
+        "maxDeg": 0.8723148884446811,
+        "deltaDeg": 0,
+        "spanDeg": 0,
+        "samples": 1,
+        "lastMeasuredAt": 1792037617707
+      },
+      {
+        "id": 5,
+        "baselineDeg": 1.5490722828852,
+        "minDeg": 1.5490722828852,
+        "maxDeg": 1.5490722828852,
+        "deltaDeg": 0,
+        "spanDeg": 0,
+        "samples": 1,
+        "lastMeasuredAt": 1792037617761
+      },
+      {
+        "id": 6,
+        "baselineDeg": 2.425781384204579,
+        "minDeg": 2.425781384204579,
+        "maxDeg": 2.425781384204579,
+        "deltaDeg": 0,
+        "spanDeg": 0,
+        "samples": 1,
+        "lastMeasuredAt": 1792037617814
+      },
+      {
+        "id": 7,
+        "baselineDeg": 0.39550757337700965,
+        "minDeg": 0.39550757337700965,
+        "maxDeg": 0.39550757337700965,
+        "deltaDeg": 0,
+        "spanDeg": 0,
+        "samples": 1,
+        "lastMeasuredAt": 1792037617866
+      }
+    ],
+    "phase": "ready",
+    "reviewed": false,
+    "reviewedAt": null,
+    "changedAxes": [],
+    "manualReview": "not-confirmed",
+    "mappingAtCapture": {
+      "version": 1,
+      "deviceId": "20250907852512190405",
+      "axes": [
+        {
+          "motorId": 1,
+          "direction": 1,
+          "offsetDeg": 0,
+          "confirmed": true
+        },
+        {
+          "motorId": 2,
+          "direction": 1,
+          "offsetDeg": 0,
+          "confirmed": true
+        },
+        {
+          "motorId": 3,
+          "direction": 1,
+          "offsetDeg": 0,
+          "confirmed": true
+        },
+        {
+          "motorId": 4,
+          "direction": 1,
+          "offsetDeg": 0,
+          "confirmed": true
+        },
+        {
+          "motorId": 5,
+          "direction": 1,
+          "offsetDeg": 0,
+          "confirmed": true
+        },
+        {
+          "motorId": 6,
+          "direction": 1,
+          "offsetDeg": 0,
+          "confirmed": true
+        }
+      ]
+    },
+    "hardwareExecutionAllowed": false,
+    "hardwareParametersWritten": false
+  },
+  "assessment": {
+    "execution_ready": true,
+    "execution_reasons": [],
+    "hardware_seconds": 1.2000000000000002,
+    "start_deg": [
+      -2.1264647789714606,
+      -0.19286936099851268,
+      0.4345730537783091,
+      0.8723148884446811,
+      1.5490722828852002,
+      2.425781384204579
+    ],
+    "target_deg": [
+      -2.128193737588434,
+      0.17229762249963465,
+      0.7998678444697145,
+      0.872162302935444,
+      1.5473439166749736,
+      2.4258266508018207
+    ],
+    "delta_deg": [
+      -0.0017289586169731818,
+      0.36516698349814736,
+      0.36529479069140536,
+      -0.0001525855092371333,
+      -0.0017283662102264199,
+      4.5266597241570927e-05
+    ],
+    "max_axis_delta_deg": 0.36529479069140536,
+    "control_source": "motorbridge typed CSP registers and existing drive position/velocity/current loops; no host MIT gravity PD",
+    "gravity_check": {
+      "source": "official RS model, nominal estimate only",
+      "sampled_peak_Nm": [
+        2.9685103496417816e-17,
+        1.572971229641413,
+        6.735607769049423,
+        1.9939159941727098,
+        0.0006258346334550661,
+        0.0008172673762550731
+      ],
+      "limits_Nm": [
+        1.0,
+        3.0,
+        9.0,
+        3.0,
+        1.0,
+        1.0
+      ]
+    },
+    "native_position_control": true,
+    "physical_acceptance": false
+  },
+  "rotation_matrix_error": 5.810945762894493e-07,
+  "orientation_mode": "hold",
+  "note": "离线复算，不持有执行许可或可重放预演令牌；实发前须从新鲜反馈重新预演。J6预计保持，J7不参与。"
+}

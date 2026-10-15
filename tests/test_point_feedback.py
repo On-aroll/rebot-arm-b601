@@ -80,6 +80,23 @@ class FeedbackPlanTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'起点'):
             self.planner.preview(body,start=start-np.array([0,.02,0,0,0,0]))
 
+    def test_hardware_hold_preserves_measured_rotation_from_tolerated_start(self):
+        # Released feedback after the first real arrival. Holding the raw
+        # orientation must not silently use the projected numerical seed's pose.
+        start=np.deg2rad([-1.694335785657679,-.1635754400404817,.45166066629737367,
+                         .8898930739647964,1.1359863905859426,2.430175970605248])
+        rotation=self.robot.fk(start).rotation.copy()
+        result=self.planner.preview(dict(execution_source='hardware-preview',
+            xyz_mm=[300.50,12.92,229.13],speed_rad_s=.02,orientation_mode='hold'),start=start)
+        target=np.deg2rad(result['q_deg'])
+        self.assertLess(result['position_error_mm'],.001)
+        self.assertLess(np.max(np.abs(target-start)),np.deg2rad(.5))
+        self.assertGreater(np.max(np.abs(target-start)),np.deg2rad(.45))
+        np.testing.assert_allclose(self.robot.fk(target).rotation,rotation,atol=1e-6)
+        np.testing.assert_allclose(result['start_deg'],np.rad2deg(start))
+        self.assertLess(start[1],0)
+        self.assertGreater(target[1],0)
+
 
 if __name__ == '__main__':
     unittest.main()
