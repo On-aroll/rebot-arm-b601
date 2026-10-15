@@ -15,27 +15,37 @@ from rebot_seeed_transport import SeeedTransport, official_module, OFFICIAL
 
 AXES=tuple(MODELS)
 MODE='native-csp-xyz-v1'
-MAX_DELTA=math.radians(.5)
+PATH_MODE='native-csp-xyz-path-v1'
+PROFILES={MODE:(.5,15.),PATH_MODE:(5.,30.)}
 CURRENT=(10.,)*6
 TORQUE=(1.,3.,9.,3.,1.,1.)
 RUNTIME={i:{0x7005:5,0x7017:.02,0x7018:CURRENT[i-1],0x700B:TORQUE[i-1]} for i in AXES}
 
 
-def proposal(limits):
+def profile(version):
+    if version not in PROFILES:
+        raise ValueError('需要明确的原生 XYZ 小幅或路径调试方案')
+    return PROFILES[version]
+
+
+def proposal(limits, *, mode=MODE):
+    delta,seconds=profile(mode)
     raw,_=single_proposal(limits)
-    raw['version']=MODE
-    return raw,dict(mode=MODE,axes=list(AXES),seconds=15.,max_axis_delta_deg=.5,
+    raw['version']=mode
+    raw['policy']['task_timeout']=seconds
+    return raw,dict(mode=mode,axes=list(AXES),seconds=seconds,max_axis_delta_deg=delta,
         speed_max_rad_s=.02,current_max_a=list(CURRENT),torque_max_nm=list(TORQUE),
         pid_source='live drive parameters; read and preserved, not replaced by MIT gains',
-        summary='J1–J6 原生位置闭环：每轴变化最多 0.5°，最高 0.02 rad/s，首次使能起最多 15 秒；J7 不参与。',
+        summary=f'J1–J6 原生位置闭环：每轴变化最多 {delta:g}°，最高 0.02 rad/s，首次使能起最多 {seconds:g} 秒；J7 不参与。',
         stop_policy='任务到位、取消或异常后失能；确认停止状态与持续稳定反馈后恢复临时运行参数，不恢复旧目标。')
 
 
 def validate_target(start,target,config):
+    delta,_=profile(config.version)
     if len(start)!=6 or len(target)!=6 or any(isinstance(v,bool) or not isinstance(v,Real) or not math.isfinite(v) for v in (*start,*target)):
         raise ValueError('需要完整的六轴有限起点与目标')
-    if any(abs(b-a)>MAX_DELTA+1e-12 for a,b in zip(start,target)):
-        raise ValueError('首次原生 XYZ 试验每轴变化最多 0.5°，请缩小坐标位移')
+    if any(abs(b-a)>math.radians(delta)+1e-12 for a,b in zip(start,target)):
+        raise ValueError(f'本次原生 XYZ 方案每轴变化最多 {delta:g}°，请缩小坐标位移')
     if any(not a.q_min<=q<=a.q_max for a,q in zip(config.axes,target)):
         raise ValueError('XYZ 目标必须位于名义关节范围内；不修改限位或零位')
 
@@ -52,7 +62,7 @@ def assess_motion(robot,start,target,config):
     if not np.all(np.isfinite(peaks)): raise ValueError('官方重力模型返回非有限值')
     reasons=[]
     if any(g>bound for g,bound in zip(peaks,TORQUE)): reasons.append('模型重力超过本次原生环力矩上限')
-    if trajectory.duration+2.>config.policy.task_timeout: reasons.append('轨迹与启动余量超过 15 秒试验上限')
+    if trajectory.duration+2.>config.policy.task_timeout: reasons.append(f'轨迹与启动余量超过 {config.policy.task_timeout:g} 秒试验上限')
     return dict(execution_ready=not reasons,execution_reasons=reasons,hardware_seconds=trajectory.duration,
         start_deg=[math.degrees(v) for v in start],target_deg=[math.degrees(v) for v in target],
         delta_deg=[math.degrees(b-a) for a,b in zip(start,target)],
@@ -144,7 +154,7 @@ class NativeXYZTransport(SeeedTransport):
 class NativeXYZExecutor(HardwareExecutor):
     def __init__(self,config,transport,*,fk=None,**kwargs):
         super().__init__(config,transport,**kwargs)
-        raw,_=proposal([(a.q_min,a.q_max) for a in config.axes])
+        raw,_=proposal([(a.q_min,a.q_max) for a in config.axes],mode=config.version)
         if config.fingerprint!=Envelope.parse(raw).fingerprint: raise ValueError('原生 XYZ 仅接受固定小幅慢速方案')
         self.fk=fk or forward_kinematics()
         self.deadline=None;self.timing={};self.arrival_feedback={};self.restoration=None
@@ -153,7 +163,7 @@ class NativeXYZExecutor(HardwareExecutor):
     def check(self,permit):
         super().check(permit)
         if self.deadline is not None and self.clock()>=self.deadline:
-            raise TimeoutError('原生 XYZ 首次使能起 15 秒结束，撤力')
+            raise TimeoutError(f'原生 XYZ 首次使能起 {self.config.policy.task_timeout:g} 秒结束，撤力')
 
     def validate(self,samples,*,csp=False,quiet=False):
         p=self.config.policy
@@ -272,7 +282,8 @@ class NativeXYZExecutor(HardwareExecutor):
             self.state=terminal
 
     def status(self):
-        result=super().status();result.update(control=dict(mode=MODE,axes=list(AXES),task_timeout_s=15.,
+        result=super().status();result.update(control=dict(mode=self.config.version,axes=list(AXES),task_timeout_s=self.config.policy.task_timeout,
+            max_axis_delta_deg=profile(self.config.version)[0],
             speed_limit_rad_s=.02,config_fingerprint=self.config.fingerprint,pid_source='live drive PID, not overwritten'),
             arrival_feedback={str(i):asdict(s) for i,s in self.arrival_feedback.items()},restoration=self.restoration,
             register_snapshot={str(i):{hex(k):v for k,v in drive.original.items()} for i,drive in self.bus.drives.items()},

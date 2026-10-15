@@ -1,0 +1,18 @@
+test_five_degree_curve_retains_velocity_acceleration_jerk_and_continuous_endpoints (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_large_stall_still_stops_on_original_tracking_error_boundary (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_lost_lease_still_stops_before_extended_deadline (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_old_half_degree_permit_cannot_authorize_extended_profile (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_old_profile_fingerprint_and_all_fast_safety_deadlines_remain_unchanged (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_old_profile_rejects_three_degrees_and_extended_rejects_over_five_before_can (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_small_stall_expires_at_thirty_seconds_without_later_motion_targets (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_three_degree_motion_arrives_then_disables_and_restores_without_pid_or_j7 (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_unknown_profile_or_modified_timeout_is_rejected (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_visible_profile_selection_has_fixed_speed_and_duration (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_five_mm_real_model_target_arrives_with_correct_profile_and_restoration (tests.test_native_xyz_path_pipe.NativeXYZPathPipe) ... ok
+test_parent_eof_preempts_extended_profile_and_restores (tests.test_native_xyz_path_pipe.NativeXYZPathPipe) ... ok
+test_stop_preempts_extended_profile_and_restores_without_retry (tests.test_native_xyz_path_pipe.NativeXYZPathPipe) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 6.902s
+
+OK

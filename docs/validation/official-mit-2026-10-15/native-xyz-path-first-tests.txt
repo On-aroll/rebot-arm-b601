@@ -1,0 +1,49 @@
+test_five_degree_curve_retains_velocity_acceleration_jerk_and_continuous_endpoints (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_lost_lease_still_stops_before_extended_deadline (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_old_half_degree_permit_cannot_authorize_extended_profile (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_old_profile_fingerprint_and_all_fast_safety_deadlines_remain_unchanged (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_old_profile_rejects_three_degrees_and_extended_rejects_over_five_before_can (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_stall_expires_at_thirty_seconds_without_later_motion_targets (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... FAIL
+test_three_degree_motion_arrives_then_disables_and_restores_without_pid_or_j7 (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_unknown_profile_or_modified_timeout_is_rejected (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_visible_profile_selection_has_fixed_speed_and_duration (tests.test_native_xyz_path_offline.NativeXYZPathOffline) ... ok
+test_five_mm_real_model_target_arrives_with_correct_profile_and_restoration (tests.test_native_xyz_path_pipe.NativeXYZPathPipe) ... FAIL
+test_parent_eof_preempts_extended_profile_and_restores (tests.test_native_xyz_path_pipe.NativeXYZPathPipe) ... FAIL
+test_stop_preempts_extended_profile_and_restores_without_retry (tests.test_native_xyz_path_pipe.NativeXYZPathPipe) ... FAIL
+
+======================================================================
+FAIL: test_stall_expires_at_thirty_seconds_without_later_motion_targets (tests.test_native_xyz_path_offline.NativeXYZPathOffline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bonvoyage/Desktop/seeed_Robotics/tests/test_native_xyz_path_offline.py", line 62, in test_stall_expires_at_thirty_seconds_without_later_motion_targets
+    self.assertEqual(c.executor.state,'FAULT');self.assertIn('30 秒',c.executor.reason)
+AssertionError: '30 秒' not found in 'J1 原生环跟踪误差超限'
+
+======================================================================
+FAIL: test_five_mm_real_model_target_arrives_with_correct_profile_and_restoration (tests.test_native_xyz_path_pipe.NativeXYZPathPipe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bonvoyage/Desktop/seeed_Robotics/tests/test_native_xyz_path_pipe.py", line 24, in setUp
+    self.assertTrue(assessment['execution_ready'],assessment)
+AssertionError: False is not true : {'gravity_check': {'source': 'Seeed compute_generalized_gravity with explicit locked RS URDF; estimate only', 'estimated_Nm': [2.821978913568335e-17, 1.5748493835054913, 6.733763891838981, 1.9936776357368586, -0.00047581870364583016, -0.0008172403447976092], 'sampled_peak_Nm': [3.030631428864276e-17, 1.5748868186043115, 6.733763891838981, 1.9936777301033943, 0.00047581870364583016, 0.0008172403531930021], 'sample_count': 51, 'software_effort_limits_Nm': [1.0, 3.0, 9.0, 3.0, 1.0, 1.0], 'insufficient_axes': [], 'continuous_external_support_verified': False}, 'static_balance_check': {'source': 'gravity residual divided by configured MIT Kp; not physical acceptance', 'required_offset_deg': [5.78807967112084e-16, 30.078122638937433, 128.60541707998712, 38.07643988138218, 0.00908746784409738, 0.015608141028579924], 'allowed_error_deg': [0.6, 0.6, 0.6, 0.6, 0.6, 0.6], 'insufficient_axes': [2, 3, 4], 'payload_and_friction_validated': False, 'nominal_model_only': True, 'feedforward_mode': 'none'}, 'effort_reserve_check': {'estimated_peak_with_tracking_reserve_Nm': [0.05141592653589795, 1.6263027451402094, 6.785179818374879, 2.0450936566392923, 0.051891745239543756, 0.05223316688909092], 'insufficient_axes': []}, 'control_source': 'existing zero-feedforward trial', 'execution_ready': False, 'execution_reasons': ['J2/J3/J4 的本次增益与前馈在当前跟踪误差边界内不足以平衡模型重力；未自动改增益或前馈'], 'hardware_seconds': 2.4000000000000004}
+
+======================================================================
+FAIL: test_parent_eof_preempts_extended_profile_and_restores (tests.test_native_xyz_path_pipe.NativeXYZPathPipe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bonvoyage/Desktop/seeed_Robotics/tests/test_native_xyz_path_pipe.py", line 24, in setUp
+    self.assertTrue(assessment['execution_ready'],assessment)
+AssertionError: False is not true : {'gravity_check': {'source': 'Seeed compute_generalized_gravity with explicit locked RS URDF; estimate only', 'estimated_Nm': [2.821978913568335e-17, 1.5748493835054913, 6.733763891838981, 1.9936776357368586, -0.00047581870364583016, -0.0008172403447976092], 'sampled_peak_Nm': [3.030631428864276e-17, 1.5748868186043115, 6.733763891838981, 1.9936777301033943, 0.00047581870364583016, 0.0008172403531930021], 'sample_count': 51, 'software_effort_limits_Nm': [1.0, 3.0, 9.0, 3.0, 1.0, 1.0], 'insufficient_axes': [], 'continuous_external_support_verified': False}, 'static_balance_check': {'source': 'gravity residual divided by configured MIT Kp; not physical acceptance', 'required_offset_deg': [5.78807967112084e-16, 30.078122638937433, 128.60541707998712, 38.07643988138218, 0.00908746784409738, 0.015608141028579924], 'allowed_error_deg': [0.6, 0.6, 0.6, 0.6, 0.6, 0.6], 'insufficient_axes': [2, 3, 4], 'payload_and_friction_validated': False, 'nominal_model_only': True, 'feedforward_mode': 'none'}, 'effort_reserve_check': {'estimated_peak_with_tracking_reserve_Nm': [0.05141592653589795, 1.6263027451402094, 6.785179818374879, 2.0450936566392923, 0.051891745239543756, 0.05223316688909092], 'insufficient_axes': []}, 'control_source': 'existing zero-feedforward trial', 'execution_ready': False, 'execution_reasons': ['J2/J3/J4 的本次增益与前馈在当前跟踪误差边界内不足以平衡模型重力；未自动改增益或前馈'], 'hardware_seconds': 2.4000000000000004}
+
+======================================================================
+FAIL: test_stop_preempts_extended_profile_and_restores_without_retry (tests.test_native_xyz_path_pipe.NativeXYZPathPipe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/bonvoyage/Desktop/seeed_Robotics/tests/test_native_xyz_path_pipe.py", line 24, in setUp
+    self.assertTrue(assessment['execution_ready'],assessment)
+AssertionError: False is not true : {'gravity_check': {'source': 'Seeed compute_generalized_gravity with explicit locked RS URDF; estimate only', 'estimated_Nm': [2.821978913568335e-17, 1.5748493835054913, 6.733763891838981, 1.9936776357368586, -0.00047581870364583016, -0.0008172403447976092], 'sampled_peak_Nm': [3.030631428864276e-17, 1.5748868186043115, 6.733763891838981, 1.9936777301033943, 0.00047581870364583016, 0.0008172403531930021], 'sample_count': 51, 'software_effort_limits_Nm': [1.0, 3.0, 9.0, 3.0, 1.0, 1.0], 'insufficient_axes': [], 'continuous_external_support_verified': False}, 'static_balance_check': {'source': 'gravity residual divided by configured MIT Kp; not physical acceptance', 'required_offset_deg': [5.78807967112084e-16, 30.078122638937433, 128.60541707998712, 38.07643988138218, 0.00908746784409738, 0.015608141028579924], 'allowed_error_deg': [0.6, 0.6, 0.6, 0.6, 0.6, 0.6], 'insufficient_axes': [2, 3, 4], 'payload_and_friction_validated': False, 'nominal_model_only': True, 'feedforward_mode': 'none'}, 'effort_reserve_check': {'estimated_peak_with_tracking_reserve_Nm': [0.05141592653589795, 1.6263027451402094, 6.785179818374879, 2.0450936566392923, 0.051891745239543756, 0.05223316688909092], 'insufficient_axes': []}, 'control_source': 'existing zero-feedforward trial', 'execution_ready': False, 'execution_reasons': ['J2/J3/J4 的本次增益与前馈在当前跟踪误差边界内不足以平衡模型重力；未自动改增益或前馈'], 'hardware_seconds': 2.4000000000000004}
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.708s
+
+FAILED (failures=4)

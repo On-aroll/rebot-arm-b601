@@ -169,7 +169,8 @@ def serve(port,host='127.0.0.1'):
             if plan.get('config_revision')!=config_store.status()['state']['revision']:
                 raise ValueError('已保存的软件草稿已改变，请重新预演')
             from rebot_xyz_trial import assess_motion
-            _,base=hardware_configuration(native=plan.get('hardware_config',{}).get('version')=='native-csp-xyz-v1')
+            from rebot_native_xyz import PROFILES
+            _,base=hardware_configuration(native=plan.get('hardware_config',{}).get('version') in PROFILES)
             if plan.get('hardware_base_hash')!=base.fingerprint:
                 raise ValueError('实机试验参数已变化或预演未绑定参数，请重新预演')
             from rebot_mit_hardware import Envelope
@@ -379,7 +380,8 @@ def serve(port,host='127.0.0.1'):
                                 try:
                                     from rebot_xyz_trial import assess_motion,configure_motion
                                     settings=body.get('hardware_motion')
-                                    base_raw,base=hardware_configuration(native=isinstance(settings,dict) and settings.get('feedforward_mode')=='native-csp-xyz-v1')
+                                    from rebot_native_xyz import PROFILES
+                                    base_raw,base=hardware_configuration(native=isinstance(settings,dict) and settings.get('feedforward_mode') in PROFILES)
                                     if isinstance(settings,dict) and settings.get('speed_rad_s')!=body.get('speed_rad_s'):
                                         raise ValueError('实机速度与预演速度不同，请重新预演')
                                     raw,envelope=configure_motion(base_raw,q,np.deg2rad(result['q_deg']),settings)
@@ -389,7 +391,7 @@ def serve(port,host='127.0.0.1'):
                                     assessment=assess_motion(r,q,np.deg2rad(result['q_deg']),envelope)
                                     result['hardware_preflight']=dict(assessment,parameters=raw,motion_settings=settings,
                                         task_timeout_s=envelope.policy.task_timeout,
-                                        parameter_source='live drive PID preserved; temporary CSP/runtime ceilings restored after verified release; saved drafts and zero unchanged' if envelope.version=='native-csp-xyz-v1' else 'task gains/source and timing explicitly selected in webpage; saved drafts and device parameters unchanged')
+                                        parameter_source='live drive PID preserved; temporary CSP/runtime ceilings restored after verified release; saved drafts and zero unchanged' if envelope.version in PROFILES else 'task gains/source and timing explicitly selected in webpage; saved drafts and device parameters unchanged')
                                     if np.isfinite(assessment.get('hardware_seconds',np.nan)):
                                         result['seconds']=assessment['hardware_seconds']
                                         plan['seconds']=result['seconds']

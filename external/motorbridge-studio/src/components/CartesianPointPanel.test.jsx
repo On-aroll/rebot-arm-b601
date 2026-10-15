@@ -18,6 +18,20 @@ function setup(overrides = {}) {
 const posts = fetch => fetch.mock.calls.filter(([,o]) => o?.body).map(([url,o]) => ({url,body:JSON.parse(o.body)}));
 
 describe('Two-mode XYZ workflow', () => {
+  it('requires separate preview for the extended CSP profile and never starts on selection',async()=>{
+    const execute=vi.fn(async()=>({status:{state:'PREPARING',busy:true}}));
+    const {fetch}=setup({mode:'hardware',hardwareConfirmed:true,onExecuteHardware:execute});
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));await screen.findByText(/预演通过/);
+    fireEvent.change(screen.getByLabelText('轨迹控制方案'),{target:{value:'native-csp-xyz-path-v1'}});
+    expect(execute).not.toHaveBeenCalled();expect(posts(fetch)).toHaveLength(1);
+    expect(screen.getByRole('button',{name:'确认实机执行'}).disabled).toBe(true);
+    expect(screen.getByLabelText('实机任务时限').disabled).toBe(true);
+    expect(screen.getByText(/固定：首次使能起最多 30 秒/)).toBeTruthy();
+    expect(screen.getByText(/扩展 XYZ 为独立待验收方案/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));await screen.findByText(/预演通过/);
+    expect(posts(fetch)[1].body.hardware_motion).toMatchObject({feedforward_mode:'native-csp-xyz-path-v1',speed_rad_s:.02,timeout_mode:'auto'});
+    fireEvent.click(screen.getByRole('button',{name:'确认实机执行'}));await waitFor(()=>expect(execute).toHaveBeenCalledExactlyOnceWith('point-token'));
+  });
   it('defaults hardware preview to validated native CSP and distinguishes arrival-time error from post-release coordinates', async () => {
     const execute=vi.fn(async()=>({status:{state:'PREPARING',busy:true}}));
     const {fetch,props,rerender}=setup({mode:'hardware',hardwareConfirmed:true,onExecuteHardware:execute});

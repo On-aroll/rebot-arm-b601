@@ -164,7 +164,8 @@ class MotorPowerAPI:
                 from rebot_gripper_csp import GripperEnvelope
                 config=GripperEnvelope.parse(plan['config'])
             else: config=Envelope.parse(plan['config'])
-            native_xyz=point and config.version=='native-csp-xyz-v1'
+            from rebot_native_xyz import PROFILES,profile
+            native_xyz=point and config.version in PROFILES
             if diagnostic:
                 if not point or config.gain_review is None or config.feedforward is None:
                     raise ValueError('启动采集仅支持已审核的官方范围增益方案')
@@ -179,7 +180,9 @@ class MotorPowerAPI:
                 if point or native: message['target']=plan['target']
                 if diagnostic: message['evidence']='本机用户明确点击启动采集：首次使能起最多 3 秒自动撤力，不执行 XYZ；沿用现场确认'
                 if native: message['evidence']=f'已明确批准 J{native_axis} CSP +0.5°、0.02 rad/s、{config.policy.task_timeout:g} 秒试验及临时四项运行参数；PID/零位/保存草稿不写入'
-                if native_xyz: message['evidence']='用户明确确认当前预演的六轴原生 XYZ 小幅试验：每轴最多0.5°、0.02 rad/s、15秒及临时运行限制；PID/零位/保存草稿不写入'
+                if native_xyz:
+                    delta,seconds=profile(config.version)
+                    message['evidence']=f'用户明确确认当前预演的六轴原生 XYZ 方案{config.version}：每轴最多{delta:g}°、0.02 rad/s、{seconds:g}秒及临时运行限制；PID/零位/保存草稿不写入'
                 self._send(message)
                 threading.Thread(target=self._read_worker,args=(self.process,),daemon=True,name='j1-power-status').start()
             except Exception as e:

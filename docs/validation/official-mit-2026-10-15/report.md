@@ -215,3 +215,11 @@ XYZ 默认预演方案改为已实测的小幅原生 CSP，避免刷新回到不
 [原始日志](native-j7-arrived.json) · [分析](native-j7-arrived-analysis.json) · [轨迹CSV](native-j7-arrived-trace.csv) · [只读预检查](native-j7-readonly-preflight.json)。原始SHA256 88a6dcb05fed39ec9bf16e5acb00d7d3b7522dea2ef31c0c2a13ef3b04a12516。本次许可已消费，不自动重复或扩大。原始电流与模型边界不是夹持力/开口标定；到位与撤力后读数分别记录。六轴邻近XYZ、J6/J7独立小幅已有实机证据，但较大XYZ、长时保持及连续书写尚未验收，同步SDK仍可能延迟停止。
 
 [原网页J7到位截图](console-native-j7-arrived.png)与现场安静确认已归档；当前使用手册和XYZ说明更新为实测CSP流程。[19项目标面板回归](native-j7-acceptance-frontend-tests.txt)及[生产构建](native-j7-acceptance-build.txt)通过。网页后续操作仍需新鲜预演及用户当次现场确认，未自动开始下一轮实机运动。
+
+## 扩展 XYZ：软件验证完成，真实试验待确认
+
+在已有六轴CSP链路增加独立 `native-csp-xyz-path-v1`：每轴最多5°、固定0.02 rad/s、首次使能起最多30秒；沿用10 A及1/3/9/3/1/1 N·m临时上限，不提高低于提案的既有设备限制。旧0.5°/15秒方案指纹与默认选择保留；反馈时限、心跳租约、命令时限、失焦停止、跟踪误差、首目标及失能恢复流程不变。PID/零位/草稿/flash不写，J7不参与。这是本项目候选包络，不是官方默认或已验收工作空间。
+
+[13项新增虚拟测试](native-xyz-path-final-tests.txt)、[162项相关后端回归](native-xyz-path-regression-tests.txt)、[25项前端回归](native-xyz-path-frontend-regression.txt)和[生产构建](native-xyz-path-build.txt)通过。新增检查覆盖3°虚拟到位与恢复、5°主机轨迹连续性和速度/加速度/jerk、旧许可指纹拒绝、超5°及篡改时限拒绝、失联、卡住跟踪保护、30秒绝对期限，以及生产API→子进程→虚拟SDK→官方模型FK的5 mm保持朝向目标、取消和父管道EOF；禁止真实Controller构造。主机曲线检查不证明驱动器内部加速度或jerk。
+
+保留[首轮失败记录](native-xyz-path-first-tests.txt)：扩展方案漏入旧MIT承重分支，修复分派后继续调用既有CSP模型检查；卡住3°目标正确提前触发原跟踪保护，测试现分开验证该保护和0.4°卡住的30秒期限，未放宽保护。前端另有[首轮20项通过记录](native-xyz-path-frontend-tests.txt)。本阶段没有追加真实使能或运动；先在原网页只读准备具体目标，实发须新一次明确确认。同步SDK阻塞仍可能延迟停止；较大工作空间、连续路径、工具/TCP独立精度和长期保持仍未验收。

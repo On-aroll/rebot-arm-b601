@@ -34,7 +34,8 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
   const running = React.useRef(false);
   const motionOptions = capabilities?.hardware_motion_options;
   const currentSpeed = offline ? speed : hardwareSpeed;
-  const nativeXYZ = !offline && feedforwardMode === 'native-csp-xyz-v1';
+  const nativeXYZ = !offline && ['native-csp-xyz-v1','native-csp-xyz-path-v1'].includes(feedforwardMode);
+  const nativeExpanded = feedforwardMode === 'native-csp-xyz-path-v1';
   React.useEffect(() => {
     let alive = true;
     request('/point-capabilities').then(value => { if (alive) {
@@ -140,21 +141,23 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
         onChange={e => { if (offline) setSpeed(e.target.value); else setHardwareSpeed(e.target.value); invalidate(); }} /></label>
       {!offline && <label htmlFor="point-timeout-mode">实机任务时限<select id="point-timeout-mode" value={timeoutMode} disabled={occupied || nativeXYZ}
         onChange={e => { setTimeoutMode(e.target.value); invalidate(); }}>
-        <option value="auto">{nativeXYZ ? '固定：首次使能起最多 15 秒' : '自动：轨迹用时 + 5 秒余量'}</option><option value="manual">手动指定秒数</option>
+        <option value="auto">{nativeXYZ ? `固定：首次使能起最多 ${nativeExpanded ? 30 : 15} 秒` : '自动：轨迹用时 + 5 秒余量'}</option><option value="manual">手动指定秒数</option>
       </select></label>}
       {!offline && timeoutMode === 'manual' && <label htmlFor="point-timeout">任务时限（秒）<input id="point-timeout" type="number"
         min={motionOptions?.timeout_min_s ?? 5} max={motionOptions?.timeout_max_s ?? 120} step="1" value={timeoutSeconds} disabled={occupied}
         onChange={e => { setTimeoutSeconds(e.target.value); invalidate(); }} /></label>}
       {!offline && <label htmlFor="point-feedforward">轨迹控制方案<select id="point-feedforward" value={feedforwardMode} disabled={occupied}
-        onChange={e=>{setFeedforwardMode(e.target.value);if(e.target.value==='native-csp-xyz-v1'){setHardwareSpeed('0.02');setTimeoutMode('auto');}invalidate();}}>
+        onChange={e=>{setFeedforwardMode(e.target.value);if(['native-csp-xyz-v1','native-csp-xyz-path-v1'].includes(e.target.value)){setHardwareSpeed('0.02');setTimeoutMode('auto');}invalidate();}}>
         <option value="none">原方案：Kp=3 / Kd=1 / 前馈=0</option>
         <option value="seeed-rs-gravity-v1">Seeed 官方：Kp=3 / Kd=1 + 重力前馈</option>
         <option value="seeed-rs-slow-position-v1">试验：官方范围增益 + 重力缓启动</option>
         <option value="native-csp-xyz-v1">原生位置闭环（CSP）· 小幅 XYZ 试验</option>
+        <option value="native-csp-xyz-path-v1">原生位置闭环（CSP）· 扩展 XYZ ≤5° / 30秒（待现场验收）</option>
       </select></label>}
     </div></details>
     {!offline && <p className="consoleNote">{nativeXYZ ? '本次保留设备 PID、零位和保存草稿；临时切换运行模式及降低限制，结束并确认撤力后恢复。' : '以上设置只用于本次任务，不覆盖保存草稿或设备参数。加速度与 jerk 沿用已有配置，自动时限最多 120 秒，修改后须重新预演。'}{feedforwardMode==='seeed-rs-slow-position-v1' && <> 本次 Kp 80/75/150/50/40/40、Kd 5/6/10/5/4/4 在锁定官方/参考范围内；J1–J4 跟踪边界为 0.6°/0.75°/0.6°/0.75°，J5/J6 为 1°。官方模型的重力力矩以 8 秒渐变接入，这是本项目适配，真实到位仍待验收。</>}</p>}
     {!offline && feedforwardMode==='native-csp-xyz-v1' && <p className="consoleNote">原生 XYZ 固定 0.02 rad/s、首次使能起最多 15 秒，每轴变化最多 0.5°。六轴保留设备现有 PID；临时采用 CSP、10 A 电流上限及 J1–J6 的 1/3/9/3/1/1 N·m 力矩上限，结束后失能并核对恢复，J7 不参与。本机已完成两次邻近 XYZ 到位，J6、J7 另有独立小幅到位记录；较大位移与连续路径尚未验收。主机平滑目标不保证驱动器内部加速度或力矩。</p>}
+    {!offline && nativeExpanded && <p className="consoleNote">扩展 XYZ 为独立待验收方案：每轴变化最多 5°、固定 0.02 rad/s、首次使能起最多 30 秒。保留同一设备 PID 和 10 A、1/3/9/3/1/1 N·m 临时上限；反馈超时、失焦停止与跟踪误差边界不放宽，J7 不参与。必须单独预演并确认本方案；不继承旧试验许可，不代表连续路径或较大工作空间已验收。</p>}
     <div className="consoleActions">
       <button disabled={occupied || !previewReady} onClick={preview}>{pending ? '处理中…' : '计算并预演'}</button>
       {offline ? <button className="primary" disabled={occupied || invalidPlan || submitted || !virtualEnabled} onClick={()=>execute()}>执行虚拟动作</button>
@@ -212,7 +215,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
       {plan.hardware_preflight.static_balance_check?.feedforward_mode==='seeed-rs-gravity-v1' && <p>已选择官方重力前馈。模型通过仅说明标称补偿与包络相符；首次应在可靠支撑下验收小幅运动和停止，再执行较长轨迹。起始保持使用原始实测角度，不要求手托或把支撑姿态设成零位。</p>}
       <details><summary>本次实机试验参数与重力估算</summary><pre>{JSON.stringify(plan.hardware_preflight,null,2)}</pre></details>
     </div>}
-    <p role="status" className="consoleMessage">{submitted && job?.status === 'succeeded' ? nativeTrial ? `J${hardwareState?.control?.axis ?? nativeAxis} CSP 反馈已到位并稳定，任务已结束并撤力；本次为单轴小幅试验。` : !offline && hardwareState?.control?.mode==='native-csp-xyz-v1'
+    <p role="status" className="consoleMessage">{submitted && job?.status === 'succeeded' ? nativeTrial ? `J${hardwareState?.control?.axis ?? nativeAxis} CSP 反馈已到位并稳定，任务已结束并撤力；本次为单轴小幅试验。` : !offline && ['native-csp-xyz-v1','native-csp-xyz-path-v1'].includes(hardwareState?.control?.mode)
       ? `原生 XYZ 反馈已到位并稳定，到位时模型 TCP 误差 ${hardwareState.tcp_error_mm?.toFixed(3) ?? '—'} mm；任务已撤力，当前坐标为撤力后的反馈。`
       : `${offline ? '虚拟动作完成' : '实机反馈已到位，任务已结束并撤力'}，当前末端误差 ${actualError?.toFixed(2) ?? '—'} mm。`
       : submitted && job?.status === 'failed' ? `执行失败：${job.error}` : submitted && job?.status === 'cancelled'

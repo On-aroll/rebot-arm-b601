@@ -220,3 +220,4 @@ Kubuntu 24.04 笔记本；Python 环境在 `~/.local/share/robotics`（不是 ve
 没装 `python3-venv`）；`~/.local/bin/` 下有 `rebot-sim`、`rebot-twin-sync`、
 `rebot-readstate`、`rebot-can-*` 等入口脚本；本机没有 `curl`、没有独立 `node`、
 没有 `gh`。ROS 2 为 Jazzy，状态桥使用 `ROS_DOMAIN_ID=42`。
+> **2026-10-15 扩展 XYZ 软件方案（待实机验收）**：新增独立 `native-csp-xyz-path-v1`，每轴≤5°、固定≤0.02 rad/s、首次使能起≤30秒，复用已有CSP执行器和原10 A及1/3/9/3/1/1 N·m临时上限。旧0.5°/15秒方案及指纹保留为默认；反馈/心跳/停止/跟踪误差边界不放宽，PID/零位/草稿/flash不写，J7不参与。13项新增虚拟测试、162项相关后端回归、25项前端测试和构建通过；尚无本方案真实运动证据。既往一次性许可均已消费，扩展方案须先具体预演并获得新一次确认，不自动勾选现场框或实发。
