@@ -5,7 +5,7 @@ import uuid
 import numpy as np
 
 
-HARDWARE_REASON = '实机同步执行已接入 Seeed SDK：预演后由本机用户确认，服务端复读起点并验证轨迹、时序与出力条件。沿用既有 3/1/0 试验配置；不修改设备参数。J1 及六轴动态验收尚未通过，网页停止不能替代现场独立断电。'
+HARDWARE_REASON = '实机同步执行已接入 Seeed SDK：预演后由本机用户确认，服务端复读起点并核对本次控制方案。MIT 增益与 CSP 设备位置环分开处理；CSP 仅临时切模式和降低限制，结束核对恢复，不改 PID 或零位。小幅六轴 XYZ 已有一次反馈到位记录，完整工作空间与连续动作仍待验收；网页停止不能替代现场独立断电。'
 
 
 def point_capabilities():
@@ -46,7 +46,14 @@ class PointPlanner:
         tolerance = np.deg2rad(1) if source == 'hardware-preview' else 0.
         if start.shape != (6,) or not np.all(np.isfinite(start)) or np.any(start < r.lower-tolerance) or np.any(start > r.upper+tolerance):
             raise ValueError('预演起点必须是模型范围内完整的六轴反馈')
-        target = r.ik(xyz / 1000, seed=start, position_only=mode == 'position')
+        # A tolerated hardware start may lie just outside nominal limits. The
+        # upstream solver clamps each trial step; starting its line search from
+        # that raw pose can reject every step even for a reachable nearby point.
+        # Only its numerical seed is projected. Preserve raw start for trajectory,
+        # drift checks and feedback; targets still obey the nominal limits.
+        solver_seed = np.clip(start, r.lower, r.upper) if source == 'hardware-preview' else start
+        rotation = r.fk(start).rotation if mode == 'hold' else None
+        target = r.ik(xyz / 1000, rotation=rotation, seed=solver_seed, position_only=mode == 'position')
         if np.any(target < r.lower) or np.any(target > r.upper):
             raise ValueError('计算结果超出关节限位')
         r.check_path(start, target)

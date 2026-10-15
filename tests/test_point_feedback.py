@@ -57,6 +57,29 @@ class FeedbackPlanTests(unittest.TestCase):
             with self.subTest(start=start), self.assertRaisesRegex(ValueError,'起点'):
                 self.planner.preview(self.body,start=start)
 
+    def test_tolerated_negative_start_keeps_raw_path_and_solves_nearby_nominal_target(self):
+        # Read-only 2026-10-15 snapshot: upstream line search could not improve
+        # from this raw negative J2 although the nominal target is reachable.
+        start=np.deg2rad([-1.5600585354434595,-.32958851056271743,.3320321975012746,
+                         .9052740196454305,1.0942384601098263,2.4279792110134424])
+        original=start.copy();r=self.robot
+        pose=r.d.qpos.copy();control=r.d.ctrl.copy()
+        body=dict(xyz_mm=[300.51,13.09,227.03],execution_source='hardware-preview',
+                  speed_rad_s=.02,orientation_mode='position')
+        preview=self.planner.preview(body,start=start)
+        target=np.deg2rad(preview['q_deg'])
+        self.assertLess(preview['position_error_mm'],.001)
+        self.assertTrue(np.all(target>=r.lower) and np.all(target<=r.upper))
+        self.assertLess(np.max(np.abs(target-start)),np.deg2rad(.5))
+        np.testing.assert_array_equal(start,original)
+        np.testing.assert_allclose(preview['start_deg'],np.rad2deg(original))
+        np.testing.assert_allclose(preview['path_xyz'][0],r.fk(original).translation)
+        self.assertLess(self.planner.plans[preview['plan_id']]['start'][1],0)
+        np.testing.assert_array_equal(r.d.qpos,pose)
+        np.testing.assert_array_equal(r.d.ctrl,control)
+        with self.assertRaisesRegex(ValueError,'起点'):
+            self.planner.preview(body,start=start-np.array([0,.02,0,0,0,0]))
+
 
 if __name__ == '__main__':
     unittest.main()

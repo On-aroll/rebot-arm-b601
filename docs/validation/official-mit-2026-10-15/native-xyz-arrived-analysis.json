@@ -1,0 +1,211 @@
+{
+  "type": "authorized-six-axis-native-csp-xyz-result",
+  "record": "native-xyz-arrived.json",
+  "sha256": "f917b6dd3b8b1df1da3c938eaba9e72537b4b9382ef167912ef712ce6859e8c6",
+  "authorization": "用户答复：批准这一次六轴试验；XYZ [300.51,13.09,227.03] mm，J1–J6每轴≤0.5°/0.02 rad/s/15秒，临时10 A及1/3/9/3/1/1 N·m，结束失能恢复，PID/零位不改，J7不参与",
+  "user_stop_observation": "已安静，无异常",
+  "state": "ARRIVED",
+  "requested_xyz_mm": [
+    300.51,
+    13.09,
+    227.03
+  ],
+  "arrival_xyz_mm": [
+    300.5416034268746,
+    13.113239091420166,
+    226.51899655980841
+  ],
+  "model_tcp_error_mm": 0.5117343466024022,
+  "enable_attempt_to_stop_request_s": 4.909886117995484,
+  "host_command_batches": 30,
+  "axis_results": [
+    {
+      "axis": 1,
+      "start_deg": -1.5551756972388409,
+      "target_deg": -1.6909172237583272,
+      "commanded_delta_deg": -0.13574152651948618,
+      "arrived_deg": -1.6967772581208411,
+      "measured_movement_deg": -0.1416015608820003,
+      "arrival_error_deg": -0.0058600343625141126,
+      "max_position_difference_speed_rad_s": 0.005468652532688789,
+      "max_abs_raw_current_a": 0.6781325340270996,
+      "released_deg": -1.6918944199162227
+    },
+    {
+      "axis": 2,
+      "start_deg": -0.3369135149215859,
+      "target_deg": -0.0,
+      "commanded_delta_deg": 0.3369135149215859,
+      "arrived_deg": -0.06591891607194675,
+      "measured_movement_deg": 0.2709945988496391,
+      "arrival_error_deg": -0.06591891607194675,
+      "max_position_difference_speed_rad_s": 0.0058995258412123585,
+      "max_abs_raw_current_a": 1.15326726436615,
+      "released_deg": -0.15869109439176887
+    },
+    {
+      "axis": 3,
+      "start_deg": 0.3369165298097742,
+      "target_deg": 0.6127452594279564,
+      "commanded_delta_deg": 0.2758287296181822,
+      "arrived_deg": 0.5249045733879756,
+      "measured_movement_deg": 0.18798804357820142,
+      "arrival_error_deg": -0.08784068603998083,
+      "max_position_difference_speed_rad_s": 0.005652405693816692,
+      "max_abs_raw_current_a": 1.3862669467926025,
+      "released_deg": 0.4467793755574888
+    },
+    {
+      "axis": 4,
+      "start_deg": 0.916260378925396,
+      "target_deg": 0.741992343703331,
+      "commanded_delta_deg": -0.174268035222065,
+      "arrived_deg": 0.733886750844945,
+      "measured_movement_deg": -0.18237362808045093,
+      "arrival_error_deg": -0.008105592858385953,
+      "max_position_difference_speed_rad_s": 0.0038234093144753267,
+      "max_abs_raw_current_a": 0.6057927012443542,
+      "released_deg": 0.8854985409249808
+    },
+    {
+      "axis": 5,
+      "start_deg": 1.092041166909492,
+      "target_deg": 1.1887817199552175,
+      "commanded_delta_deg": 0.09674055304572539,
+      "arrived_deg": 1.186523493863396,
+      "measured_movement_deg": 0.09448232695390373,
+      "arrival_error_deg": -0.0022582260918216656,
+      "max_position_difference_speed_rad_s": 0.0033821078770401246,
+      "max_abs_raw_current_a": 0.27899491786956787,
+      "released_deg": 1.1403809769866111
+    },
+    {
+      "axis": 6,
+      "start_deg": 2.430175970605248,
+      "target_deg": 2.430175970605248,
+      "commanded_delta_deg": 0.0,
+      "arrived_deg": 2.425781384204579,
+      "measured_movement_deg": -0.004394586400668516,
+      "arrival_error_deg": -0.004394586400668516,
+      "max_position_difference_speed_rad_s": 0.0013312448584184321,
+      "max_abs_raw_current_a": 0.10822109878063202,
+      "released_deg": 2.425781384204579
+    }
+  ],
+  "stop_sdk_status_and_quiet_confirmed": true,
+  "runtime_restoration": {
+    "ok": true,
+    "restored": {
+      "1": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "2": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "3": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "4": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "5": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ],
+      "6": [
+        "0x7005",
+        "0x7017",
+        "0x7018",
+        "0x700b"
+      ]
+    },
+    "errors": {},
+    "old_target_restored": false
+  },
+  "protected_register_snapshots": {
+    "1": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 57.0,
+      "0x700b": 36.0,
+      "0x701e": 30.0,
+      "0x701f": 6.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "2": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 57.0,
+      "0x700b": 36.0,
+      "0x701e": 30.0,
+      "0x701f": 6.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "3": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 57.0,
+      "0x700b": 36.0,
+      "0x701e": 30.0,
+      "0x701f": 6.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "4": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 16.0,
+      "0x700b": 14.0,
+      "0x701e": 30.0,
+      "0x701f": 5.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "5": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 16.0,
+      "0x700b": 14.0,
+      "0x701e": 30.0,
+      "0x701f": 5.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    },
+    "6": {
+      "0x7005": 0,
+      "0x7017": 1.0,
+      "0x7018": 16.0,
+      "0x700b": 14.0,
+      "0x701e": 30.0,
+      "0x701f": 5.0,
+      "0x7020": 0.019999999552965164,
+      "0x702b": 0.0
+    }
+  },
+  "parameter_writes_scope": "only declared temporary runtime registers, fresh measured-position preload and trajectory loc_ref; no PID/zero/flash/draft writes",
+  "source_timing": "host monotonic time and synchronous SDK reads, not independently timestamped drive telemetry",
+  "physical_acceptance": false,
+  "limits": [
+    "1 mm邻近点一次六轴反馈到位，非任意工作空间或连续书写验收",
+    "J6本次保持，未验证其主动转动；J7未参与",
+    "TCP为模型FK，额外工具与独立空间精度未标定",
+    "SDK同步读取/阻塞仍可能影响停止延迟，网页非硬件急停",
+    "任务结束自动失能，释放后位置不作为到位时数据"
+  ]
+}

@@ -11,10 +11,10 @@ def readiness(store):
         user_trial_axes=trial_axes,missing_constraints=missing,
         reasons=[
             '每个任务由本机用户点击执行，并沿用上方一次现场确认。',
-            '单轴及六轴动态效果尚未验收；当前 3/1/0 不保证承重或克服静摩擦。',
+            '原生 CSP 已完成一次小幅六轴 XYZ 反馈到位；尚不代表全工作空间、J6 主动转动或夹爪验收。MIT 草稿 3/1/0 不作为 CSP 设备 PID。',
             '执行按既有临时试验包络检查，预演结果显示具体出力及时序阻挡。',
             '实发前须退出其他 CAN 控制器并重新读取起点；网页配置批准不会解除此限制。',
         ],
-        stop_policy='仅实现显式授权的已支撑轴撤力；未实现/批准承重轴保持策略',
+        stop_policy='当次任务完成、取消或异常后撤力；CSP 持续稳定及失能状态确认后恢复临时参数，不自动长期保持',
         xyz_hardware_integrated=True,physical_acceptance=False,
         next_step='实机起点预演 → 查看本任务出力/时序检查 → 现场确认 → 显式请求执行')

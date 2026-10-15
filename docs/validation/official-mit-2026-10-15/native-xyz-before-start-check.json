@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "report": {
+    "source": "explicit-gateway-read",
+    "capturedAt": 1792035683686,
+    "rows": [
+      {
+        "id": 1,
+        "fresh": true,
+        "rawDeg": -1.5600585354434595,
+        "modelDeg": -1.5600585354434595,
+        "nominal": true,
+        "tolerated": true,
+        "range": [
+          -150,
+          150
+        ],
+        "mode": 0,
+        "modeOk": true,
+        "previouslyConfirmed": true,
+        "measuredAt": 1792035683323,
+        "modeMeasuredAt": 1792035683332
+      },
+      {
+        "id": 2,
+        "fresh": true,
+        "rawDeg": -0.32958851056271743,
+        "modelDeg": -0.32958851056271743,
+        "nominal": false,
+        "tolerated": true,
+        "range": [
+          0,
+          179.9087476710785
+        ],
+        "mode": 0,
+        "modeOk": true,
+        "previouslyConfirmed": true,
+        "measuredAt": 1792035683377,
+        "modeMeasuredAt": 1792035683386
+      },
+      {
+        "id": 3,
+        "fresh": true,
+        "rawDeg": 0.3320321975012746,
+        "modelDeg": 0.3320321975012746,
+        "nominal": true,
+        "tolerated": true,
+        "range": [
+          0,
+          179.9087476710785
+        ],
+        "mode": 0,
+        "modeOk": true,
+        "previouslyConfirmed": true,
+        "measuredAt": 1792035683433,
+        "modeMeasuredAt": 1792035683442
+      },
+      {
+        "id": 4,
+        "fresh": true,
+        "rawDeg": 0.9052740196454305,
+        "modelDeg": 0.9052740196454304,
+        "nominal": true,
+        "tolerated": true,
+        "range": [
+          -89.95437383553924,
+          89.95437383553924
+        ],
+        "mode": 0,
+        "modeOk": true,
+        "previouslyConfirmed": true,
+        "measuredAt": 1792035683485,
+        "modeMeasuredAt": 1792035683493
+      },
+      {
+        "id": 5,
+        "fresh": true,
+        "rawDeg": 1.0942384601098263,
+        "modelDeg": 1.0942384601098263,
+        "nominal": true,
+        "tolerated": true,
+        "range": [
+          -89.95437383553924,
+          89.95437383553924
+        ],
+        "mode": 0,
+        "modeOk": true,
+        "previouslyConfirmed": true,
+        "measuredAt": 1792035683537,
+        "modeMeasuredAt": 1792035683546
+      },
+      {
+        "id": 6,
+        "fresh": true,
+        "rawDeg": 2.4279792110134424,
+        "modelDeg": 2.4279792110134424,
+        "nominal": true,
+        "tolerated": true,
+        "range": [
+          -179.9087476710785,
+          179.9087476710785
+        ],
+        "mode": 0,
+        "modeOk": true,
+        "previouslyConfirmed": true,
+        "measuredAt": 1792035683590,
+        "modeMeasuredAt": 1792035683599
+      },
+      {
+        "id": 7,
+        "fresh": true,
+        "rawDeg": 0.3999021064168253,
+        "modelDeg": null,
+        "nominal": false,
+        "tolerated": false,
+        "range": null,
+        "mode": 0,
+        "modeOk": true,
+        "previouslyConfirmed": false,
+        "measuredAt": 1792035683643,
+        "modeMeasuredAt": 1792035683651
+      }
+    ],
+    "positionsOk": true,
+    "modesOk": true,
+    "startOk": true,
+    "identityStatus": "not-independently-verified",
+    "hardwareExecutionAllowed": false
+  },
+  "observations": [
+    {
+      "id": 1,
+      "baselineDeg": -1.5600585354434595,
+      "minDeg": -1.5600585354434595,
+      "maxDeg": -1.5600585354434595,
+      "deltaDeg": 0,
+      "spanDeg": 0,
+      "samples": 1,
+      "lastMeasuredAt": 1792035683323
+    },
+    {
+      "id": 2,
+      "baselineDeg": -0.32958851056271743,
+      "minDeg": -0.32958851056271743,
+      "maxDeg": -0.32958851056271743,
+      "deltaDeg": 0,
+      "spanDeg": 0,
+      "samples": 1,
+      "lastMeasuredAt": 1792035683377
+    },
+    {
+      "id": 3,
+      "baselineDeg": 0.3320321975012746,
+      "minDeg": 0.3320321975012746,
+      "maxDeg": 0.3320321975012746,
+      "deltaDeg": 0,
+      "spanDeg": 0,
+      "samples": 1,
+      "lastMeasuredAt": 1792035683433
+    },
+    {
+      "id": 4,
+      "baselineDeg": 0.9052740196454305,
+      "minDeg": 0.9052740196454305,
+      "maxDeg": 0.9052740196454305,
+      "deltaDeg": 0,
+      "spanDeg": 0,
+      "samples": 1,
+      "lastMeasuredAt": 1792035683485
+    },
+    {
+      "id": 5,
+      "baselineDeg": 1.0942384601098263,
+      "minDeg": 1.0942384601098263,
+      "maxDeg": 1.0942384601098263,
+      "deltaDeg": 0,
+      "spanDeg": 0,
+      "samples": 1,
+      "lastMeasuredAt": 1792035683537
+    },
+    {
+      "id": 6,
+      "baselineDeg": 2.4279792110134424,
+      "minDeg": 2.4279792110134424,
+      "maxDeg": 2.4279792110134424,
+      "deltaDeg": 0,
+      "spanDeg": 0,
+      "samples": 1,
+      "lastMeasuredAt": 1792035683590
+    },
+    {
+      "id": 7,
+      "baselineDeg": 0.3999021064168253,
+      "minDeg": 0.3999021064168253,
+      "maxDeg": 0.3999021064168253,
+      "deltaDeg": 0,
+      "spanDeg": 0,
+      "samples": 1,
+      "lastMeasuredAt": 1792035683643
+    }
+  ],
+  "phase": "ready",
+  "reviewed": false,
+  "reviewedAt": null,
+  "changedAxes": [],
+  "manualReview": "not-confirmed",
+  "mappingAtCapture": {
+    "version": 1,
+    "deviceId": "20250907852512190405",
+    "axes": [
+      {
+        "motorId": 1,
+        "direction": 1,
+        "offsetDeg": 0,
+        "confirmed": true
+      },
+      {
+        "motorId": 2,
+        "direction": 1,
+        "offsetDeg": 0,
+        "confirmed": true
+      },
+      {
+        "motorId": 3,
+        "direction": 1,
+        "offsetDeg": 0,
+        "confirmed": true
+      },
+      {
+        "motorId": 4,
+        "direction": 1,
+        "offsetDeg": 0,
+        "confirmed": true
+      },
+      {
+        "motorId": 5,
+        "direction": 1,
+        "offsetDeg": 0,
+        "confirmed": true
+      },
+      {
+        "motorId": 6,
+        "direction": 1,
+        "offsetDeg": 0,
+        "confirmed": true
+      }
+    ]
+  },
+  "hardwareExecutionAllowed": false,
+  "hardwareParametersWritten": false
+}

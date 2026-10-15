@@ -1,0 +1,2 @@
+PASS: preview read-only; invalid/expired/drift/replay/hardware rejected; actual arrival error 0.5596 mm
+PASS: configuration change invalidates point plan
