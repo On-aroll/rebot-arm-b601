@@ -1,0 +1,438 @@
+{
+  "recorded_at_unix_s": 1792046293.762662,
+  "operation": "prepare-csp-j7",
+  "execution_authorized": false,
+  "hardware_motion_commands": 0,
+  "read_only_plan": {
+    "plan_id": "nPsySFrhjqplFqRaPbNSV0lfHAYfHDuQ",
+    "proposal": {
+      "title": "J7 夹爪电机轴 CSP +0.5° 小幅试验",
+      "seconds": 15.0,
+      "axes": [
+        7
+      ],
+      "delta_deg": 0.5,
+      "summary": "只控制 J7 电机轴增加 0.5°，最高 0.02 rad/s，首次使能起最多15秒；不是夹爪开口角或毫米距离。",
+      "runtime_registers": {
+        "0x7005": 5,
+        "0x7017": 0.02,
+        "0x7018": 10.0,
+        "0x700b": 0.2
+      },
+      "parameter_source": "单轴试验临时运行参数提案，仅在当次明确确认后写入；PID、零位、保存草稿及掉电保存不写入",
+      "stop_policy": "先失能并观察稳定反馈，再恢复非目标运行参数；不恢复旧位置目标。停止未确认则保留低限制并报告。",
+      "limitations": "原生位置环内的加速度/力矩不由主机轨迹保证；SDK 阻塞可能延迟停止，网页不是物理急停。",
+      "gripper_range_source": "锁定 Seeed ROS2 pick_place_rs.yaml：电机位置0..5 rad；不是本机夹爪端点/开口标定",
+      "gripper_range_calibrated": false,
+      "arm_model_scope": "仅检查六轴支撑姿态；本试验不推断夹爪开口或夹持力",
+      "start_deg": [
+        5.400390666334485,
+        -0.036621956880354294,
+        0.2709976270780407,
+        0.7294922178051294,
+        1.0371094772313703,
+        4.875733527221364,
+        0.4152830254170328
+      ],
+      "target_deg": [
+        5.400390666334485,
+        -0.036621956880354294,
+        0.2709976270780407,
+        0.7294922178051294,
+        1.0371094772313703,
+        4.875733527221364,
+        0.9152830254170328
+      ],
+      "curve_seconds": 1.4000000000000001
+    },
+    "status": {
+      "state": "READY",
+      "busy": false,
+      "axis": 7,
+      "reason": "检查通过；尚未使能。请核对并确认本次方案。",
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": 0.09425459802150726,
+          "qd": 0.000223904143316737,
+          "mode": 0,
+          "requested_at": 94977.53702915,
+          "received_at": 94977.561376695,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0006391737260855734,
+          "qd": 0.00022392569629022788,
+          "mode": 0,
+          "requested_at": 94977.561610921,
+          "received_at": 94977.586070445,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.00472980085760355,
+          "qd": 0.0008951617669195128,
+          "mode": 0,
+          "requested_at": 94977.586488559,
+          "received_at": 94977.610917881,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.01273204106837511,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 94977.611284374,
+          "received_at": 94977.635786317,
+          "qd_raw": 0.005727261304855347,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.018100975081324577,
+          "qd": -0.0004024626582210413,
+          "mode": 0,
+          "requested_at": 94977.636147397,
+          "received_at": 94977.660559084,
+          "qd_raw": -0.016430186107754707,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.08509760349988937,
+          "qd": -0.00020125256448046984,
+          "mode": 0,
+          "requested_at": 94977.660799145,
+          "received_at": 94977.685231004,
+          "qd_raw": 0.038603439927101135,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "7": {
+          "axis": 7,
+          "q": 0.007248056121170521,
+          "qd": 0.0006053261767746545,
+          "mode": 0,
+          "requested_at": 94977.685651709,
+          "received_at": 94977.71009097,
+          "qd_raw": -0.03949080780148506,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 94977.710106882,
+          "diagnostics_received_at": 94977.727142406
+        }
+      },
+      "physical_acceptance": false,
+      "proposal": {
+        "title": "J7 夹爪电机轴 CSP +0.5° 小幅试验",
+        "seconds": 15.0,
+        "axes": [
+          7
+        ],
+        "delta_deg": 0.5,
+        "summary": "只控制 J7 电机轴增加 0.5°，最高 0.02 rad/s，首次使能起最多15秒；不是夹爪开口角或毫米距离。",
+        "runtime_registers": {
+          "0x7005": 5,
+          "0x7017": 0.02,
+          "0x7018": 10.0,
+          "0x700b": 0.2
+        },
+        "parameter_source": "单轴试验临时运行参数提案，仅在当次明确确认后写入；PID、零位、保存草稿及掉电保存不写入",
+        "stop_policy": "先失能并观察稳定反馈，再恢复非目标运行参数；不恢复旧位置目标。停止未确认则保留低限制并报告。",
+        "limitations": "原生位置环内的加速度/力矩不由主机轨迹保证；SDK 阻塞可能延迟停止，网页不是物理急停。",
+        "gripper_range_source": "锁定 Seeed ROS2 pick_place_rs.yaml：电机位置0..5 rad；不是本机夹爪端点/开口标定",
+        "gripper_range_calibrated": false,
+        "arm_model_scope": "仅检查六轴支撑姿态；本试验不推断夹爪开口或夹持力",
+        "start_deg": [
+          5.400390666334485,
+          -0.036621956880354294,
+          0.2709976270780407,
+          0.7294922178051294,
+          1.0371094772313703,
+          4.875733527221364,
+          0.4152830254170328
+        ],
+        "target_deg": [
+          5.400390666334485,
+          -0.036621956880354294,
+          0.2709976270780407,
+          0.7294922178051294,
+          1.0371094772313703,
+          4.875733527221364,
+          0.9152830254170328
+        ],
+        "curve_seconds": 1.4000000000000001
+      },
+      "enabled_feedback_available": false,
+      "observed_at_ms": 1792046293759.9648,
+      "motors": {
+        "1": {
+          "id": 1,
+          "model": "rs-06",
+          "mechPosRad": 0.09425459802150726,
+          "positionUpdatedAt": 1792046293435.641,
+          "error": ""
+        },
+        "2": {
+          "id": 2,
+          "model": "rs-06",
+          "mechPosRad": -0.0006391737260855734,
+          "positionUpdatedAt": 1792046293460.2227,
+          "error": ""
+        },
+        "3": {
+          "id": 3,
+          "model": "rs-06",
+          "mechPosRad": 0.00472980085760355,
+          "positionUpdatedAt": 1792046293485.1006,
+          "error": ""
+        },
+        "4": {
+          "id": 4,
+          "model": "rs-00",
+          "mechPosRad": 0.01273204106837511,
+          "positionUpdatedAt": 1792046293509.8962,
+          "error": ""
+        },
+        "5": {
+          "id": 5,
+          "model": "rs-00",
+          "mechPosRad": 0.018100975081324577,
+          "positionUpdatedAt": 1792046293534.7593,
+          "error": ""
+        },
+        "6": {
+          "id": 6,
+          "model": "rs-00",
+          "mechPosRad": 0.08509760349988937,
+          "positionUpdatedAt": 1792046293559.4111,
+          "error": ""
+        },
+        "7": {
+          "id": 7,
+          "model": "rs-00",
+          "mechPosRad": 0.007248056121170521,
+          "positionUpdatedAt": 1792046293584.2637,
+          "error": ""
+        }
+      }
+    }
+  },
+  "plan_invalidated": {
+    "status": {
+      "state": "IDLE",
+      "busy": false,
+      "axis": 7,
+      "reason": "当次准备已取消，未使能",
+      "feedback": {
+        "1": {
+          "axis": 1,
+          "q": 0.09425459802150726,
+          "qd": 0.000223904143316737,
+          "mode": 0,
+          "requested_at": 94977.53702915,
+          "received_at": 94977.561376695,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "2": {
+          "axis": 2,
+          "q": -0.0006391737260855734,
+          "qd": 0.00022392569629022788,
+          "mode": 0,
+          "requested_at": 94977.561610921,
+          "received_at": 94977.586070445,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "3": {
+          "axis": 3,
+          "q": 0.00472980085760355,
+          "qd": 0.0008951617669195128,
+          "mode": 0,
+          "requested_at": 94977.586488559,
+          "received_at": 94977.610917881,
+          "qd_raw": 0.0,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "4": {
+          "axis": 4,
+          "q": 0.01273204106837511,
+          "qd": 0.0,
+          "mode": 0,
+          "requested_at": 94977.611284374,
+          "received_at": 94977.635786317,
+          "qd_raw": 0.005727261304855347,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "5": {
+          "axis": 5,
+          "q": 0.018100975081324577,
+          "qd": -0.0004024626582210413,
+          "mode": 0,
+          "requested_at": 94977.636147397,
+          "received_at": 94977.660559084,
+          "qd_raw": -0.016430186107754707,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "6": {
+          "axis": 6,
+          "q": 0.08509760349988937,
+          "qd": -0.00020125256448046984,
+          "mode": 0,
+          "requested_at": 94977.660799145,
+          "received_at": 94977.685231004,
+          "qd_raw": 0.038603439927101135,
+          "iq_raw_a": null,
+          "torque_raw_nm": null,
+          "diagnostics_requested_at": null,
+          "diagnostics_received_at": null
+        },
+        "7": {
+          "axis": 7,
+          "q": 0.007248056121170521,
+          "qd": 0.0006053261767746545,
+          "mode": 0,
+          "requested_at": 94977.685651709,
+          "received_at": 94977.71009097,
+          "qd_raw": -0.03949080780148506,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 94977.710106882,
+          "diagnostics_received_at": 94977.727142406
+        }
+      },
+      "physical_acceptance": false,
+      "proposal": {
+        "title": "J7 夹爪电机轴 CSP +0.5° 小幅试验",
+        "seconds": 15.0,
+        "axes": [
+          7
+        ],
+        "delta_deg": 0.5,
+        "summary": "只控制 J7 电机轴增加 0.5°，最高 0.02 rad/s，首次使能起最多15秒；不是夹爪开口角或毫米距离。",
+        "runtime_registers": {
+          "0x7005": 5,
+          "0x7017": 0.02,
+          "0x7018": 10.0,
+          "0x700b": 0.2
+        },
+        "parameter_source": "单轴试验临时运行参数提案，仅在当次明确确认后写入；PID、零位、保存草稿及掉电保存不写入",
+        "stop_policy": "先失能并观察稳定反馈，再恢复非目标运行参数；不恢复旧位置目标。停止未确认则保留低限制并报告。",
+        "limitations": "原生位置环内的加速度/力矩不由主机轨迹保证；SDK 阻塞可能延迟停止，网页不是物理急停。",
+        "gripper_range_source": "锁定 Seeed ROS2 pick_place_rs.yaml：电机位置0..5 rad；不是本机夹爪端点/开口标定",
+        "gripper_range_calibrated": false,
+        "arm_model_scope": "仅检查六轴支撑姿态；本试验不推断夹爪开口或夹持力",
+        "start_deg": [
+          5.400390666334485,
+          -0.036621956880354294,
+          0.2709976270780407,
+          0.7294922178051294,
+          1.0371094772313703,
+          4.875733527221364,
+          0.4152830254170328
+        ],
+        "target_deg": [
+          5.400390666334485,
+          -0.036621956880354294,
+          0.2709976270780407,
+          0.7294922178051294,
+          1.0371094772313703,
+          4.875733527221364,
+          0.9152830254170328
+        ],
+        "curve_seconds": 1.4000000000000001
+      },
+      "enabled_feedback_available": false,
+      "observed_at_ms": 1792046293762.089,
+      "motors": {
+        "1": {
+          "id": 1,
+          "model": "rs-06",
+          "mechPosRad": 0.09425459802150726,
+          "positionUpdatedAt": 1792046293435.6409,
+          "error": ""
+        },
+        "2": {
+          "id": 2,
+          "model": "rs-06",
+          "mechPosRad": -0.0006391737260855734,
+          "positionUpdatedAt": 1792046293460.2227,
+          "error": ""
+        },
+        "3": {
+          "id": 3,
+          "model": "rs-06",
+          "mechPosRad": 0.00472980085760355,
+          "positionUpdatedAt": 1792046293485.1003,
+          "error": ""
+        },
+        "4": {
+          "id": 4,
+          "model": "rs-00",
+          "mechPosRad": 0.01273204106837511,
+          "positionUpdatedAt": 1792046293509.896,
+          "error": ""
+        },
+        "5": {
+          "id": 5,
+          "model": "rs-00",
+          "mechPosRad": 0.018100975081324577,
+          "positionUpdatedAt": 1792046293534.759,
+          "error": ""
+        },
+        "6": {
+          "id": 6,
+          "model": "rs-00",
+          "mechPosRad": 0.08509760349988937,
+          "positionUpdatedAt": 1792046293559.411,
+          "error": ""
+        },
+        "7": {
+          "id": 7,
+          "model": "rs-00",
+          "mechPosRad": 0.007248056121170521,
+          "positionUpdatedAt": 1792046293584.2637,
+          "error": ""
+        }
+      }
+    },
+    "note": "当前没有本会话拥有的使能轴；未对未知状态设备发送批量失能"
+  }
+}

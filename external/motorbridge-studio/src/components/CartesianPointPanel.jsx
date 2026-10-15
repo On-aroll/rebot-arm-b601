@@ -154,7 +154,7 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
       </select></label>}
     </div></details>
     {!offline && <p className="consoleNote">{nativeXYZ ? '本次保留设备 PID、零位和保存草稿；临时切换运行模式及降低限制，结束并确认撤力后恢复。' : '以上设置只用于本次任务，不覆盖保存草稿或设备参数。加速度与 jerk 沿用已有配置，自动时限最多 120 秒，修改后须重新预演。'}{feedforwardMode==='seeed-rs-slow-position-v1' && <> 本次 Kp 80/75/150/50/40/40、Kd 5/6/10/5/4/4 在锁定官方/参考范围内；J1–J4 跟踪边界为 0.6°/0.75°/0.6°/0.75°，J5/J6 为 1°。官方模型的重力力矩以 8 秒渐变接入，这是本项目适配，真实到位仍待验收。</>}</p>}
-    {!offline && feedforwardMode==='native-csp-xyz-v1' && <p className="consoleNote">原生 XYZ 固定 0.02 rad/s、首次使能起最多 15 秒，每轴变化最多 0.5°。六轴保留设备现有 PID；临时采用 CSP、10 A 电流上限及 J1–J6 的 1/3/9/3/1/1 N·m 力矩上限，结束后失能并核对恢复，J7 不参与。主机平滑目标不保证驱动器内部加速度或力矩；需先验收小幅协同动作。</p>}
+    {!offline && feedforwardMode==='native-csp-xyz-v1' && <p className="consoleNote">原生 XYZ 固定 0.02 rad/s、首次使能起最多 15 秒，每轴变化最多 0.5°。六轴保留设备现有 PID；临时采用 CSP、10 A 电流上限及 J1–J6 的 1/3/9/3/1/1 N·m 力矩上限，结束后失能并核对恢复，J7 不参与。本机已完成两次邻近 XYZ 到位，J6、J7 另有独立小幅到位记录；较大位移与连续路径尚未验收。主机平滑目标不保证驱动器内部加速度或力矩。</p>}
     <div className="consoleActions">
       <button disabled={occupied || !previewReady} onClick={preview}>{pending ? '处理中…' : '计算并预演'}</button>
       {offline ? <button className="primary" disabled={occupied || invalidPlan || submitted || !virtualEnabled} onClick={()=>execute()}>执行虚拟动作</button>
