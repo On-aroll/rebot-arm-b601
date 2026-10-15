@@ -69,6 +69,26 @@ describe('Two-mode XYZ workflow', () => {
     await screen.findByText(/J3 CSP 反馈已到位并稳定/);
     expect(screen.queryByText(/当前末端误差/)).toBeNull();
   });
+  it('selects J6 explicitly without starting or writing anything on selection',async()=>{
+    const j3=vi.fn(),j6=vi.fn(async()=>({status:{state:'PREPARING',busy:true}}));
+    const {fetch}=setup({mode:'hardware',hardwareConfirmed:true,onExecuteCspJ3:j3,onExecuteCspJ6:j6});
+    fireEvent.click(screen.getByText('原生位置闭环 · J3 小幅试验'));
+    fireEvent.change(screen.getByLabelText('单轴试验轴'),{target:{value:'6'}});
+    expect(j3).not.toHaveBeenCalled();expect(j6).not.toHaveBeenCalled();expect(posts(fetch)).toEqual([]);
+    expect(screen.getByText(/10 A、1 N·m 上限/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:'执行 J6 CSP +0.5°'}));
+    await waitFor(()=>expect(j6).toHaveBeenCalledOnce());expect(j3).not.toHaveBeenCalled();
+  });
+  it('shows J6 feedback rather than J3 values in the saved single-axis result',()=>{
+    const rad=value=>value*Math.PI/180;
+    setup({mode:'hardware',hardwareState:{control:{mode:'native-csp-j6-v1',axis:6},busy:false,
+      motion_arrived_before_stop:true,expected_start:[0,0,0,0,0,rad(2)],target:[0,0,0,0,0,rad(2.5)],
+      arrival_feedback:{6:{q:rad(2.48)},3:{q:rad(99)}},feedback:{6:{q:rad(2.45)}}}});
+    const record=screen.getByRole('group',{name:'上次 J6 CSP 试验记录'});
+    expect(record.textContent).toContain('撤力前读数 2.480°');
+    expect(record.textContent).toContain('剩余误差 0.020°');
+    expect(record.textContent).not.toContain('99.000°');
+  });
   it('previews from virtual feedback and submits only the reviewed token to ROS', async () => {
     const { fetch } = setup();
     expect(screen.getByRole('button',{name:'执行虚拟动作'}).disabled).toBe(true);

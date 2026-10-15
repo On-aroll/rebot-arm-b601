@@ -392,7 +392,8 @@ export function ConsoleWorkspace() {
       <CartesianPointPanel mode={workMode} feedback={executionFeedback} previewReady={previewReady} virtualEnabled={Boolean(rosFeedback?.enabled)}
         hardwareConfirmed={onsiteConfirmed} onExecuteHardware={planId => hardware.execute(planId, onsiteConfirmed)} hardwareError={hardware.error}
         onObserveStartup={planId => hardware.execute(planId, onsiteConfirmed, true)}
-        onExecuteCspJ3={() => hardware.executeCspJ3(onsiteConfirmed)} hardwareState={hardware.state}
+        onExecuteCspJ3={() => hardware.executeCspJ3(onsiteConfirmed)}
+        onExecuteCspJ6={() => hardware.executeCspJ6(onsiteConfirmed)} hardwareState={hardware.state}
         currentXyz={!diagnosticSimulation && coordinateFresh ? displayedXyz : null} readiness={hardwareReadiness} resetKey={syncVersion} locked={locked||syncing} active={active} moving={moving} now={now}
         onPrepareHardwarePreview={prepareHardwarePreview} onStop={() => workMode === 'offline' ? ros.action('stop') : hardware.stop()}
         onPreview={(plan) => { setPointPlan(plan); if (plan) { setDiagnosticSimulation(false); setCameraView('overview'); setShowPlan(true); setGhost(false); } }} onBusy={(value) => { commandBusy.current = value; setBusy(value); }}

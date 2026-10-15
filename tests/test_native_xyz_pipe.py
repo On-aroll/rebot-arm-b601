@@ -74,8 +74,8 @@ class NativeXYZPipe(unittest.TestCase):
     def action(self,action,**body):
         return self.api.request('/hardware-point/action',self.headers,'127.0.0.1',dict(action=action,**body))
 
-    def run_trial(self,*,cancel=None):
-        self.action('execute',plan_id=self.trusted['id'],confirmed={k:True for k in CONFIRMATIONS})
+    def run_trial(self,*,cancel=None,action='execute'):
+        self.action(action,plan_id=self.trusted['id'],confirmed={k:True for k in CONFIRMATIONS})
         deadline=time.monotonic()+10;cancelled=False
         while time.monotonic()<deadline:
             state=self.api.status();self.observed.append(state)

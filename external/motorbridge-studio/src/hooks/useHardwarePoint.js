@@ -42,8 +42,9 @@ export function useHardwarePoint({ beforeExecute, onFinished }) {
     catch (failure) { if (mounted.current) setError(`停止未确认：${failure.message}；请使用现场独立断电`); }
     finally { stopping.current = false; }
   }, [accept, session]);
-  const execute = React.useCallback(async (planId, confirmed, observeStartup = false, native = false) => {
+  const execute = React.useCallback(async (planId, confirmed, observeStartup = false, nativeAxis = 0) => {
     if (!confirmed) throw new Error('请勾选上方一次现场确认');
+    if (![0, 3, 6].includes(nativeAxis)) throw new Error('请选择既定 J3 或 J6 小幅试验');
     if (starting.current || active.current) throw new Error('实机任务尚未结束');
     const ticket = ++generation.current;
     starting.current = true; setPending(true); setError('');
@@ -54,14 +55,14 @@ export function useHardwarePoint({ beforeExecute, onFinished }) {
       owned.current = true;
       if (ticket !== generation.current || !mounted.current) throw new Error('执行已取消，未发送新任务');
       if (!document.hasFocus() || document.visibilityState !== 'visible') throw new Error('操作页面已失焦，未发送实机任务');
-      if (native) {
-        const prepared = await request('action', { action: 'prepare-csp-j3' }, token.current, false, 15000);
+      if (nativeAxis) {
+        const prepared = await request('action', { action: `prepare-csp-j${nativeAxis}` }, token.current, false, 15000);
         if (ticket !== generation.current || !mounted.current) throw new Error('CSP 准备已取消，未发送试验');
         if (!document.hasFocus() || document.visibilityState !== 'visible') throw new Error('操作页面已失焦，未发送 CSP 试验');
         if (!prepared.plan_id) throw new Error(prepared.status?.reason || 'CSP 只读准备未通过');
         planId = prepared.plan_id;
       }
-      const result = await request('action', { action: native ? 'csp-j3-trial' : observeStartup ? 'probe-startup' : 'execute', plan_id: planId, confirmed: {
+      const result = await request('action', { action: nativeAxis ? `csp-j${nativeAxis}-trial` : observeStartup ? 'probe-startup' : 'execute', plan_id: planId, confirmed: {
         operator_present: true, power_cut_ready: true, supported: true, space_clear: true, accept_proposal: true,
       } }, token.current);
       if (ticket !== generation.current || !mounted.current) { await stop(); throw new Error('执行请求已取消'); }
@@ -119,5 +120,6 @@ export function useHardwarePoint({ beforeExecute, onFinished }) {
     };
   }, [accept, stop]);
   return { state, pending, busy: Boolean(pending || state?.busy), execute,
-    executeCspJ3: confirmed => execute(null, confirmed, false, true), stop, error };
+    executeCspJ3: confirmed => execute(null, confirmed, false, 3),
+    executeCspJ6: confirmed => execute(null, confirmed, false, 6), stop, error };
 }

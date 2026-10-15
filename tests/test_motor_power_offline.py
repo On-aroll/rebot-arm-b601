@@ -163,7 +163,7 @@ class PowerAPI(unittest.TestCase):
         headers=dict(self.base_headers,**{'X-Motor-Session':self.token})
         before=copy.deepcopy(self.store.state)
         result=self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='prepare-csp-j3'))
-        self.api._readonly_probe.assert_called_once_with(self.api.plan['config'],native=True)
+        self.api._readonly_probe.assert_called_once_with(self.api.plan['config'],native=True,native_axis=3)
         self.assertEqual(self.pose.call_count,102)
         self.assertFalse(self.popen.called)
         self.assertAlmostEqual(self.api.plan['target'][2],math.radians(.5))
@@ -178,6 +178,23 @@ class PowerAPI(unittest.TestCase):
         self.assertEqual(self.store.state,before)
         with self.assertRaises(ValueError):
             self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='csp-j3-trial',plan_id=plan_id,confirmed={k:True for k in CONFIRMATIONS}))
+
+    def test_native_j6_plan_is_fixed_and_cannot_reuse_j3_execute_action(self):
+        import math
+        headers=dict(self.base_headers,**{'X-Motor-Session':self.token})
+        before=copy.deepcopy(self.store.state)
+        result=self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='prepare-csp-j6'))
+        self.api._readonly_probe.assert_called_once_with(self.api.plan['config'],native=True,native_axis=6)
+        self.assertEqual(self.pose.call_count,102);self.popen.assert_not_called()
+        plan_id=result['plan_id']
+        confirmed={k:True for k in CONFIRMATIONS}
+        with self.assertRaises(ValueError):
+            self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='csp-j3-trial',plan_id=plan_id,confirmed=confirmed))
+        self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='csp-j6-trial',plan_id=plan_id,confirmed=confirmed,target=[99]*6,seconds=500))
+        message=self.process.messages()[0]
+        self.assertEqual(message['operation'],'csp-j6-trial');self.assertEqual(message['seconds'],15)
+        self.assertEqual(message['target'],[0,0,0,0,0,math.radians(.5)])
+        self.assertEqual(self.store.state,before)
 
     def test_native_csp_model_collision_and_cancel_never_produce_a_plan(self):
         headers=dict(self.base_headers,**{'X-Motor-Session':self.token})

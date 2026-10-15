@@ -52,7 +52,7 @@ def run_trial(message, bus=None):
     config = Envelope.parse(message['config'])
     native_xyz=message['operation']=='native-xyz'
     point=message['operation'] in ('move-xyz','probe-startup') or native_xyz
-    native=message['operation']=='csp-j3-trial'
+    native=message['operation'] in ('csp-j3-trial','csp-j6-trial')
     if not point and not native and (message['operation'] != 'hold-j1' or message.get('seconds') != 3):
         raise ValueError('仅支持 J1 当次 3 秒保持试验')
     if native_xyz:
@@ -62,11 +62,13 @@ def run_trial(message, bus=None):
         intent=MotionIntent([message['target']],'native-csp-xyz',message['request_id'],expected_start=message['expected_start'])
         executor=NativeXYZExecutor(config,bus or NativeXYZTransport())
     elif native:
-        from rebot_native_csp import CspJ3Trial,CspTransport
+        from rebot_native_csp import CspJ3Trial,CspJ6Trial,CspTransport,runtime_for_axis
         from rebot_mit_hardware import MotionIntent
-        axes=(3,)
-        intent=MotionIntent([message['target']],'native-csp-j3',message['request_id'],expected_start=message['expected_start'])
-        executor=CspJ3Trial(config,bus or CspTransport())
+        axis=3 if message['operation']=='csp-j3-trial' else 6
+        axes=(axis,)
+        intent=MotionIntent([message['target']],f'native-csp-j{axis}',message['request_id'],expected_start=message['expected_start'])
+        cls=CspJ3Trial if axis==3 else CspJ6Trial
+        executor=cls(config,bus or CspTransport(axis=axis,runtime=runtime_for_axis(axis)))
     elif point:
         from rebot_mit_hardware import MotionIntent, StartupObservationIntent
         from rebot_seeed_transport import SeeedTransport
@@ -116,9 +118,10 @@ def main():
     message = json.loads(sys.stdin.readline())
     if message.get('operation') == 'probe':
         emit(dict(kind='probe', **probe(Envelope.parse(message['config']), SdkTransport())))
-    elif message.get('operation') == 'probe-csp-j3':
-        from rebot_native_csp import CspTransport,probe as csp_probe
-        emit(dict(kind='probe', **csp_probe(Envelope.parse(message['config']),CspTransport())))
+    elif message.get('operation') in ('probe-csp-j3','probe-csp-j6'):
+        from rebot_native_csp import CspTransport,probe as csp_probe,runtime_for_axis
+        axis=3 if message['operation']=='probe-csp-j3' else 6
+        emit(dict(kind='probe', **csp_probe(Envelope.parse(message['config']),CspTransport(axis=axis,runtime=runtime_for_axis(axis)))))
     else:
         run_trial(message)
 

@@ -1,4 +1,4 @@
-"""One explicitly approved J3 CSP trial, using the audited motorbridge protocol.
+"""Explicit J3/J6 CSP trials, using the audited motorbridge protocol.
 
 This is a narrow adapter to the drive's existing position loop, not a new PID.
 It reuses the task lease, cancellation, CAN ownership and septic trajectory.
@@ -14,13 +14,20 @@ from rebot_seeed_transport import SeeedTransport
 
 AXIS = 3
 DELTA = math.radians(.5)
-TASK_TIMEOUT = 15.  # Explicitly approved extension of the same J3 trial.
+TASK_TIMEOUT = 15.  # Fixed proposal cap; each real trial needs its own confirmation.
 RUNTIME = {0x7005: 5, 0x7017: .02, 0x7018: 10., 0x700B: 9.}
 PROTECTED = (0x701E, 0x701F, 0x7020, 0x702B)
 
 
-def proposal(limits):
-    raw = dict(source='explicit-onsite-trial-proposal', version='native-csp-j3-v2-15s',
+def runtime_for_axis(axis):
+    if type(axis) is not int or axis not in (3, 6):
+        raise ValueError('本单轴入口仅支持已定义的 J3 或 J6 小幅方案')
+    return dict(RUNTIME) if axis == 3 else {0x7005: 5, 0x7017: .02, 0x7018: 10., 0x700B: 1.}
+
+
+def proposal(limits, *, axis=AXIS):
+    runtime = runtime_for_axis(axis)
+    raw = dict(source='explicit-onsite-trial-proposal', version='native-csp-j3-v2-15s' if axis == 3 else 'native-csp-j6-v1-15s',
         start_boundary_tolerance=math.radians(1),
         axes=[dict(q_min=float(lo), q_max=float(hi), v_max=.02, a_max=.04, jerk_max=.2,
             kp=3., kd=1., tau_ff=0., kp_max=3., kd_max=1.,
@@ -30,30 +37,30 @@ def proposal(limits):
             jitter_max=.15, lease_timeout=.75, start_speed=.01, arrival_q=math.radians(.1),
             arrival_qd=.01, settle_time=.3, task_timeout=TASK_TIMEOUT))
     Envelope.parse(raw)
-    public = dict(title='J3 原生 CSP +0.5° 小幅试验', seconds=TASK_TIMEOUT, axes=[3], delta_deg=.5,
-        summary=f'只控制 J3：从新鲜实测起点增加 0.5°，最高 0.02 rad/s；首次使能起最多 {TASK_TIMEOUT:g} 秒，完成或异常均失能。',
-        runtime_registers={hex(k):v for k,v in RUNTIME.items()},
-        parameter_source='本次明确授权的临时运行参数；PID、零位、保存草稿及掉电保存不写入',
+    public = dict(title=f'J{axis} 原生 CSP +0.5° 小幅试验', seconds=TASK_TIMEOUT, axes=[axis], delta_deg=.5,
+        summary=f'只控制 J{axis}：从新鲜实测起点增加 0.5°，最高 0.02 rad/s；首次使能起最多 {TASK_TIMEOUT:g} 秒，完成或异常均失能。',
+        runtime_registers={hex(k):v for k,v in runtime.items()},
+        parameter_source='单轴试验临时运行参数提案，仅在当次明确确认后写入；PID、零位、保存草稿及掉电保存不写入',
         stop_policy='先失能并观察稳定反馈，再恢复非目标运行参数；不恢复旧位置目标。停止未确认则保留低限制并报告。',
         limitations='原生位置环内的加速度/力矩不由主机轨迹保证；SDK 阻塞可能延迟停止，网页不是物理急停。')
     return raw, public
 
 
-def validate_samples(config, samples, clock, *, csp=False, quiet=False):
+def validate_samples(config, samples, clock, *, csp=False, quiet=False, axis=AXIS):
     for i,s in samples.items():
         a=config.axes[i-1]; p=config.policy
-        if s.mode != (5 if csp and i==AXIS else 0):
+        if s.mode != (5 if csp and i==axis else 0):
             raise ValueError(f'J{i} 实际运行模式与本次 CSP 阶段不符')
         if not 0 <= clock()-s.requested_at <= p.feedback_age:
             raise TimeoutError(f'J{i} 反馈过期')
-        margin=0. if i==AXIS else config.start_boundary_tolerance
+        margin=0. if i==axis else config.start_boundary_tolerance
         if not a.q_min-margin <= s.q <= a.q_max+margin:
             raise ValueError(f'J{i} 原始位置超出本次范围；未裁剪或改零位')
         limit=p.start_speed if quiet else a.v_max
         if abs(s.qd)>limit:
             raise ValueError(f'J{i} 实测速度 {s.qd:.6f} rad/s 超过 {limit:g} rad/s')
-        if i==AXIS and s.iq_raw_a is not None and abs(s.iq_raw_a)>RUNTIME[0x7018]:
-            raise ValueError(f'J3 电流反馈 {s.iq_raw_a:.3f} A 超过本次 10 A 限制')
+        if i==axis and s.iq_raw_a is not None and abs(s.iq_raw_a)>runtime_for_axis(axis)[0x7018]:
+            raise ValueError(f'J{axis} 电流反馈 {s.iq_raw_a:.3f} A 超过本次 10 A 限制')
 
 
 def probe(config, bus):
@@ -63,7 +70,7 @@ def probe(config, bus):
         for _ in range(3):
             samples=bus.read(tuple(MODELS),config.policy)
             readings.append({str(i):asdict(s) for i,s in samples.items()})
-            validate_samples(config,samples,bus.clock,quiet=True)
+            validate_samples(config,samples,bus.clock,quiet=True,axis=bus.axis)
             if any(abs(s.q-readings[0][str(i)]['q'])>config.policy.arrival_q for i,s in samples.items()):
                 raise ValueError('只读检查期间起点发生变化')
         return dict(ok=True,expected_start=[samples[i].q for i in MODELS],
@@ -180,7 +187,7 @@ class CspTransport(SeeedTransport):
 
     def enable(self, axis):
         if axis!=self.axis or self.prepared!=set(self.runtime) or self.preloaded_at is None:
-            raise PermissionError('先完成 J3 运行参数读回与当前位置装载，再使能')
+            raise PermissionError(f'先完成 J{self.axis} 运行参数读回与当前位置装载，再使能')
         if self.clock()-self.preloaded_at>self.envelope.policy.command_age:
             raise TimeoutError('已装载的当前位置超过首帧期限')
         super().enable(axis)
@@ -196,12 +203,13 @@ class CspTransport(SeeedTransport):
         raise PermissionError('CSP 试验不发送 MIT 帧')
 
 
-class CspJ3Trial(HardwareExecutor):
-    def __init__(self, config, transport, **kwargs):
+class CspAxisTrial(HardwareExecutor):
+    def __init__(self, config, transport, *, axis=AXIS, **kwargs):
         super().__init__(config,transport,**kwargs)
-        if transport.axis!=AXIS or transport.runtime!=RUNTIME or transport.coordinated:
-            raise ValueError('本入口仅允许既定 J3 单轴运行参数')
-        expected,_=proposal([(a.q_min,a.q_max) for a in config.axes])
+        self.axis=axis; self.runtime=runtime_for_axis(axis)
+        if transport.axis!=axis or transport.runtime!=self.runtime or transport.coordinated:
+            raise ValueError(f'本入口仅允许既定 J{axis} 单轴运行参数')
+        expected,_=proposal([(a.q_min,a.q_max) for a in config.axes],axis=axis)
         if config.fingerprint!=Envelope.parse(expected).fingerprint:
             raise ValueError(f'CSP 试验只能使用已确认的固定 0.5°/0.02 rad/s/{TASK_TIMEOUT:g} 秒方案')
         self.restore_result=None; self.power_deadline=None; self.arrival_feedback={}
@@ -213,72 +221,72 @@ class CspJ3Trial(HardwareExecutor):
             raise TimeoutError(f'CSP 首次使能起 {TASK_TIMEOUT:g} 秒时限已到，撤力')
 
     def send_position(self, q, samples, permit, phase):
-        self.check(permit); validate_samples(self.config,samples,self.clock,csp=True)
-        s=samples[AXIS]; a=self.config.axes[AXIS-1]
+        self.check(permit); validate_samples(self.config,samples,self.clock,csp=True,axis=self.axis)
+        s=samples[self.axis]; a=self.config.axes[self.axis-1]
         if not a.q_min<=q<=a.q_max or abs(q-s.q)>a.error_max:
-            raise ValueError(f'J3 CSP 跟踪误差或目标越界：误差 {math.degrees(q-s.q):.3f}°')
+            raise ValueError(f'J{self.axis} CSP 跟踪误差或目标越界：误差 {math.degrees(q-s.q):.3f}°')
         entry=dict(time=self.clock(),phase=phase,target_rad=q,feedback={str(i):asdict(s) for i,s in samples.items()})
         self.frames.append(entry)
         self.bus.write_register(0x7016,q,lambda:self.check(permit),phase=phase,verify=False)
-        self.last_axis_command[AXIS]=self.clock(); self.check(permit)
+        self.last_axis_command[self.axis]=self.clock(); self.check(permit)
 
     def run(self, intent, permit):
         if self.consumed: raise RuntimeError('CSP 试验会话不能重放')
         self.consumed=True; terminal='FAULT'; p=self.config.policy
         try:
             permit.validate(self.config,self.clock())
-            if permit.axes!=(AXIS,) or intent.source!='native-csp-j3' or len(intent.waypoints)!=1:
-                raise ValueError('只允许已批准的 J3 CSP 小幅试验')
+            if permit.axes!=(self.axis,) or intent.source!=f'native-csp-j{self.axis}' or len(intent.waypoints)!=1:
+                raise ValueError(f'只允许当次已确认的 J{self.axis} CSP 小幅试验')
             expected=intent.expected_start; target=intent.waypoints[0]
             if expected is None or len(expected)!=6 or any(not finite(v) for v in expected):
                 raise ValueError('缺少已检查的六轴起点')
-            if any(abs(b-a-(DELTA if i==2 else 0.))>1e-9 for i,(a,b) in enumerate(zip(expected,target))):
-                raise ValueError('目标必须为 J3 +0.5°，其他轴不改变')
+            if any(abs(b-a-(DELTA if i==self.axis-1 else 0.))>1e-9 for i,(a,b) in enumerate(zip(expected,target))):
+                raise ValueError(f'目标必须为 J{self.axis} +0.5°，其他轴不改变')
             check=lambda:self.check(permit)
             check(); self.bus.open_readonly()
             samples=self.bus.read(tuple(MODELS),p,check); self.feedback.update(samples)
-            validate_samples(self.config,samples,self.clock,quiet=True)
+            validate_samples(self.config,samples,self.clock,quiet=True,axis=self.axis)
             if any(abs(samples[i].q-expected[i-1])>p.arrival_q for i in MODELS):
                 raise ValueError('实测起点已改变，请重新检查')
             self.bus.authorize(self.config,permit)
             self.bus.quiesce(); check()
             self.bus.snapshot_registers(check)
             for index in (0x7005,0x700B,0x7018,0x7017):
-                self.bus.write_register(index,RUNTIME[index],check,phase='prepare')
+                self.bus.write_register(index,self.runtime[index],check,phase='prepare')
             samples=self.bus.read(tuple(MODELS),p,check); self.feedback.update(samples)
-            validate_samples(self.config,samples,self.clock,csp=True,quiet=True)
+            validate_samples(self.config,samples,self.clock,csp=True,quiet=True,axis=self.axis)
             if any(abs(samples[i].q-expected[i-1])>p.arrival_q for i in MODELS):
                 raise ValueError('使能前起点发生变化；不自动追赶旧目标')
             start=tuple(samples[i].q for i in MODELS)
-            # Keep passive slots at the measured start. Only J3 is commanded.
-            goal=tuple(target[2] if i==3 else start[i-1] for i in MODELS)
-            trajectory=Trajectory.create(start,[goal],self.config,axes=(AXIS,))
-            self.bus.write_register(0x7016,start[2],check,phase='preload-current')
-            if self.clock()-samples[AXIS].requested_at>p.command_age:
+            # Keep passive slots at the measured start; command only the selected axis.
+            goal=tuple(target[self.axis-1] if i==self.axis else start[i-1] for i in MODELS)
+            trajectory=Trajectory.create(start,[goal],self.config,axes=(self.axis,))
+            self.bus.write_register(0x7016,start[self.axis-1],check,phase='preload-current')
+            if self.clock()-samples[self.axis].requested_at>p.command_age:
                 raise TimeoutError('首个位置目标已过期；未使能')
             self.enable_attempted_at=self.clock()
             self.power_deadline=self.enable_attempted_at+p.task_timeout
-            self.last_axis_command[AXIS]=self.clock(); self.bus.enable(AXIS); check()
+            self.last_axis_command[self.axis]=self.clock(); self.bus.enable(self.axis); check()
             began=self.clock(); last=began; settled=None; self.state='RUNNING'
             while True:
                 cycle_started=self.clock()
                 check(); samples=self.bus.read(tuple(MODELS),p,check); self.feedback.update(samples)
-                validate_samples(self.config,samples,self.clock,csp=True); check()
-                if any(abs(samples[i].q-start[i-1])>p.arrival_q for i in MODELS if i!=AXIS):
-                    raise ValueError('未控制轴发生位移，停止 J3 小幅试验')
+                validate_samples(self.config,samples,self.clock,csp=True,axis=self.axis); check()
+                if any(abs(samples[i].q-start[i-1])>p.arrival_q for i in MODELS if i!=self.axis):
+                    raise ValueError(f'未控制轴发生位移，停止 J{self.axis} 小幅试验')
                 now=self.clock()
                 if now-last>p.period+p.jitter_max: raise TimeoutError('CSP 反馈周期延迟超限')
                 # A short hold verifies the preloaded start before advancing.
                 elapsed=max(0.,now-began-p.settle_time)
-                if now-began<p.settle_time and abs(samples[AXIS].q-start[2])>p.arrival_q:
+                if now-began<p.settle_time and abs(samples[self.axis].q-start[self.axis-1])>p.arrival_q:
                     raise ValueError('CSP 启动保持偏移，轨迹未开始')
                 q,_,_,_=trajectory.sample(elapsed)
-                self.send_position(q[2],samples,permit,'hold' if elapsed==0 else 'trajectory'); last=now
-                arrived=elapsed>=trajectory.duration and abs(samples[AXIS].q-goal[2])<=p.arrival_q and abs(samples[AXIS].qd)<=p.arrival_qd
+                self.send_position(q[self.axis-1],samples,permit,'hold' if elapsed==0 else 'trajectory'); last=now
+                arrived=elapsed>=trajectory.duration and abs(samples[self.axis].q-goal[self.axis-1])<=p.arrival_q and abs(samples[self.axis].qd)<=p.arrival_qd
                 settled=now if arrived and settled is None else settled if arrived else None
                 if settled is not None and now-settled>=p.settle_time:
                     self.motion_arrived=True; self.arrival_feedback=dict(samples)
-                    self.reason='J3 CSP 反馈到位并稳定，随后撤力；六轴 XYZ 尚未验收'; terminal='ARRIVED'; break
+                    self.reason=f'J{self.axis} CSP 反馈到位并稳定，随后撤力；本次仅验收单轴小幅运动'; terminal='ARRIVED'; break
                 # Account for the entire synchronous feedback sweep. Sleeping
                 # a full period after reading six axes double-counts that time.
                 self.wait(max(0.,p.period-(self.clock()-cycle_started)))
@@ -293,9 +301,9 @@ class CspJ3Trial(HardwareExecutor):
                     if self.stop_result['errors']: raise ValueError('失能状态未确认，保留当前低限制')
                     quiet=None; began=self.clock(); self.stop_result['observations']=[]
                     while True:
-                        samples=self.bus.read((AXIS,),p); self.feedback.update(samples); now=self.clock()
+                        samples=self.bus.read((self.axis,),p); self.feedback.update(samples); now=self.clock()
                         self.stop_result['observations'].append({str(i):asdict(s) for i,s in samples.items()})
-                        s=samples[AXIS]
+                        s=samples[self.axis]
                         if not 0<=now-s.requested_at<=p.feedback_age: raise TimeoutError('失能后反馈过期')
                         quiet=now if abs(s.qd)<=p.arrival_qd and quiet is None else quiet if abs(s.qd)<=p.arrival_qd else None
                         if quiet is not None and now-quiet>=p.settle_time: break
@@ -327,8 +335,8 @@ class CspJ3Trial(HardwareExecutor):
 
     def status(self):
         result=super().status()
-        result.update(control=dict(mode='native-csp-j3-v1',axis=3,delta_deg=.5,
-            speed_limit_rad_s=.02,task_timeout_s=TASK_TIMEOUT,runtime_registers={hex(k):v for k,v in RUNTIME.items()},
+        result.update(control=dict(mode=f'native-csp-j{self.axis}-v1',axis=self.axis,delta_deg=.5,
+            speed_limit_rad_s=.02,task_timeout_s=TASK_TIMEOUT,runtime_registers={hex(k):v for k,v in self.runtime.items()},
             pid_source='live drive parameters, not overwritten',config_fingerprint=self.config.fingerprint),
             register_snapshot={hex(k):v for k,v in self.bus.original.items()},
             restoration=self.restore_result,arrival_feedback={str(i):asdict(s) for i,s in self.arrival_feedback.items()},
@@ -336,3 +344,15 @@ class CspJ3Trial(HardwareExecutor):
                 stop_requested_at=self.stop_requested_at,stop_call_completed_at=self.stop_call_completed_at,
                 source='host monotonic timestamps; not independently measured physical enable duration'))
         return result
+
+
+class CspJ3Trial(CspAxisTrial):
+    """Retain the already validated, fixed J3 entrypoint."""
+    def __init__(self, config, transport, **kwargs):
+        super().__init__(config, transport, axis=3, **kwargs)
+
+
+class CspJ6Trial(CspAxisTrial):
+    """Same execution and cleanup; fixed J6 +0.5° at the lower 1 N·m cap."""
+    def __init__(self, config, transport, **kwargs):
+        super().__init__(config, transport, axis=6, **kwargs)

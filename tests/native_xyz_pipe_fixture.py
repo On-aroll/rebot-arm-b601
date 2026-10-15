@@ -10,6 +10,7 @@ from unittest.mock import patch
 from test_native_csp_offline import NativeController
 from test_mit_hardware_offline import Owner
 import rebot_native_xyz as native
+from rebot_native_csp import CspTransport,probe,runtime_for_axis
 import rebot_power_worker as worker
 
 
@@ -25,11 +26,13 @@ class WallClock:
 
 def main():
     message=json.loads(worker.sys.stdin.readline())
-    if message.get('operation')!='native-xyz': raise ValueError('fixture permits only native XYZ')
+    operation=message.get('operation')
+    if operation not in ('native-xyz','probe-csp-j6','csp-j6-trial'):
+        raise ValueError('fixture permits only existing native XYZ or fixed J6')
     sdk=NativeController(WallClock())
     register=sdk.add_robstride_motor
     def initialized_motor(i,host,model):
-        motor=register(i,host,model);motor.q=message['expected_start'][i-1]
+        motor=register(i,host,model);motor.q=message.get('expected_start',[0.]*6)[i-1]
         return motor
     sdk.add_robstride_motor=initialized_motor
     transport=native.NativeXYZTransport
@@ -41,7 +44,13 @@ def main():
     with patch('motorbridge.Controller',side_effect=AssertionError('real CAN forbidden')), \
          patch.object(native,'NativeXYZTransport',lambda:transport(factory=lambda **_:sdk,ownership=Owner())), \
          patch.object(worker,'emit',marked_emit):
-        worker.run_trial(message)
+        if operation=='probe-csp-j6':
+            from rebot_mit_hardware import Envelope
+            emit(dict(kind='probe',**probe(Envelope.parse(message['config']),
+                CspTransport(axis=6,runtime=runtime_for_axis(6),factory=lambda **_:sdk,ownership=Owner()))))
+        elif operation=='csp-j6-trial':
+            worker.run_trial(message,bus=CspTransport(axis=6,runtime=runtime_for_axis(6),factory=lambda **_:sdk,ownership=Owner()))
+        else:worker.run_trial(message)
 
 
 if __name__=='__main__':main()

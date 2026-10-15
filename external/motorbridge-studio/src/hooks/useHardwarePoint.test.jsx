@@ -197,3 +197,20 @@ it('failed CSP preparation preserves its actual reason without starting',async()
   await act(async()=>{await expect(result.current.executeCspJ3(true)).rejects.toThrow('J3 起点变化');});
   expect(actions().some(b=>b.action==='csp-j3-trial')).toBe(false);
 });
+
+
+it('J6 uses its own fixed preparation and start, never the J3 action',async()=>{
+  const base=fetch.getMockImplementation();
+  fetch.mockImplementation(async(path,options)=>{
+    const body=options?.body?JSON.parse(options.body):{};
+    if(body.action==='prepare-csp-j6') return {ok:true,json:async()=>({plan_id:'fixed-j6-plan'})};
+    if(body.action==='csp-j6-trial') server={state:'RUNNING',busy:true,feedback:{}};
+    return base(path,options);
+  });
+  const {result}=renderHook(()=>useHardwarePoint({beforeExecute:async()=>{}}));
+  await act(async()=>{await expect(result.current.executeCspJ6(false)).rejects.toThrow('现场确认');});
+  await act(async()=>{await result.current.executeCspJ6(true);});
+  expect(actions().filter(b=>b.action!=='heartbeat')).toEqual([
+    {action:'prepare-csp-j6'},expect.objectContaining({action:'csp-j6-trial',plan_id:'fixed-j6-plan'}),
+  ]);
+});

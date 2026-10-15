@@ -1,0 +1,80 @@
+{
+  "kind": "offline-j6-proposal-preflight-not-live-start",
+  "time_unix_s": 1792043326.943194,
+  "execution_authorized": false,
+  "real_hardware_commands": 0,
+  "source": "docs/validation/official-mit-2026-10-15/native-xyz-rebased-arrived.json",
+  "source_sha256": "7ec22b73ca71975d1fc110249d254fc99651c1d75c32800cf7730689e7a70b79",
+  "start_source": "archived released feedback, not current live pose",
+  "start_deg": [
+    -11.335449394671215,
+    -0.01953130612772831,
+    0.2661132680891146,
+    0.7778321879648071,
+    1.4809571541701898,
+    2.069824581505484
+  ],
+  "target_deg": [
+    -11.335449394671215,
+    -0.01953130612772831,
+    0.2661132680891146,
+    0.7778321879648071,
+    1.4809571541701898,
+    2.569824581505484
+  ],
+  "proposal": {
+    "title": "J6 原生 CSP +0.5° 小幅试验",
+    "seconds": 15.0,
+    "axes": [
+      6
+    ],
+    "delta_deg": 0.5,
+    "summary": "只控制 J6：从新鲜实测起点增加 0.5°，最高 0.02 rad/s；首次使能起最多 15 秒，完成或异常均失能。",
+    "runtime_registers": {
+      "0x7005": 5,
+      "0x7017": 0.02,
+      "0x7018": 10.0,
+      "0x700b": 1.0
+    },
+    "parameter_source": "单轴试验临时运行参数提案，仅在当次明确确认后写入；PID、零位、保存草稿及掉电保存不写入",
+    "stop_policy": "先失能并观察稳定反馈，再恢复非目标运行参数；不恢复旧位置目标。停止未确认则保留低限制并报告。",
+    "limitations": "原生位置环内的加速度/力矩不由主机轨迹保证；SDK 阻塞可能延迟停止，网页不是物理急停。"
+  },
+  "model_points_checked": 101,
+  "collisions": [],
+  "trajectory_seconds": 1.4000000000000001,
+  "services": {
+    "/hardware-point/state": {
+      "state": "IDLE",
+      "busy": false
+    },
+    "/state": {
+      "job": null,
+      "playing": false,
+      "manual_motion": false,
+      "error": ""
+    },
+    "/ros-control/state": {
+      "job": {
+        "status": "succeeded",
+        "target": [
+          -0.357067985507613,
+          0.17788564849530106,
+          0.4423523810354541,
+          -0.6987238384084199,
+          0.354952902266599,
+          3.522372974558723e-17
+        ],
+        "error": "joint target accepted positions=[-0.35706916647697506, 0.17789154758402503, 0.4423525044882142, -0.6987178454226726, 0.35495232672864063, 3.52239940980125e-17] velocities=[0.00036540598518552123, -0.0018252483053907856, -3.8197754226012835e-05, -0.0018543011626613018, 0.00017807829857836548, -8.179378863509755e-20]",
+        "max_error_rad": 5.992985747327317e-06,
+        "ros_status": 4
+      }
+    }
+  },
+  "trial_config_sha256": {
+    "configs/trials/seeed-j1-pending.json": "3eddbaf3f1c9b09d16ade7ed203691de11bdbbb59ca2ef98431a958267af0a3f",
+    "configs/trials/seeed-nearby-xyz-gravity-proposal.json": "3f958b88df9ccc34e8a4746558ad3d950a6dffd43f0a07e2d9f6d98c1938d1eb",
+    "configs/trials/seeed-nearby-xyz-pending.json": "fb34001a6aad21c25b53f25ba9b7781d7882f391f745467f00f1e1a6af8f3b3f"
+  },
+  "limitation": "Real execution must reread the current pose and rerun checks after explicit one-time approval."
+}
