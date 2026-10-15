@@ -1,6 +1,6 @@
 {
   "type": "reviewed-native-position-trial",
-  "status": "authorized-and-executed-not-arrived",
+  "status": "five-second-history-preserved; authorized-15-second-followup-arrived",
   "authorization": "用户明确允许接入原生 CSP 并进行上述 J3 +0.5°、0.02 rad/s、5 秒及四项临时运行参数试验",
   "source_snapshot": "native-position-readonly.json",
   "controlled_axes": [
@@ -116,7 +116,7 @@
     "physical_acceptance": false
   },
   "proposed_followup": {
-    "status": "not-authorized-not-implemented-not-executed",
+    "status": "authorized-implemented-executed-arrived",
     "trial_seconds": 15,
     "axis": 3,
     "delta_deg": 0.5,
@@ -124,6 +124,10 @@
     "changes_from_approved_trial": "only first-enable duration ceiling from 5 to 15 seconds",
     "unchanged": "10 A, 9 Nm, live PID, nominal limits, feedback guards, cancel/lease/stop and verified restoration",
     "question_to_resolve": "whether the existing drive position loop can settle within 0.1 degree with more bounded time",
-    "arrival_guaranteed": false
+    "arrival_guaranteed": false,
+    "authorization": "用户答复：允许这次 15 秒单轴试验",
+    "result_report": "native-csp-15s-analysis.json",
+    "actual_host_enable_attempt_to_stop_request_s": 8.674558783997782,
+    "remaining_error_deg": 0.07031127853019047
   }
 }

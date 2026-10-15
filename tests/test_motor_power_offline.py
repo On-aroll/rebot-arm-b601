@@ -173,7 +173,7 @@ class PowerAPI(unittest.TestCase):
             plan_id=plan_id,confirmed={k:True for k in CONFIRMATIONS},target=[99]*6,seconds=500))
         message=self.process.messages()[0]
         self.assertEqual(message['operation'],'csp-j3-trial')
-        self.assertEqual(message['seconds'],5)
+        self.assertEqual(message['seconds'],15)
         self.assertEqual(message['target'],[0,0,math.radians(.5),0,0,0])
         self.assertEqual(self.store.state,before)
         with self.assertRaises(ValueError):
@@ -192,6 +192,21 @@ class PowerAPI(unittest.TestCase):
         result=self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='prepare-csp-j3'))
         self.assertNotIn('plan_id',result)
         self.popen.assert_not_called()
+
+    def test_native_xyz_dispatches_reviewed_point_token_to_native_worker_without_replacing_drafts(self):
+        from rebot_native_xyz import proposal
+        raw,_=proposal([(-1.,1.)]*6)
+        self.api.point_plan=Mock(return_value=dict(id='native-xyz-token',expires=100.,config=raw,
+            revision=self.store.state['revision'],expected_start=[0.]*6,target=[.004]*6))
+        before=copy.deepcopy(self.store.state)
+        headers=dict(self.base_headers,**{'X-Motor-Session':self.token})
+        self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='execute',plan_id='native-xyz-token',
+            confirmed={k:True for k in CONFIRMATIONS},target=[99]*6,seconds=500))
+        message=self.process.messages()[0]
+        self.assertEqual(message['operation'],'native-xyz')
+        self.assertEqual(message['seconds'],15.)
+        self.assertEqual(message['target'],[.004]*6)
+        self.assertEqual(self.store.state,before)
 
     def test_failed_trial_trace_is_saved_once_and_excluded_from_status_polling(self):
         self.start()
@@ -212,6 +227,26 @@ class PowerAPI(unittest.TestCase):
         self.assertEqual(report['command_log'],trace)
         self.assertEqual(report['expected_start'],[0.]*6)
         self.assertEqual(report['target'],[.001]*6)
+
+    def test_native_xyz_worker_preserves_fixed_profile_scope_and_register_evidence(self):
+        from rebot_native_xyz import proposal
+        raw,_=proposal([(-1.,1.)]*6)
+        message=dict(operation='native-xyz',config=raw,expected_start=[0.]*6,target=[.004]*6,
+                     request_id='virtual-native-point',evidence='synthetic reviewed native XYZ')
+        bus=Mock();bus.register_log=[dict(axis=2,index='0x7016',value=.004)]
+        with patch('rebot_native_xyz.NativeXYZExecutor') as factory,patch('rebot_power_worker.threading.Thread'), \
+             patch('rebot_power_worker.signal.signal'),patch('rebot_power_worker.emit') as emit, \
+             patch('rebot_power_worker.time.monotonic',return_value=10.):
+            executor=factory.return_value;executor.bus=bus
+            executor.worker.is_alive.return_value=False
+            executor.status.return_value={'state':'FAULT'};executor.frames=[]
+            run_trial(message,bus=bus)
+            intent,permit=executor.start.call_args.args
+            self.assertEqual(intent.source,'native-csp-xyz')
+            self.assertEqual(permit.axes,(1,2,3,4,5,6));self.assertTrue(permit.coordinated_start_checked)
+            self.assertEqual(permit.expires_at,35.)
+            self.assertEqual(factory.call_args.args[0].policy.task_timeout,15.)
+            self.assertEqual(emit.call_args.args[0]['command_log']['registers'],bus.register_log)
 
     def test_xyz_worker_reuses_executor_with_six_axis_permit_and_never_j7(self):
         raw,_=trial_proposal(self.store.state,self.api.limits)

@@ -322,7 +322,7 @@ class MotionIntent:
     must resolve IK upstream and require a live lease; never streams browser CAN.
     """
     def __init__(self, waypoints, source, request_id, expected_start=None):
-        if source not in ('onsite-single-axis','onsite-hold','xyz','gamepad-planned','native-csp-j3') or not request_id:
+        if source not in ('onsite-single-axis','onsite-hold','xyz','gamepad-planned','native-csp-j3','native-csp-xyz') or not request_id:
             raise ValueError('需要明确运动来源及一次性请求编号')
         self.waypoints=tuple(tuple(p) for p in waypoints); self.source=source; self.request_id=request_id
         self.expected_start=tuple(expected_start) if expected_start is not None else None

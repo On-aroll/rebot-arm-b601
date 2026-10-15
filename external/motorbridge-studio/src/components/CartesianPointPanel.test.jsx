@@ -18,6 +18,22 @@ function setup(overrides = {}) {
 const posts = fetch => fetch.mock.calls.filter(([,o]) => o?.body).map(([url,o]) => ({url,body:JSON.parse(o.body)}));
 
 describe('Two-mode XYZ workflow', () => {
+  it('sends an explicit native XYZ preview choice and distinguishes arrival-time error from post-release coordinates', async () => {
+    const execute=vi.fn(async()=>({status:{state:'PREPARING',busy:true}}));
+    const {fetch,props,rerender}=setup({mode:'hardware',hardwareConfirmed:true,onExecuteHardware:execute});
+    fireEvent.change(screen.getByLabelText('轨迹控制方案'),{target:{value:'native-csp-xyz-v1'}});
+    expect(screen.getByText(/六轴保留设备现有 PID/)).toBeTruthy();
+    expect(screen.getByLabelText('实机关节速度上限（rad/s）').disabled).toBe(true);
+    expect(screen.getByLabelText('实机任务时限').disabled).toBe(true);
+    expect(screen.getByText(/固定：首次使能起最多 15 秒/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));await screen.findByText(/预演通过/);
+    expect(posts(fetch)[0].body.hardware_motion.feedforward_mode).toBe('native-csp-xyz-v1');
+    fireEvent.click(screen.getByRole('button',{name:'确认实机执行'}));await waitFor(()=>expect(execute).toHaveBeenCalledOnce());
+    rerender(<CartesianPointPanel {...props} hardwareState={{control:{mode:'native-csp-xyz-v1'},tcp_error_mm:.123}}
+      feedback={{q_deg:[0,0,0,0,0,0],job:{status:'succeeded'}}} currentXyz={[0,0,0]} />);
+    expect(screen.getByRole('status').textContent).toContain('到位时模型 TCP 误差 0.123 mm');
+    expect(screen.getByRole('status').textContent).toContain('当前坐标为撤力后的反馈');
+  });
   it('keeps the last CSP fault and pre-release evidence visible after reload without claiming XYZ arrival', () => {
     const rad = value => value * Math.PI / 180;
     setup({mode:'hardware',hardwareState:{control:{mode:'native-csp-j3-v1'},busy:false,motion_arrived_before_stop:false,

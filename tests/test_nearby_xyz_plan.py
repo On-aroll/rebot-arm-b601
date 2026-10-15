@@ -20,6 +20,34 @@ class NearbyPlan(unittest.TestCase):
         path=Path(__file__).resolve().parents[1]/'configs/trials/seeed-nearby-xyz-pending.json'
         cls.config=Envelope.parse(json.loads(path.read_text())['envelope'])
 
+    def test_native_xyz_model_uses_live_position_loop_instead_of_zero_mit_gravity_gate(self):
+        import copy
+        raw=json.loads((Path(__file__).resolve().parents[1]/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        before=copy.deepcopy(raw)
+        start=np.deg2rad([-1.37207,-.32959,.33692,.82178,1.10522,2.43677])
+        xyz=self.robot.fk(start).translation.copy();xyz[1]+=.002
+        target=self.robot.ik(xyz,seed=start,position_only=True)
+        task,config=configure_motion(raw,start,target,dict(speed_rad_s=.02,timeout_mode='auto',feedforward_mode='native-csp-xyz-v1'))
+        result=assess_motion(self.robot,start,target,config)
+        self.assertTrue(result['execution_ready'],result)
+        self.assertTrue(result['native_position_control'])
+        self.assertLess(result['max_axis_delta_deg'],.5)
+        np.testing.assert_allclose(result['delta_deg'],np.rad2deg(target-start))
+        self.assertNotIn('static_balance_check',result)
+        self.assertEqual(config.policy.task_timeout,15.)
+        self.assertEqual(raw,before)
+        self.assertLess(max(abs(np.rad2deg(target-start))),.5)
+        self.assertLess(np.linalg.norm(self.robot.fk(target).translation-xyz)*1000,.002)
+        from rebot_native_xyz import forward_kinematics
+        np.testing.assert_allclose(forward_kinematics()(target),self.robot.fk(target).translation*1000,atol=1e-8)
+
+    def test_native_xyz_rejects_larger_displacement_speed_or_extended_duration(self):
+        raw=json.loads((Path(__file__).resolve().parents[1]/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        start=np.array([0.,.5,.5,0.,0.,0.])
+        for speed,mode,timeout,delta in ((.1,'auto',15,.004),(.02,'manual',60,.004),(.02,'auto',15,.02)):
+            with self.assertRaises(ValueError):
+                configure_motion(raw,start,start+delta,dict(speed_rad_s=speed,timeout_mode=mode,timeout_s=timeout,feedforward_mode='native-csp-xyz-v1'))
+
     def test_current_seed_selects_feasible_five_mm_point_with_small_angles(self):
         start=np.deg2rad([61.96,1.5,.1,.56,-.91,4.46])
         plan=plan_nearby(self.robot,start,self.config)

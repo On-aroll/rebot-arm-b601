@@ -149,10 +149,10 @@ def serve(port,host='127.0.0.1'):
     writing_document=writing_program();writing_compiled=compile_program(writing_document,r)
     r.m.vis.quality.offsamples=0
     lock=threading.RLock(); stop=threading.Event()
-    def hardware_configuration():
+    def hardware_configuration(native=False):
         from rebot_motor_power import trial_proposal
         from rebot_mit_hardware import Envelope
-        trial_proposal(config_store.status()['state'],list(zip(r.lower,r.upper)))
+        if not native: trial_proposal(config_store.status()['state'],list(zip(r.lower,r.upper)))
         raw=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
         envelope=Envelope.parse(raw)
         if any(abs(a.q_min-lo)>1e-8 or abs(a.q_max-hi)>1e-8 for a,lo,hi in zip(envelope.axes,r.lower,r.upper)):
@@ -169,7 +169,7 @@ def serve(port,host='127.0.0.1'):
             if plan.get('config_revision')!=config_store.status()['state']['revision']:
                 raise ValueError('已保存的软件草稿已改变，请重新预演')
             from rebot_xyz_trial import assess_motion
-            _,base=hardware_configuration()
+            _,base=hardware_configuration(native=plan.get('hardware_config',{}).get('version')=='native-csp-xyz-v1')
             if plan.get('hardware_base_hash')!=base.fingerprint:
                 raise ValueError('实机试验参数已变化或预演未绑定参数，请重新预演')
             from rebot_mit_hardware import Envelope
@@ -378,8 +378,8 @@ def serve(port,host='127.0.0.1'):
                                 result=point_planner.preview(body,start=q)
                                 try:
                                     from rebot_xyz_trial import assess_motion,configure_motion
-                                    base_raw,base=hardware_configuration()
                                     settings=body.get('hardware_motion')
+                                    base_raw,base=hardware_configuration(native=isinstance(settings,dict) and settings.get('feedforward_mode')=='native-csp-xyz-v1')
                                     if isinstance(settings,dict) and settings.get('speed_rad_s')!=body.get('speed_rad_s'):
                                         raise ValueError('实机速度与预演速度不同，请重新预演')
                                     raw,envelope=configure_motion(base_raw,q,np.deg2rad(result['q_deg']),settings)
@@ -389,7 +389,7 @@ def serve(port,host='127.0.0.1'):
                                     assessment=assess_motion(r,q,np.deg2rad(result['q_deg']),envelope)
                                     result['hardware_preflight']=dict(assessment,parameters=raw,motion_settings=settings,
                                         task_timeout_s=envelope.policy.task_timeout,
-                                        parameter_source='task gains/source and timing explicitly selected in webpage; saved drafts and device parameters unchanged')
+                                        parameter_source='live drive PID preserved; temporary CSP/runtime ceilings restored after verified release; saved drafts and zero unchanged' if envelope.version=='native-csp-xyz-v1' else 'task gains/source and timing explicitly selected in webpage; saved drafts and device parameters unchanged')
                                     if np.isfinite(assessment.get('hardware_seconds',np.nan)):
                                         result['seconds']=assessment['hardware_seconds']
                                         plan['seconds']=result['seconds']

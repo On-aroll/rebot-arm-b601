@@ -14,12 +14,13 @@ from rebot_seeed_transport import SeeedTransport
 
 AXIS = 3
 DELTA = math.radians(.5)
+TASK_TIMEOUT = 15.  # Explicitly approved extension of the same J3 trial.
 RUNTIME = {0x7005: 5, 0x7017: .02, 0x7018: 10., 0x700B: 9.}
 PROTECTED = (0x701E, 0x701F, 0x7020, 0x702B)
 
 
 def proposal(limits):
-    raw = dict(source='explicit-onsite-trial-proposal', version='native-csp-j3-v1',
+    raw = dict(source='explicit-onsite-trial-proposal', version='native-csp-j3-v2-15s',
         start_boundary_tolerance=math.radians(1),
         axes=[dict(q_min=float(lo), q_max=float(hi), v_max=.02, a_max=.04, jerk_max=.2,
             kp=3., kd=1., tau_ff=0., kp_max=3., kd_max=1.,
@@ -27,10 +28,10 @@ def proposal(limits):
             for i,(lo,hi) in enumerate(limits)],
         policy=dict(period=.1, io_timeout=.05, feedback_age=.6, command_age=.3,
             jitter_max=.15, lease_timeout=.75, start_speed=.01, arrival_q=math.radians(.1),
-            arrival_qd=.01, settle_time=.3, task_timeout=5.))
+            arrival_qd=.01, settle_time=.3, task_timeout=TASK_TIMEOUT))
     Envelope.parse(raw)
-    public = dict(title='J3 原生 CSP +0.5° 小幅试验', seconds=5., axes=[3], delta_deg=.5,
-        summary='只控制 J3：从新鲜实测起点增加 0.5°，最高 0.02 rad/s；首次使能起最多 5 秒，完成或异常均失能。',
+    public = dict(title='J3 原生 CSP +0.5° 小幅试验', seconds=TASK_TIMEOUT, axes=[3], delta_deg=.5,
+        summary=f'只控制 J3：从新鲜实测起点增加 0.5°，最高 0.02 rad/s；首次使能起最多 {TASK_TIMEOUT:g} 秒，完成或异常均失能。',
         runtime_registers={hex(k):v for k,v in RUNTIME.items()},
         parameter_source='本次明确授权的临时运行参数；PID、零位、保存草稿及掉电保存不写入',
         stop_policy='先失能并观察稳定反馈，再恢复非目标运行参数；不恢复旧位置目标。停止未确认则保留低限制并报告。',
@@ -74,55 +75,69 @@ def probe(config, bus):
 
 
 class CspTransport(SeeedTransport):
-    def __init__(self, **kwargs):
-        super().__init__(position_window=True, diagnostic_axes=(AXIS,), **kwargs)
+    def __init__(self, *, axis=AXIS, runtime=None, **kwargs):
+        if type(axis) is not int or axis not in MODELS: raise ValueError('需要明确的 J1–J6 轴编号')
+        super().__init__(position_window=True, diagnostic_axes=(axis,), **kwargs)
+        self.axis=axis; self.runtime=dict(RUNTIME if runtime is None else runtime)
+        self.coordinated=False; self.last_boundary_target=None
         self.original={}; self.register_log=[]; self.changed=set()
         self.prepared=set(); self.preloaded_at=None; self.restoration_authorized=False
 
     def authorize(self, config, permit):
-        if permit.axes!=(AXIS,): raise PermissionError('CSP 仅批准 J3 单轴试验')
+        if permit.axes!=(self.axis,): raise PermissionError('CSP 需要对应的明确单轴许可')
         # Register/feedback comes from Seeed; no MIT group or lifecycle needed.
         SdkTransport.authorize(self,config,permit)
 
     def read_register(self, index):
-        motor=self.motors[AXIS]
+        motor=self.motors[self.axis]
         value=(motor.robstride_get_param_i8(index,50) if index==0x7005 else
                motor.robstride_get_param_f32_host_id(index,0xFD,50))
-        if not finite(value): raise ValueError(f'J3 寄存器 {index:#x} 无效')
+        if not finite(value): raise ValueError(f'J{self.axis} 寄存器 {index:#x} 无效')
         return value
 
     def snapshot_registers(self, check):
-        for index in (*RUNTIME,*PROTECTED):
+        for index in (*self.runtime,*PROTECTED):
             check(); self.ownership.check()
             self.original[index]=self.read_register(index); check()
-        if self.original[0x7005]!=0: raise ValueError('J3 起始模式不是 MIT，拒绝覆盖未知运行状态')
-        if any(self.original[i]<v for i,v in RUNTIME.items() if i!=0x7005):
+        if self.original[0x7005]!=0: raise ValueError(f'J{self.axis} 起始模式不是 MIT，拒绝覆盖未知运行状态')
+        if any(self.original[i]<v for i,v in self.runtime.items() if i!=0x7005):
             raise ValueError('设备现有限制低于本次提案，不能自动提高')
 
     def write_register(self, index, value, check, *, phase, verify=True):
-        if index not in (*RUNTIME,0x7016) or not finite(value):
+        if index not in (*self.runtime,0x7016) or not finite(value):
             raise PermissionError('仅允许本次明确的 CSP 运行寄存器')
         if phase in ('restore','disabled-current'):
             if not self.restoration_authorized or self.active:
                 raise PermissionError('恢复参数须先确认失能及持续稳定反馈')
             if phase=='restore' and (index not in self.original or value!=self.original[index]):
                 raise PermissionError('恢复值必须来自本次真实设备快照')
-            if phase=='disabled-current' and (index!=0x7016 or value!=self.latest_samples[AXIS].q):
+            if phase=='disabled-current' and (index!=0x7016 or value!=self.latest_samples[self.axis].q):
                 raise PermissionError('失能后只装载新鲜当前位置，不恢复旧目标')
         else:
-            if not self.permit or self.permit.axes!=(AXIS,) or AXIS not in self.active or self.clock()>=self.permit.expires_at:
+            scope=self.permit and (self.permit.axes==(self.axis,) or self.coordinated and self.permit.axes==tuple(MODELS) and self.permit.coordinated_start_checked)
+            if not scope or self.axis not in self.active or self.clock()>=self.permit.expires_at:
                 raise PermissionError('没有当次 CSP 寄存器写入许可')
             if phase=='prepare':
-                if index not in RUNTIME or value!=RUNTIME[index]: raise PermissionError('只能写入已确认的四项运行值')
+                if index not in self.runtime or value!=self.runtime[index]: raise PermissionError('只能写入已确认的四项运行值')
             elif phase in ('preload-current','hold','trajectory'):
-                a=self.envelope.axes[AXIS-1]
-                if index!=0x7016 or not a.q_min<=value<=a.q_max: raise PermissionError('CSP 目标越界')
+                a=self.envelope.axes[self.axis-1]
+                bounded=a.q_min<=value<=a.q_max
+                if not bounded and self.coordinated and self.axis not in self.boundary_recovered:
+                    start=self.boundary_start.get(self.axis); margin=self.envelope.start_boundary_tolerance
+                    if start is not None and a.q_min-margin<=start<a.q_min:
+                        bounded=max(a.q_min-margin,start-self.envelope.policy.arrival_q)<=value<a.q_min
+                        if phase=='trajectory': bounded=bounded and value>= (self.last_boundary_target if self.last_boundary_target is not None else start)-1e-12
+                    elif start is not None and a.q_max<start<=a.q_max+margin:
+                        bounded=a.q_max<value<=min(a.q_max+margin,start+self.envelope.policy.arrival_q)
+                        if phase=='trajectory': bounded=bounded and value<= (self.last_boundary_target if self.last_boundary_target is not None else start)+1e-12
+                    if phase=='preload-current': bounded=bounded and value==self.latest_samples[self.axis].q
+                if index!=0x7016 or not bounded: raise PermissionError('CSP 目标越界')
             else: raise PermissionError('未知 CSP 写入阶段')
         check(); self.ownership.check()
-        entry=dict(index=hex(index),value=value,phase=phase,requested_at=self.clock(),status='attempted')
+        entry=dict(axis=self.axis,index=hex(index),value=value,phase=phase,requested_at=self.clock(),status='attempted')
         self.register_log.append(entry); self.changed.add(index)
         try:
-            motor=self.motors[AXIS]
+            motor=self.motors[self.axis]
             if index==0x7005: motor.robstride_write_param_i8(index,int(value))
             else: motor.robstride_write_param_f32(index,value)
             check()
@@ -133,19 +148,22 @@ class CspTransport(SeeedTransport):
                 # comparison; speed/current/torque/mode readbacks stay exact.
                 tolerance=math.radians(.02) if index==0x7016 else 1e-6
                 if not math.isclose(actual,value,rel_tol=1e-6,abs_tol=tolerance):
-                    raise ValueError(f'J3 {index:#x} 写后读回不一致：{actual} != {value}')
+                    raise ValueError(f'J{self.axis} {index:#x} 写后读回不一致：{actual} != {value}')
             entry.update(status='readback-matched' if verify else 'host-send-complete',completed_at=self.clock())
             if phase=='prepare': self.prepared.add(index)
             if phase=='preload-current': self.preloaded_at=entry['requested_at']
+            if index==0x7016 and phase in ('preload-current','hold','trajectory'): self.last_boundary_target=value
+            if index==0x7016 and phase in ('hold','trajectory') and self.envelope.axes[self.axis-1].q_min<=value<=self.envelope.axes[self.axis-1].q_max:
+                self.boundary_recovered.add(self.axis)
         except Exception as e:
             entry.update(status='unknown-may-have-reached-drive',error=str(e)); raise
 
     def disabled_status(self):
         """Called only immediately after SDK disable's new-status wait."""
-        state=self.motors[AXIS].get_state()
+        state=self.motors[self.axis].get_state()
         if state is None: raise ValueError('失能后的状态帧缺失')
         arbitration=int(state.arbitration_id)
-        if (arbitration>>24)&0x1F != 2 or (arbitration>>8)&0xFF != AXIS:
+        if (arbitration>>24)&0x1F != 2 or (arbitration>>8)&0xFF != self.axis:
             raise ValueError('失能后的状态帧类型或电机 ID 不符')
         mode=(arbitration>>22)&3; faults=(arbitration>>16)&0x3F
         if mode!=0 or faults:
@@ -154,13 +172,14 @@ class CspTransport(SeeedTransport):
                     source='SDK status after disable; no independent drive timestamp')
 
     def quiesce(self):
-        if not self.permit or self.permit.axes!=(AXIS,): raise PermissionError('没有 J3 当次停止/切模式许可')
-        self.ownership.check(); self.active.add(AXIS)
-        self.motors[AXIS].disable()
+        scope=self.permit and (self.permit.axes==(self.axis,) or self.coordinated and self.permit.axes==tuple(MODELS) and self.permit.coordinated_start_checked)
+        if not scope: raise PermissionError('没有对应轴的当次停止/切模式许可')
+        self.ownership.check(); self.active.add(self.axis)
+        self.motors[self.axis].disable()
         return self.disabled_status()
 
     def enable(self, axis):
-        if axis!=AXIS or self.prepared!=set(RUNTIME) or self.preloaded_at is None:
+        if axis!=self.axis or self.prepared!=set(self.runtime) or self.preloaded_at is None:
             raise PermissionError('先完成 J3 运行参数读回与当前位置装载，再使能')
         if self.clock()-self.preloaded_at>self.envelope.policy.command_age:
             raise TimeoutError('已装载的当前位置超过首帧期限')
@@ -168,9 +187,9 @@ class CspTransport(SeeedTransport):
 
     def stop_supported(self):
         result=super().stop_supported()
-        if AXIS in result['sdk_status_ack_axes']:
+        if self.axis in result['sdk_status_ack_axes']:
             try: result['disabled_status']=self.disabled_status()
-            except Exception as e: result['errors'][str(AXIS)]=str(e)
+            except Exception as e: result['errors'][str(self.axis)]=str(e)
         return result
 
     def frame(self, *args):
@@ -180,15 +199,18 @@ class CspTransport(SeeedTransport):
 class CspJ3Trial(HardwareExecutor):
     def __init__(self, config, transport, **kwargs):
         super().__init__(config,transport,**kwargs)
+        if transport.axis!=AXIS or transport.runtime!=RUNTIME or transport.coordinated:
+            raise ValueError('本入口仅允许既定 J3 单轴运行参数')
         expected,_=proposal([(a.q_min,a.q_max) for a in config.axes])
         if config.fingerprint!=Envelope.parse(expected).fingerprint:
-            raise ValueError('CSP 试验只能使用已确认的固定 0.5°/0.02 rad/s/5 秒方案')
+            raise ValueError(f'CSP 试验只能使用已确认的固定 0.5°/0.02 rad/s/{TASK_TIMEOUT:g} 秒方案')
         self.restore_result=None; self.power_deadline=None; self.arrival_feedback={}
+        self.enable_attempted_at=None; self.stop_requested_at=None; self.stop_call_completed_at=None
 
     def check(self, permit):
         super().check(permit)
         if self.power_deadline is not None and self.clock()>=self.power_deadline:
-            raise TimeoutError('CSP 首次使能起 5 秒时限已到，撤力')
+            raise TimeoutError(f'CSP 首次使能起 {TASK_TIMEOUT:g} 秒时限已到，撤力')
 
     def send_position(self, q, samples, permit, phase):
         self.check(permit); validate_samples(self.config,samples,self.clock,csp=True)
@@ -234,7 +256,8 @@ class CspJ3Trial(HardwareExecutor):
             self.bus.write_register(0x7016,start[2],check,phase='preload-current')
             if self.clock()-samples[AXIS].requested_at>p.command_age:
                 raise TimeoutError('首个位置目标已过期；未使能')
-            self.power_deadline=self.clock()+p.task_timeout
+            self.enable_attempted_at=self.clock()
+            self.power_deadline=self.enable_attempted_at+p.task_timeout
             self.last_axis_command[AXIS]=self.clock(); self.bus.enable(AXIS); check()
             began=self.clock(); last=began; settled=None; self.state='RUNNING'
             while True:
@@ -264,7 +287,8 @@ class CspJ3Trial(HardwareExecutor):
             terminal='CANCELLED' if isinstance(e,InterruptedError) else 'FAULT'
         finally:
             if self.bus.active:
-                self.state='STOPPING'; self.stop_result=self.bus.stop_supported()
+                self.state='STOPPING'; self.stop_requested_at=self.clock()
+                self.stop_result=self.bus.stop_supported(); self.stop_call_completed_at=self.clock()
                 try:
                     if self.stop_result['errors']: raise ValueError('失能状态未确认，保留当前低限制')
                     quiet=None; began=self.clock(); self.stop_result['observations']=[]
@@ -304,8 +328,11 @@ class CspJ3Trial(HardwareExecutor):
     def status(self):
         result=super().status()
         result.update(control=dict(mode='native-csp-j3-v1',axis=3,delta_deg=.5,
-            speed_limit_rad_s=.02,task_timeout_s=5.,runtime_registers={hex(k):v for k,v in RUNTIME.items()},
+            speed_limit_rad_s=.02,task_timeout_s=TASK_TIMEOUT,runtime_registers={hex(k):v for k,v in RUNTIME.items()},
             pid_source='live drive parameters, not overwritten',config_fingerprint=self.config.fingerprint),
             register_snapshot={hex(k):v for k,v in self.bus.original.items()},
-            restoration=self.restore_result,arrival_feedback={str(i):asdict(s) for i,s in self.arrival_feedback.items()})
+            restoration=self.restore_result,arrival_feedback={str(i):asdict(s) for i,s in self.arrival_feedback.items()},
+            timing=dict(enable_attempted_at=self.enable_attempted_at,power_deadline=self.power_deadline,
+                stop_requested_at=self.stop_requested_at,stop_call_completed_at=self.stop_call_completed_at,
+                source='host monotonic timestamps; not independently measured physical enable duration'))
         return result

@@ -1,0 +1,133 @@
+{
+  "type": "bounded-native-csp-15s-result",
+  "authorization": "用户明确允许这次 15 秒 J3 单轴试验",
+  "record": "native-csp-15s.json",
+  "sha256": "82ab1727d4b2119da3ad8451f8c8b3d7a3fe95a5a4c0ea7106e07af99c52e555",
+  "state": "ARRIVED",
+  "host_position_batches": 52,
+  "prepared_start_deg": 0.3149415434135953,
+  "preloaded_start_deg": 0.3198258757220949,
+  "target_deg": 0.8149415434135954,
+  "arrival_deg": 0.7446302648834049,
+  "error_deg": 0.07031127853019047,
+  "movement_from_preload_deg": 0.42480438916130997,
+  "host_enable_attempt_to_stop_request_s": 8.674558783997782,
+  "max_abs_position_difference_velocity_rad_s": 0.00356439285718276,
+  "max_abs_raw_iq_a": 3.6999595165252686,
+  "stop": {
+    "requested": true,
+    "policy": "explicitly-supported-release",
+    "attempted_axes": [
+      3
+    ],
+    "sent_axes": [
+      3
+    ],
+    "sdk_status_ack_axes": [
+      3
+    ],
+    "send_status": {
+      "3": "host-send-complete-and-sdk-status-observed"
+    },
+    "errors": {},
+    "physical_stopped": false,
+    "disabled_status": {
+      "arbitration_id": 33555453,
+      "mode_state": 0,
+      "fault_bits": 0,
+      "source": "SDK status after disable; no independent drive timestamp"
+    },
+    "observations": [
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.004601955413818359,
+          "qd": -0.06504213793752951,
+          "mode": 5,
+          "requested_at": 80063.955879257,
+          "received_at": 80063.996594895,
+          "qd_raw": 0.22885926067829132,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 80063.996621174,
+          "diagnostics_received_at": 80064.013677038
+        }
+      },
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.005709860008209944,
+          "qd": 0.007375065652188045,
+          "mode": 5,
+          "requested_at": 80064.114283508,
+          "received_at": 80064.138636673,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 80064.138681924,
+          "diagnostics_received_at": 80064.156045513
+        }
+      },
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.005880302749574184,
+          "qd": 0.001197496723826419,
+          "mode": 5,
+          "requested_at": 80064.256646204,
+          "received_at": 80064.280939042,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 80064.280960589,
+          "diagnostics_received_at": 80064.298032902
+        }
+      },
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.005837652366608381,
+          "qd": -0.0002998950620528316,
+          "mode": 5,
+          "requested_at": 80064.398823178,
+          "received_at": 80064.423197448,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 80064.423224859,
+          "diagnostics_received_at": 80064.440452477
+        }
+      },
+      {
+        "3": {
+          "axis": 3,
+          "q": 0.005880302749574184,
+          "qd": 0.0002996503222087826,
+          "mode": 5,
+          "requested_at": 80064.541172203,
+          "received_at": 80064.565516116,
+          "qd_raw": 0.0,
+          "iq_raw_a": 0.0,
+          "torque_raw_nm": 0.0,
+          "diagnostics_requested_at": 80064.565539868,
+          "diagnostics_received_at": 80064.582697599
+        }
+      }
+    ],
+    "stationary_sample": true
+  },
+  "restoration": {
+    "ok": true,
+    "restored": [
+      "0x7005",
+      "0x7017",
+      "0x7018",
+      "0x700b"
+    ],
+    "old_target_restored": false
+  },
+  "pid_zero_flash_saved_draft_writes": 0,
+  "physical_acceptance": false,
+  "xyz_arrival_accepted": false,
+  "six_axis_csp_hardware_execution": false
+}

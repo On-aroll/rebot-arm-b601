@@ -1,0 +1,8 @@
+
+ RUN  v4.1.11 /home/bonvoyage/Desktop/seeed_Robotics/external/motorbridge-studio
+
+
+ Test Files  3 passed (3)
+      Tests  33 passed (33)
+   Start at  10:50:13
+   Duration  2.51s (transform 287ms, setup 0ms, import 649ms, tests 2.72s, environment 2.16s)

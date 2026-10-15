@@ -9,7 +9,7 @@ import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from test_mit_hardware_offline import Clock,Owner,Controller,Motor
 from rebot_mit_hardware import Envelope,MotionIntent,OnsitePermit
-from rebot_native_csp import CspTransport,CspJ3Trial,DELTA,PROTECTED,RUNTIME,proposal,probe
+from rebot_native_csp import CspTransport,CspJ3Trial,DELTA,PROTECTED,RUNTIME,TASK_TIMEOUT,proposal,probe
 
 
 class NativeMotor(Motor):
@@ -123,6 +123,10 @@ class NativeCspOffline(unittest.TestCase):
         self.assertTrue(status['stop']['stationary_sample'])
         self.assertFalse(status['physical_acceptance'])
         self.assertAlmostEqual(status['arrival_feedback']['3']['q'],DELTA)
+        timing=status['timing']
+        self.assertLess(timing['enable_attempted_at'],timing['stop_requested_at'])
+        self.assertLessEqual(timing['stop_requested_at'],timing['stop_call_completed_at'])
+        self.assertEqual(timing['power_deadline']-timing['enable_attempted_at'],15.)
 
     def test_readback_mismatch_never_enables(self):
         self.sdk.bad_readback=0x7017
@@ -206,10 +210,12 @@ class NativeCspOffline(unittest.TestCase):
             self.intent=MotionIntent([target],'native-csp-j3','bad-target',expected_start=[0.]*6)
             self.run_trial();self.assertEqual(self.executor.state,'FAULT');self.assertEqual(self.sdk.calls,[])
 
-    def test_stalled_position_stops_within_five_seconds(self):
+    def test_stalled_position_stops_at_approved_fifteen_second_deadline(self):
         self.sdk.stalled=True; self.run_trial()
         self.assertEqual(self.executor.state,'FAULT')
-        self.assertIn('5 秒',self.executor.reason)
+        self.assertIn('15 秒',self.executor.reason)
+        self.assertEqual(TASK_TIMEOUT,15.)
+        self.assertGreaterEqual(self.executor.stop_requested_at,self.executor.power_deadline)
         targets=[r for r in self.bus.register_log if r['phase']=='trajectory']
         self.assertTrue(targets)
         self.assertLess(targets[-1]['requested_at'],self.executor.power_deadline)

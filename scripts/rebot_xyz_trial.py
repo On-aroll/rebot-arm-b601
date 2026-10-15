@@ -42,6 +42,13 @@ def configure_motion(raw, start, target, settings):
         raise ValueError('任务时限请选择按轨迹自动计算或手动设置')
     task_raw=copy.deepcopy(raw)
     ff=settings.get('feedforward_mode','none')
+    if ff=='native-csp-xyz-v1':
+        from rebot_native_xyz import proposal,validate_target
+        if speed!=.02 or mode=='manual' and settings.get('timeout_s')!=15:
+            raise ValueError('首次原生 XYZ 方案固定为 0.02 rad/s、15 秒；请选择此速度和自动时限')
+        task_raw,_=proposal([(a['q_min'],a['q_max']) for a in raw['axes']])
+        config=Envelope.parse(task_raw);validate_target(start,target,config)
+        return task_raw,config
     if ff not in ('none','seeed-rs-gravity-v1','seeed-rs-slow-position-v1'):
         raise ValueError('请选择无前馈或 Seeed 官方重力前馈')
     if ff!='none':
@@ -136,6 +143,9 @@ def plan_nearby(robot, start, config):
 
 def assess_motion(robot, start, target, config):
     """Pure preflight shared by the terminal trial and the webpage. No CAN."""
+    if config.version=='native-csp-xyz-v1':
+        from rebot_native_xyz import assess_motion as assess_native
+        return assess_native(robot,start,target,config)
     import numpy as np
     q=np.asarray(start,dtype=float)
     target=np.asarray(target,dtype=float)

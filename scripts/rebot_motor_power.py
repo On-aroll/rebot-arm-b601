@@ -154,8 +154,9 @@ class MotorPowerAPI:
             if not self.idle(): raise ValueError('仿真任务尚未结束')
             if plan['revision']!=self.store.status()['state']['revision']:
                 self.plan=None; raise ValueError('软件配置已变化，请重新检查；没有覆盖修改')
+            config=Envelope.parse(plan['config'])
+            native_xyz=point and config.version=='native-csp-xyz-v1'
             if diagnostic:
-                config=Envelope.parse(plan['config'])
                 if not point or config.gain_review is None or config.feedforward is None:
                     raise ValueError('启动采集仅支持已审核的官方范围增益方案')
             self.plan=None; self.owner=token; self.sequence=0; self.stop_requested=False
@@ -164,11 +165,12 @@ class MotorPowerAPI:
                                  '正在复读真实起点；仅执行本次已确认目标' if point else '正在复读真实起点；随后仅尝试使能 J1',feedback={})
             try:
                 self.process=self._new_process()
-                message=dict(operation='csp-j3-trial' if native else 'probe-startup' if diagnostic else 'move-xyz' if point else 'hold-j1',seconds=5 if native else 3,config=plan['config'],expected_start=plan['expected_start'],
+                message=dict(operation='csp-j3-trial' if native else 'native-xyz' if native_xyz else 'probe-startup' if diagnostic else 'move-xyz' if point else 'hold-j1',seconds=config.policy.task_timeout if native or native_xyz else 3,config=plan['config'],expected_start=plan['expected_start'],
                              request_id=secrets.token_hex(16),evidence='本机用户点击确认执行已预演 XYZ，沿用七轴现场确认' if point else '当前本机页面明确确认 J1 3 秒保持、机械支撑及撤力方案')
                 if point or native: message['target']=plan['target']
                 if diagnostic: message['evidence']='本机用户明确点击启动采集：首次使能起最多 3 秒自动撤力，不执行 XYZ；沿用现场确认'
-                if native: message['evidence']='已明确批准 J3 CSP +0.5°、0.02 rad/s、5 秒试验及临时四项运行参数；PID/零位/保存草稿不写入'
+                if native: message['evidence']=f'已明确批准 J3 CSP +0.5°、0.02 rad/s、{config.policy.task_timeout:g} 秒试验及临时四项运行参数；PID/零位/保存草稿不写入'
+                if native_xyz: message['evidence']='用户明确确认当前预演的六轴原生 XYZ 小幅试验：每轴最多0.5°、0.02 rad/s、15秒及临时运行限制；PID/零位/保存草稿不写入'
                 self._send(message)
                 threading.Thread(target=self._read_worker,args=(self.process,),daemon=True,name='j1-power-status').start()
             except Exception as e:
