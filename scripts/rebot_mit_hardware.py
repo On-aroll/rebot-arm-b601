@@ -338,6 +338,11 @@ class HoldIntent(MotionIntent):
         self.hold_seconds = 3.
 
 
+class StartupObservationIntent(MotionIntent):
+    """Observe the reviewed startup only; never enter its XYZ trajectory."""
+    observation_seconds = 3.
+
+
 class HardwareExecutor:
     """One background worker, fresh hardware start, bounded synchronous SDK calls.
 
@@ -352,6 +357,7 @@ class HardwareExecutor:
         self.official_motion=None
         self.failure_feedback={}
         self.gravity_scale=1.
+        self.observation_deadline=None
 
     def heartbeat(self, session, sequence, focused):
         with self.lock:
@@ -365,6 +371,8 @@ class HardwareExecutor:
     def check(self, permit):
         now=self.clock()
         if self.cancelled.is_set(): raise InterruptedError('任务取消或窗口失焦')
+        if self.observation_deadline is not None and now>=self.observation_deadline:
+            raise InterruptedError('3 秒启动采集结束，自动撤力；未执行 XYZ 轨迹')
         if now>self.lease_until: raise TimeoutError('操作窗口失联，禁止继续发送旧目标')
         if now>=permit.expires_at: raise TimeoutError('现场许可过期')
         if any(now-stamp>self.config.policy.command_age for stamp in self.last_axis_command.values()):
@@ -438,6 +446,9 @@ class HardwareExecutor:
             self.consumed=True
         permit=replace(permit,axes=tuple(permit.axes),mechanically_supported_axes=tuple(permit.mechanically_supported_axes))
         try:
+            observing=isinstance(intent,StartupObservationIntent)
+            if observing and (intent.source!='xyz' or self.config.gain_review is None or self.config.feedforward is None):
+                raise ValueError('启动采集仅支持已审核的六轴 XYZ 启动方案')
             if self.config.feedforward is not None:
                 if permit.axes!=tuple(MODELS) or intent.source!='xyz' or not permit.coordinated_start_checked:
                     raise ValueError('官方重力前馈仅用于已预演并确认的六轴 XYZ')
@@ -494,6 +505,8 @@ class HardwareExecutor:
                     if abs(pre[i].q-start[i-1])>self.config.policy.arrival_q or abs(pre[i].qd)>self.config.policy.start_speed:
                         raise ValueError('使能前起点变化，需重新预演')
                     immediate=(pre[i].q,0.,self.config.axes[i-1].kp,self.config.axes[i-1].kd,0.)
+                if observing and self.observation_deadline is None:
+                    self.observation_deadline=self.clock()+intent.observation_seconds
                 self.last_axis_command[i]=self.clock();self.bus.enable(i);check()
                 if immediate is not None:
                     issued=self.clock()
@@ -556,6 +569,8 @@ class HardwareExecutor:
                     self.validate_feedback(samples,permit.axes);check()
                 self.gravity_scale=1.
                 self._send(start,(0.,)*6,samples,permit)
+            if observing:
+                raise InterruptedError('启动采集结束，自动撤力；未执行 XYZ 轨迹')
             # Enabling a stiff position loop can settle by a few encoder counts.
             # Keep holding the original measured pose while it settles; do not
             # mistake a sub-limit transient for a ready trajectory start.
@@ -658,6 +673,7 @@ class HardwareExecutor:
                     feedback={str(i):asdict(s) for i,s in self.feedback.items()},
                     failure_feedback={str(i):asdict(s) for i,s in self.failure_feedback.items()},
                     control=dict(config_fingerprint=self.config.fingerprint,
+                        startup_observation_seconds=3. if self.observation_deadline is not None else None,
                         feedforward=asdict(self.config.feedforward) if self.config.feedforward else None,
                         gain_review=asdict(self.config.gain_review) if self.config.gain_review else None,
                         kp=[a.kp for a in self.config.axes],kd=[a.kd for a in self.config.axes],

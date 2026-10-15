@@ -137,6 +137,27 @@ class PowerAPI(unittest.TestCase):
             self.api.request('/hardware-point/action',headers,'127.0.0.1',dict(action='execute',plan_id='xyz-token',confirmed={k:True for k in CONFIRMATIONS}))
         self.popen.assert_not_called()
 
+    def test_startup_observation_requires_the_reviewed_plan_and_keeps_the_fixed_duration(self):
+        from rebot_official_motion import apply_slow_gains,policy
+        raw,_=trial_proposal(self.store.state,self.api.limits)
+        trusted=dict(id='diagnostic-token',expires=60.,config=raw,revision=self.store.state['revision'],
+                     expected_start=[0.]*6,target=[.001]*6)
+        self.api.point_plan=Mock(return_value=trusted)
+        headers=dict(self.base_headers,**{'X-Motor-Session':self.token})
+        body=dict(action='probe-startup',plan_id=trusted['id'],confirmed={k:True for k in CONFIRMATIONS},seconds=1000)
+        with self.assertRaisesRegex(ValueError,'官方范围增益'):
+            self.api.request('/hardware-point/action',headers,'127.0.0.1',body)
+        self.popen.assert_not_called()
+        apply_slow_gains(raw);raw['feedforward']=policy()
+        # The real pinned-source check is covered by OfficialMotion. This unit
+        # forbids every child process, including git version queries.
+        with patch('rebot_official_motion.official_gain_limits',return_value=[(80,5),(75,6),(150,10),(50,5),(40,4),(40,4)]):
+            self.api.request('/hardware-point/action',headers,'127.0.0.1',body)
+        message=self.process.messages()[0]
+        self.assertEqual(message['operation'],'probe-startup')
+        self.assertEqual(message['seconds'],3)
+        self.assertEqual(message['target'],trusted['target'])
+
     def test_failed_trial_trace_is_saved_once_and_excluded_from_status_polling(self):
         self.start()
         trace=[dict(time=1.,commands=[dict(axis=3,values=[.01,0.,150.,10.,1.])])]

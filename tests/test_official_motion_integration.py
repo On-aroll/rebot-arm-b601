@@ -11,7 +11,7 @@ import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
 from test_mit_hardware_offline import Clock,Controller,Owner
-from rebot_mit_hardware import Envelope,HardwareExecutor,MotionIntent,OnsitePermit,Sample
+from rebot_mit_hardware import Envelope,HardwareExecutor,MotionIntent,OnsitePermit,Sample,StartupObservationIntent
 from rebot_seeed_transport import SeeedTransport
 from rebot_official_motion import OfficialMIT,policy,apply_slow_gains,gain_policy
 
@@ -265,6 +265,45 @@ class OfficialMotion(unittest.TestCase):
         raw['gain_review']['source_commit']='wrong'
         with self.assertRaisesRegex(ValueError,'配置来源'):Envelope.parse(raw)
         self.assertEqual(Envelope.parse(original).fingerprint,old_hash)
+
+    def test_startup_observation_stops_at_three_seconds_without_any_trajectory_frame(self):
+        raw=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        apply_slow_gains(raw);raw['feedforward']=policy()
+        self.executor.config=Envelope.parse(raw);self.permit.config_hash=self.executor.config.fingerprint
+        intent=StartupObservationIntent([self.target],'xyz','offline-observe',expected_start=self.start)
+        first_enable=[];enable=self.bus.enable
+        def observed_enable(axis):
+            first_enable.append(self.clock.t);enable(axis)
+        self.bus.enable=observed_enable
+        self.executor.run(intent,self.permit)
+        self.assertEqual(self.executor.state,'CANCELLED',self.executor.reason)
+        self.assertIn('3 秒启动采集结束',self.executor.reason)
+        self.assertFalse(self.executor.motion_arrived)
+        self.assertTrue(all(abs(c[2]-self.start[c[1]-1])<1e-12 for c in self.calls('mit')))
+        self.assertLess(max(c['requested_at'] for f in self.executor.frames for c in f['commands']),first_enable[0]+3.)
+        self.assertEqual({c[1] for c in self.calls('disable')},set(range(1,7)))
+        stop=next(i for i,c in enumerate(self.sdk.calls) if c[0]=='disable')
+        self.assertFalse(any(c[0]=='mit' for c in self.sdk.calls[stop:]))
+
+    def test_observation_deadline_also_covers_a_blocked_first_enable(self):
+        raw=json.loads((ROOT/'configs/trials/seeed-nearby-xyz-pending.json').read_text())['envelope']
+        apply_slow_gains(raw);raw['feedforward']=policy()
+        self.executor.config=Envelope.parse(raw);self.permit.config_hash=self.executor.config.fingerprint
+        enable=self.bus.enable
+        def slow_enable(axis):
+            enable(axis);self.clock.wait(3.01)
+        self.bus.enable=slow_enable
+        self.executor.run(StartupObservationIntent([self.target],'xyz','offline-slow-observe',expected_start=self.start),self.permit)
+        self.assertEqual(self.executor.state,'CANCELLED')
+        self.assertFalse(self.calls('mit'))
+        self.assertEqual(self.calls('enable'),[('enable',1)])
+        self.assertEqual(self.calls('disable'),[('disable',1)])
+
+    def test_observation_without_reviewed_profile_never_connects(self):
+        self.executor.run(StartupObservationIntent([self.target],'xyz','offline-unreviewed-observe',expected_start=self.start),self.permit)
+        self.assertEqual(self.executor.state,'FAULT')
+        self.assertIn('启动采集仅支持',self.executor.reason)
+        self.assertEqual(self.sdk.calls,[])
 
 
 if __name__=='__main__':unittest.main()

@@ -13,7 +13,7 @@ async function request(path, body) {
 }
 
 export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, virtualEnabled, locked, active, moving, now,
-  onPreview, onBusy, onExecuted, onPrepareHardwarePreview, onExecuteHardware, hardwareConfirmed = false, hardwareError,
+  onPreview, onBusy, onExecuted, onPrepareHardwarePreview, onExecuteHardware, onObserveStartup, hardwareConfirmed = false, hardwareError,
   onStop, resetKey, readiness, currentXyz }) {
   const offline = mode === 'offline';
   const [xyz, setXyz] = React.useState(['200', '150', '200']);
@@ -84,13 +84,15 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     } catch (error) { setMessage(error.message); setPlan(null); onPreview(null); }
     finally { running.current = false; setPending(false); onBusy(false); }
   }
-  async function execute() {
-    if (running.current || occupied || invalidPlan || submitted || (offline ? !virtualEnabled : !hardwareConfirmed || !onExecuteHardware)) return;
+  async function execute(observeStartup = false) {
+    if (running.current || occupied || invalidPlan || submitted || (offline ? !virtualEnabled : !hardwareConfirmed || !(observeStartup ? onObserveStartup : onExecuteHardware))) return;
     running.current = true; setPending(true); onBusy(true);
     try {
-      const result = offline ? await request('/ros-control/action', { action: 'execute', plan_id: plan.plan_id }) : await onExecuteHardware(plan.plan_id);
+      const result = offline ? await request('/ros-control/action', { action: 'execute', plan_id: plan.plan_id })
+        : observeStartup ? await onObserveStartup(plan.plan_id) : await onExecuteHardware(plan.plan_id);
       setSubmitted(true); onExecuted(result);
-      setMessage(offline ? '虚拟动作已提交，三维模型持续跟随执行反馈。' : '实机任务已提交；模型跟随执行器读取的真实关节反馈。');
+      setMessage(offline ? '虚拟动作已提交，三维模型持续跟随执行反馈。' : observeStartup
+        ? '启动采集已提交：首次使能起 3 秒结束并请求撤力，不执行 XYZ 轨迹。' : '实机任务已提交；模型跟随执行器读取的真实关节反馈。');
     } catch (error) { setMessage(error.message); setPlan(null); onPreview(null); }
     finally { running.current = false; setPending(false); onBusy(false); }
   }
@@ -131,10 +133,14 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
     {!offline && <p className="consoleNote">以上设置只用于本次任务，不覆盖保存草稿或设备参数。加速度与 jerk 沿用已有配置，自动时限最多 120 秒，修改后须重新预演。{feedforwardMode==='seeed-rs-slow-position-v1' && <> 本次 Kp 80/75/150/50/40/40、Kd 5/6/10/5/4/4 在锁定官方/参考范围内；J1–J4 跟踪边界为 0.6°/0.75°/0.6°/0.75°，J5/J6 为 1°。官方模型的重力力矩以 8 秒渐变接入，这是本项目适配，真实到位仍待验收。</>}</p>}
     <div className="consoleActions">
       <button disabled={occupied || !previewReady} onClick={preview}>{pending ? '处理中…' : '计算并预演'}</button>
-      {offline ? <button className="primary" disabled={occupied || invalidPlan || submitted || !virtualEnabled} onClick={execute}>执行虚拟动作</button>
-        : <button className="primary" disabled={occupied || invalidPlan || submitted || !hardwareConfirmed || !onExecuteHardware} onClick={execute}>确认实机执行</button>}
+      {offline ? <button className="primary" disabled={occupied || invalidPlan || submitted || !virtualEnabled} onClick={()=>execute()}>执行虚拟动作</button>
+        : <button className="primary" disabled={occupied || invalidPlan || submitted || !hardwareConfirmed || !onExecuteHardware} onClick={()=>execute()}>确认实机执行</button>}
       <button className="danger" disabled={!executing && !(pending && !offline)} onClick={onStop}>{offline ? '停止当前任务' : '立即停止实机任务'}</button>
     </div>
+    {!offline && feedforwardMode==='seeed-rs-slow-position-v1' && <details className="consoleNote"><summary>启动诊断（按需）</summary>
+      <p>复用本次启动保持与前馈渐变；首次使能起 3 秒结束并请求撤力，不执行 XYZ。用于记录 J3 电流、位置与原始转矩响应，不是自动标定。SDK 阻塞仍可能延迟撤力。</p>
+      <button disabled={occupied || invalidPlan || submitted || !hardwareConfirmed || !onObserveStartup} onClick={()=>execute(true)}>启动采集 · 3 秒自动撤力</button>
+    </details>}
     {!previewReady && <p className="consoleNote">{offline ? '等待完整、新鲜的虚拟电机反馈；请检查虚拟服务。' : '请先连接实机，取得完整、新鲜的六轴位置。'}</p>}
     {offline && !virtualEnabled && <p className="consoleNote">可以先预演；执行前点击上方“使能虚拟电机”。</p>}
     {!offline && !hardwareConfirmed && !executing && <p className="consoleNote">预演通过后，勾选上方一次现场确认即可点击“确认实机执行”。</p>}
@@ -155,7 +161,8 @@ export function CartesianPointPanel({ mode = 'offline', feedback, previewReady, 
       <details><summary>本次实机试验参数与重力估算</summary><pre>{JSON.stringify(plan.hardware_preflight,null,2)}</pre></details>
     </div>}
     <p role="status" className="consoleMessage">{submitted && job?.status === 'succeeded' ? `${offline ? '虚拟动作完成' : '实机反馈已到位，任务已结束并撤力'}，当前末端误差 ${actualError?.toFixed(2) ?? '—'} mm。`
-      : submitted && job?.status === 'failed' ? `执行失败：${job.error}` : submitted && job?.status === 'cancelled' ? '动作已停止，请确认现场状态。' : message}</p>
+      : submitted && job?.status === 'failed' ? `执行失败：${job.error}` : submitted && job?.status === 'cancelled'
+        ? `任务已结束${job.error ? `：${job.error}` : '，请确认现场状态。'}` : message}</p>
     {hardwareError && !offline && hardwareError !== message && <p role="alert">{hardwareError}</p>}
     <details className="pointReadiness"><summary>{offline ? '控制点与离线验证说明' : '实机执行状态与控制点说明'}</summary>
       {!offline && <><p>{hardwareReason}</p>{readiness?.reasons && <ul>{readiness.reasons.map(reason => <li key={reason}>{reason}</li>)}</ul>}</>}

@@ -84,6 +84,19 @@ it('an uncertain start response sends stop without retrying the motion',async()=
   expect(actions().some(body=>body.action==='stop')).toBe(true);
 });
 
+it('renews an idle page session before each explicit task without retrying starts',async()=>{
+  const {result}=renderHook(()=>useHardwarePoint({beforeExecute:async()=>{}}));
+  await act(async()=>{await result.current.execute('first-plan',true);});
+  server={state:'CANCELLED',busy:false,feedback:{}};
+  await waitFor(()=>expect(result.current.busy).toBe(false));
+  await act(async()=>{await result.current.execute('next-plan',true,true);});
+  expect(fetch.mock.calls.filter(([path])=>path.endsWith('/session'))).toHaveLength(2);
+  expect(actions().filter(body=>['execute','probe-startup'].includes(body.action))).toEqual([
+    expect.objectContaining({action:'execute',plan_id:'first-plan'}),
+    expect.objectContaining({action:'probe-startup',plan_id:'next-plan'}),
+  ]);
+});
+
 it('a heartbeat rejected after worker completion preserves the actual motor fault',async()=>{
   vi.useFakeTimers();
   const base=fetch.getMockImplementation();

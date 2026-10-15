@@ -137,4 +137,19 @@ describe('Two-mode XYZ workflow', () => {
     fireEvent.change(screen.getByLabelText('轨迹控制方案'),{target:{value:'none'}});
     expect(screen.getByRole('button',{name:'确认实机执行'}).disabled).toBe(true);
   });
+  it('submits startup observation separately from XYZ and requires the same fresh plan and confirmation',async()=>{
+    const observe=vi.fn(async()=>({status:{state:'PREPARING',busy:true}}));
+    const execute=vi.fn();
+    const {props,rerender}=setup({mode:'hardware',hardwareConfirmed:true,onExecuteHardware:execute,onObserveStartup:observe});
+    expect(screen.queryByRole('button',{name:'启动采集 · 3 秒自动撤力'})).toBeNull();
+    fireEvent.change(screen.getByLabelText('轨迹控制方案'),{target:{value:'seeed-rs-slow-position-v1'}});
+    expect(screen.getByRole('button',{name:'启动采集 · 3 秒自动撤力',hidden:true}).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button',{name:'计算并预演'}));await screen.findByText(/预演通过/);
+    fireEvent.click(screen.getByText('启动诊断（按需）'));
+    fireEvent.click(screen.getByRole('button',{name:'启动采集 · 3 秒自动撤力'}));
+    await waitFor(()=>expect(observe).toHaveBeenCalledExactlyOnceWith('point-token'));
+    expect(execute).not.toHaveBeenCalled();
+    rerender(<CartesianPointPanel {...props} feedback={{q_deg:[0,0,0,0,0,0],job:{status:'cancelled',error:'3 秒启动采集结束，自动撤力；未执行 XYZ 轨迹'}}} />);
+    expect(screen.getByRole('status').textContent).toContain('3 秒启动采集结束，自动撤力；未执行 XYZ 轨迹');
+  });
 });

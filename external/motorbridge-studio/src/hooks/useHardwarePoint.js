@@ -30,8 +30,8 @@ export function useHardwarePoint({ beforeExecute, onFinished }) {
       callbacks.current.onFinished?.(next);
     }
   }, []);
-  const session = React.useCallback(async () => {
-    if (!token.current) token.current = (await request('session', {})).token;
+  const session = React.useCallback(async (fresh = false) => {
+    if (fresh || !token.current) token.current = (await request('session', {})).token;
     if (!token.current) throw new Error('未取得本机实机控制会话');
     return token.current;
   }, []);
@@ -42,18 +42,19 @@ export function useHardwarePoint({ beforeExecute, onFinished }) {
     catch (failure) { if (mounted.current) setError(`停止未确认：${failure.message}；请使用现场独立断电`); }
     finally { stopping.current = false; }
   }, [accept, session]);
-  const execute = React.useCallback(async (planId, confirmed) => {
+  const execute = React.useCallback(async (planId, confirmed, observeStartup = false) => {
     if (!confirmed) throw new Error('请勾选上方一次现场确认');
     if (starting.current || active.current) throw new Error('实机任务尚未结束');
     const ticket = ++generation.current;
     starting.current = true; setPending(true); setError('');
     try {
-      await session();
+      // Renew before a new explicit task, never retry a possibly delivered start.
+      await session(true);
       await callbacks.current.beforeExecute();
       owned.current = true;
       if (ticket !== generation.current || !mounted.current) throw new Error('执行已取消，未发送新任务');
       if (!document.hasFocus() || document.visibilityState !== 'visible') throw new Error('操作页面已失焦，未发送实机任务');
-      const result = await request('action', { action: 'execute', plan_id: planId, confirmed: {
+      const result = await request('action', { action: observeStartup ? 'probe-startup' : 'execute', plan_id: planId, confirmed: {
         operator_present: true, power_cut_ready: true, supported: true, space_clear: true, accept_proposal: true,
       } }, token.current);
       if (ticket !== generation.current || !mounted.current) { await stop(); throw new Error('执行请求已取消'); }

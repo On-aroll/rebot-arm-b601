@@ -50,14 +50,15 @@ def probe(config, bus):
 
 def run_trial(message, bus=None):
     config = Envelope.parse(message['config'])
-    point=message['operation']=='move-xyz'
+    point=message['operation'] in ('move-xyz','probe-startup')
     if not point and (message['operation'] != 'hold-j1' or message.get('seconds') != 3):
         raise ValueError('仅支持 J1 当次 3 秒保持试验')
     if point:
-        from rebot_mit_hardware import MotionIntent
+        from rebot_mit_hardware import MotionIntent, StartupObservationIntent
         from rebot_seeed_transport import SeeedTransport
         axes=tuple(range(1,7))
-        intent=MotionIntent([message['target']],'xyz',message['request_id'],expected_start=message['expected_start'])
+        intent_class=StartupObservationIntent if message['operation']=='probe-startup' else MotionIntent
+        intent=intent_class([message['target']],'xyz',message['request_id'],expected_start=message['expected_start'])
         executor=HardwareExecutor(config,bus or SeeedTransport(position_window=True,diagnostic_axes=(3,) if config.gain_review else ()))
     else:
         axes=(1,)

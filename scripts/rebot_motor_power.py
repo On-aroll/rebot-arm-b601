@@ -124,7 +124,7 @@ class MotorPowerAPI:
             with self.lock: self.snapshot.update(state='FAULT',busy=False,reason=str(e))
             return dict(status=self.status())
 
-    def start(self, token, body, *, point=False):
+    def start(self, token, body, *, point=False, diagnostic=False):
         with self.lock:
             if self.closed or self.snapshot['busy']: raise ValueError('已有试验或服务正在关闭')
             if not isinstance(body.get('confirmed'),dict) or any(body['confirmed'].get(k) is not True for k in CONFIRMATIONS):
@@ -139,14 +139,20 @@ class MotorPowerAPI:
             if not self.idle(): raise ValueError('仿真任务尚未结束')
             if plan['revision']!=self.store.status()['state']['revision']:
                 self.plan=None; raise ValueError('软件配置已变化，请重新检查；没有覆盖修改')
+            if diagnostic:
+                config=Envelope.parse(plan['config'])
+                if not point or config.gain_review is None or config.feedforward is None:
+                    raise ValueError('启动采集仅支持已审核的官方范围增益方案')
             self.plan=None; self.owner=token; self.sequence=0; self.stop_requested=False
             self.snapshot.update(state='PREPARING',busy=True,axes=list(range(1,7)) if point else [1],
-                                 reason='正在复读真实起点；仅执行本次已确认目标' if point else '正在复读真实起点；随后仅尝试使能 J1',feedback={})
+                                 reason='正在复读真实起点；仅做 3 秒启动采集，不执行 XYZ' if diagnostic else
+                                 '正在复读真实起点；仅执行本次已确认目标' if point else '正在复读真实起点；随后仅尝试使能 J1',feedback={})
             try:
                 self.process=self._new_process()
-                message=dict(operation='move-xyz' if point else 'hold-j1',seconds=3,config=plan['config'],expected_start=plan['expected_start'],
+                message=dict(operation='probe-startup' if diagnostic else 'move-xyz' if point else 'hold-j1',seconds=3,config=plan['config'],expected_start=plan['expected_start'],
                              request_id=secrets.token_hex(16),evidence='本机用户点击确认执行已预演 XYZ，沿用七轴现场确认' if point else '当前本机页面明确确认 J1 3 秒保持、机械支撑及撤力方案')
                 if point: message['target']=plan['target']
+                if diagnostic: message['evidence']='本机用户明确点击启动采集：首次使能起最多 3 秒自动撤力，不执行 XYZ；沿用现场确认'
                 self._send(message)
                 threading.Thread(target=self._read_worker,args=(self.process,),daemon=True,name='j1-power-status').start()
             except Exception as e:
@@ -221,11 +227,12 @@ class MotorPowerAPI:
             token=headers.get('X-Motor-Session')
             if path!='/motor-power/action' or token not in self.sessions: raise ValueError('单轴操作会话失效，请重新打开操作入口')
         action=body.get('action')
-        if point and action not in ('execute','stop','heartbeat'):
-            raise ValueError('XYZ 入口只接受已预演任务、停止和会话心跳')
+        if point and action not in ('execute','probe-startup','stop','heartbeat'):
+            raise ValueError('XYZ 入口只接受已预演任务、启动采集、停止和会话心跳')
         if action=='prepare': return self.prepare(token)
         if action=='start': return self.start(token,body)
         if action=='execute' and point: return self.start(token,body,point=True)
+        if action=='probe-startup' and point: return self.start(token,body,point=True,diagnostic=True)
         if action=='stop': return self.stop()
         if action=='heartbeat':
             with self.lock:
