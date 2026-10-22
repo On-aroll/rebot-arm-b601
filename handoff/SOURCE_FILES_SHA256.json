@@ -13,8 +13,8 @@
     },
     "HANDOFF.md": {
       "kind": "file",
-      "sha256": "2fedf16c33e71e3be5ec85dca7e6f34b6108b7254d326205c613c847e6964f00",
-      "size": 13134
+      "sha256": "e6c54acdbae2dc8a5eddaed592d54934c5f86100206495fb46cf9fbb7d83cc3f",
+      "size": 13458
     },
     "README.md": {
       "kind": "file",
@@ -4808,8 +4808,8 @@
     },
     "handoff/ARTIFACTS.json": {
       "kind": "file",
-      "sha256": "89d6b4cc358fe34a010d99cf78c14bef82f9f7ebd17946086d993a345915b19d",
-      "size": 25669
+      "sha256": "db8135b5c2a7352a1988ec6488fd0e5fd6f28d6c5369b4acb5274e246d734faf",
+      "size": 25810
     },
     "handoff/COVERAGE_VERIFIED.json": {
       "kind": "file",
@@ -4818,13 +4818,18 @@
     },
     "handoff/PUBLISHED_SOURCE.json": {
       "kind": "file",
-      "sha256": "c2a58c894a8015388ba198f39d316e8a4b994c13b049a273d5dc91022e16806e",
-      "size": 527
+      "sha256": "8973fd445e7f8c2904b3912183d7649e62fd002e37aab3f91c533f49ac26db5f",
+      "size": 736
     },
     "handoff/RELEASE_NOTES.md": {
       "kind": "file",
-      "sha256": "f3c1eeb1531541e1db176d15621d3f874ac8e11399eafc78acbfb6bf02c1a4e8",
-      "size": 1004
+      "sha256": "dc67d3254626ec5169cf63303521c179f4d94e95a2e331ced3402f0a65176e85",
+      "size": 1415
+    },
+    "handoff/RELEASE_VERIFIED.json": {
+      "kind": "file",
+      "sha256": "65c27a58ea6a088f3c0085b0cd6481c44a9ec3f4a6c688130197e8b3f54f0791",
+      "size": 60551
     },
     "handoff/SOURCE_PROVENANCE.json": {
       "kind": "file",
@@ -4833,8 +4838,8 @@
     },
     "handoff/VERIFICATION.md": {
       "kind": "file",
-      "sha256": "230c1943fd99df5a57c1482de11f7ebc8afa4b802217007bb377ac08029f9013",
-      "size": 1794
+      "sha256": "c112031c7c5d9d344917162016bbb620c6334b3ab5bc97d4b48971e7472ed2c3",
+      "size": 2371
     },
     "handoff/build_artifacts.py": {
       "kind": "file",
@@ -5688,8 +5693,8 @@
     },
     "handoff/upload_assets.py": {
       "kind": "file",
-      "sha256": "1f85e872449461de4e7e9cb5396e095f5002395d9db88f4912fedad3fd4c90b0",
-      "size": 2892
+      "sha256": "debe0962e368fdf9d5238972b10976e9d341653d742f202f36fbeab44571ef9a",
+      "size": 3340
     },
     "handoff/upload_release.sh": {
       "kind": "file",

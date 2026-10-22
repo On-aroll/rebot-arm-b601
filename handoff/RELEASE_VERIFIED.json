@@ -1,0 +1,1164 @@
+{
+  "schema": "b601-release-verification-v1",
+  "repo": "On-aroll/rebot-arm-b601",
+  "tag": "handoff-2026-10-22",
+  "release_url": "https://github.com/On-aroll/rebot-arm-b601/releases/tag/handoff-2026-10-22",
+  "all_assets_verified": true,
+  "verified_at_utc": "2026-10-22T11:14:12.727243+00:00",
+  "asset_count": 192,
+  "total_bytes": 13876360180,
+  "assets": [
+    {
+      "name": "REBOTARM_SHA256SUMS",
+      "size": 227,
+      "sha256": "f178986fa52664e218f5e879767d5180c178ebfe1d6bbc8a61c1bcdf3fcd7ddd",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/REBOTARM_SHA256SUMS"
+    },
+    {
+      "name": "ReBotArm-deployment-guide.md",
+      "size": 5426,
+      "sha256": "1e7c21bad9626db275930013719e740ea144132fdfff422c7d0758ece65269da",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/ReBotArm-deployment-guide.md"
+    },
+    {
+      "name": "ReBotArm-validation-report.md",
+      "size": 3833,
+      "sha256": "9752e6f293fb8f1dc4ec93bade45522b093156760aa5438b7bbf87b9d3f0a1c3",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/ReBotArm-validation-report.md"
+    },
+    {
+      "name": "SHA256SUMS",
+      "size": 20522,
+      "sha256": "7ccab201bd573bbdfd90870fe69b3429dd9dac53041f0062b5ea0de9f7a0b06c",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/SHA256SUMS"
+    },
+    {
+      "name": "install-release.py",
+      "size": 7796,
+      "sha256": "18b1e551a0d0afaa4064f0c6b0d1f39487327536d2e149d878ab53e6c9018d95",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/install-release.py"
+    },
+    {
+      "name": "main-outputs.manifest.json",
+      "size": 232631,
+      "sha256": "7e3403f91908a66cceabccaa87fb6e209bb1aab7fa49a8caa8bab7ae14ca6054",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/main-outputs.manifest.json"
+    },
+    {
+      "name": "main-outputs.tar.zst",
+      "size": 87803073,
+      "sha256": "46a3828cd2d7f7ce09fdd9c6774429bd00735546af4237b14729c1961372997b",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/main-outputs.tar.zst"
+    },
+    {
+      "name": "rebotarm-b601-rs-1.0.0-ubuntu24.04-x86_64.manifest.json",
+      "size": 118066,
+      "sha256": "6fbb8ac67ca14040b8243559e63f7092a13d735062e9886d153361b6736cf952",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/rebotarm-b601-rs-1.0.0-ubuntu24.04-x86_64.manifest.json"
+    },
+    {
+      "name": "rebotarm-b601-rs-1.0.0-ubuntu24.04-x86_64.run",
+      "size": 204687765,
+      "sha256": "82bd897623a142824863a6727a96295a7ceaf1380693826dfc6dac3d1c4ee80e",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/rebotarm-b601-rs-1.0.0-ubuntu24.04-x86_64.run"
+    },
+    {
+      "name": "rebotarm-b601-rs-1.0.0-ubuntu24.04-x86_64.tar.gz",
+      "size": 204685774,
+      "sha256": "822babf891d81575a41bf97b7129e60c56eec4ad6e0e001b1341743e95c94405",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/rebotarm-b601-rs-1.0.0-ubuntu24.04-x86_64.tar.gz"
+    },
+    {
+      "name": "seeed-lerobot-0.1.0-linux-x86_64.tar.gz",
+      "size": 1274270,
+      "sha256": "cf98b70d1d67ca99d8b97591a9e883912613195ef930f33a3d0e9815ae182e36",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/seeed-lerobot-0.1.0-linux-x86_64.tar.gz"
+    },
+    {
+      "name": "seeed-lerobot-0.1.0-linux-x86_64.tar.gz.sha256",
+      "size": 106,
+      "sha256": "e9583c82d3ded47f5b62dfab69d2b842c11f9bd2f04830582bb3fd03b305d3ea",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/seeed-lerobot-0.1.0-linux-x86_64.tar.gz.sha256"
+    },
+    {
+      "name": "sim-common-seed-verification.manifest.json",
+      "size": 28826,
+      "sha256": "1116354cad841aa7c2c0c758ede4d78fe3ea111361edb69c22d12e2686a15ed9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-common-seed-verification.manifest.json"
+    },
+    {
+      "name": "sim-common-seed-verification.tar.zst",
+      "size": 37118528,
+      "sha256": "012b363dd7f3d75d3aceea7ce25cfbcd5a4db546ffcc9bdd49d4fdc9dece8d45",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-common-seed-verification.tar.zst"
+    },
+    {
+      "name": "sim-component-geometry-development-01.manifest.json",
+      "size": 4898,
+      "sha256": "38a34064860ee2200d1a728ef2510b2546c3bda929b59166478596d6e14326d5",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-component-geometry-development-01.manifest.json"
+    },
+    {
+      "name": "sim-component-geometry-development-01.tar.zst",
+      "size": 174642,
+      "sha256": "7b5f5dcb5aa54bd5dcf1bb73e9089f91dc83eacc59a93d71833273e1ff3a4a33",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-component-geometry-development-01.tar.zst"
+    },
+    {
+      "name": "sim-confidence-gate-development-01.manifest.json",
+      "size": 4109,
+      "sha256": "faa3c852ef48e44efe3267e03e91c8f28e926c1d4500b1ce3e38c7d63457e01f",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-confidence-gate-development-01.manifest.json"
+    },
+    {
+      "name": "sim-confidence-gate-development-01.tar.zst",
+      "size": 95409,
+      "sha256": "5ed7a8c6dbeb3dbdcd425bdf7beedbefa8aa4d2b362420622d8225ed7077cdf1",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-confidence-gate-development-01.tar.zst"
+    },
+    {
+      "name": "sim-feedback-development-smoke-01.manifest.json",
+      "size": 5353,
+      "sha256": "b9f8766a9024adb45133392160887c10117f2fccc78c591a642615ea76194c5f",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-development-smoke-01.manifest.json"
+    },
+    {
+      "name": "sim-feedback-development-smoke-01.tar.zst",
+      "size": 7097229,
+      "sha256": "be3342306ea1f7f0c98049f0251f8b5d75b51925a5ee72832f86e59c3156faae",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-development-smoke-01.tar.zst"
+    },
+    {
+      "name": "sim-feedback-development-smoke-02.manifest.json",
+      "size": 5172,
+      "sha256": "c865b00b15ffc0ed9437578c89cbaa88c6b6095024d0d433381d517c9f396d24",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-development-smoke-02.manifest.json"
+    },
+    {
+      "name": "sim-feedback-development-smoke-02.tar.zst",
+      "size": 5136161,
+      "sha256": "fcfec88e2282967fbc00fe357ade0a4e8152aac7085146afbc51d0eebec803f0",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-development-smoke-02.tar.zst"
+    },
+    {
+      "name": "sim-feedback-development-smoke-03.manifest.json",
+      "size": 5172,
+      "sha256": "bfc48d725055607660127adf3a6f209fa186c67b4b0c6ed62bfb16547f1f0e28",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-development-smoke-03.manifest.json"
+    },
+    {
+      "name": "sim-feedback-development-smoke-03.tar.zst",
+      "size": 7174547,
+      "sha256": "379b5d7729c156c059069c5090717297c9d4668b0c0fc707f063136ef9baaa7d",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-development-smoke-03.tar.zst"
+    },
+    {
+      "name": "sim-feedback-development-smoke-04.manifest.json",
+      "size": 5355,
+      "sha256": "48dd0052ec0dbbc27cabcb4c2fc0298a57f606460a7193332fb972e7eebb502e",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-development-smoke-04.manifest.json"
+    },
+    {
+      "name": "sim-feedback-development-smoke-04.tar.zst",
+      "size": 10770177,
+      "sha256": "a33138f47beab7b60a722878b6ceff8a8ec505137588be8506c9061db47c7e33",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-development-smoke-04.tar.zst"
+    },
+    {
+      "name": "sim-feedback-gate-development-01.manifest.json",
+      "size": 86950,
+      "sha256": "869061b23850c9806334c95e64e15eb0a0da676393a75b85dbdf88319a7a133a",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-gate-development-01.manifest.json"
+    },
+    {
+      "name": "sim-feedback-gate-development-01.tar.zst",
+      "size": 48336936,
+      "sha256": "d5c1810e34a7b78d937f6eaa78de4adecd366a5335dfb9c3219d9f9a9ad976db",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-gate-development-01.tar.zst"
+    },
+    {
+      "name": "sim-feedback-gate-validation-02.manifest.json",
+      "size": 88704,
+      "sha256": "bd28e99d5b301fa87ae37d37f75f7569bc2c041031a66118df3de5b3dff76e05",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-gate-validation-02.manifest.json"
+    },
+    {
+      "name": "sim-feedback-gate-validation-02.tar.zst",
+      "size": 50939456,
+      "sha256": "9c1f53712c9a01b01ff0cf79aa02b88ddf3ea63b0934881616d2ad95bf62db2e",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-feedback-gate-validation-02.tar.zst"
+    },
+    {
+      "name": "sim-first-training.manifest.json",
+      "size": 17038,
+      "sha256": "734bdb1ff5f7e385b7990e366ce20afb2c7b7aa5e32b20d83363f633723fbd8e",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-first-training.manifest.json"
+    },
+    {
+      "name": "sim-first-training.tar.zst",
+      "size": 13991180,
+      "sha256": "d82139407778370ca0b20091d5b1315d2b7685790a5a35b26513b3793c069470",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-first-training.tar.zst"
+    },
+    {
+      "name": "sim-force-development-01.manifest.json",
+      "size": 41389,
+      "sha256": "58ceb8010d2fd6f0309031ac2c9c425934fc6d3612bf95d7d53aaf5361f69ee3",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-force-development-01.manifest.json"
+    },
+    {
+      "name": "sim-force-development-01.tar.zst",
+      "size": 11261450,
+      "sha256": "5759e87c2756d3e338e84e84679bde5d9cfe94a6dda750af973d85974c25e5ce",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-force-development-01.tar.zst"
+    },
+    {
+      "name": "sim-fragment-home-development-01.manifest.json",
+      "size": 108090,
+      "sha256": "1d6817c25997db187d3da3fb3f0aed4746595001d9df87ea0eadc81519fce9b7",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment-home-development-01.manifest.json"
+    },
+    {
+      "name": "sim-fragment-home-development-01.tar.zst",
+      "size": 384002274,
+      "sha256": "2565322bed6087f4db9bbdd5b52d5baf9b24eb9c3d9ecc90ceea2cc057944df9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment-home-development-01.tar.zst"
+    },
+    {
+      "name": "sim-fragment-home-protocol-01.manifest.json",
+      "size": 546,
+      "sha256": "4eb1647b68f320c03a67ffe1318664353d12931bb362e5c6b79e062cc802fd96",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment-home-protocol-01.manifest.json"
+    },
+    {
+      "name": "sim-fragment-home-protocol-01.tar.zst",
+      "size": 4347,
+      "sha256": "a791db55a566527b4ef80cec4f574114261565f1227983d1d9f7f4f89434b917",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment-home-protocol-01.tar.zst"
+    },
+    {
+      "name": "sim-fragment-known-development-01.manifest.json",
+      "size": 14307,
+      "sha256": "c848581188a772a9ca3565bf6671718ab5d8ecb2b173598c5c6b79c0ef4684df",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment-known-development-01.manifest.json"
+    },
+    {
+      "name": "sim-fragment-known-development-01.tar.zst",
+      "size": 50453255,
+      "sha256": "0ec64b478c808e5a05c710bff5300530ce023a1320aad648dc9c98ba1f0402d9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment-known-development-01.tar.zst"
+    },
+    {
+      "name": "sim-fragment-regression-11100009.manifest.json",
+      "size": 6207,
+      "sha256": "fc911568ed00186104648139cbdfed50e3f0892f6dfeaa9615dce142e4951d4c",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment-regression-11100009.manifest.json"
+    },
+    {
+      "name": "sim-fragment-regression-11100009.tar.zst",
+      "size": 8460168,
+      "sha256": "35daf1eacb0aeb057548f03afb1a06977529fcfffe6017445be177eb67d72254",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment-regression-11100009.tar.zst"
+    },
+    {
+      "name": "sim-fragment-regression-16400002.manifest.json",
+      "size": 6390,
+      "sha256": "01e06dc3ff59c2548d3fff4c048916b7d1e6fd1e8a3a339be12358c0ba27c7e9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment-regression-16400002.manifest.json"
+    },
+    {
+      "name": "sim-fragment-regression-16400002.tar.zst",
+      "size": 13599856,
+      "sha256": "29bc78d1fd35470d7fe8cf7f142d08772a95fef2dc124e9a3d2699a32a9f7cd6",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment-regression-16400002.tar.zst"
+    },
+    {
+      "name": "sim-fragment075-regression-11100009.manifest.json",
+      "size": 6312,
+      "sha256": "b87e2a83ba15b7a05f6ef400ae742bf686c025f1ba2eab4cbcd5b054f35d3f22",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment075-regression-11100009.manifest.json"
+    },
+    {
+      "name": "sim-fragment075-regression-11100009.tar.zst",
+      "size": 8460190,
+      "sha256": "244d3aac5499d5dbcabe48c5e4176fa42734a99d122e27ca472085c2fc7b4569",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-fragment075-regression-11100009.tar.zst"
+    },
+    {
+      "name": "sim-geometry-decoder-parity-01.manifest.json",
+      "size": 4016,
+      "sha256": "dee0d4a587f20b0d93329b97d312231a6ba6702a2bbd405379320a359fc32213",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-decoder-parity-01.manifest.json"
+    },
+    {
+      "name": "sim-geometry-decoder-parity-01.tar.zst",
+      "size": 54192,
+      "sha256": "bae8bfc9dd88de76b9d2c5e0d557fa3b24c70dcb433b6ddf819f767b4af27b76",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-decoder-parity-01.tar.zst"
+    },
+    {
+      "name": "sim-geometry-decoder-parity-02.manifest.json",
+      "size": 4016,
+      "sha256": "f66108369a9a7a1cc19f8783d97237c7a9413409a58c4748abe781cb839f8ef2",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-decoder-parity-02.manifest.json"
+    },
+    {
+      "name": "sim-geometry-decoder-parity-02.tar.zst",
+      "size": 54381,
+      "sha256": "f7874a4adcc907f2cd0f878bdc44fdc8fa488d314fa491988a7c420439abf337",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-decoder-parity-02.tar.zst"
+    },
+    {
+      "name": "sim-geometry-fallback-development-01.manifest.json",
+      "size": 108159,
+      "sha256": "60f08ae81264d59ee5beebe47269b204cfacffb175fa97fc5abb8e2a0603dc8f",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-fallback-development-01.manifest.json"
+    },
+    {
+      "name": "sim-geometry-fallback-development-01.tar.zst",
+      "size": 349460796,
+      "sha256": "6712fe33e9e964eabe402c5ca9a84d30aaa9ad625c8295a9c12db3a005a01236",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-fallback-development-01.tar.zst"
+    },
+    {
+      "name": "sim-geometry-fallback-images-development-01.manifest.json",
+      "size": 4522,
+      "sha256": "73a97f9ec060a6d38d0c465f1c6aecbbbb3892c3cf5db15a187294e136122d88",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-fallback-images-development-01.manifest.json"
+    },
+    {
+      "name": "sim-geometry-fallback-images-development-01.tar.zst",
+      "size": 130244,
+      "sha256": "a418d9cf84832b1fe78002ead0f898c85fd66c0e162f396c157319cd1a582709",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-fallback-images-development-01.tar.zst"
+    },
+    {
+      "name": "sim-geometry-fallback-known-development-01.manifest.json",
+      "size": 23748,
+      "sha256": "5d5a699aaaf3b81e77280bc9a7943410da1bb22a79f0b3655cc819ea540d1bdc",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-fallback-known-development-01.manifest.json"
+    },
+    {
+      "name": "sim-geometry-fallback-known-development-01.tar.zst",
+      "size": 88785285,
+      "sha256": "7658f0cedbd75da41519f9b6687dfbe28f0ed310e1bbea854802682518b71622",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-fallback-known-development-01.tar.zst"
+    },
+    {
+      "name": "sim-geometry-fallback-protocol-01.manifest.json",
+      "size": 560,
+      "sha256": "6b4efec1e02812bab6e4076574199504d08ce76d5dc326bfab93106b791989d0",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-fallback-protocol-01.manifest.json"
+    },
+    {
+      "name": "sim-geometry-fallback-protocol-01.tar.zst",
+      "size": 4479,
+      "sha256": "87217120a12ac162705e638546276b38ed6b470593b92831e0496358955caf58",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-fallback-protocol-01.tar.zst"
+    },
+    {
+      "name": "sim-geometry-known-development-01.manifest.json",
+      "size": 52838,
+      "sha256": "caa531f850fd818f01384009081872eb1da48086d45fcd5dfda06567bea22248",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-known-development-01.manifest.json"
+    },
+    {
+      "name": "sim-geometry-known-development-01.tar.zst",
+      "size": 221775205,
+      "sha256": "10adaf2350c4c6ca00c5b92080e9e49c160ffaba8dc44175add64ccb952cc4a5",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-known-development-01.tar.zst"
+    },
+    {
+      "name": "sim-geometry-policy-images-development-01.manifest.json",
+      "size": 4472,
+      "sha256": "8bceb1c223d826f5835e013650a5f1052a24eced77a5ec9c27f34fc147f7634f",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-policy-images-development-01.manifest.json"
+    },
+    {
+      "name": "sim-geometry-policy-images-development-01.tar.zst",
+      "size": 259396,
+      "sha256": "6d3e9cb25d88d07c4aa96b51f8e7759860180975802d731eac3f1e2ab53747bb",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-geometry-policy-images-development-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-development-A.manifest.json",
+      "size": 3491,
+      "sha256": "7943d69db73cb926d67db4f7878be3ddd1396f6f931c441717490eb7277acbd6",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-development-A.manifest.json"
+    },
+    {
+      "name": "sim-goal-development-A.tar.zst",
+      "size": 8032178,
+      "sha256": "f4424c178bc68656b016ca5d5f2cc646d7df7cc73cf92e246fe7595b97cadd77",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-development-A.tar.zst"
+    },
+    {
+      "name": "sim-goal-development-B.manifest.json",
+      "size": 3491,
+      "sha256": "ee032b7f58bb5d2554ac788155b460ef08a11fada5dc3ab286cf244247a49a06",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-development-B.manifest.json"
+    },
+    {
+      "name": "sim-goal-development-B.tar.zst",
+      "size": 8130976,
+      "sha256": "312842d0c179da786b969833bcd65bb948e5c06f76b432b66a3b1edc7c43a497",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-development-B.tar.zst"
+    },
+    {
+      "name": "sim-goal-development-C.manifest.json",
+      "size": 3491,
+      "sha256": "9ad6d9317afd0ab5f9602d34960a26379034fdc9197dd938f9e9dc9ce3c63708",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-development-C.manifest.json"
+    },
+    {
+      "name": "sim-goal-development-C.tar.zst",
+      "size": 8901729,
+      "sha256": "ec9e4ad9408367e05c6246bcd2322efdddb32d7e89ecf144f87c010e7149f7ba",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-development-C.tar.zst"
+    },
+    {
+      "name": "sim-goal-development-recovery.manifest.json",
+      "size": 3815,
+      "sha256": "3fd770b043d157e60dc22cc7482472ece1095085573a185a5a524c27b7997c18",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-development-recovery.manifest.json"
+    },
+    {
+      "name": "sim-goal-development-recovery.tar.zst",
+      "size": 13988446,
+      "sha256": "a33d09dfe7bfb5b102214b0c2b4a1c49272324d2f18f88ff7c853a7c0112d9cb",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-development-recovery.tar.zst"
+    },
+    {
+      "name": "sim-goal-egl-coverage-v2-candidate-02.manifest.json",
+      "size": 377528,
+      "sha256": "fb644b4ee3bc6d34c6ecc95cefd33b9a635dc658f2b4ff62a391815171b19ffe",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-egl-coverage-v2-candidate-02.manifest.json"
+    },
+    {
+      "name": "sim-goal-egl-coverage-v2-candidate-02.tar.zst",
+      "size": 1408207769,
+      "sha256": "e01f14b6a77352d9b76208b6cbe0b3ce4a40afd41d0687277e177c1883b8d547",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-egl-coverage-v2-candidate-02.tar.zst"
+    },
+    {
+      "name": "sim-goal-feedback-v2-candidate-01.manifest.json",
+      "size": 232413,
+      "sha256": "aa6607a08be43e88810d5c41f5ad626fd2d74d2e097543279e52ab0b85032997",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-feedback-v2-candidate-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-feedback-v2-candidate-01.tar.zst",
+      "size": 1076389507,
+      "sha256": "ca3d2741aebc154fcb855ecfc7ef85edbfa49be6add2376c72a99947e6ae5109",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-feedback-v2-candidate-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-fragment-home-v2-candidate-01.manifest.json",
+      "size": 470797,
+      "sha256": "55db3040fc63e7aa0a0426b3e31f7d5aa8511d0e3119b06fd47a486dd45ae1b3",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-fragment-home-v2-candidate-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-fragment-home-v2-candidate-01.tar.zst",
+      "size": 1673813165,
+      "sha256": "0bd1993f038ec885199287c3d626c8db3799365f0d610ccc7578f9f6ed1ca55f",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-fragment-home-v2-candidate-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-geometry-fallback-v3-candidate-01.manifest.json",
+      "size": 477157,
+      "sha256": "8f2efdf3e2137750eff0dc89a29cca17ec213547a1577253f3b01249d57bb975",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-geometry-fallback-v3-candidate-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-geometry-fallback-v3-candidate-01.tar.zst",
+      "size": 1631947692,
+      "sha256": "597e905e0d0eba65460aa6d301c7d0b2081bdbdcc193f74118b1f653c5c71552",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-geometry-fallback-v3-candidate-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-image-residual-v4-candidate-01.manifest.json",
+      "size": 469366,
+      "sha256": "af4b9545b253e9d0fbc511303f690b178c09d36b8fde877b14e3603ff2f49de9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-image-residual-v4-candidate-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-image-residual-v4-candidate-01.tar.zst",
+      "size": 1630584373,
+      "sha256": "491143bb90c676b7143645f9bbb3c079709305165d5b5a1fbe695b08affdde7c",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-image-residual-v4-candidate-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-multiview-v2-candidate-01.manifest.json",
+      "size": 371427,
+      "sha256": "48aedb9bcb02a476a944027bf533e31eeb3b5bce44a3269f33befb0cb946f2fe",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-multiview-v2-candidate-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-multiview-v2-candidate-01.tar.zst",
+      "size": 1394468286,
+      "sha256": "c29c4d4ae2e051f6e1123f9705fb10d1facfda9ef39ed5acaa8d1eb7c0ea51a2",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-multiview-v2-candidate-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-policy-fragment-egl-01.manifest.json",
+      "size": 4721,
+      "sha256": "4ff87c7034c39634ab64212cb214b414301fc30c6a4d4a316a0d3d1d0f3731f1",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-fragment-egl-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-policy-fragment-egl-01.tar.zst",
+      "size": 222069,
+      "sha256": "819649fb1a69af2832ab40f2e9d590cbc39886baf2fb109e122176a3b2c63699",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-fragment-egl-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-policy-geometry050-01.manifest.json",
+      "size": 4694,
+      "sha256": "de4712fdebc18ab61abaf50c66c15b91361213deae2d31f13e8daab9925f59b6",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-geometry050-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-policy-geometry050-01.tar.zst",
+      "size": 218469,
+      "sha256": "7ec797d0d7404b83a53aff437676f23081517db2526c98a7e0426f91baa7154c",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-geometry050-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-policy-geometry050-fallback-01.manifest.json",
+      "size": 4937,
+      "sha256": "7b96f1dc0240c9220b21535d7d05758a0b2e6b18ff918467060ebff2426fd775",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-geometry050-fallback-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-policy-geometry050-fallback-01.tar.zst",
+      "size": 219074,
+      "sha256": "29de7ac11b3f7c5eda97df688b2913b712910874fe566e55b5939da3155adb6d",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-geometry050-fallback-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-policy-geometry055-01.manifest.json",
+      "size": 4694,
+      "sha256": "5647c09524ae22be9b7340e45c5329c07d516f1d2d887f79ff1af6726594f3b0",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-geometry055-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-policy-geometry055-01.tar.zst",
+      "size": 218330,
+      "sha256": "fbf1e99815fccf1ee43e328246cfa164bc741e89ff2cf361547e9cbfbc6d4707",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-geometry055-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-policy-multiview-01.manifest.json",
+      "size": 4293,
+      "sha256": "59286604296c59101e445d4f8b5ae0b1c0a9f0e344ecf042152c8c3ca5c7c021",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-multiview-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-policy-multiview-01.tar.zst",
+      "size": 219429,
+      "sha256": "336c9a194c0659500adfd5b98def3c99dad7468fad70b66627f935d21ca2d853",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-multiview-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-policy-multiview-egl-01.manifest.json",
+      "size": 4571,
+      "sha256": "1f64623c98a7de007020abddb11a46ed1ea6cc8bd0fbb9d2e6628c48b43a94c0",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-multiview-egl-01.manifest.json"
+    },
+    {
+      "name": "sim-goal-policy-multiview-egl-01.tar.zst",
+      "size": 219382,
+      "sha256": "9d4ccd3447d3b777e2f4af8d0455ae8b59c20832aca0d23f70d93d0fcffa8f0a",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-multiview-egl-01.tar.zst"
+    },
+    {
+      "name": "sim-goal-policy-v0.manifest.json",
+      "size": 2721,
+      "sha256": "001b9af83755d5cd54fc6f735fe6418e1d3c9a5f0b635d62bf9f8df21eb208b9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-v0.manifest.json"
+    },
+    {
+      "name": "sim-goal-policy-v0.tar.zst",
+      "size": 126323,
+      "sha256": "3ea2520867aba29087a89a50674a485ebd0c035047cbf5cecccad00514161ea4",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-v0.tar.zst"
+    },
+    {
+      "name": "sim-goal-policy-v1.manifest.json",
+      "size": 2721,
+      "sha256": "f75da6d52e1052904c3ff2fda919950b5cb06abce107762bf76024644e78fcd9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-v1.manifest.json"
+    },
+    {
+      "name": "sim-goal-policy-v1.tar.zst",
+      "size": 127149,
+      "sha256": "577f3dca7467a1dbc1ff6e137425a40cb99d98be0a93e5f8ce349744a2a0cc60",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-v1.tar.zst"
+    },
+    {
+      "name": "sim-goal-policy-v2.manifest.json",
+      "size": 3204,
+      "sha256": "a8b9afc50cf8f8e87b716abada62f4a80e860d157ecda48c2f706adb804a2a18",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-v2.manifest.json"
+    },
+    {
+      "name": "sim-goal-policy-v2.tar.zst",
+      "size": 156409,
+      "sha256": "2bbaee81971a99cdf92e89d79b7f25b6221398cdba10736814441031cc5c7c10",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-policy-v2.tar.zst"
+    },
+    {
+      "name": "sim-goal-v0-evaluation.manifest.json",
+      "size": 61235,
+      "sha256": "99f85d9f6bd61d6c2ecb7e017b2b94f4d0e57549e6a1e7a451594f53c1d7be7f",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-v0-evaluation.manifest.json"
+    },
+    {
+      "name": "sim-goal-v0-evaluation.tar.zst",
+      "size": 287368551,
+      "sha256": "4a43da4d99c0d6f0f9536caa0663433d708e87b602dc6ff3b2f6896782cb48a6",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-v0-evaluation.tar.zst"
+    },
+    {
+      "name": "sim-goal-v1-evaluation.manifest.json",
+      "size": 88974,
+      "sha256": "92e6d6fad36fa5a983556b7bd987c787f48e7e994e62b35a396f6584511fee48",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-v1-evaluation.manifest.json"
+    },
+    {
+      "name": "sim-goal-v1-evaluation.tar.zst",
+      "size": 430253665,
+      "sha256": "a8bc18b094a215cec54fc1c07019f60474f6da53e7c32a32d628150a39832321",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-goal-v1-evaluation.tar.zst"
+    },
+    {
+      "name": "sim-home-first-development-01.manifest.json",
+      "size": 11623,
+      "sha256": "33b975bd0bc5c515c5cd33b8d742e396d0bf37fbb6e1655e9a202f7424c89368",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-first-development-01.manifest.json"
+    },
+    {
+      "name": "sim-home-first-development-01.tar.zst",
+      "size": 18793629,
+      "sha256": "f50436a7b1d678668e040eda7a551d51d7a11505adc90100918b082f7d9da41d",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-first-development-01.tar.zst"
+    },
+    {
+      "name": "sim-home-first-development-02.manifest.json",
+      "size": 102107,
+      "sha256": "a847ec9effbbb8ff51a2c7d463ae65082d55081de5c6aeb9d3758f3c2b513880",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-first-development-02.manifest.json"
+    },
+    {
+      "name": "sim-home-first-development-02.tar.zst",
+      "size": 331768317,
+      "sha256": "f2e204edb21d82e8efdd82e920e45ed2221c272e5d1ad8002f59211a68b36a89",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-first-development-02.tar.zst"
+    },
+    {
+      "name": "sim-home-first-known-development-01.manifest.json",
+      "size": 14281,
+      "sha256": "62fa037828ea8b398f7fe7fe793b59bd5b5ae87868d6291951ff11689d68ed56",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-first-known-development-01.manifest.json"
+    },
+    {
+      "name": "sim-home-first-known-development-01.tar.zst",
+      "size": 50528946,
+      "sha256": "1879b49554d924305e8e5592ca2e308d431a8934b0ddec63c4097238fa3fb1bf",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-first-known-development-01.tar.zst"
+    },
+    {
+      "name": "sim-home-first-regression-11100009.manifest.json",
+      "size": 6279,
+      "sha256": "ca99380ea1395c7a02649057b951c7ca99ffe29e2ff816eee6ef1aaf67662b4d",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-first-regression-11100009.manifest.json"
+    },
+    {
+      "name": "sim-home-first-regression-11100009.tar.zst",
+      "size": 4520515,
+      "sha256": "b7cb930269ef0708fa3095dd8cd803635678c4d04cf7489897df5490183dddea",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-first-regression-11100009.tar.zst"
+    },
+    {
+      "name": "sim-home-refresh-development-01.manifest.json",
+      "size": 137575,
+      "sha256": "a383f983faec01dfb4edccec3bf69ff0fa454d31c1f1f210ec74d3dc220a04f1",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-refresh-development-01.manifest.json"
+    },
+    {
+      "name": "sim-home-refresh-development-01.tar.zst",
+      "size": 28448178,
+      "sha256": "1f0f1c5b5fb379e9c8354ec838d73ec10a3529c8074c9c8e2907f5ba5079f010",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-refresh-development-01.tar.zst"
+    },
+    {
+      "name": "sim-home-view-development-01.manifest.json",
+      "size": 37206,
+      "sha256": "bf3e46e5920970b94750399b57d6642674098b1bbe9f18351cdbfd46557d1217",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-view-development-01.manifest.json"
+    },
+    {
+      "name": "sim-home-view-development-01.tar.zst",
+      "size": 13716629,
+      "sha256": "11dfa570e238640a355f089ca450bb7c64f186eb395f41a41d36523e5fa3b62a",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-home-view-development-01.tar.zst"
+    },
+    {
+      "name": "sim-image-residual-development-01.manifest.json",
+      "size": 5848,
+      "sha256": "1572f9f39a0da3c22ebe06c3b40183638083a0d04ea232f28250fa7893b39645",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-image-residual-development-01.manifest.json"
+    },
+    {
+      "name": "sim-image-residual-development-01.tar.zst",
+      "size": 10726381,
+      "sha256": "decdb3070474bd04bdaf23f09ffd155cf7cac0bc3b287cc173ca053b01cb312b",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-image-residual-development-01.tar.zst"
+    },
+    {
+      "name": "sim-image-residual-known-tasks-01.manifest.json",
+      "size": 48124,
+      "sha256": "6a9e2f819fed97498912e455931fa687288e0e9af86b39912b4d018f71ecc1b0",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-image-residual-known-tasks-01.manifest.json"
+    },
+    {
+      "name": "sim-image-residual-known-tasks-01.tar.zst",
+      "size": 176724012,
+      "sha256": "ab9f736b6458e9f1cb6659ed3d965e886b63ee34f74d4d25a098c908b0614aae",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-image-residual-known-tasks-01.tar.zst"
+    },
+    {
+      "name": "sim-image-residual-known-view-review-01.manifest.json",
+      "size": 5350,
+      "sha256": "81182e1f779347734bf162688e4d9629382828b6dc9d30bc9357818b6adde55e",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-image-residual-known-view-review-01.manifest.json"
+    },
+    {
+      "name": "sim-image-residual-known-view-review-01.tar.zst",
+      "size": 99061,
+      "sha256": "f17e68f66f0869d2d6c8a6c3e00f0dd7f15de77c58cc70933cfbaff44f0e5e18",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-image-residual-known-view-review-01.tar.zst"
+    },
+    {
+      "name": "sim-image-residual-task-development-01.manifest.json",
+      "size": 109589,
+      "sha256": "ae7723916debae465dc6a78cbdcf69826fe036caca8fc92641fe9ba4f5511265",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-image-residual-task-development-01.manifest.json"
+    },
+    {
+      "name": "sim-image-residual-task-development-01.tar.zst",
+      "size": 351663425,
+      "sha256": "5437afd816449e9abe4cfe2a511e9a3c4b62372d0aa1af1c6d870aed3a00cde6",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-image-residual-task-development-01.tar.zst"
+    },
+    {
+      "name": "sim-initial-visibility-development-01.manifest.json",
+      "size": 23992,
+      "sha256": "242cdc310d8c7eb46f12bebc74ad842d4e0003d63e0a2efc83fe9516d256d1c4",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-initial-visibility-development-01.manifest.json"
+    },
+    {
+      "name": "sim-initial-visibility-development-01.tar.zst",
+      "size": 14051288,
+      "sha256": "6ddb395a34fcdde41aa8ae618415a9c723e0e294291a0e996f1c95fb5718a91b",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-initial-visibility-development-01.tar.zst"
+    },
+    {
+      "name": "sim-low-coverage-development-01.manifest.json",
+      "size": 7089,
+      "sha256": "bff5a67eb87afbec1818f61bee72cc27a42f51f4d8dc12cc6ec4155e1caa7a86",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-low-coverage-development-01.manifest.json"
+    },
+    {
+      "name": "sim-low-coverage-development-01.tar.zst",
+      "size": 4907563,
+      "sha256": "b36e73e923b11694be4a086090049d5466abc530a99c83812060c00a96483cd5",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-low-coverage-development-01.tar.zst"
+    },
+    {
+      "name": "sim-low-coverage-egl-development-02.manifest.json",
+      "size": 14644,
+      "sha256": "e0a820e72f7f33d2cbf587f619e0b97b3469cf551a412419e587e983951fcd03",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-low-coverage-egl-development-02.manifest.json"
+    },
+    {
+      "name": "sim-low-coverage-egl-development-02.tar.zst",
+      "size": 39838822,
+      "sha256": "f822c4614b5aef6300b260fd97cef7540db94bc346573aa6e64b5c83091a45bb",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-low-coverage-egl-development-02.tar.zst"
+    },
+    {
+      "name": "sim-low-coverage-glfw-development-02.manifest.json",
+      "size": 37334,
+      "sha256": "88446c2aaa8576ebe74b3d7b081ba688c4a12197cfff15dccfccb977d414d3b0",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-low-coverage-glfw-development-02.manifest.json"
+    },
+    {
+      "name": "sim-low-coverage-glfw-development-02.tar.zst",
+      "size": 99222736,
+      "sha256": "4e6d23fe7e25a0fe167ee9608fc613e5962a857f8e47cc96f4ebc2e4fba78ab6",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-low-coverage-glfw-development-02.tar.zst"
+    },
+    {
+      "name": "sim-mask-gate-development-01.manifest.json",
+      "size": 3966,
+      "sha256": "5483d33dab0c45f709a4457a1b6b5b06c64de66cb291a37c9597d24b1ddb20e9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-mask-gate-development-01.manifest.json"
+    },
+    {
+      "name": "sim-mask-gate-development-01.tar.zst",
+      "size": 118242,
+      "sha256": "a25bd0854299fab7d5bafb8679fb6da600e6afc1250bea8cbff3749c8b90c279",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-mask-gate-development-01.tar.zst"
+    },
+    {
+      "name": "sim-multiview-development-01.manifest.json",
+      "size": 88811,
+      "sha256": "9fc616a8a4848a70d07233957bca662378a8cacf1f1b74d7f6761444f8b0ffff",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-multiview-development-01.manifest.json"
+    },
+    {
+      "name": "sim-multiview-development-01.tar.zst",
+      "size": 342303656,
+      "sha256": "28964c3292f39b0e0ade6e6dd664107bef744b82b60b6821f003f3d707592905",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-multiview-development-01.tar.zst"
+    },
+    {
+      "name": "sim-multiview-egl-development-02.manifest.json",
+      "size": 88230,
+      "sha256": "8c576b2a4f14cefd05a103fe31c590602c5c515217afce1c68cee1baf02c0257",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-multiview-egl-development-02.manifest.json"
+    },
+    {
+      "name": "sim-multiview-egl-development-02.tar.zst",
+      "size": 319109487,
+      "sha256": "c77e555029ba42cc0e5af89877295b7b3b148221a91de82ee71d30a4deb511ac",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-multiview-egl-development-02.tar.zst"
+    },
+    {
+      "name": "sim-negative-mask-development-01.manifest.json",
+      "size": 5141,
+      "sha256": "b0c431bc068c577a2a27c674939016d61fb07abd64b91b60ae61ca88fad52dc4",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-negative-mask-development-01.manifest.json"
+    },
+    {
+      "name": "sim-negative-mask-development-01.tar.zst",
+      "size": 30189068,
+      "sha256": "458c20f91cccb5a39dd95c78f5a090c5a82a1459a4d55ea392876e814d0b6e4e",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-negative-mask-development-01.tar.zst"
+    },
+    {
+      "name": "sim-observation-images-01.manifest.json",
+      "size": 4256,
+      "sha256": "e40e0b9807617ef7aeb804424e1f6932bd94510950e99f9f18eb95d582045f4b",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-observation-images-01.manifest.json"
+    },
+    {
+      "name": "sim-observation-images-01.tar.zst",
+      "size": 56624506,
+      "sha256": "58ab8f6d192f05b2c3d7266c11162e7e7803bd0d894d3d8d1a24a3489e29c2c6",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-observation-images-01.tar.zst"
+    },
+    {
+      "name": "sim-observation-images-egl-01.manifest.json",
+      "size": 5069,
+      "sha256": "1285c7076ea11f7bddd1ad8982b4ee3e065d43f28b721c7d1686bfe0a31d054b",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-observation-images-egl-01.manifest.json"
+    },
+    {
+      "name": "sim-observation-images-egl-01.tar.zst",
+      "size": 59352538,
+      "sha256": "2134d92a61f09f32e81c395b5b28bf45e878bede995297d13c3318984dc086af",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-observation-images-egl-01.tar.zst"
+    },
+    {
+      "name": "sim-oracle-0.manifest.json",
+      "size": 917,
+      "sha256": "a6e4adac13bc3163d2811be981183f1b5a5ec7e10e62e627fb94c94d6b2ee343",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-oracle-0.manifest.json"
+    },
+    {
+      "name": "sim-oracle-0.tar.zst",
+      "size": 18053,
+      "sha256": "2271fd49197f6dfd473270a8d2ea931c6ac2c134133cc1f92afe25413d9a84b4",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-oracle-0.tar.zst"
+    },
+    {
+      "name": "sim-oracle-1.manifest.json",
+      "size": 1221,
+      "sha256": "b67b11df9ee0439c623d262c89459a83249a7741e47becbc91bc4d87b33b89a3",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-oracle-1.manifest.json"
+    },
+    {
+      "name": "sim-oracle-1.tar.zst",
+      "size": 1590382,
+      "sha256": "7343f63be0f2be5b032b9693870d7d98d61336945f1158d3c83190ab9e2f1e19",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-oracle-1.tar.zst"
+    },
+    {
+      "name": "sim-quality-risk-diagnostic-01.manifest.json",
+      "size": 871,
+      "sha256": "72681c8e0092d1b5ccbc297e68f6a17337e8f0c12839bc9551e3b6aa62e6c034",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-quality-risk-diagnostic-01.manifest.json"
+    },
+    {
+      "name": "sim-quality-risk-diagnostic-01.tar.zst",
+      "size": 323959,
+      "sha256": "0310a8491a91317a50018c7ce1ce930bc8c013dacab8572a94c0aa7686e2a902",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-quality-risk-diagnostic-01.tar.zst"
+    },
+    {
+      "name": "sim-relative-view-development-01.manifest.json",
+      "size": 57975,
+      "sha256": "7b82e8bc163e7efb67df017d3870e5f33c21b6ce41575a5c2075967329c083f5",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-relative-view-development-01.manifest.json"
+    },
+    {
+      "name": "sim-relative-view-development-01.tar.zst",
+      "size": 41009068,
+      "sha256": "f2b79afce7a3e2096e64462ac29b91c1c67f7298201b92c4a0d8f01c3f36833c",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-relative-view-development-01.tar.zst"
+    },
+    {
+      "name": "sim-resume-smoke.manifest.json",
+      "size": 3022,
+      "sha256": "ffdda323c51781f208fdc26a4f21338f148253c82bcb5c4f0034637698ebdbd0",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-resume-smoke.manifest.json"
+    },
+    {
+      "name": "sim-resume-smoke.tar.zst",
+      "size": 5973610,
+      "sha256": "b1850766f55e5add0488bbcd4ad90e52839a5d8af31edacac624def5e2459288",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-resume-smoke.tar.zst"
+    },
+    {
+      "name": "sim-risk-observation-development-01.manifest.json",
+      "size": 6106,
+      "sha256": "76c1fd5f5f3197962c13a85aa9772fdeed4be5c0a6edb2a9c71862ac47a7cdde",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-risk-observation-development-01.manifest.json"
+    },
+    {
+      "name": "sim-risk-observation-development-01.tar.zst",
+      "size": 201799249,
+      "sha256": "9eb8d90d4415a7c2c03e5a98c93c630bf683fdff53cd50f373aa64f6808479ad",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-risk-observation-development-01.tar.zst"
+    },
+    {
+      "name": "sim-risk-observation-model-review-01.manifest.json",
+      "size": 5600,
+      "sha256": "f1a80468f82b4d138bd9c333512e898d2a5bba2c8316bba1c3a39a9be5d1f24b",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-risk-observation-model-review-01.manifest.json"
+    },
+    {
+      "name": "sim-risk-observation-model-review-01.tar.zst",
+      "size": 1098987,
+      "sha256": "bbfd5c3103f5b1e6173d893ecc32a1635800008e74a88f30f80ffa2f5f38efb5",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-risk-observation-model-review-01.tar.zst"
+    },
+    {
+      "name": "sim-risk-observation-smoke-01.manifest.json",
+      "size": 6253,
+      "sha256": "eafd6f45222be9229964edd2d4d80700f4778b63fb1d73fc9220d392af0a2ba1",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-risk-observation-smoke-01.manifest.json"
+    },
+    {
+      "name": "sim-risk-observation-smoke-01.tar.zst",
+      "size": 1395014,
+      "sha256": "6dfea00cf99b5b6bf7d865d932d41a6fd46ef9e7743d4e3ccc81b7c4f54ce23c",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-risk-observation-smoke-01.tar.zst"
+    },
+    {
+      "name": "sim-self-visibility-known-development-01.manifest.json",
+      "size": 38356,
+      "sha256": "1512b7a83b9d1f5047d045722f11621433872a0a01e81db006edfb4b9be8ef70",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-self-visibility-known-development-01.manifest.json"
+    },
+    {
+      "name": "sim-self-visibility-known-development-01.tar.zst",
+      "size": 24922514,
+      "sha256": "a0e0dc20313bcb6fe18dd6478b9852e54f3726b46b25a7bef14c868d0c2e0bb0",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-self-visibility-known-development-01.tar.zst"
+    },
+    {
+      "name": "sim-v2-frozen-release-B.manifest.json",
+      "size": 5892,
+      "sha256": "75012d981d1127b30bffe31106c07e636220808b7f235de49de825c24c32b4e1",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-v2-frozen-release-B.manifest.json"
+    },
+    {
+      "name": "sim-v2-frozen-release-B.tar.zst",
+      "size": 8386825,
+      "sha256": "782753886c3dedf66b4468f72f15c172b19090971bd89ce6a15aacf897e52510",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-v2-frozen-release-B.tar.zst"
+    },
+    {
+      "name": "sim-v2-verified-entry-C.manifest.json",
+      "size": 5892,
+      "sha256": "e4894683ed20cd16857b8a7bb446ca8a6fe7b813fa0f82a87bd30c486d1fa678",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-v2-verified-entry-C.manifest.json"
+    },
+    {
+      "name": "sim-v2-verified-entry-C.tar.zst",
+      "size": 8777254,
+      "sha256": "d17d8c834448fbf52e370225df150f9522201f17d2b55a71e3ba0f7300682dc2",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-v2-verified-entry-C.tar.zst"
+    },
+    {
+      "name": "sim-v3-frozen-release-B.manifest.json",
+      "size": 5892,
+      "sha256": "a84aefac395e7e5bb7bf1e9c32ea5010d90f458bfeb3e8e0f65211aec96743a4",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-v3-frozen-release-B.manifest.json"
+    },
+    {
+      "name": "sim-v3-frozen-release-B.tar.zst",
+      "size": 8503452,
+      "sha256": "57af103c054ab1e529d740379bf1452d16c4e871c81faa7e225053c2991e1dc6",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-v3-frozen-release-B.tar.zst"
+    },
+    {
+      "name": "sim-v3-verified-entry-C.manifest.json",
+      "size": 5892,
+      "sha256": "dced546c1686f42880c726e2927d651329d74c844409a9bd5ccca376cc0b3d6a",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-v3-verified-entry-C.manifest.json"
+    },
+    {
+      "name": "sim-v3-verified-entry-C.tar.zst",
+      "size": 8720476,
+      "sha256": "f6a6142951a96c01df1a27c90f5df1d4a529d6bbfbacea052c6cf4aa3831c3ed",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-v3-verified-entry-C.tar.zst"
+    },
+    {
+      "name": "sim-viewpoint-development-01.manifest.json",
+      "size": 11627,
+      "sha256": "df49817b932d9763cb81d787d6577154830d8730a800e4488732d41a7cfc73b3",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-viewpoint-development-01.manifest.json"
+    },
+    {
+      "name": "sim-viewpoint-development-01.tar.zst",
+      "size": 10958009,
+      "sha256": "ed8a4daf307ecb62f36ac8e5a46714e282f29dd62dcfef86be41ca5458c7bb30",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-viewpoint-development-01.tar.zst"
+    },
+    {
+      "name": "sim-vision-fragment-egl-01.manifest.json",
+      "size": 4087,
+      "sha256": "7d71104173697cbf1318a1872863e623d3e2416965769b74a0495dce19fd2b1f",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-fragment-egl-01.manifest.json"
+    },
+    {
+      "name": "sim-vision-fragment-egl-01.tar.zst",
+      "size": 49464,
+      "sha256": "ed8eaaa7335c8a098761469287124e59dbcc52b23b776daf55f334c271cfa402",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-fragment-egl-01.tar.zst"
+    },
+    {
+      "name": "sim-vision-geometry050-01.manifest.json",
+      "size": 4068,
+      "sha256": "a5a2016b75ed2580f2b3fad09451b6636cabf95713113a2be30bd0d4858e948d",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-geometry050-01.manifest.json"
+    },
+    {
+      "name": "sim-vision-geometry050-01.tar.zst",
+      "size": 50057,
+      "sha256": "76ad0e63c20938b82d5b7b37707745ab7fce20cc11beca1b52096626deac510e",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-geometry050-01.tar.zst"
+    },
+    {
+      "name": "sim-vision-geometry050-fallback-01.manifest.json",
+      "size": 4284,
+      "sha256": "b3a50b459a9db2184166f174a46d93548e2346e64a4c73968384f884cc534cc8",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-geometry050-fallback-01.manifest.json"
+    },
+    {
+      "name": "sim-vision-geometry050-fallback-01.tar.zst",
+      "size": 50657,
+      "sha256": "1c3b04503190f64c2f7dd884bd775adb757f073fda0a79933ff2dccd308b0da3",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-geometry050-fallback-01.tar.zst"
+    },
+    {
+      "name": "sim-vision-geometry055-01.manifest.json",
+      "size": 4068,
+      "sha256": "f74e4e5e14efb20bb8eafffb35d91b55ca28292175e0842b97d6baabbab98477",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-geometry055-01.manifest.json"
+    },
+    {
+      "name": "sim-vision-geometry055-01.tar.zst",
+      "size": 50069,
+      "sha256": "d2d6611abccaf4768cff51936e429659c8cd20f55566e818901652a273737751",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-geometry055-01.tar.zst"
+    },
+    {
+      "name": "sim-vision-iteration-01.manifest.json",
+      "size": 3801,
+      "sha256": "28e24ce91fbf2947f9629a9215f53401d4af09ecd9c101315c13f691ca021a0c",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-iteration-01.manifest.json"
+    },
+    {
+      "name": "sim-vision-iteration-01.tar.zst",
+      "size": 28799380,
+      "sha256": "4344221fd951ec6aca71a321ba2374434c5c77412a52e147b581f3b104e41e2e",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-iteration-01.tar.zst"
+    },
+    {
+      "name": "sim-vision-iteration-02.manifest.json",
+      "size": 3801,
+      "sha256": "5c5de83de94780f1fa4c675865acae0dc2d7a91d79bc21d7b82bb6ed8e06f165",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-iteration-02.manifest.json"
+    },
+    {
+      "name": "sim-vision-iteration-02.tar.zst",
+      "size": 28797202,
+      "sha256": "f1b692bbb7c9aaa6bc68423c23221079be2dd7852161bfee0d5ad3378f719f8a",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-iteration-02.tar.zst"
+    },
+    {
+      "name": "sim-vision-iteration-03.manifest.json",
+      "size": 4169,
+      "sha256": "9b4275932300afce7e9ceb61ac30743e4fa27bf4af9e6a13f730fee762991033",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-iteration-03.manifest.json"
+    },
+    {
+      "name": "sim-vision-iteration-03.tar.zst",
+      "size": 28792018,
+      "sha256": "b33052f9a13960b3173f79af69bdd6eb41f9e4b8d4c391697b0e6160105e2a23",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-iteration-03.tar.zst"
+    },
+    {
+      "name": "sim-vision-multiview-01.manifest.json",
+      "size": 4329,
+      "sha256": "fdc4cf699d9c756fd0688c7b6f2c2008da12f587fdf1b6ce8f52d492c5e5e0a8",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-multiview-01.manifest.json"
+    },
+    {
+      "name": "sim-vision-multiview-01.tar.zst",
+      "size": 56534411,
+      "sha256": "bf930c0fad3e1e15fd50f9d9ffff42ffa86d9fbdbc1647088bd496ac34f43ad6",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-multiview-01.tar.zst"
+    },
+    {
+      "name": "sim-vision-multiview-egl-01.manifest.json",
+      "size": 4606,
+      "sha256": "b9a674da9ee4afd3a5e1df7048b298c9a858ece26c15effeb015ce9ee981038f",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-multiview-egl-01.manifest.json"
+    },
+    {
+      "name": "sim-vision-multiview-egl-01.tar.zst",
+      "size": 59305366,
+      "sha256": "786c43f1f880159eef4c36d39cd0a81ba8d07384061b331b1921ebdc8b99325e",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-vision-multiview-egl-01.tar.zst"
+    },
+    {
+      "name": "sim-visual-risk-development-01.manifest.json",
+      "size": 7588,
+      "sha256": "368b0e91f0276b9673e44b060ea12237808d1c74344ad5d84d572adf4019d904",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-visual-risk-development-01.manifest.json"
+    },
+    {
+      "name": "sim-visual-risk-development-01.tar.zst",
+      "size": 3301741,
+      "sha256": "5637ac82d6712c9251bc158355c9f073471a6a32dc67e16e3ab90f0a3e05f5a0",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/handoff-2026-10-22/sim-visual-risk-development-01.tar.zst"
+    }
+  ]
+}

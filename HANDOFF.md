@@ -41,6 +41,8 @@ python3 handoff/prepare_simulation.py
 
 原始大附件以 [handoff-2026-10-22 Release](https://github.com/On-aroll/rebot-arm-b601/releases/tag/handoff-2026-10-22) 为准。`ARTIFACTS.json` 显示 `prepared_pending_upload` 或 `uploading` 时，说明附件尚未全部发布。只有状态为 `uploaded_and_verified`，且存在服务端 SHA256 对账记录 `handoff/RELEASE_VERIFIED.json`，才表示全部附件发布完成。Git clone 带走源码、默认模型、全部报告和同臂恢复历史；完整原始 RGB-D/录像须另从 Release 下载。
 
+**本次完整发布已于 2026-10-22 19:14（北京时间）核验完成：192 个附件，共 13,876,360,180 字节（约 13.88 GB），全部服务端 SHA256 与本机一致。** 核验记录在 `handoff/RELEASE_VERIFIED.json`，包含每个附件的大小、哈希和下载地址；仓库和 Release 均保持私有。
+
 ## 3. 主线新机部署（先不连接板子）
 
 已实测主机环境：Ubuntu/Kubuntu 24.04 x86_64，ROS 2 Jazzy，Python 3.12，Node.js 22+，SocketCAN 1 Mbps。22.04/Humble 为兼容路径，须重新回归。若新设备是 ARM 板，不能使用包内 x86_64 Node/旧 `.run` 安装文件，须按目标架构安装依赖；ARM 运行尚未验收。

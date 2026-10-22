@@ -11,5 +11,7 @@
 - 本次没有训练、仿真运行、ROS/CAN/SDK/真实相机访问，没有停止、重启或更改正在运行的实机服务。
 - 上传前发现重复生成的 `SHA256SUMS` 包含清单自身的旧哈希，已修正生成器并去掉该自引用；191 个实际内容附件均通过原清单校验，没有改动归档或原始实验文件。
 - 两份旧中文名 Markdown 附件被服务端归并成同名；已逐一核对原始文件哈希，采用不同 ASCII 上传名，并在 `ARTIFACTS.json` 记录 `legacy_filename_aliases`。已上传的说明文件只修改远端名称，内容哈希保持不变。
+- 已通过 GitHub CLI 从私有 Release 实际下载 `SHA256SUMS`，与本机逐字节哈希相同（`7ccab201bd573bbdfd90870fe69b3429dd9dac53041f0062b5ea0de9f7a0b06c`），其中 191 个内容附件条目无遗漏且不包含清单自身。
+- 2026-10-22 19:14（北京时间）：192 个远端附件全部 `uploaded`，总计 13,876,360,180 字节；远端文件名、大小与本地目录完全一致，每个服务端 SHA256 均匹配本地。完整证明见 `RELEASE_VERIFIED.json`，包含清单自身的哈希。上传使用三路并行，完整保留原归档内容。
 
 机器可读记录：`COVERAGE_VERIFIED.json`、`ARCHIVES_VERIFIED.json`、`SOURCE_PROVENANCE.json`。推送后以远端 commit 对账；附件只有 `RELEASE_VERIFIED.json` 的服务端 SHA256 对账完成才视为发布完毕。

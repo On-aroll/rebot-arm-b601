@@ -2,6 +2,8 @@
 """Resume private Release uploads, checking remote SHA256 digests when available."""
 import hashlib
 import json
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
 from pathlib import Path
 import subprocess
 
@@ -32,7 +34,7 @@ def main():
     local = sorted(p for p in directory.iterdir() if p.is_file())
     if any(not path.name.isascii() for path in local):
         raise ValueError('Use ASCII asset names to avoid server renaming; preserve original names in ARTIFACTS.json')
-    for path in local:
+    def upload(path):
         expected = hashlib.file_digest(path.open('rb'), 'sha256').hexdigest()
         previous = remote.get(path.name)
         if previous:
@@ -41,11 +43,16 @@ def main():
             if previous.get('digest') and previous['digest'] != f'sha256:{expected}':
                 raise ValueError(f'Remote digest mismatch: {path.name}')
             print(f'Present: {path.name}', flush=True)
-            continue
+            return
         if path.stat().st_size >= 2_000_000_000:
             raise ValueError(f'Asset exceeds conservative 2 GB upload boundary: {path.name}')
         print(f'Uploading: {path.name}', flush=True)
         subprocess.run(['gh', 'release', 'upload', TAG, '--repo', REPO, str(path)], check=True)
+        print(f'Uploaded: {path.name}', flush=True)
+
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        for _ in executor.map(upload, local):
+            pass
     remote = assets(release['id'])
     verified = []
     for path in local:
@@ -55,7 +62,10 @@ def main():
         assert item.get('digest') == f'sha256:{expected}', f'Server SHA256 unavailable/mismatch: {path.name}'
         verified.append(dict(name=path.name, size=item['size'], sha256=expected, url=item['browser_download_url']))
     record = dict(schema='b601-release-verification-v1', repo=REPO, tag=TAG,
-                  release_url=release['html_url'], all_assets_verified=True, assets=verified)
+                  release_url=release['html_url'], all_assets_verified=True,
+                  verified_at_utc=datetime.now(timezone.utc).isoformat(),
+                  asset_count=len(verified), total_bytes=sum(item['size'] for item in verified),
+                  assets=verified)
     (ROOT / 'handoff/RELEASE_VERIFIED.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
     print(f'Verified {len(verified)} remote assets against server SHA256.', flush=True)
 

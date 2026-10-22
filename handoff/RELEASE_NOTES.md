@@ -8,3 +8,7 @@
 - `SHA256SUMS` 校验其余 191 个附件；清单自身的哈希记录在仓库 `handoff/RELEASE_VERIFIED.json`。解压路径和新机只读启动步骤见交接文档。
 - 10 月 18 日 `.run`、`.tar.gz` 是历史安装包，**不是本次最新版代码**，不能替代本次源码安装。
 - 图像策略正式对照持平、风险头拒绝全部、自遮挡探测机制和射线审计失败，均保留且未采用。
+
+## 发布核验
+
+2026-10-22 19:14（北京时间）已完成全部 192 个附件的服务端 SHA256 对账，总计 13,876,360,180 字节。下载地址、大小和哈希见 [完整核验记录](https://github.com/On-aroll/rebot-arm-b601/blob/main/handoff/RELEASE_VERIFIED.json)。新设备安装与同臂历史恢复步骤见 [交接文档](https://github.com/On-aroll/rebot-arm-b601/blob/main/HANDOFF.md)。
