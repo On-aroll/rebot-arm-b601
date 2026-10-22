@@ -1,0 +1,34 @@
+test_bundle_is_reproducible_and_excludes_user_state (test_release.ReleaseTests.test_bundle_is_reproducible_and_excludes_user_state) ... ok
+test_corrupt_archive_is_rejected_before_extraction (test_release.ReleaseTests.test_corrupt_archive_is_rejected_before_extraction) ... ok
+test_path_traversal_and_symlinks_are_rejected (test_release.ReleaseTests.test_path_traversal_and_symlinks_are_rejected) ... ok
+test_platform_family_plans (test_release.ReleaseTests.test_platform_family_plans) ... ok
+test_upgrade_failure_keeps_current_and_shared_data_then_can_retry (test_release.ReleaseTests.test_upgrade_failure_keeps_current_and_shared_data_then_can_retry) ... ok
+test_custom_missing_config_does_not_silently_use_default (test_workflow.WorkflowTests.test_custom_missing_config_does_not_silently_use_default) ... ok
+test_dry_run_never_starts_a_process_or_writes_state (test_workflow.WorkflowTests.test_dry_run_never_starts_a_process_or_writes_state) ... /home/bonvoyage/Desktop/1seeed_Robotics/dist/seeed-lerobot-0.1.0-linux-x86_64.tar.gz (1.21 MiB)
+/home/bonvoyage/Desktop/1seeed_Robotics/dist/seeed-lerobot-0.1.0-linux-x86_64.tar.gz (1.21 MiB)
+
+Release v0.1.0 安装并通过自检。启动菜单：
+'/tmp/tmp5_g1ajz0/install with spaces/current/robotctl'
+配置、数据与模型：/tmp/tmp5_g1ajz0/install with spaces/shared
+旧版本保留在：/tmp/tmp5_g1ajz0/install with spaces/releases
+
+/usr/bin/python3 -m lerobot.scripts.lerobot_record --robot.type=seeed_b601_rs_follower --robot.port=can0 --robot.id=follower1 --robot.can_adapter=socketcan --robot.max_relative_target=5.0 '--robot.cameras={"front": {"type": "opencv", "index_or_path": 0, "width": 640, "height": 480, "fps": 15, "fourcc": "MJPG"}}' --teleop.type=rebot_arm_102_leader --teleop.port=/dev/ttyUSB0 --teleop.id=leader1 --dataset.repo_id=local/rebot_pick_cube --dataset.fps=15 --dataset.num_episodes=50 --dataset.episode_time_s=30 --dataset.reset_time_s=15 --dataset.root=/home/bonvoyage/Desktop/1seeed_Robotics/data/datasets/rebot_pick_cube '--dataset.single_task=Pick up the black cube and put it in the box' --dataset.push_to_hub=false --dataset.vcodec=h264 --display_data=false --play_sounds=false --resume=false
+
+/usr/bin/python3 -m lerobot.scripts.lerobot_calibrate --robot.type=seeed_b601_rs_follower --robot.port=can0 --robot.id=follower1 --robot.can_adapter=socketcan --robot.max_relative_target=5.0
+
+/usr/bin/python3 -m lerobot.scripts.lerobot_train --policy.type=act --dataset.repo_id=local/rebot_pick_cube --dataset.root=/home/bonvoyage/Desktop/1seeed_Robotics/data/datasets/rebot_pick_cube --dataset.video_backend=pyav --policy.device=cpu --policy.push_to_hub=false --wandb.enable=false --output_dir=/home/bonvoyage/Desktop/1seeed_Robotics/data/outputs/act-20261018-164111-291136 --job_name=act-20261018-164111-291136 --eval_freq=0 --steps=20000 --batch_size=2 --num_workers=0 --policy.chunk_size=25 --policy.n_action_steps=25
+
+sudo ip link set can0 down
+
+sudo ip link set can0 type can bitrate 1000000
+
+sudo ip link set can0 up
+ok
+test_invalid_steps_fail_before_starting_training (test_workflow.WorkflowTests.test_invalid_steps_fail_before_starting_training) ... ok
+test_mismatched_camera_config_prevents_model_execution (test_workflow.WorkflowTests.test_mismatched_camera_config_prevents_model_execution) ... ok
+test_record_and_training_share_the_local_dataset (test_workflow.WorkflowTests.test_record_and_training_share_the_local_dataset) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.172s
+
+OK

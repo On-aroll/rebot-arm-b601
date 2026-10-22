@@ -13,8 +13,8 @@
     },
     "HANDOFF.md": {
       "kind": "file",
-      "sha256": "6850ffcfb3748c7a7f06f7908a09299948e9947dc413ac5154f8812179d9e35d",
-      "size": 12501
+      "sha256": "4242086d56e0b916f4255eeefd1dbe80eb6e8f355370407e652dc46b3208cada",
+      "size": 12711
     },
     "README.md": {
       "kind": "file",
@@ -4816,6 +4816,11 @@
       "sha256": "3397be3bcc637c6ecb664548a505075189611405784fdf37d66ca6fcf0709070",
       "size": 235
     },
+    "handoff/PUBLISHED_SOURCE.json": {
+      "kind": "file",
+      "sha256": "e9ed80f7200efb8cf39e0a1f5702bf2ad8b0153c66d5f021f6fd6e9e8013350a",
+      "size": 390
+    },
     "handoff/RELEASE_NOTES.md": {
       "kind": "file",
       "sha256": "e1d02b58667df191b971d50dc426f5d14a2214ea61e260a5a376985fee16100b",
@@ -4855,6 +4860,41 @@
       "kind": "file",
       "sha256": "184a8f35e397196e4153b532525f61835c0aa3cf7f500b89750f4c23eb64dca1",
       "size": 35263581
+    },
+    "handoff/evidence/legacy-install-logs/.state/release validation/shared/logs/install-20261018-163950.log": {
+      "kind": "file",
+      "sha256": "9e40d37f7d153b40b32d51b6041e1dd9d3dcf10bae9885c080834770e5efbd81",
+      "size": 15351
+    },
+    "handoff/evidence/legacy-install-logs/.state/release validation/shared/logs/self-test-20261018-164021-063887.log": {
+      "kind": "file",
+      "sha256": "0d0f57ba856846855e9c4a42ff55e934057dd574d3778e5c1027b440329b587b",
+      "size": 11723
+    },
+    "handoff/evidence/legacy-install-logs/.state/release validation/shared/logs/self-test-training-20261018-164023-836669.log": {
+      "kind": "file",
+      "sha256": "43b2a496b5c440e752321b172167d6d48f804a8f620f1602779ed6c16feb1113",
+      "size": 7066
+    },
+    "handoff/evidence/legacy-install-logs/.state/release-tests.log": {
+      "kind": "file",
+      "sha256": "fa9970ce3da3acf71ccec20355a6b42da2a0e0718ca3b5e7b68312ba5e226b4d",
+      "size": 3528
+    },
+    "handoff/evidence/legacy-install-logs/.state/self-test/last-result.json": {
+      "kind": "file",
+      "sha256": "9d865704f117e2bab92facaadb7cd98b059a4e446a3ad22b7de74e4da85da84f",
+      "size": 195
+    },
+    "handoff/evidence/legacy-install-logs/logs/self-test-20261018-152654-834789.log": {
+      "kind": "file",
+      "sha256": "ee7b6db9c09fa138aea484777053d6450f20deba67bce003631507e8ecabbc0f",
+      "size": 11273
+    },
+    "handoff/evidence/legacy-install-logs/logs/self-test-training-20261018-152707-735860.log": {
+      "kind": "file",
+      "sha256": "074e04a654eedf475c009b483cbd28d0ef78063eb1727af1b9aecaf704267da5",
+      "size": 6865
     },
     "handoff/evidence/simulation-records.manifest.json": {
       "kind": "file",

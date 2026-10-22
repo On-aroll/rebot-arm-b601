@@ -27,6 +27,8 @@
 
 ## 2. 在另一台设备获取
 
+这是私有仓库，需要同一有权限的账号。新机尚未配置 SSH 时，可先安装并登录 GitHub CLI，再执行 `gh repo clone On-aroll/rebot-arm-b601`；已有 SSH 权限使用下面命令。
+
 ```bash
 git clone git@github.com:On-aroll/rebot-arm-b601.git
 cd rebot-arm-b601

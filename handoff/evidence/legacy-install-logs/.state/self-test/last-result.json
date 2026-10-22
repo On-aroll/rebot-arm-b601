@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "device": "cpu",
+  "episodes": 2,
+  "frames": 24,
+  "training_steps": 2,
+  "action_shape": [
+    1,
+    7
+  ],
+  "hardware_tested": false,
+  "grasp_success_tested": false
+}

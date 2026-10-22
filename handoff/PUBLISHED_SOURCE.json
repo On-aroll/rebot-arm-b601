@@ -1,0 +1,13 @@
+{
+  "repository": "On-aroll/rebot-arm-b601",
+  "visibility": "private",
+  "source_commit": "eb372731e6e894e7249ecf00b2505378f897c4fa",
+  "source_tag": "handoff-2026-10-22",
+  "branches": [
+    "main",
+    "handoff/2026-10-22"
+  ],
+  "remote_refs_verified": true,
+  "verified_at_utc": "2026-10-22T09:49:31.314316+00:00",
+  "release_assets_status": "prepared_pending_user_github_cli_login"
+}
