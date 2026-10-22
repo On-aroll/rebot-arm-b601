@@ -9,5 +9,7 @@
 - 新迁移 Python 脚本语法检查、Shell 语法检查通过。
 - 文件型密钥、真实 .env 和配置凭据未导出；源码令牌特征扫描未发现真实凭据。
 - 本次没有训练、仿真运行、ROS/CAN/SDK/真实相机访问，没有停止、重启或更改正在运行的实机服务。
+- 上传前发现重复生成的 `SHA256SUMS` 包含清单自身的旧哈希，已修正生成器并去掉该自引用；191 个实际内容附件均通过原清单校验，没有改动归档或原始实验文件。
+- 两份旧中文名 Markdown 附件被服务端归并成同名；已逐一核对原始文件哈希，采用不同 ASCII 上传名，并在 `ARTIFACTS.json` 记录 `legacy_filename_aliases`。已上传的说明文件只修改远端名称，内容哈希保持不变。
 
 机器可读记录：`COVERAGE_VERIFIED.json`、`ARCHIVES_VERIFIED.json`、`SOURCE_PROVENANCE.json`。推送后以远端 commit 对账；附件只有 `RELEASE_VERIFIED.json` 的服务端 SHA256 对账完成才视为发布完毕。

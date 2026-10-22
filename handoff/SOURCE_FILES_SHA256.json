@@ -13,8 +13,8 @@
     },
     "HANDOFF.md": {
       "kind": "file",
-      "sha256": "4242086d56e0b916f4255eeefd1dbe80eb6e8f355370407e652dc46b3208cada",
-      "size": 12711
+      "sha256": "2fedf16c33e71e3be5ec85dca7e6f34b6108b7254d326205c613c847e6964f00",
+      "size": 13134
     },
     "README.md": {
       "kind": "file",
@@ -4808,8 +4808,8 @@
     },
     "handoff/ARTIFACTS.json": {
       "kind": "file",
-      "sha256": "1ded727c510a7a38a61308a841a6a0abb6012caa59c6c12cdcf21ea3634e9605",
-      "size": 25356
+      "sha256": "89d6b4cc358fe34a010d99cf78c14bef82f9f7ebd17946086d993a345915b19d",
+      "size": 25669
     },
     "handoff/COVERAGE_VERIFIED.json": {
       "kind": "file",
@@ -4818,13 +4818,13 @@
     },
     "handoff/PUBLISHED_SOURCE.json": {
       "kind": "file",
-      "sha256": "e9ed80f7200efb8cf39e0a1f5702bf2ad8b0153c66d5f021f6fd6e9e8013350a",
-      "size": 390
+      "sha256": "c2a58c894a8015388ba198f39d316e8a4b994c13b049a273d5dc91022e16806e",
+      "size": 527
     },
     "handoff/RELEASE_NOTES.md": {
       "kind": "file",
-      "sha256": "e1d02b58667df191b971d50dc426f5d14a2214ea61e260a5a376985fee16100b",
-      "size": 925
+      "sha256": "f3c1eeb1531541e1db176d15621d3f874ac8e11399eafc78acbfb6bf02c1a4e8",
+      "size": 1004
     },
     "handoff/SOURCE_PROVENANCE.json": {
       "kind": "file",
@@ -4833,13 +4833,13 @@
     },
     "handoff/VERIFICATION.md": {
       "kind": "file",
-      "sha256": "8245e1c732b4c99dc2cf29e0d85fc83a65b4fe7d001e577e0e808c85f54e399f",
-      "size": 1310
+      "sha256": "230c1943fd99df5a57c1482de11f7ebc8afa4b802217007bb377ac08029f9013",
+      "size": 1794
     },
     "handoff/build_artifacts.py": {
       "kind": "file",
-      "sha256": "ac096bfc6fbd8df556fee34c5dd6cbfe53ae7d170f61db5d812241b9e8a582a3",
-      "size": 5461
+      "sha256": "4b53f0d69395fb9446524d2e5dbc9452b173ff86948d6e6b1353ff2450df2f72",
+      "size": 5786
     },
     "handoff/evidence/deployment-validation.manifest.json": {
       "kind": "file",
@@ -5688,8 +5688,8 @@
     },
     "handoff/upload_assets.py": {
       "kind": "file",
-      "sha256": "93a346032626ef1a67c47a0edbd9d2bed3fb539b883849947540e12aec373a92",
-      "size": 2719
+      "sha256": "1f85e872449461de4e7e9cb5396e095f5002395d9db88f4912fedad3fd4c90b0",
+      "size": 2892
     },
     "handoff/upload_release.sh": {
       "kind": "file",

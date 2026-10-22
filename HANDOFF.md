@@ -8,7 +8,7 @@
 
 | 路径 | 内容 |
 | --- | --- |
-| `ReBot_Arm_DigitalTwin_RS/` | 当前主线：3002 网页工作台、ROS 2、MuJoCo、唯一 CAN 执行器、全部未提交的新功能源码与测试 |
+| `ReBot_Arm_DigitalTwin_RS/` | 当前主线：3002 网页工作台、ROS 2、MuJoCo、唯一 CAN 执行器、本次封存的全部新功能源码与测试 |
 | `learning-workspace/` | 原 `1seeed_Robotics`：LeRobot 部署工具、ROS 工作台安装器及视觉实验 |
 | `learning-workspace/experiments/b601-vision-grasp/` | 本会话全部实验分支、冻结 V2/V3、报告和协议 |
 | `scripts/`, `external/`, `rebotarm_ros2/` | 早期 Studio/8765 工程与 ROS 工作区，保留历史成果；当前实机入口用上面的 3002 主线 |
@@ -39,7 +39,7 @@ python3 handoff/prepare_simulation.py
 
 不需要 `git submodule` 或 Git LFS。`handoff-2026-10-22` 标签固定封存源码，后续附件上传核验记录查看 main 分支。当前工程和改过的第三方源码已经是实际文件；受执行器完整性检查约束的 CSP SDK 要按下面的锁定提交单独重建。主线原 Git 历史另存 `handoff/provenance/digitaltwin-history.bundle`，可用 `git clone 路径/digitaltwin-history.bundle 独立历史目录` 查看，不需要操作现有工作区。
 
-原始大附件以 `handoff-2026-10-22` Release 为准。`ARTIFACTS.json` 显示 `prepared_pending_upload` 时，说明附件尚未上传成功，不能声称 Git clone 已带走原始 RGB-D/录像。源码、默认模型、全部报告和同臂恢复历史随 Git 可获得。上传状态改变后会另写可核验记录。
+原始大附件以 [handoff-2026-10-22 Release](https://github.com/On-aroll/rebot-arm-b601/releases/tag/handoff-2026-10-22) 为准。`ARTIFACTS.json` 显示 `prepared_pending_upload` 或 `uploading` 时，说明附件尚未全部发布。只有状态为 `uploaded_and_verified`，且存在服务端 SHA256 对账记录 `handoff/RELEASE_VERIFIED.json`，才表示全部附件发布完成。Git clone 带走源码、默认模型、全部报告和同臂恢复历史；完整原始 RGB-D/录像须另从 Release 下载。
 
 ## 3. 主线新机部署（先不连接板子）
 
@@ -144,6 +144,8 @@ zstd -dc downloaded-assets/main-outputs.tar.zst | tar -xf - -C historical-main
 只要恢复摘要：`zstd -dc handoff/evidence/simulation-records.tar.zst | tar -xf - -C learning-workspace/experiments/b601-vision-grasp`。这会恢复到忽略的 outputs 目录，不启动任何任务。
 
 原 `dist` 的 1.0.0 ROS 安装器和 0.1.0 LeRobot 包也保留为历史产物。**它们构建于 10 月 18 日，不包含 10 月 20–22 日的新代码，不能当作本次最新版部署包。** 新设备使用本次源码安装。`learning-workspace/scripts/build_rebotarm_bundle.py` 可以重新构建，但重打包须重新验收，不继承旧安装包验证结论。
+
+Release 中旧版两份说明使用 `ReBotArm-deployment-guide.md` 和 `ReBotArm-validation-report.md`，原中文文件名保存在 `handoff/ARTIFACTS.json` 的 `legacy_filename_aliases`；内容与原文件逐字节相同。
 
 环境、依赖缓存、build/install、node_modules、进程 PID/锁和密钥不迁移；依赖按锁文件/安装脚本重建。API key、真实相机权限、服务地址、标定需要在目标设备重新配置。
 

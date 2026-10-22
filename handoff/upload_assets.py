@@ -30,6 +30,8 @@ def main():
     release = json.loads(gh('api', f'repos/{REPO}/releases/tags/{TAG}'))
     remote = assets(release['id'])
     local = sorted(p for p in directory.iterdir() if p.is_file())
+    if any(not path.name.isascii() for path in local):
+        raise ValueError('Use ASCII asset names to avoid server renaming; preserve original names in ARTIFACTS.json')
     for path in local:
         expected = hashlib.file_digest(path.open('rb'), 'sha256').hexdigest()
         previous = remote.get(path.name)

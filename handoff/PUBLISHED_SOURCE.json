@@ -9,5 +9,7 @@
   ],
   "remote_refs_verified": true,
   "verified_at_utc": "2026-10-22T09:49:31.314316+00:00",
-  "release_assets_status": "prepared_pending_user_github_cli_login"
+  "release_assets_status": "uploading",
+  "release_url": "https://github.com/On-aroll/rebot-arm-b601/releases/tag/handoff-2026-10-22",
+  "release_upload_started_at_utc": "2026-10-22T10:52:07.567456+00:00"
 }

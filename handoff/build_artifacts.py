@@ -13,6 +13,10 @@ ROOT = Path(__file__).resolve().parents[1]
 SKIP = {'.git', '__pycache__', '.venv', 'node_modules', '.certs', '.pytest_cache'}
 SECRET_SUFFIX = ('.pem', '.key', '.token')
 MEDIA = {'.npz', '.gif', '.png', '.jpg', '.jpeg', '.mp4', '.pdf', '.docx'}
+LEGACY_FILENAMES = {
+    'ReBotArm-部署说明.md': 'ReBotArm-deployment-guide.md',
+    'ReBotArm-验证报告.md': 'ReBotArm-validation-report.md',
+}
 
 
 def files(directory):
@@ -85,16 +89,18 @@ def main():
             groups.append(dict(name=directory.name, location='release', **{k:v for k,v in record.items() if k!='files'}))
     for path in sorted((args.learning_source / 'dist').iterdir()):
         if path.is_file():
-            shutil.copy2(path, release / path.name)
+            shutil.copy2(path, release / LEGACY_FILENAMES.get(path.name, path.name))
     # Historical installer validation logs; installed environments are reproducible caches.
     validation = args.learning_source / '.state/rebotarm-validation'
     selected = [p for p in validation.iterdir() if p.is_file() and p.suffix in {'.json','.log','.txt'}]
     package(evidence / 'deployment-validation.tar.zst', validation, selected)
-    sums = ''.join(f'{digest(p)}  {p.name}\n' for p in sorted(release.iterdir()) if p.is_file())
+    sums = ''.join(f'{digest(p)}  {p.name}\n' for p in sorted(release.iterdir())
+                   if p.is_file() and p.name != 'SHA256SUMS')
     (release / 'SHA256SUMS').write_text(sums)
     (ROOT / 'handoff/ARTIFACTS.json').write_text(json.dumps(
         dict(schema='b601-paused-handoff-artifacts-v1', raw_output_files=sum(len(list(files(p))) for p in [sim,args.main_source/'outputs']),
              release_tag='handoff-2026-10-22', release_status='prepared_pending_upload', groups=groups,
+             legacy_filename_aliases={value: key for key, value in LEGACY_FILENAMES.items()},
              excluded=['virtual environments, build/install/log caches, node_modules, process PID/lock state',
                        'API keys, real .env/config credentials, private keys',
                        'validation installed copies; standalone original validation logs retained']),
