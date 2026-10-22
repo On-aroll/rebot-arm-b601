@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0e1418"><title>B601-RS · 项目启动台</title>
+  <link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/startup.css?v=20261017-start02">
+  <script src="/js/startup.js?v=20261017-start02" defer></script>
+  <link rel="stylesheet" href="/css/project-shutdown.css?v=20261018-exit156">
+</head>
+<body>
+  <header><a class="brand" href="/startup.html"><span class="logo">R</span><span><strong>B601-RS</strong><small>项目启动台</small></span></a><div class="header-actions"><span class="local">本机 · 3002</span><a href="/" class="quiet-link">返回操作工作台 ↗</a><button type="button" class="project-exit-entry" data-project-exit>结束项目</button></div></header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">START YOUR WORKSPACE</p><h1>按顺序点，准备好再开始。</h1><p>从 ROS 到机器人反馈，每一步都在这里。绿色表示已确认就绪，正在运行的服务会直接复用。</p></div><div class="progress"><strong id="startup-progress">正在检查…</strong><span id="startup-next">读取本机服务状态</span></div></section>
+    <div class="mode-row"><div><strong>启动对象</strong><span>本启动台固定连接真实机械臂，只读取反馈，不会自动使能或运动。</span></div><div class="mode-fixed" aria-label="启动对象">▣ 真实机械臂</div><button type="button" id="startup-refresh" class="text-button">↻ 刷新状态</button></div>
+    <section class="steps" aria-label="按顺序启动">
+      <article class="step" data-service="ros"><span class="step-number">01</span><div class="step-copy"><h2>检查 ROS 2 环境 <span class="badge">待检查</span></h2><p>检查已安装的 ROS、项目工作空间和 Python 依赖。ROS 2 无需单独启动 roscore。</p><p class="service-message" role="status"></p><details><summary>查看启动日志</summary><pre></pre></details></div><button type="button" data-start="ros">检查环境</button></article>
+      <article class="step" data-service="bridge"><span class="step-number">02</span><div class="step-copy"><h2>启动 ROS 联动接口 <span class="badge">待启动</span></h2><p>启动 ROSBridge，让网页接收机器人状态并与 ROS 通信。</p><p class="service-message" role="status"></p><details><summary>查看启动日志</summary><pre></pre></details></div><button type="button" data-start="bridge" disabled>启动联动接口</button></article>
+      <article class="step" data-service="can" data-for="hardware" hidden><span class="step-number">03</span><div class="step-copy"><h2>启用 CAN 接口 <span class="badge">待检查</span></h2><p>连接 USB-CAN，打开本体电源。将 can0 配置为 1 Mbps；需要权限时会弹出系统密码窗口。</p><p class="service-message" role="status"></p><details><summary>查看启动日志</summary><pre></pre></details></div><button type="button" data-start="can" disabled>启用 CAN</button></article>
+      <article class="step" data-service="hardware" data-for="hardware" hidden><span class="step-number">04</span><div class="step-copy"><h2>启动实机反馈服务 <span class="badge">待启动</span></h2><p>启动唯一 CAN 驱动并接收关节状态。此步骤不使能、不回零、不执行运动。</p><p class="service-message" role="status"></p><details><summary>查看启动日志</summary><pre></pre></details></div><button type="button" data-start="hardware" disabled>启动只读反馈</button></article>
+    </section>
+    <section class="enter-workspace"><div><h2 id="startup-enter-title">服务准备完成后，进入真实机械臂工作台</h2><p id="startup-enter-hint">坐标、键盘、手柄、TCP、程序、调参和画面，都在工作台左侧工具栏。</p></div><a href="/" id="startup-enter" class="primary-link" aria-disabled="true">进入操作工作台 →</a></section>
+    <details class="optional" id="startup-optional"><summary><span>可选服务</span><small>MCP 与文本代理 · 使用仿真任务接口时开启</small></summary><p class="optional-note">以下两个接口只连接仿真命名空间 /rebotarm_rs。工作台内的视觉、规划和大模型也可以直接配置各自的服务地址。</p>
+      <article class="step" data-service="mcp"><span class="step-number">＋</span><div class="step-copy"><h2>仿真 MCP 接口 <span class="badge">可选</span></h2><p>将仿真任务工具提供给 MCP 客户端 · 8081。</p><p class="service-message" role="status"></p><details><summary>查看启动日志</summary><pre></pre></details></div><button type="button" data-start="mcp" disabled>启动 MCP</button></article>
+      <article class="step" data-service="text"><span class="step-number">＋</span><div class="step-copy"><h2>仿真文本代理 <span class="badge">可选</span></h2><p>使用已配置的模型连接 MCP；未配置模型时，启动成功也不能完成对话任务 · 8082。</p><p class="service-message" role="status"></p><details><summary>查看启动日志</summary><pre></pre></details></div><button type="button" data-start="text" disabled>启动文本代理</button></article>
+    </details>
+    <p id="startup-message" class="page-message" role="status" aria-live="polite">使用结束后，点击右上角「结束项目」释放资源。使能和运动在操作工作台中明确发起。</p>
+    <footer><p>下次使用：双击桌面 <strong>ReBot Arm B601-RS 项目启动台</strong> → 按顺序完成本页步骤。</p><details><summary>工程位置与启动说明</summary><p>网页服务尚未运行时，先用桌面图标打开本页。网页关闭不会停止已运行的驱动；悬空保持时不要关闭驱动服务或切断电源。</p><code id="startup-root"></code></details></footer>
+  </main>
+  <dialog id="project-exit-dialog" class="project-exit-dialog" aria-labelledby="project-exit-title">
+    <h2 id="project-exit-title">结束项目并释放资源</h2>
+    <p>结束实机反馈、仿真、ROS联动接口及本工程启动的可选服务，最后退出网页服务和三维画面。</p>
+    <p>机械臂仍在运动或保持时会拒绝退出。请先让机械臂有支撑，点击工作台的「失能撤力」，等待只读状态。</p>
+    <label><input id="project-exit-confirm" type="checkbox"><span>机械臂已有支撑并已失能；确认结束本项目。仅使用仿真时也可勾选。</span></label>
+    <p id="project-exit-status" class="project-exit-status" role="status" aria-live="polite">关闭标签页不会结束后台。请使用此入口完整退出。</p>
+    <div class="project-exit-actions"><button type="button" id="project-exit-cancel">取消</button><button type="button" id="project-exit-submit" disabled>确认结束项目</button></div>
+  </dialog>
+  <script src="/js/project-shutdown.js?v=20261018-exit156" defer></script>
+</body></html>

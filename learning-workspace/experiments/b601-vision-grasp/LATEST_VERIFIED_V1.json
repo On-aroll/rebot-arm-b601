@@ -1,0 +1,14 @@
+{
+  "version": "V1",
+  "domain": "simulation",
+  "hardware_executable": false,
+  "evaluation_run": "outputs/goal-v1-evaluation",
+  "report": "GOAL_V1_REPORT.md",
+  "policy_checkpoint": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/outputs/goal-policy-v2/residual.pt",
+  "policy_sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+  "perception_checkpoint": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/outputs/vision-iteration-03/perception.pt",
+  "perception_sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+  "task_successes": 30,
+  "task_trials": 30,
+  "audit_passed": true
+}

@@ -1,0 +1,31 @@
+{
+  "version": "V3",
+  "domain": "simulation",
+  "hardware_executable": false,
+  "evaluation_run": "outputs/goal-geometry-fallback-v3-candidate-01",
+  "report": "GOAL_GEOMETRY_FALLBACK_V3_REPORT.md",
+  "policy_checkpoint": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/versions/V3/models/residual.pt",
+  "policy_sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+  "perception_checkpoint": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/versions/V3/models/perception.pt",
+  "perception_sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+  "runtime_directory": "versions/V3",
+  "runtime_manifest": "versions/V3/release_manifest.json",
+  "runtime_manifest_sha256": "bb6bebf40eb2b660f66600c5be2b41b7e13bee6529bcc042e247a363bcb1342b",
+  "feedback_config": "versions/V3/feedback_config.json",
+  "observation_mode": "feedback",
+  "task_successes": 60,
+  "task_trials": 60,
+  "blocks": {
+    "static": {
+      "successes": 30,
+      "trials": 30
+    },
+    "disturbed": {
+      "successes": 30,
+      "trials": 30
+    }
+  },
+  "audit_passed": true,
+  "previous_verified": "LATEST_VERIFIED_V2.json",
+  "run_command": "./verified_task.sh --goal B"
+}

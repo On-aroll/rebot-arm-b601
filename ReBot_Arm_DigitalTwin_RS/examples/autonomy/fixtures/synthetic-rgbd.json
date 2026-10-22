@@ -1,0 +1,183 @@
+{
+  "schema_version": "b601-rgbd-replay/1.0",
+  "source": {
+    "kind": "synthetic",
+    "capture_id": "synthetic-geometry-only"
+  },
+  "stamp_ms": 1000,
+  "camera": {
+    "id": "synthetic-camera",
+    "frame_id": "camera_optical_frame",
+    "width": 640,
+    "height": 480,
+    "rectified": true,
+    "K": [
+      600,
+      0,
+      320,
+      0,
+      600,
+      240,
+      0,
+      0,
+      1
+    ]
+  },
+  "detection": {
+    "label": "合成目标（未运行识别）",
+    "confidence": 1,
+    "center_px": [
+      332,
+      240
+    ],
+    "obb_px": [
+      [
+        328,
+        238
+      ],
+      [
+        336,
+        238
+      ],
+      [
+        336,
+        242
+      ],
+      [
+        328,
+        242
+      ]
+    ]
+  },
+  "depth": {
+    "stamp_ms": 1000,
+    "aligned_to": "color",
+    "scale_m": 0.001,
+    "roi": {
+      "x": 328,
+      "y": 238,
+      "values": [
+        [
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400
+        ],
+        [
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400
+        ],
+        [
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400
+        ],
+        [
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400
+        ],
+        [
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400,
+          400
+        ]
+      ]
+    }
+  },
+  "calibration": {
+    "id": "synthetic-hand-eye",
+    "camera_id": "synthetic-camera",
+    "mount": "eye_in_hand",
+    "tool_frame": "gripper_end",
+    "robot_calibration_id": "rs-identity-v1",
+    "T_tool_camera": [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1
+      ]
+    ]
+  },
+  "robot_pose": {
+    "stamp_ms": 1000,
+    "frame_id": "base_link",
+    "tool_frame": "gripper_end",
+    "calibration_id": "rs-identity-v1",
+    "T_base_tool": [
+      [
+        1,
+        0,
+        0,
+        0.1
+      ],
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        -0.2
+      ],
+      [
+        0,
+        0,
+        0,
+        1
+      ]
+    ]
+  }
+}

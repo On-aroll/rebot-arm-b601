@@ -1,0 +1,14 @@
+{
+  "schema": "b601-controller/1.0",
+  "engine": "pid",
+  "name": "PID初始参数（未实机调定）",
+  "rate_hz": 10,
+  "output": "joint_velocity",
+  "parameters": {
+    "kp": [0.6, 0.6, 0.6, 0.6, 0.6, 0.6],
+    "ki": [0.02, 0.02, 0.02, 0.02, 0.02, 0.02],
+    "kd": [0.03, 0.03, 0.03, 0.03, 0.03, 0.03],
+    "derivative_filter_s": 0.1,
+    "integral_limit_rad_s": 0.03
+  }
+}

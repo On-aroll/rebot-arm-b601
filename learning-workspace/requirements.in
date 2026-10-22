@@ -1,0 +1,8 @@
+# See vendor/ORIGIN.json for the immutable Seeed source revision.
+./vendor/lerobot-0.4.4-py3-none-any.whl
+lerobot-robot-seeed-b601==1.0.5
+lerobot-teleoperator-rebot-arm-102==1.0.1
+motorbridge==0.5.6
+motorbridge-smart-servo==0.0.4
+# Compatible with torch 2.7; runtime video decoding uses PyAV.
+torchcodec==0.5.0

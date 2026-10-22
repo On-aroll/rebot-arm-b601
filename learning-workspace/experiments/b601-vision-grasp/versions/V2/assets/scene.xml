@@ -1,0 +1,34 @@
+<mujoco model="b601_vision_grasp_experiment">
+  <include file="rs_arm.xml"/>
+  <compiler angle="radian" meshdir="meshes/"/>
+  <option timestep="0.002" iterations="80" solver="Newton" integrator="implicitfast" cone="elliptic"/>
+  <statistic center="0.3 0 0.2" extent="0.7"/>
+  <visual>
+    <global offwidth="640" offheight="480"/>
+    <headlight diffuse="0.7 0.7 0.7" ambient="0.4 0.4 0.4"/>
+    <map znear="0.01" zfar="5"/>
+  </visual>
+  <contact>
+    <exclude body1="world" body2="link1"/>
+    <exclude body1="base_link" body2="link1"/>
+    <exclude body1="link1" body2="link2"/>
+    <exclude body1="link2" body2="link3"/>
+    <exclude body1="link2" body2="link5"/>
+    <exclude body1="link3" body2="link4"/>
+    <exclude body1="link3" body2="link5"/>
+    <exclude body1="link4" body2="link5"/>
+    <exclude body1="link5" body2="link6"/>
+  </contact>
+  <worldbody>
+    <light name="task_light" pos="0.3 -0.3 1.2" dir="0 0 -1" directional="true"/>
+    <camera name="overhead_rgbd" pos="0.33 0 0.78" xyaxes="1 0 0 0 1 0" fovy="48"/>
+    <geom name="floor" type="plane" size="1 1 0.02" rgba="0.12 0.16 0.19 1"/>
+    <body name="table" pos="0.37 0 0.085">
+      <geom name="table_geom" type="box" size="0.27 0.34 0.015" rgba="0.35 0.4 0.4 1" friction="1 0.01 0.001"/>
+    </body>
+    <body name="target" pos="0.32 0 0.12">
+      <freejoint name="target_free"/>
+      <geom name="target_geom" type="box" size="0.02 0.02 0.02" mass="0.04" rgba="0.9 0.1 0.04 1" friction="1.5 0.04 0.005" condim="6" solref="0.004 1"/>
+    </body>
+  </worldbody>
+</mujoco>

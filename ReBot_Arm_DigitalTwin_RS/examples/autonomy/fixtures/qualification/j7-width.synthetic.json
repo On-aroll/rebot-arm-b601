@@ -1,0 +1,78 @@
+{
+  "schema_version": "b601-j7-width-data/1.0",
+  "source": {
+    "kind": "synthetic"
+  },
+  "calibration_id": "synthetic-jaw-only",
+  "device_id": "synthetic-robot",
+  "gripper_id": "synthetic-j7",
+  "max_validation_error_mm": 0.3,
+  "measurements": {
+    "opening": [
+      {
+        "position_rad": 0.2,
+        "width_mm": 2.8080000000000003
+      },
+      {
+        "position_rad": 1.4,
+        "width_mm": 17.591999999999995
+      },
+      {
+        "position_rad": 2.8,
+        "width_mm": 35.56799999999999
+      },
+      {
+        "position_rad": 4.8,
+        "width_mm": 62.60799999999999
+      }
+    ],
+    "closing": [
+      {
+        "position_rad": 0.2,
+        "width_mm": 2.4080000000000004
+      },
+      {
+        "position_rad": 1.4,
+        "width_mm": 17.191999999999997
+      },
+      {
+        "position_rad": 2.8,
+        "width_mm": 35.16799999999999
+      },
+      {
+        "position_rad": 4.8,
+        "width_mm": 62.20799999999999
+      }
+    ]
+  },
+  "validation": {
+    "opening": [
+      {
+        "position_rad": 0.8,
+        "width_mm": 10.128000000000002
+      },
+      {
+        "position_rad": 2.0,
+        "width_mm": 25.2
+      },
+      {
+        "position_rad": 3.8,
+        "width_mm": 48.88799999999999
+      }
+    ],
+    "closing": [
+      {
+        "position_rad": 0.8,
+        "width_mm": 9.728000000000002
+      },
+      {
+        "position_rad": 2.0,
+        "width_mm": 24.8
+      },
+      {
+        "position_rad": 3.8,
+        "width_mm": 48.48799999999999
+      }
+    ]
+  }
+}

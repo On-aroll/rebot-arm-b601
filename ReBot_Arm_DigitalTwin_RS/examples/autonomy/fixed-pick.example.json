@@ -1,0 +1,16 @@
+{
+  "schema_version": "b601-fixed-pick-request/1.0",
+  "robot_model": "b601_rs",
+  "base_frame": "base_link",
+  "tcp_frame": "gripper_end",
+  "units": {"position": "m", "angle": "rad", "time": "s"},
+  "calibration_id": "rs-identity-v1",
+  "pick_pose": [0.2558058086557773, -0.16279248905134397, 0.30988777186323935, -0.19999985356060268, 0.000001386281597071104, -0.5000007297579265],
+  "place_pose": [0.2608058086557773, -0.15779248905134397, 0.30988777186323935, -0.19999985356060268, 0.000001386281597071104, -0.5000007297579265],
+  "workspace": {"min": [0.10, -0.30, 0.20], "max": [0.40, 0.10, 0.45]},
+  "approach_m": 0.005,
+  "clearance_z_m": 0.31988777186323936,
+  "sample_step_m": 0.005,
+  "joint_speed_rad_s": 0.01,
+  "gripper": {"open_rad": 4.0, "close_rad": 1.0, "speed_rad_s": 0.2}
+}

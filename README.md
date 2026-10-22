@@ -1,5 +1,32 @@
 # reBot Arm B601-RS 仿真工程
 
+## 2026-10-22 全项目封存与换机入口
+
+**先读 [HANDOFF.md](HANDOFF.md)**：已汇集 3002 主线控制工作台、部署工具、所有视觉仿真实验分支、冻结 V2/V3、151 份检查点和同臂恢复历史。持续实验已按用户要求暂停。当前主线在 `ReBot_Arm_DigitalTwin_RS/`；视觉支线在 `learning-workspace/experiments/b601-vision-grasp/`。以下旧目录、PID 和状态说明保留为历史，换机以交接文件为准。
+
+附件覆盖范围与实际上传状态见 [ARTIFACTS.json](handoff/ARTIFACTS.json)。不要用 10 月 18 日的历史安装包替代本次源码。
+
+## 当前工作区入口
+
+推荐从 `/home/bonvoyage/Desktop/rebot-b601-doc-replica` 工作。RS 数字孪生工程位于
+`ReBot_Arm_DigitalTwin_RS/`，先阅读：
+
+- [RS 快速启动指南](ReBot_Arm_DigitalTwin_RS/快速启动指南.md)
+- [连续坐标与控制平滑改进](ReBot_Arm_DigitalTwin_RS/docs/连续坐标与控制平滑_2026-10-16.md)
+- [十项需求与扩展实施清单](ReBot_Arm_DigitalTwin_RS/docs/需求与扩展实施清单_2026-10-16.md)
+- [新版统一控制与相机对照：坐标、键盘、手柄](ReBot_Arm_DigitalTwin_RS/docs/统一控制与相机对照.md)
+- [RS 文件说明](ReBot_Arm_DigitalTwin_RS/docs/文件说明.md)
+- [RS 工程 README](ReBot_Arm_DigitalTwin_RS/README.md)
+- [ROS 2 中文说明](ReBot_Arm_DigitalTwin_RS/rebotarm_ros2_RS/README_zh.md)
+- [Web Simulator 说明](ReBot_Arm_DigitalTwin_RS/reBotArm_simulator-RS/README.md)
+
+一键启动安全仿真：
+
+```bash
+cd /home/bonvoyage/Desktop/rebot-b601-doc-replica/ReBot_Arm_DigitalTwin_RS
+./rebotarm start all
+```
+
 当前可以执行多步骤物理动作程序：抓取、抬升、搬运、放置并抓回原位。支持 Python / JSON 编排、暂停继续、取消、仿真反馈判定与任务记录。已整合本地 Studio 和实机参数读取；仿真轨迹驱动实机尚待接入与验收。
 
 - **[项目重启指南：日常启动、实机连接、排障与当前进度](docs/项目重启指南.md)**

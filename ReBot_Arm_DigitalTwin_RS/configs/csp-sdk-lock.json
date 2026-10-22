@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "path": "rebotarm_ros2_RS/third_party/reBotArm_control_py_csp",
+  "url": "https://github.com/Seeed-Projects/reBotArm_control_py.git",
+  "commit": "6415d43130d1e143c70dc106096a857ac5556f81"
+}

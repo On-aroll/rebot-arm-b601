@@ -46,3 +46,18 @@ Thumbs.db
 *.token
 *.pem
 *.key
+
+# Cross-device source snapshot. Runtime output archives live under handoff/evidence.
+**/outputs/
+**/build/
+**/install/
+**/log/
+**/node_modules/
+**/.venv/
+**/.env
+**/.env.*
+!**/.env.example
+**/.tools/
+**/.state/
+**/.certs/
+handoff/release-assets/

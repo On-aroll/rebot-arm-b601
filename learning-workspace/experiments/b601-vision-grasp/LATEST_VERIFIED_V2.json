@@ -1,0 +1,22 @@
+{
+  "version": "V2",
+  "domain": "simulation",
+  "hardware_executable": false,
+  "evaluation_run": "outputs/goal-fragment-home-v2-candidate-01",
+  "report": "GOAL_V2_REPORT.md",
+  "policy_checkpoint": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/versions/V2/models/residual.pt",
+  "policy_sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+  "perception_checkpoint": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/versions/V2/models/perception.pt",
+  "perception_sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+  "runtime_directory": "versions/V2",
+  "runtime_manifest": "versions/V2/release_manifest.json",
+  "runtime_manifest_sha256": "1a1c4f3cb4461bafcbd2b6f7dd12bbe066219591cf1309939e8feb1b11062a51",
+  "feedback_config": "versions/V2/feedback_config.json",
+  "observation_mode": "feedback",
+  "task_successes": 59,
+  "task_trials": 60,
+  "blocks": {"static": {"successes": 29, "trials": 30}, "disturbed": {"successes": 30, "trials": 30}},
+  "audit_passed": true,
+  "previous_verified": "LATEST_VERIFIED_V1.json",
+  "run_command": "./verified_task.sh --goal B"
+}

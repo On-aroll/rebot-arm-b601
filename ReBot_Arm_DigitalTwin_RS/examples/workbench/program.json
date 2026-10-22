@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "robot_model": "b601_rs",
+  "base_frame": "base_link",
+  "calibration_id": "rs-identity-v1",
+  "units": {
+    "position": "m",
+    "angle": "rad",
+    "time": "s"
+  },
+  "name": "导入示例：等待1秒",
+  "steps": [
+    {
+      "type": "wait",
+      "seconds": 1
+    }
+  ]
+}

@@ -1,0 +1,476 @@
+{
+  "all_archives_verified": true,
+  "archive_count": 94,
+  "archives": [
+    {
+      "archive": "handoff/evidence/deployment-validation.tar.zst",
+      "files": 20,
+      "sha256": "3fe9525f95ba7351f75efa44154a6aaf1bda4f9587acf2e608cfe5d3f4b90632"
+    },
+    {
+      "archive": "handoff/evidence/hardware-history.tar.zst",
+      "files": 215,
+      "sha256": "184a8f35e397196e4153b532525f61835c0aa3cf7f500b89750f4c23eb64dca1"
+    },
+    {
+      "archive": "handoff/evidence/simulation-records.tar.zst",
+      "files": 4982,
+      "sha256": "c5f1aac17f4cacc0817c629bca7f9e0dc6a1ad094f2fa488053379adaae60cd4"
+    },
+    {
+      "archive": "handoff/release-assets/main-outputs.tar.zst",
+      "files": 1267,
+      "sha256": "46a3828cd2d7f7ce09fdd9c6774429bd00735546af4237b14729c1961372997b"
+    },
+    {
+      "archive": "handoff/release-assets/sim-common-seed-verification.tar.zst",
+      "files": 156,
+      "sha256": "012b363dd7f3d75d3aceea7ce25cfbcd5a4db546ffcc9bdd49d4fdc9dece8d45"
+    },
+    {
+      "archive": "handoff/release-assets/sim-component-geometry-development-01.tar.zst",
+      "files": 26,
+      "sha256": "7b5f5dcb5aa54bd5dcf1bb73e9089f91dc83eacc59a93d71833273e1ff3a4a33"
+    },
+    {
+      "archive": "handoff/release-assets/sim-confidence-gate-development-01.tar.zst",
+      "files": 22,
+      "sha256": "5ed7a8c6dbeb3dbdcd425bdf7beedbefa8aa4d2b362420622d8225ed7077cdf1"
+    },
+    {
+      "archive": "handoff/release-assets/sim-feedback-development-smoke-01.tar.zst",
+      "files": 29,
+      "sha256": "be3342306ea1f7f0c98049f0251f8b5d75b51925a5ee72832f86e59c3156faae"
+    },
+    {
+      "archive": "handoff/release-assets/sim-feedback-development-smoke-02.tar.zst",
+      "files": 28,
+      "sha256": "fcfec88e2282967fbc00fe357ade0a4e8152aac7085146afbc51d0eebec803f0"
+    },
+    {
+      "archive": "handoff/release-assets/sim-feedback-development-smoke-03.tar.zst",
+      "files": 28,
+      "sha256": "379b5d7729c156c059069c5090717297c9d4668b0c0fc707f063136ef9baaa7d"
+    },
+    {
+      "archive": "handoff/release-assets/sim-feedback-development-smoke-04.tar.zst",
+      "files": 29,
+      "sha256": "a33138f47beab7b60a722878b6ceff8a8ec505137588be8506c9061db47c7e33"
+    },
+    {
+      "archive": "handoff/release-assets/sim-feedback-gate-development-01.tar.zst",
+      "files": 462,
+      "sha256": "d5c1810e34a7b78d937f6eaa78de4adecd366a5335dfb9c3219d9f9a9ad976db"
+    },
+    {
+      "archive": "handoff/release-assets/sim-feedback-gate-validation-02.tar.zst",
+      "files": 474,
+      "sha256": "9c1f53712c9a01b01ff0cf79aa02b88ddf3ea63b0934881616d2ad95bf62db2e"
+    },
+    {
+      "archive": "handoff/release-assets/sim-first-training.tar.zst",
+      "files": 96,
+      "sha256": "d82139407778370ca0b20091d5b1315d2b7685790a5a35b26513b3793c069470"
+    },
+    {
+      "archive": "handoff/release-assets/sim-force-development-01.tar.zst",
+      "files": 225,
+      "sha256": "5759e87c2756d3e338e84e84679bde5d9cfe94a6dda750af973d85974c25e5ce"
+    },
+    {
+      "archive": "handoff/release-assets/sim-fragment-home-development-01.tar.zst",
+      "files": 542,
+      "sha256": "2565322bed6087f4db9bbdd5b52d5baf9b24eb9c3d9ecc90ceea2cc057944df9"
+    },
+    {
+      "archive": "handoff/release-assets/sim-fragment-home-protocol-01.tar.zst",
+      "files": 2,
+      "sha256": "a791db55a566527b4ef80cec4f574114261565f1227983d1d9f7f4f89434b917"
+    },
+    {
+      "archive": "handoff/release-assets/sim-fragment-known-development-01.tar.zst",
+      "files": 76,
+      "sha256": "0ec64b478c808e5a05c710bff5300530ce023a1320aad648dc9c98ba1f0402d9"
+    },
+    {
+      "archive": "handoff/release-assets/sim-fragment-regression-11100009.tar.zst",
+      "files": 34,
+      "sha256": "35daf1eacb0aeb057548f03afb1a06977529fcfffe6017445be177eb67d72254"
+    },
+    {
+      "archive": "handoff/release-assets/sim-fragment-regression-16400002.tar.zst",
+      "files": 35,
+      "sha256": "29bc78d1fd35470d7fe8cf7f142d08772a95fef2dc124e9a3d2699a32a9f7cd6"
+    },
+    {
+      "archive": "handoff/release-assets/sim-fragment075-regression-11100009.tar.zst",
+      "files": 34,
+      "sha256": "244d3aac5499d5dbcabe48c5e4176fa42734a99d122e27ca472085c2fc7b4569"
+    },
+    {
+      "archive": "handoff/release-assets/sim-geometry-decoder-parity-01.tar.zst",
+      "files": 22,
+      "sha256": "bae8bfc9dd88de76b9d2c5e0d557fa3b24c70dcb433b6ddf819f767b4af27b76"
+    },
+    {
+      "archive": "handoff/release-assets/sim-geometry-decoder-parity-02.tar.zst",
+      "files": 22,
+      "sha256": "f7874a4adcc907f2cd0f878bdc44fdc8fa488d314fa491988a7c420439abf337"
+    },
+    {
+      "archive": "handoff/release-assets/sim-geometry-fallback-development-01.tar.zst",
+      "files": 532,
+      "sha256": "6712fe33e9e964eabe402c5ca9a84d30aaa9ad625c8295a9c12db3a005a01236"
+    },
+    {
+      "archive": "handoff/release-assets/sim-geometry-fallback-images-development-01.tar.zst",
+      "files": 23,
+      "sha256": "a418d9cf84832b1fe78002ead0f898c85fd66c0e162f396c157319cd1a582709"
+    },
+    {
+      "archive": "handoff/release-assets/sim-geometry-fallback-known-development-01.tar.zst",
+      "files": 110,
+      "sha256": "7658f0cedbd75da41519f9b6687dfbe28f0ed310e1bbea854802682518b71622"
+    },
+    {
+      "archive": "handoff/release-assets/sim-geometry-fallback-protocol-01.tar.zst",
+      "files": 2,
+      "sha256": "87217120a12ac162705e638546276b38ed6b470593b92831e0496358955caf58"
+    },
+    {
+      "archive": "handoff/release-assets/sim-geometry-known-development-01.tar.zst",
+      "files": 262,
+      "sha256": "10adaf2350c4c6ca00c5b92080e9e49c160ffaba8dc44175add64ccb952cc4a5"
+    },
+    {
+      "archive": "handoff/release-assets/sim-geometry-policy-images-development-01.tar.zst",
+      "files": 23,
+      "sha256": "6d3e9cb25d88d07c4aa96b51f8e7759860180975802d731eac3f1e2ab53747bb"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-development-A.tar.zst",
+      "files": 20,
+      "sha256": "f4424c178bc68656b016ca5d5f2cc646d7df7cc73cf92e246fe7595b97cadd77"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-development-B.tar.zst",
+      "files": 20,
+      "sha256": "312842d0c179da786b969833bcd65bb948e5c06f76b432b66a3b1edc7c43a497"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-development-C.tar.zst",
+      "files": 20,
+      "sha256": "ec9e4ad9408367e05c6246bcd2322efdddb32d7e89ecf144f87c010e7149f7ba"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-development-recovery.tar.zst",
+      "files": 21,
+      "sha256": "a33d09dfe7bfb5b102214b0c2b4a1c49272324d2f18f88ff7c853a7c0112d9cb"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-egl-coverage-v2-candidate-02.tar.zst",
+      "files": 1831,
+      "sha256": "e01f14b6a77352d9b76208b6cbe0b3ce4a40afd41d0687277e177c1883b8d547"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-feedback-v2-candidate-01.tar.zst",
+      "files": 1191,
+      "sha256": "ca3d2741aebc154fcb855ecfc7ef85edbfa49be6add2376c72a99947e6ae5109"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-fragment-home-v2-candidate-01.tar.zst",
+      "files": 2264,
+      "sha256": "0bd1993f038ec885199287c3d626c8db3799365f0d610ccc7578f9f6ed1ca55f"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-geometry-fallback-v3-candidate-01.tar.zst",
+      "files": 2251,
+      "sha256": "597e905e0d0eba65460aa6d301c7d0b2081bdbdcc193f74118b1f653c5c71552"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-image-residual-v4-candidate-01.tar.zst",
+      "files": 2250,
+      "sha256": "491143bb90c676b7143645f9bbb3c079709305165d5b5a1fbe695b08affdde7c"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-multiview-v2-candidate-01.tar.zst",
+      "files": 1828,
+      "sha256": "c29c4d4ae2e051f6e1123f9705fb10d1facfda9ef39ed5acaa8d1eb7c0ea51a2"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-policy-fragment-egl-01.tar.zst",
+      "files": 26,
+      "sha256": "819649fb1a69af2832ab40f2e9d590cbc39886baf2fb109e122176a3b2c63699"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-policy-geometry050-01.tar.zst",
+      "files": 26,
+      "sha256": "7ec797d0d7404b83a53aff437676f23081517db2526c98a7e0426f91baa7154c"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-policy-geometry050-fallback-01.tar.zst",
+      "files": 26,
+      "sha256": "29de7ac11b3f7c5eda97df688b2913b712910874fe566e55b5939da3155adb6d"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-policy-geometry055-01.tar.zst",
+      "files": 26,
+      "sha256": "fbf1e99815fccf1ee43e328246cfa164bc741e89ff2cf361547e9cbfbc6d4707"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-policy-multiview-01.tar.zst",
+      "files": 24,
+      "sha256": "336c9a194c0659500adfd5b98def3c99dad7468fad70b66627f935d21ca2d853"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-policy-multiview-egl-01.tar.zst",
+      "files": 25,
+      "sha256": "9d4ccd3447d3b777e2f4af8d0455ae8b59c20832aca0d23f70d93d0fcffa8f0a"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-policy-v0.tar.zst",
+      "files": 16,
+      "sha256": "3ea2520867aba29087a89a50674a485ebd0c035047cbf5cecccad00514161ea4"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-policy-v1.tar.zst",
+      "files": 16,
+      "sha256": "577f3dca7467a1dbc1ff6e137425a40cb99d98be0a93e5f8ce349744a2a0cc60"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-policy-v2.tar.zst",
+      "files": 19,
+      "sha256": "2bbaee81971a99cdf92e89d79b7f25b6221398cdba10736814441031cc5c7c10"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-v0-evaluation.tar.zst",
+      "files": 352,
+      "sha256": "4a43da4d99c0d6f0f9536caa0663433d708e87b602dc6ff3b2f6896782cb48a6"
+    },
+    {
+      "archive": "handoff/release-assets/sim-goal-v1-evaluation.tar.zst",
+      "files": 508,
+      "sha256": "a8bc18b094a215cec54fc1c07019f60474f6da53e7c32a32d628150a39832321"
+    },
+    {
+      "archive": "handoff/release-assets/sim-home-first-development-01.tar.zst",
+      "files": 62,
+      "sha256": "f50436a7b1d678668e040eda7a551d51d7a11505adc90100918b082f7d9da41d"
+    },
+    {
+      "archive": "handoff/release-assets/sim-home-first-development-02.tar.zst",
+      "files": 520,
+      "sha256": "f2e204edb21d82e8efdd82e920e45ed2221c272e5d1ad8002f59211a68b36a89"
+    },
+    {
+      "archive": "handoff/release-assets/sim-home-first-known-development-01.tar.zst",
+      "files": 75,
+      "sha256": "1879b49554d924305e8e5592ca2e308d431a8934b0ddec63c4097238fa3fb1bf"
+    },
+    {
+      "archive": "handoff/release-assets/sim-home-first-regression-11100009.tar.zst",
+      "files": 34,
+      "sha256": "b7cb930269ef0708fa3095dd8cd803635678c4d04cf7489897df5490183dddea"
+    },
+    {
+      "archive": "handoff/release-assets/sim-home-refresh-development-01.tar.zst",
+      "files": 705,
+      "sha256": "1f0f1c5b5fb379e9c8354ec838d73ec10a3529c8074c9c8e2907f5ba5079f010"
+    },
+    {
+      "archive": "handoff/release-assets/sim-home-view-development-01.tar.zst",
+      "files": 193,
+      "sha256": "11dfa570e238640a355f089ca450bb7c64f186eb395f41a41d36523e5fa3b62a"
+    },
+    {
+      "archive": "handoff/release-assets/sim-image-residual-development-01.tar.zst",
+      "files": 32,
+      "sha256": "decdb3070474bd04bdaf23f09ffd155cf7cac0bc3b287cc173ca053b01cb312b"
+    },
+    {
+      "archive": "handoff/release-assets/sim-image-residual-known-tasks-01.tar.zst",
+      "files": 239,
+      "sha256": "ab9f736b6458e9f1cb6659ed3d965e886b63ee34f74d4d25a098c908b0614aae"
+    },
+    {
+      "archive": "handoff/release-assets/sim-image-residual-known-view-review-01.tar.zst",
+      "files": 28,
+      "sha256": "f17e68f66f0869d2d6c8a6c3e00f0dd7f15de77c58cc70933cfbaff44f0e5e18"
+    },
+    {
+      "archive": "handoff/release-assets/sim-image-residual-task-development-01.tar.zst",
+      "files": 535,
+      "sha256": "5437afd816449e9abe4cfe2a511e9a3c4b62372d0aa1af1c6d870aed3a00cde6"
+    },
+    {
+      "archive": "handoff/release-assets/sim-initial-visibility-development-01.tar.zst",
+      "files": 128,
+      "sha256": "6ddb395a34fcdde41aa8ae618415a9c723e0e294291a0e996f1c95fb5718a91b"
+    },
+    {
+      "archive": "handoff/release-assets/sim-low-coverage-development-01.tar.zst",
+      "files": 38,
+      "sha256": "b36e73e923b11694be4a086090049d5466abc530a99c83812060c00a96483cd5"
+    },
+    {
+      "archive": "handoff/release-assets/sim-low-coverage-egl-development-02.tar.zst",
+      "files": 78,
+      "sha256": "f822c4614b5aef6300b260fd97cef7540db94bc346573aa6e64b5c83091a45bb"
+    },
+    {
+      "archive": "handoff/release-assets/sim-low-coverage-glfw-development-02.tar.zst",
+      "files": 197,
+      "sha256": "4e6d23fe7e25a0fe167ee9608fc613e5962a857f8e47cc96f4ebc2e4fba78ab6"
+    },
+    {
+      "archive": "handoff/release-assets/sim-mask-gate-development-01.tar.zst",
+      "files": 22,
+      "sha256": "a25bd0854299fab7d5bafb8679fb6da600e6afc1250bea8cbff3749c8b90c279"
+    },
+    {
+      "archive": "handoff/release-assets/sim-multiview-development-01.tar.zst",
+      "files": 457,
+      "sha256": "28964c3292f39b0e0ade6e6dd664107bef744b82b60b6821f003f3d707592905"
+    },
+    {
+      "archive": "handoff/release-assets/sim-multiview-egl-development-02.tar.zst",
+      "files": 445,
+      "sha256": "c77e555029ba42cc0e5af89877295b7b3b148221a91de82ee71d30a4deb511ac"
+    },
+    {
+      "archive": "handoff/release-assets/sim-negative-mask-development-01.tar.zst",
+      "files": 28,
+      "sha256": "458c20f91cccb5a39dd95c78f5a090c5a82a1459a4d55ea392876e814d0b6e4e"
+    },
+    {
+      "archive": "handoff/release-assets/sim-observation-images-01.tar.zst",
+      "files": 24,
+      "sha256": "58ab8f6d192f05b2c3d7266c11162e7e7803bd0d894d3d8d1a24a3489e29c2c6"
+    },
+    {
+      "archive": "handoff/release-assets/sim-observation-images-egl-01.tar.zst",
+      "files": 28,
+      "sha256": "2134d92a61f09f32e81c395b5b28bf45e878bede995297d13c3318984dc086af"
+    },
+    {
+      "archive": "handoff/release-assets/sim-oracle-0.tar.zst",
+      "files": 5,
+      "sha256": "2271fd49197f6dfd473270a8d2ea931c6ac2c134133cc1f92afe25413d9a84b4"
+    },
+    {
+      "archive": "handoff/release-assets/sim-oracle-1.tar.zst",
+      "files": 7,
+      "sha256": "7343f63be0f2be5b032b9693870d7d98d61336945f1158d3c83190ab9e2f1e19"
+    },
+    {
+      "archive": "handoff/release-assets/sim-quality-risk-diagnostic-01.tar.zst",
+      "files": 4,
+      "sha256": "0310a8491a91317a50018c7ce1ce930bc8c013dacab8572a94c0aa7686e2a902"
+    },
+    {
+      "archive": "handoff/release-assets/sim-relative-view-development-01.tar.zst",
+      "files": 318,
+      "sha256": "f2b79afce7a3e2096e64462ac29b91c1c67f7298201b92c4a0d8f01c3f36833c"
+    },
+    {
+      "archive": "handoff/release-assets/sim-resume-smoke.tar.zst",
+      "files": 17,
+      "sha256": "b1850766f55e5add0488bbcd4ad90e52839a5d8af31edacac624def5e2459288"
+    },
+    {
+      "archive": "handoff/release-assets/sim-risk-observation-development-01.tar.zst",
+      "files": 33,
+      "sha256": "9eb8d90d4415a7c2c03e5a98c93c630bf683fdff53cd50f373aa64f6808479ad"
+    },
+    {
+      "archive": "handoff/release-assets/sim-risk-observation-model-review-01.tar.zst",
+      "files": 30,
+      "sha256": "bbfd5c3103f5b1e6173d893ecc32a1635800008e74a88f30f80ffa2f5f38efb5"
+    },
+    {
+      "archive": "handoff/release-assets/sim-risk-observation-smoke-01.tar.zst",
+      "files": 35,
+      "sha256": "6dfea00cf99b5b6bf7d865d932d41a6fd46ef9e7743d4e3ccc81b7c4f54ce23c"
+    },
+    {
+      "archive": "handoff/release-assets/sim-self-visibility-known-development-01.tar.zst",
+      "files": 201,
+      "sha256": "a0e0dc20313bcb6fe18dd6478b9852e54f3726b46b25a7bef14c868d0c2e0bb0"
+    },
+    {
+      "archive": "handoff/release-assets/sim-v2-frozen-release-B.tar.zst",
+      "files": 34,
+      "sha256": "782753886c3dedf66b4468f72f15c172b19090971bd89ce6a15aacf897e52510"
+    },
+    {
+      "archive": "handoff/release-assets/sim-v2-verified-entry-C.tar.zst",
+      "files": 34,
+      "sha256": "d17d8c834448fbf52e370225df150f9522201f17d2b55a71e3ba0f7300682dc2"
+    },
+    {
+      "archive": "handoff/release-assets/sim-v3-frozen-release-B.tar.zst",
+      "files": 34,
+      "sha256": "57af103c054ab1e529d740379bf1452d16c4e871c81faa7e225053c2991e1dc6"
+    },
+    {
+      "archive": "handoff/release-assets/sim-v3-verified-entry-C.tar.zst",
+      "files": 34,
+      "sha256": "f6a6142951a96c01df1a27c90f5df1d4a529d6bbfbacea052c6cf4aa3831c3ed"
+    },
+    {
+      "archive": "handoff/release-assets/sim-viewpoint-development-01.tar.zst",
+      "files": 65,
+      "sha256": "ed8a4daf307ecb62f36ac8e5a46714e282f29dd62dcfef86be41ca5458c7bb30"
+    },
+    {
+      "archive": "handoff/release-assets/sim-vision-fragment-egl-01.tar.zst",
+      "files": 23,
+      "sha256": "ed8eaaa7335c8a098761469287124e59dbcc52b23b776daf55f334c271cfa402"
+    },
+    {
+      "archive": "handoff/release-assets/sim-vision-geometry050-01.tar.zst",
+      "files": 23,
+      "sha256": "76ad0e63c20938b82d5b7b37707745ab7fce20cc11beca1b52096626deac510e"
+    },
+    {
+      "archive": "handoff/release-assets/sim-vision-geometry050-fallback-01.tar.zst",
+      "files": 23,
+      "sha256": "1c3b04503190f64c2f7dd884bd775adb757f073fda0a79933ff2dccd308b0da3"
+    },
+    {
+      "archive": "handoff/release-assets/sim-vision-geometry055-01.tar.zst",
+      "files": 23,
+      "sha256": "d2d6611abccaf4768cff51936e429659c8cd20f55566e818901652a273737751"
+    },
+    {
+      "archive": "handoff/release-assets/sim-vision-iteration-01.tar.zst",
+      "files": 22,
+      "sha256": "4344221fd951ec6aca71a321ba2374434c5c77412a52e147b581f3b104e41e2e"
+    },
+    {
+      "archive": "handoff/release-assets/sim-vision-iteration-02.tar.zst",
+      "files": 22,
+      "sha256": "f1b692bbb7c9aaa6bc68423c23221079be2dd7852161bfee0d5ad3378f719f8a"
+    },
+    {
+      "archive": "handoff/release-assets/sim-vision-iteration-03.tar.zst",
+      "files": 24,
+      "sha256": "b33052f9a13960b3173f79af69bdd6eb41f9e4b8d4c391697b0e6160105e2a23"
+    },
+    {
+      "archive": "handoff/release-assets/sim-vision-multiview-01.tar.zst",
+      "files": 25,
+      "sha256": "bf930c0fad3e1e15fd50f9d9ffff42ffa86d9fbdbc1647088bd496ac34f43ad6"
+    },
+    {
+      "archive": "handoff/release-assets/sim-vision-multiview-egl-01.tar.zst",
+      "files": 26,
+      "sha256": "786c43f1f880159eef4c36d39cd0a81ba8d07384061b331b1921ebdc8b99325e"
+    },
+    {
+      "archive": "handoff/release-assets/sim-visual-risk-development-01.tar.zst",
+      "files": 42,
+      "sha256": "5637ac82d6712c9251bc158355c9f073471a6a32dc67e16e3ab90f0a3e05f5a0"
+    }
+  ]
+}

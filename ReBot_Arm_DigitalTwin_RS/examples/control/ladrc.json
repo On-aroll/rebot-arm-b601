@@ -1,0 +1,14 @@
+{
+  "schema": "b601-controller/1.0",
+  "engine": "ladrc",
+  "name": "ladrc 初始参数",
+  "endpoint": "",
+  "rate_hz": 10.0,
+  "output": "joint_velocity",
+  "parameters": {
+    "control_bandwidth": 0.6,
+    "observer_bandwidth": 3.0,
+    "input_gain": 1.0,
+    "disturbance_limit": 0.03
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "b601-controller/1.0",
+  "engine": "mpc",
+  "name": "mpc 初始参数",
+  "endpoint": "",
+  "rate_hz": 10.0,
+  "output": "joint_velocity",
+  "parameters": {
+    "horizon": 12,
+    "position_weight": 1.0,
+    "velocity_weight": 0.05,
+    "delta_weight": 0.1
+  }
+}

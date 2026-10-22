@@ -1,0 +1,41 @@
+{
+  "robot": {
+    "type": "seeed_b601_rs_follower",
+    "port": "can0",
+    "id": "follower1",
+    "can_adapter": "socketcan",
+    "max_relative_target": 5.0
+  },
+  "teleop": {
+    "type": "rebot_arm_102_leader",
+    "port": "/dev/ttyUSB0",
+    "id": "leader1"
+  },
+  "cameras": {
+    "front": {
+      "type": "opencv",
+      "index_or_path": 0,
+      "width": 640,
+      "height": 480,
+      "fps": 15,
+      "fourcc": "MJPG"
+    }
+  },
+  "dataset": {
+    "repo_id": "local/rebot_pick_cube",
+    "root": "data/datasets/rebot_pick_cube",
+    "task": "Pick up the black cube and put it in the box",
+    "fps": 15,
+    "num_episodes": 50,
+    "episode_time_s": 30,
+    "reset_time_s": 15
+  },
+  "training": {
+    "device": "cpu",
+    "steps": 20000,
+    "batch_size": 2,
+    "num_workers": 0,
+    "chunk_size": 25
+  },
+  "display_data": false
+}

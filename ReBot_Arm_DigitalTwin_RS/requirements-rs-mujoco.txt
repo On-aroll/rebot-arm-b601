@@ -1,0 +1,6 @@
+mujoco>=3.10,<4
+numpy>=2.3,<3; python_version >= "3.11"
+numpy>=2.1,<2.3; python_version < "3.11"
+scipy>=1.16,<2; python_version >= "3.11"
+scipy>=1.15,<1.16; python_version < "3.11"
+fastmcp>=3.4,<4

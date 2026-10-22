@@ -1,0 +1,26 @@
+name: Linux software checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  cpu:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Check scripts and release boundaries
+        run: |
+          bash -n install.sh robotctl scripts/system_deps.sh
+          python3 -m unittest discover -s tests -v
+          python3 scripts/build_bundle.py
+          cd dist && sha256sum -c SHA256SUMS
+      - name: Install dependencies and test real ACT training/inference
+        run: bash install.sh

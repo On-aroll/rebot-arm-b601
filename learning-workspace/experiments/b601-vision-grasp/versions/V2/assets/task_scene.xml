@@ -1,0 +1,9 @@
+<mujoco model="b601_goal_pick_place">
+  <include file="scene.xml"/>
+  <worldbody>
+    <!-- Visual task regions only: no collision geometry or object attachment. -->
+    <site name="goal_A" type="box" pos="0.42 -0.16 0.1003" size="0.06 0.06 0.0002" rgba="0.05 0.35 0.8 0.65"/>
+    <site name="goal_B" type="box" pos="0.42 0 0.1003" size="0.06 0.06 0.0002" rgba="0.05 0.65 0.3 0.65"/>
+    <site name="goal_C" type="box" pos="0.42 0.16 0.1003" size="0.06 0.06 0.0002" rgba="0.25 0.25 0.8 0.65"/>
+  </worldbody>
+</mujoco>

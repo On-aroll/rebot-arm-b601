@@ -1,0 +1,29 @@
+{
+  "purpose": "Self-geometry visibility forecasting and known-scene observation probe; not adopted or full-task controller",
+  "base_runtime": "versions/V3",
+  "V3_manifest_sha256": "bb6bebf40eb2b660f66600c5be2b41b7e13bee6529bcc042e247a363bcb1342b",
+  "source_workspace": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/variants/visual-risk-01",
+  "source_sha256": {
+    "sim.py": "22ffddc7dfa6fe1a30ac3ac6bd95400c8a489f04fc05423beb1c9d2eeb3433c3",
+    "vision.py": "b52df1cfe011a68452ede2766eef173bff4c0145bd2d093cc7e2bbc16322baf4",
+    "vision_runner.py": "d59f773f9ff028f50b4b3190193d0857ac8732c05bc09d3390b07642db3f64ba",
+    "viewpoint_probe.py": "1acb3f66c16cc99dc0280095fc881df1cd3708ddb98029be56a35d93f0f2e1ba",
+    "episode.py": "bd106ea6082f1d77cb059b651c875fa1b057732f1930532ab4fca0ab5d3f659f",
+    "policy.py": "f4244ff1302a62b1209c4f4e3151082449892fe355b9fdd1de6260cf609b3e61",
+    "task.py": "4bb7754fe203c3927994518ce76078459cacb96ca671c30b3d5d302c7da3b6de",
+    "feedback.py": "3ef857b72e479bbb74fcf1e6aa6663c2c79a4f1f5e459471e2dfaaca98fa45ae",
+    "feedback_runner.py": "1884fa17062c50727769030aa4b2cad3df2cd27ae5d286341d9e37c4898f5801",
+    "feedback_audit.py": "d1e3dc575c661d576a6b4d672686dd81ce3a12bc504998c989aa606c98910f80",
+    "score_audit.py": "b12c244e4a607a2f22cb172fbc0985884b6400a2e9ad92e935a280bde6b2bc04",
+    "task_runner.py": "09ebc1ab706ef1e8f95691add04c9b48f8aa3e728823f329552a0dacb05c39dc",
+    "task_audit.py": "36872d8d64a331cae2197a5fffe945ef88c1a5839582447d0b3a1d6bf16ff9b6",
+    "demo_audit.py": "73199546c8af9c945059ce018413fbbd59ad1cbf670468e2a574092269a9a3be",
+    "task.sh": "d40bdd5f6a401e58556c30b263cf564c959b718dd5fcc3ed6d7b3e14b4c5e327",
+    "image_residual.py": "d72790ad662cbcf529c6e7b2363f1fcb6c2bdf6345318e1b5fcd138f39b16557",
+    "audit_frozen.py": "c172e46f0edd012d86fb2b60a5c120c48b533a771b62884fcb19b29a2c543871",
+    "AGENTS.md": "4188e5ecd782ea4edb3787d8d3428be5698ada4201f15be0a63b87766f90c760",
+    "requirements.lock": "e6bed8c0b90ac85ce47c55f3d6ee50de9531d6bbb09ee0a0e4cd97e13a8254fa"
+  },
+  "interface_equivalence_evidence": "outputs/image-residual-known-tasks-01: all9 frozenV3 exactphysical/action/score/RGBD references, only added frame-passing interface; V3scalar ignores frame",
+  "hardware_executable": false
+}

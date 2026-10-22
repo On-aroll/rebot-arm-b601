@@ -1,0 +1,43 @@
+{
+  "schema": "b601-multiview-residual-training-v1",
+  "hardware_executable": false,
+  "training": {
+    "images": 1792,
+    "unique_scene_seeds": 1280,
+    "training_examples": 1466,
+    "excluded_images": 326,
+    "path": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/variants/home-first-01/outputs/goal-policy-fragment-egl-01/training.npz",
+    "source_images": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/outputs/observation-images-egl-01/training.npz",
+    "source_images_sha256": "19bc570f868fef38635ed29984e12b1d7eaa971bd307c80ba46ae2bea798a355"
+  },
+  "validation": {
+    "images": 640,
+    "unique_scene_seeds": 384,
+    "training_examples": 519,
+    "excluded_images": 121,
+    "path": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/variants/home-first-01/outputs/goal-policy-fragment-egl-01/validation.npz",
+    "source_images": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/outputs/observation-images-egl-01/validation.npz",
+    "source_images_sha256": "ad6f98964257dc21214db033e22dfcd95090da74458e4f403d3d7c4fa3647eb2"
+  },
+  "metrics": {
+    "parameters": 1443,
+    "selected_epoch": 287,
+    "validation_baseline": {
+      "mean_mm": 1.6455894708633423,
+      "median_mm": 1.077743649482727,
+      "p95_mm": 5.768064975738525,
+      "samples": 519
+    },
+    "validation_policy": {
+      "mean_mm": 1.3760533332824707,
+      "median_mm": 0.9026411771774292,
+      "p95_mm": 4.771631717681885,
+      "samples": 519
+    },
+    "epochs": 300,
+    "training_examples": 1466
+  },
+  "checkpoint_sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+  "perception_sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+  "interpretation": "Image-supervised residual candidate; requires independent physical full-task evaluation."
+}

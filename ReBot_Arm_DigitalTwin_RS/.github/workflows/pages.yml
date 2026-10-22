@@ -1,0 +1,50 @@
+name: Deploy WASM demo to GitHub Pages
+
+on:
+  push:
+    branches: [main, feat/web-mujoco-m1]
+    paths:
+      - 'web_mujoco/**'
+      - '.github/workflows/pages.yml'
+      - 'rebotarm_ros2_RS/src/rebotarm_mujoco_rs/models/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: web_mujoco/package-lock.json
+      - name: Install and build
+        working-directory: web_mujoco
+        env:
+          GITHUB_PAGES_BASE: /${{ github.event.repository.name }}/
+        run: |
+          npm ci
+          npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web_mujoco/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

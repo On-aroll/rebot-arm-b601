@@ -1,0 +1,7 @@
+.project-exit-entry{border:1px solid #76544d;border-radius:7px;padding:8px 12px;background:#392823;color:#f0c9bb;font:inherit;cursor:pointer;white-space:nowrap}
+.project-exit-dialog{width:min(530px,calc(100% - 28px));padding:26px;border:1px solid #4d6269;border-radius:14px;background:#142127;color:#e6f0f2;font:14px/1.7 system-ui,sans-serif}
+.project-exit-dialog::backdrop{background:#03090dcc}
+.project-exit-dialog h2{margin:0 0 10px;font-size:21px}.project-exit-dialog p{color:#afc6cb}.project-exit-dialog label{display:flex;gap:10px;align-items:flex-start;margin:20px 0}.project-exit-dialog input{margin-top:6px;accent-color:#91e4c5}
+.project-exit-dialog ol{padding-left:24px;font-size:13px}.project-exit-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:20px}.project-exit-actions button{padding:9px 17px;border:1px solid #527668;border-radius:7px;background:#27483d;color:#d4f4e7;font:inherit;cursor:pointer}.project-exit-actions button:disabled{opacity:.45;cursor:not-allowed}
+.project-exit-status{white-space:pre-line;font-size:13px}.project-exit-status[data-error=true]{color:#ffd398}
+@media(max-width:760px){.project-exit-entry{font-size:12px;padding:7px}.project-exit-dialog{padding:20px}}

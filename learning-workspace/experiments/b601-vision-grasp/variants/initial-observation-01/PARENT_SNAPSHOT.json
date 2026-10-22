@@ -1,0 +1,28 @@
+{
+  "purpose": "Initial visibility diagnostic from adopted V2; V2 remains immutable",
+  "parent_runtime": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/versions/V2",
+  "parent_manifest_sha256": "1a1c4f3cb4461bafcbd2b6f7dd12bbe066219591cf1309939e8feb1b11062a51",
+  "copied_sha256": {
+    "audit_frozen.py": "fa990fc759512d2aeba8d94ca583c3f6082d84ddd879615097f0ae4b7f8dbded",
+    "demo_audit.py": "73199546c8af9c945059ce018413fbbd59ad1cbf670468e2a574092269a9a3be",
+    "episode.py": "bd106ea6082f1d77cb059b651c875fa1b057732f1930532ab4fca0ab5d3f659f",
+    "feedback.py": "3ef857b72e479bbb74fcf1e6aa6663c2c79a4f1f5e459471e2dfaaca98fa45ae",
+    "feedback_audit.py": "0aaf1d8752af4ee9a33f4bd7709da6af4eef468992b0a70a9115425bedee278f",
+    "feedback_runner.py": "1884fa17062c50727769030aa4b2cad3df2cd27ae5d286341d9e37c4898f5801",
+    "multiview_audit.py": "feb9a8fb32a1167ff26c804b9550186f1eb8d7eef372c28ec965ce37bd1616d4",
+    "multiview_runner.py": "ba47d88b21f25eaf9b9029f165c5b133d11f9397711d7751b3364bf40f0e7398",
+    "observation_data_audit.py": "f5a0f3ca234b6833ac58f0993004dee8c1d979c58836bc02330f74445dd988dd",
+    "observation_dataset.py": "1b50318c84a1d22520c6bfc811780ca7bc641972ebccea5bfa4b96d237d416ed",
+    "observation_policy.py": "9c5a5e7c2f43ede86d6c3823534bb1c67851fe2bbf53859247d87db3ab020d77",
+    "policy.py": "a04323f246dc35a8e394684cc5670fd0412aaaf630f31411738570b3849c8433",
+    "score_audit.py": "b12c244e4a607a2f22cb172fbc0985884b6400a2e9ad92e935a280bde6b2bc04",
+    "sim.py": "22ffddc7dfa6fe1a30ac3ac6bd95400c8a489f04fc05423beb1c9d2eeb3433c3",
+    "task.py": "fd636d6169b3d54ef76d58d2815cbdaba87e445192d737fbbcbb72376280ca59",
+    "task.sh": "d40bdd5f6a401e58556c30b263cf564c959b718dd5fcc3ed6d7b3e14b4c5e327",
+    "task_audit.py": "36872d8d64a331cae2197a5fffe945ef88c1a5839582447d0b3a1d6bf16ff9b6",
+    "task_runner.py": "de2d8fccd772ab77cad445df88974fecb7173247fdc0a0455a3831699984e1cd",
+    "viewpoint_probe.py": "1acb3f66c16cc99dc0280095fc881df1cd3708ddb98029be56a35d93f0f2e1ba",
+    "vision.py": "8ea18dd01545fb80ee6133e0beba92a4e7a4c84d647a847929210b1264edc202",
+    "vision_runner.py": "d59f773f9ff028f50b4b3190193d0857ac8732c05bc09d3390b07642db3f64ba"
+  }
+}

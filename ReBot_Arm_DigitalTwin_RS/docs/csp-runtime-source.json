@@ -1,0 +1,18 @@
+{
+  "source": "/home/bonvoyage/Desktop/seeed_Robotics/scripts",
+  "modules_sha256": {
+    "rebot_mit_mock": "dc78787b835a64bbe7ada350498ccf3679d72c6cc571b98e718b2a9b7304e7bd",
+    "rebot_mit_hardware": "54f9f9b1bc405136d5bf6bca5ced6d7af9aa179e8cfed009a4f75af965bd8202",
+    "rebot_seeed_transport": "444443abc9ff90e14ee049bac0b44a551460ec22f74a51e7ef8c8da456cf9e48",
+    "rebot_native_csp": "504b6fb4b51f564a48ef51720c0bf1b68cf4fa2abc50d3b6628c5fd6a6c2c924",
+    "rebot_native_xyz": "1c43b2fffff75a0f5bf8d11838824b4f75f2d9d50d9a836548130757ed4a5e99"
+  },
+  "sdk_commit": "6415d43130d1e143c70dc106096a857ac5556f81",
+  "changes": [
+    "package-relative imports",
+    "SDK path uses separately pinned local checkout",
+    "GatewayLease class extracted without old UI/API",
+    "2026-10-16: rebot_native_xyz adds pinned native-csp-twin-full-v1 profile (0.1 rad/s, 1800 s), per-mode runtime registers; original source hashes above are provenance, not current file checksums",
+    "2026-10-16: native-csp-twin-full-v3-official adds sourced speed/acceleration/jerk and drive limits, rated gravity checks, per-device speed caps; v1/v2 fingerprints and recovery preserved; source hashes above remain provenance"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "project": "Seeed-Projects/lerobot",
+  "repository": "https://github.com/Seeed-Projects/lerobot",
+  "branch_at_build": "DepthCameraSupport",
+  "commit": "fe078af31247a6144200abbfa3c2ce29d0062033",
+  "version": "0.4.4",
+  "modified": false,
+  "wheel": "lerobot-0.4.4-py3-none-any.whl",
+  "wheel_sha256": "a3bd2ea28508012401ccfc9883f5a580da44628aba757dd11653245f50d3ce5c",
+  "build_command": "uv build --wheel /path/to/Seeed-Projects/lerobot --out-dir vendor",
+  "build_date": "2026-10-18",
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,483 @@
+{
+  "scope": "B601-RS fixed pose picking, visual picking, and metal arc welding",
+  "started_date": "2026-10-18",
+  "completed_date": "2026-10-19",
+  "timezone": "Asia/Shanghai",
+  "user_choices": {
+    "camera": "compare candidates; not selected",
+    "welding": "metal arc welding"
+  },
+  "limitations": [
+    "Not a systematic review of every paper/patent/copyright record.",
+    "Selected-source review, not full reproduction or welding qualification.",
+    "Several 2025/2026 publisher pages could only be screened from publisher search abstracts.",
+    "CPCC direct access failed; university listings are not registry certification.",
+    "Pinned repository references are retrieval snapshots, not validated deployment versions."
+  ],
+  "queries": [
+    "B601 RS visual grasp official SDK YOLO OBB ROS2 YOLOE",
+    "hand eye calibration OpenCV calibrateHandEye ROS2 tf2 timestamp",
+    "GraspNet Contact-GraspNet AnyGrasp FoundationPose GraspGen",
+    "robotic weld seam extraction tracking 2025 2026 3D vision",
+    "Scan-N-Plan Tesseract Pilz LIN CIRC Ruckig",
+    "机器人 焊缝 跟踪 手眼 抓取 专利",
+    "视觉抓取 焊接机器人 软件著作权 登记号",
+    "Fronius TPS/i robot interface ISO 10218-2:2025 ISO 5817:2023"
+  ],
+  "sources": [
+    {
+      "id": "S01",
+      "kind": "official_document",
+      "title": "B601-RS Visual Grasping Demo",
+      "url": "https://wiki.seeedstudio.com/rebot_arm_b601_rs_grasping_demo/",
+      "review_depth": "document_and_source_crosscheck",
+      "project_implication": "同型号两条路线；接入感知，保留本工程执行器",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S02",
+      "kind": "github",
+      "title": "Seeed reBot-DevArm-Grasp",
+      "url": "https://github.com/Seeed-Projects/reBot-DevArm-Grasp",
+      "review_depth": "readme_and_selected_source",
+      "project_implication": "核对标定与驱动生命周期；未执行",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false,
+      "head_sha": "547faa08e5161af996892497c0aaa788401454fc",
+      "source_pin_date": "2026-10-18"
+    },
+    {
+      "id": "S03",
+      "kind": "github",
+      "title": "rebot_visual_grasp",
+      "url": "https://github.com/xiehuangbao888/rebot_visual_grasp",
+      "review_depth": "selected_source_and_package_metadata",
+      "project_implication": "核对TF/偏移/执行服务；Apache声明仅元数据",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false,
+      "head_sha": "dd28d65598deec767cf95fa45521d69b38155833",
+      "source_pin_date": "2026-10-18"
+    },
+    {
+      "id": "S04",
+      "kind": "official_document",
+      "title": "B601-RS Pinocchio and MeshCat",
+      "url": "https://wiki.seeedstudio.com/rebot_arm_b601_rs_pinocchio_meshcat/",
+      "review_depth": "official_specification_search_record",
+      "project_implication": "厂商规格不能替代本机计量",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S05",
+      "kind": "manufacturer_test",
+      "title": "B601-RS Performance and Durability Tests",
+      "url": "https://www.seeedstudio.com/blog/2026/09/09/rebot-arm-b601-rs-performance-durability-tests-payload-repeatability-teleoperation-and-gravity-compensation-2/",
+      "review_depth": "official_search_record",
+      "project_implication": "方法与指标需对照本机安装和工具复测",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S06",
+      "kind": "official_api",
+      "title": "OpenCV Camera Calibration and 3D Reconstruction",
+      "url": "https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html",
+      "review_depth": "official_api_and_source_crosscheck",
+      "project_implication": "内外参/手眼求解，需独立验证集",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S07",
+      "kind": "github",
+      "title": "easy_handeye2",
+      "url": "https://github.com/marcoesposito1988/easy_handeye2",
+      "review_depth": "readme",
+      "project_implication": "固定相机与腕部相机标定流程候选",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false,
+      "head_sha": "29bd50a7939e853d768d203d2abc61eb6e50facc",
+      "source_pin_date": "2026-10-18"
+    },
+    {
+      "id": "S08",
+      "kind": "official_document",
+      "title": "ROS 2 Jazzy tf2 and time",
+      "url": "https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Tf2/Learning-About-Tf2-And-Time-Cpp.html",
+      "review_depth": "official_documentation_reference",
+      "project_implication": "图像时刻变换，不复用移动相机静态外参",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S09",
+      "kind": "official_document",
+      "title": "Pick and Place with MoveIt Task Constructor",
+      "url": "https://moveit.picknik.ai/main/doc/tutorials/pick_and_place_with_moveit_task_constructor/pick_and_place_with_moveit_task_constructor.html",
+      "review_depth": "official_tutorial",
+      "project_implication": "任务阶段、物体附着与场景规划",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S10",
+      "kind": "conference_paper",
+      "title": "MoveIt! Task Constructor for Task-Level Motion Planning",
+      "url": "https://ieeexplore.ieee.org/document/8793898/",
+      "review_depth": "publication_metadata_and_official_tutorial",
+      "project_implication": "ICRA 2019；未声称全文复现",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S11",
+      "kind": "official_document",
+      "title": "Pilz Industrial Motion Planner",
+      "url": "https://moveit.picknik.ai/main/doc/how_to_guides/pilz_industrial_motion_planner/pilz_industrial_motion_planner.html",
+      "review_depth": "official_documentation",
+      "project_implication": "LIN/CIRC/PTP候选，主分支文档不代表Jazzy本机已验证",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S12",
+      "kind": "conference_paper",
+      "title": "Jerk-limited Real-time Trajectory Generation with Arbitrary Target States",
+      "url": "https://www.roboticsproceedings.org/rss17/p015.pdf",
+      "review_depth": "official_proceedings_search_record",
+      "project_implication": "RSS 2021；轨迹时间化不等于环境避障",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S13",
+      "kind": "official_project",
+      "title": "Scan-N-Plan Workshop",
+      "url": "https://ros-industrial-consortium.github.io/scan_n_plan_workshop/",
+      "review_depth": "official_documentation_and_repository_metadata",
+      "project_implication": "Humble/Jazzy，扫描到工具路径的架构参考",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S14",
+      "kind": "github",
+      "title": "Tesseract Motion Planning Environment",
+      "url": "https://github.com/tesseract-robotics/tesseract",
+      "review_depth": "official_project_readme_search_record",
+      "project_implication": "焊接等工艺路径规划候选，未在本机安装",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S15",
+      "kind": "github",
+      "title": "RealSense SDK librealsense",
+      "url": "https://github.com/realsenseai/librealsense",
+      "review_depth": "official_sdk_reference_from_vendor_documentation",
+      "project_implication": "相机选定后验证SDK与USB稳定性",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S16",
+      "kind": "manufacturer_spec",
+      "title": "D405 Series",
+      "url": "https://www.realsenseai.com/product-family/d405-series/",
+      "review_depth": "official_specification_search_record",
+      "project_implication": "标准D405理想距离7至50cm",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S17",
+      "kind": "github",
+      "title": "Orbbec SDK v2",
+      "url": "https://github.com/orbbec/OrbbecSDK_v2",
+      "review_depth": "official_sdk_reference_from_vendor_documentation",
+      "project_implication": "Gemini2候选驱动；未做现场数据测试",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S18",
+      "kind": "conference_paper",
+      "title": "GraspNet-1Billion",
+      "url": "https://openaccess.thecvf.com/content_CVPR_2020/html/Fang_GraspNet-1Billion_A_Large-Scale_Benchmark_for_General_Object_Grasping_CVPR_2020_paper.html",
+      "review_depth": "official_abstract_and_publication_metadata",
+      "project_implication": "CVPR2020，6D抓取基准",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S19",
+      "kind": "github",
+      "title": "GraspNet baseline",
+      "url": "https://github.com/graspnet/graspnet-baseline",
+      "review_depth": "readme_and_license",
+      "project_implication": "研究用途限制；环境与夹爪适配待复现",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false,
+      "head_sha": "280c215129f759ed8649cb4e89fc5dfee55f4f80",
+      "source_pin_date": "2026-10-18"
+    },
+    {
+      "id": "S20",
+      "kind": "conference_paper",
+      "title": "Contact-GraspNet",
+      "url": "https://elib.dlr.de/145798/",
+      "review_depth": "author_institution_publication_metadata",
+      "project_implication": "ICRA2021，杂乱场景6D候选",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S21",
+      "kind": "github",
+      "title": "Contact-GraspNet official implementation",
+      "url": "https://github.com/NVlabs/contact_graspnet",
+      "review_depth": "readme",
+      "project_implication": "取得README，未取得根LICENSE；许可未核清",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false,
+      "head_sha": "721706067cc7f7889c32afe7b4f7955eb90bd866",
+      "source_pin_date": "2026-10-18"
+    },
+    {
+      "id": "S22",
+      "kind": "journal_paper",
+      "title": "AnyGrasp",
+      "url": "https://doi.org/10.1109/TRO.2023.3281153",
+      "review_depth": "publisher_abstract_and_metadata",
+      "project_implication": "IEEE T-RO2023，不能移植论文成功率",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S23",
+      "kind": "github",
+      "title": "AnyGrasp SDK",
+      "url": "https://github.com/graspnet/anygrasp_sdk",
+      "review_depth": "readme",
+      "project_implication": "核心SDK机器授权；非全源码方案",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false,
+      "head_sha": "b8eaafc9eca7babd5208e7a5ade3c561060be4c5",
+      "source_pin_date": "2026-10-18"
+    },
+    {
+      "id": "S24",
+      "kind": "conference_project",
+      "title": "FoundationPose",
+      "url": "https://nvlabs.github.io/FoundationPose/",
+      "review_depth": "author_project_page",
+      "project_implication": "CVPR2024，物体位姿跟踪不等于抓取或焊缝生成",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S25",
+      "kind": "license",
+      "title": "FoundationPose license",
+      "url": "https://github.com/NVlabs/FoundationPose/blob/a1b694b83e633c2cb6115b9063d940a687759392/LICENSE",
+      "review_depth": "license_text",
+      "project_implication": "非商业研究/评估限制，其他组件分别核对",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S26",
+      "kind": "preprint",
+      "title": "GraspGen",
+      "url": "https://arxiv.org/abs/2507.13097",
+      "review_depth": "author_abstract_and_metadata",
+      "project_implication": "2025预印本，本轮不认定正式会议录用",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S27",
+      "kind": "github_and_license",
+      "title": "GraspGen code and license",
+      "url": "https://github.com/NVlabs/GraspGen",
+      "review_depth": "readme_and_license",
+      "project_implication": "扩散抓取候选；夹爪适配和非商业限制",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false,
+      "head_sha": "2dd8852e1be60f5f9d277fafcc621835cdf59110",
+      "source_pin_date": "2026-10-18"
+    },
+    {
+      "id": "S28",
+      "kind": "license",
+      "title": "Ultralytics LICENSE",
+      "url": "https://github.com/ultralytics/ultralytics/blob/main/LICENSE",
+      "review_depth": "license_page",
+      "project_implication": "代码/权重/商用许可逐项核查",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S29",
+      "kind": "journal_paper",
+      "title": "Self-adaptive seam detection framework for unmanned structural steel welding robots in unstructured environments",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0926580525002614",
+      "review_depth": "publisher_search_abstract_full_page_failed",
+      "project_implication": "2025；待全文和具体传感器/接头复核",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S30",
+      "kind": "journal_paper",
+      "title": "A novel weld seam extraction method with semantic segmentation and point cloud feature for irregular structure workpieces",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0736584525000419",
+      "review_depth": "publisher_search_abstract_full_page_failed",
+      "project_implication": "2025；语义与点云方向，未复现",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S31",
+      "kind": "journal_paper",
+      "title": "Automated welding seam extraction and path planning for steel box girders using 3D vision",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0926580526002116",
+      "review_depth": "publisher_search_abstract_full_page_failed",
+      "project_implication": "2026；仅近期线索，待全文",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S32",
+      "kind": "journal_paper",
+      "title": "Tracking any welding point (TAWP)",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S152661252600530X",
+      "review_depth": "publisher_search_abstract_full_page_failed",
+      "project_implication": "2026；仅近期线索，不据此认定弧光鲁棒性",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S33",
+      "kind": "manufacturer_manual",
+      "title": "Fronius TPS/i Interface Signal Descriptions",
+      "url": "https://manuals.fronius.com/html/4204260227/en-US.html",
+      "review_depth": "official_manual",
+      "project_implication": "工艺握手参考，非已选焊机型号",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S34",
+      "kind": "standard",
+      "title": "ISO 10218-2:2025",
+      "url": "https://www.iso.org/standard/73934.html",
+      "review_depth": "official_scope_metadata_only",
+      "project_implication": "机器人工作站集成范围；未取得完整付费标准",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S35",
+      "kind": "standard",
+      "title": "ISO 5817:2023",
+      "url": "https://www.iso.org/standard/80209.html",
+      "review_depth": "official_scope_metadata_only",
+      "project_implication": "材料与熔焊缺陷质量等级适用性需核实",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S36",
+      "kind": "patent",
+      "title": "CN107186708B",
+      "url": "https://patents.google.com/patent/CN107186708B/zh",
+      "review_depth": "patent_text_and_metadata",
+      "project_implication": "抓取/视觉伺服先例；未做侵权或有效性判断",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S37",
+      "kind": "patent",
+      "title": "CN109693018B",
+      "url": "https://patents.google.com/patent/CN109693018B/zh",
+      "review_depth": "patent_text_and_metadata",
+      "project_implication": "焊缝视觉跟踪/焊机联动先例；未做FTO",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S38",
+      "kind": "patent",
+      "title": "CN106312398A",
+      "url": "https://patents.google.com/patent/CN106312398A/zh",
+      "review_depth": "search_screening_only",
+      "project_implication": "焊缝识别跟踪；待同族/状态/权利要求复核",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S39",
+      "kind": "government_document",
+      "title": "CNIPA专利检索及分析系统介绍",
+      "url": "https://www.cnipa.gov.cn/art/2023/2/13/art_3166_182074.html",
+      "review_depth": "official_search_record",
+      "project_implication": "正式方案确定后使用官方系统补检",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S40",
+      "kind": "government_regulation",
+      "title": "计算机软件著作权登记办法",
+      "url": "https://www.ncac.gov.cn/xxfb/flfg/bmgz/202410/P020241015604759788122.pdf",
+      "review_depth": "official_regulation_search_record",
+      "project_implication": "登记规则依据；不代替算法公开与技术验证",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S41",
+      "kind": "copyright_public_listing",
+      "title": "天津工业大学宋丽梅公开成果",
+      "url": "https://kz.tiangong.edu.cn/2016/0616/c5028a36034/page.psp",
+      "review_depth": "university_page_and_search_record_not_registry_verified",
+      "project_implication": "2021SR1312284及2022SR1338218；未在登记中心核验",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S42",
+      "kind": "copyright_public_listing",
+      "title": "上海交通大学陈晓波公开成果",
+      "url": "https://me.sjtu.edu.cn/teacher_directory3/chenxiaobo.html",
+      "review_depth": "university_search_record_body_extraction_incomplete",
+      "project_implication": "2018SR245001及2019SR0254715，正文抽取缺段，保留待复核",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S43",
+      "kind": "conference_preprint",
+      "title": "Closing the Loop for Robotic Grasping (GG-CNN)",
+      "url": "https://arxiv.org/abs/1804.05172",
+      "review_depth": "author_abstract_search_record",
+      "project_implication": "闭环感知思想，未在本机复现",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    },
+    {
+      "id": "S44",
+      "kind": "official_project",
+      "title": "SwRI Scan-N-Plan applications",
+      "url": "https://www.swri.org/newsroom/press-releases/swri-develops-new-robotics-image-processing-tools-automate-aircraft-surface-preparation",
+      "review_depth": "official_search_record",
+      "project_implication": "工业表面处理架构参考，不当成已焊接验收案例",
+      "review_date": "2026-10-19",
+      "reproduced_on_b601": false
+    }
+  ]
+}

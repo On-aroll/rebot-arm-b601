@@ -1,0 +1,48 @@
+{
+  "schema_version": "b601-path-review-input/1.0",
+  "source": {
+    "kind": "synthetic"
+  },
+  "units": {
+    "position": "rad",
+    "translation": "m",
+    "time": "s"
+  },
+  "mode": "reference_segments",
+  "tcp_offset_m": [
+    0,
+    0,
+    0
+  ],
+  "period_s": 0.02,
+  "limits": {
+    "max_chord_error_mm": 0.1,
+    "max_orientation_deviation_deg": 1,
+    "max_joint_step_rad": 0.02,
+    "max_sample_gap_s": 0.05
+  },
+  "segments": [
+    {
+      "start_rad": [
+        0.7,
+        0.3,
+        0.4,
+        -0.1,
+        0.2,
+        0.2
+      ],
+      "goal_rad": [
+        0.9,
+        0.3,
+        0.4,
+        -0.1,
+        0.2,
+        0.2
+      ],
+      "speed_rad_s": 0.1,
+      "acceleration_rad_s2": 0.3,
+      "jerk_rad_s3": 2,
+      "minimum_duration_s": 0.5
+    }
+  ]
+}

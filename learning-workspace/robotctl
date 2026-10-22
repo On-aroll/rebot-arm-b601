@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+if [[ ! -x "$ROOT/.venv/bin/python" ]]; then
+    echo '尚未安装。请先运行：bash install.sh'
+    exit 1
+fi
+export PYTHONUNBUFFERED=1
+exec "$ROOT/.venv/bin/python" "$ROOT/scripts/robotctl.py" "$@"

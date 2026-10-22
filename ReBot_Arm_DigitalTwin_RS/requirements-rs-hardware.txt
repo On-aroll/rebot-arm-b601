@@ -1,0 +1,4 @@
+motorbridge==0.5.6
+pin==4.1.0
+meshcat>=0.3.2,<1
+ruckig==0.12.2

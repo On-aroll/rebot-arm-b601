@@ -1,0 +1,8 @@
+{
+  "version": "V3",
+  "release_manifest": "/home/bonvoyage/Desktop/1seeed_Robotics/experiments/b601-vision-grasp/versions/V3/release_manifest.json",
+  "release_manifest_sha256": "bb6bebf40eb2b660f66600c5be2b41b7e13bee6529bcc042e247a363bcb1342b",
+  "purpose": "Offline image-conditioned bounded residual development; adopted versions immutable",
+  "models_changed": false,
+  "hardware_executable": false
+}

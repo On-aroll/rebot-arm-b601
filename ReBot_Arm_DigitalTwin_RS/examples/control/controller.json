@@ -1,0 +1,8 @@
+{
+  "schema": "b601-controller/1.0",
+  "name": "本机控制算法",
+  "endpoint": "http://127.0.0.1:8089/step",
+  "rate_hz": 10,
+  "output": "joint_velocity",
+  "parameters": {"kp": 0.6}
+}

@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111211">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="reBot Arm">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>B601-RS · 机械臂操作总台</title>
+  <link rel="icon" type="image/png" href="./favicon.png">
+  <link rel="apple-touch-icon" href="./favicon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="/css/project-shutdown.css?v=20261018-exit156">
+  <link rel="stylesheet" href="./css/rebot-sim.css?v=20260813-rs-guide43">
+  <link rel="stylesheet" href="./css/leader-teleop.css?v=20261007-leader02">
+  <link rel="stylesheet" href="./css/twin-console.css?v=20261018-speed159">
+</head>
+<body>
+  <header class="twin-topbar">
+    <a class="twin-brand" href="/" aria-label="B601-RS 工作台首页"><span class="twin-logo">R</span><span><strong>B601-RS</strong><small>机械臂操作总台</small></span></a>
+    <div class="twin-top-actions">
+      <span id="twin-connection" class="twin-badge" role="status">ROS 未连接</span>
+      <button type="button" id="toolbar-toggle" aria-expanded="false" aria-controls="feature-toolbar">功能菜单</button>
+      <button type="button" data-hub-monitor="model" aria-controls="hub-monitor">模型与相机</button>
+      <button type="button" id="twin-advanced" aria-expanded="false">连接设置</button>
+      <button type="button" id="twin-suspend">暂停并保持</button>
+      <button type="button" id="twin-stop" class="twin-stop" title="撤去驱动力，悬空姿态可能下落；先确认已有支撑">失能撤力 / Esc</button>
+      <button type="button" class="project-exit-entry" data-project-exit title="结束项目并释放资源">结束项目</button>
+    </div>
+  </header>
+  <div class="console-layout">
+    <aside class="feature-sidebar" aria-label="功能工具栏">
+      <a class="startup-entry" href="/startup.html" target="_blank" rel="noopener"><span>↗</span><span><strong>项目启动台</strong><small>ROS · 接口 · 仿真 · 实机反馈</small></span></a>
+      <div class="feature-sidebar-scroll">
+        <nav class="hub-features" id="feature-toolbar" aria-label="全部功能入口">
+          <p class="toolbar-label">拖动入口调整顺序 · Alt + ↑ / ↓</p>
+        <button type="button" class="project-mode-entry" data-project-mode="motorbridge" aria-controls="motorbridge-mode-panel">
+          <span class="hub-feature-icon">MB</span><span><strong>MotorBridge 直连</strong><small>逐轴目标 · 实机直连</small></span><span class="hub-arrow">↗</span>
+        </button>
+        <button type="button" class="project-mode-entry" data-project-mode="ros" aria-controls="ros-mode-panel">
+          <span class="hub-feature-icon">ROS</span><span><strong>ROSBridge 仿真控制台</strong><small>ROS 2 · 仿真 · 任务</small></span><span class="hub-arrow">↗</span>
+        </button>
+
+          <button type="button" data-hub-system aria-controls="hub-system"><span class="hub-feature-icon">⚙</span><span><strong>连接与服务</strong><small>连接状态 / 服务检查 / 高级设置</small></span></button>
+          <button type="button" data-hub-system-section="hub-expert-start" aria-controls="hub-expert-start"><span class="hub-feature-icon">☷</span><span><strong>分步准备与接管</strong><small>选择范围 / 准备 / 接管 / 使能</small></span></button>
+          <button type="button" data-hub-system-section="hub-reset-section" aria-controls="hub-reset-section"><span class="hub-feature-icon">↻</span><span><strong>重置与维护</strong><small>重置控制 / 清理与恢复状态</small></span></button>
+          <button type="button" data-hub-mode="point"><span class="hub-feature-icon">XYZ</span><span><strong>坐标到点</strong><small>输入位置，预览后执行</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-hub-mode="keyboard"><span class="hub-feature-icon">⌨</span><span><strong>键盘 / 按钮</strong><small>空格 + 方向键，含夹爪</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-hub-mode="gamepad"><span class="hub-feature-icon">RB</span><span><strong>手柄控制</strong><small>连接手柄，按住 RB 移动</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-hub-mode="tcp"><span class="hub-feature-icon">↔</span><span><strong>拖拽末端 TCP</strong><small>打开模型，拖动末端</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-open-workbench="programs"><span class="hub-feature-icon">▶</span><span><strong>动作程序</strong><small>导入 / 程序库 / 国庆快乐</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-hub-teach><span class="hub-feature-icon">●</span><span><strong>示教录制</strong><small>记录操作，生成回放程序</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-hub-monitor="camera" aria-controls="hub-monitor"><span class="hub-feature-icon">◎</span><span><strong>相机画面</strong><small>USB / 网络 / ROS 相机</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-open-workbench="support"><span class="hub-feature-icon">⌂</span><span><strong>支撑姿态</strong><small>记录 / 预览 / 返回</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-open-workbench="controller"><span class="hub-feature-icon">ƒ</span><span><strong>控制算法与调参</strong><small>PID / LADRC / MPC 等</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-open-workbench="integrations"><span class="hub-feature-icon">◈</span><span><strong>视觉与任务规划</strong><small>识别 / 标定 / 接入规划服务</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-open-workbench="chat"><span class="hub-feature-icon">✦</span><span><strong>大模型对话</strong><small>连接模型，生成动作提案</small></span><span class="hub-arrow">↗</span></button>
+        </nav>
+      <p class="toolbar-footnote">切换功能不执行动作；连接、使能和运动仍需在对应面板中明确点击。</p>
+      </div>
+    </aside>
+  <main class="app-shell">
+    <div class="twin-workspace">
+      <section class="operation-hub" id="operation-hub" aria-labelledby="hub-title">
+        <div class="hub-heading"><div><p class="eyebrow" id="hub-project-eyebrow">ROBOT WORKSPACE</p><h1 id="hub-title">坐标到点</h1><p id="hub-project-description" class="hub-project-description">ROSBridge 仿真控制台用于 ROS 2、仿真模型、任务和路径预览；从左侧进入 MotorBridge 直连可切换到原始逐轴实机控制。</p></div><span class="hub-local" id="hub-project-local">参数 · 操作指导 · 同步画面</span></div>
+        <div class="twin-onboarding hub-startup workspace-connection" aria-label="启动与连接">
+          <div class="hub-step-card"><span class="twin-step">1</span><div><label for="twin-target">控制对象</label><select id="twin-target"><option value="hardware" selected>真实机械臂</option><option value="simulation">仿真机械臂（调试）</option></select><p class="twin-hint">启动台默认按真实机械臂连接；仿真仅用于离线调试。</p></div></div>
+          <div class="hub-step-card"><span class="twin-step">2</span><div><strong>连接机器人</strong><button type="button" id="twin-connect" class="primary-btn">连接实机反馈</button><span id="twin-service-status" class="twin-hint" role="status">连接不会使能机械臂</span></div></div>
+          <div class="hub-step-card"><span class="twin-step">3</span><div><strong>开始手动操作</strong><button type="button" id="twin-start-manual" class="primary-btn" disabled>开始仿真控制</button><p id="hub-manual-help" class="twin-hint">连接完成后点这里，从左侧选择操作方式。执行程序可直接进入「动作程序」。</p></div></div>
+        </div>
+        <div class="twin-hardware-gate hub-onsite" id="twin-hardware-gate" hidden>
+          <label><input type="checkbox" id="twin-onsite">我在现场：方向、零位、限位已核实，活动范围无障碍，能随时断电。</label>
+          <span id="twin-power-state" class="twin-badge" role="status">电机：未获取状态</span>
+          <p class="twin-hint">连接只读取反馈。点击「使能并进入手动控制」才会使能并保持当前位置；不会自动回零。悬空时要暂停，请用顶部「暂停并保持」。</p>
+          <span id="twin-session-remaining" role="status"></span>
+        </div>
+        <div class="hub-next" role="status"><span class="hub-status-dot"></span><div><strong id="hub-next-title">下一步：连接机器人</strong><p id="hub-next-detail">点击连接按钮；完整启动流程见左侧「项目启动台」。</p></div></div>
+        <p id="hub-last-message" class="hub-last-message" role="status"></p>
+
+      </section>
+      <div class="workspace-detail">
+      <div class="project-mode-workspace" id="project-mode-workspace" hidden aria-live="polite"></div>
+      <div class="workspace-forms">
+      <nav class="wb-tabs" id="workbench-tabs" hidden aria-label="工作区">
+        <button type="button" data-workbench-tab="control" aria-pressed="true">手动控制</button>
+        <button type="button" data-workbench-tab="support" aria-pressed="false">支撑姿态</button>
+        <button type="button" data-workbench-tab="controller" aria-pressed="false">控制与调参</button>
+        <button type="button" data-workbench-tab="programs" aria-pressed="false">动作程序</button>
+        <button type="button" data-workbench-tab="teach" aria-pressed="false">示教录制</button>
+        <button type="button" data-workbench-tab="integrations" aria-pressed="false">视觉与任务规划</button>
+        <button type="button" data-workbench-tab="chat" aria-pressed="false">对话任务</button>
+      </nav>
+      <section class="wb-panel" data-workbench-panel="controller" aria-label="控制算法" hidden>
+        <div class="wb-heading"><div><p class="eyebrow">FEEDBACK CONTROL</p><h2>反馈控制与调参</h2><p>反馈 → 所选控制器 → 共用轨迹平滑 → CSP / MIT执行 → 新反馈。常规手动和程序使用各功能下方的共用运动配置；这里的反馈控制器仅在显式启动后接管参考。</p></div><a class="secondary-btn" href="/api/workbench/controller-template" download="controller.py">下载 Python 接入模板</a></div>
+        <div class="wb-two-col">
+          <div class="wb-card">
+            <h3>1 · 选择控制器与参数档案</h3>
+            <div class="wb-fields"><label>反馈控制器<select id="ctrl-engine"><option value="external">外部算法 · 本机HTTP</option><option value="p">P · 比例位置伺服</option><option value="pd">PD · 比例 + 速度阻尼</option><option value="pid">PID · 比例 + 积分 + 速度阻尼</option><option value="scheduled_pid">增益调度 PID · 远快近稳</option><option value="ladrc">LADRC · 线性自抗扰</option><option value="mpc">线性 MPC · 受约束预测</option></select></label><label>已保存档案<select id="ctrl-library"><option value="">选择参数档案…</option></select></label></div>
+            <p class="twin-hint" id="ctrl-engine-hint">外部控制器通过本地服务计算。</p>
+            <label>算法名称<input id="ctrl-name" value="我的控制算法" maxlength="80"></label>
+            <label id="ctrl-endpoint-row">机器人主机上的计算服务<input id="ctrl-endpoint" type="url" value="http://127.0.0.1:8089/step" spellcheck="false"></label>
+            <div class="wb-fields"><label>输出类型<select id="ctrl-output"><option value="joint_velocity">关节速度参考 · rad/s</option><option value="joint_position">关节位置参考 · rad</option></select></label><label>请求频率 · Hz<input id="ctrl-rate" type="number" min="5" max="20" step="1" value="10"></label></div>
+            <div id="ctrl-gains" hidden><table class="motion-gains"><thead><tr><th>关节</th><th>Kp · s⁻¹</th><th>Ki · s⁻²</th><th>Kd · 无量纲</th></tr></thead><tbody><tr><th>J1</th><td><input id="ctrl-kp1" aria-label="J1 KP" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-ki1" aria-label="J1 KI" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-kd1" aria-label="J1 KD" type="number" min="0" max="5" step="any"></td></tr><tr><th>J2</th><td><input id="ctrl-kp2" aria-label="J2 KP" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-ki2" aria-label="J2 KI" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-kd2" aria-label="J2 KD" type="number" min="0" max="5" step="any"></td></tr><tr><th>J3</th><td><input id="ctrl-kp3" aria-label="J3 KP" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-ki3" aria-label="J3 KI" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-kd3" aria-label="J3 KD" type="number" min="0" max="5" step="any"></td></tr><tr><th>J4</th><td><input id="ctrl-kp4" aria-label="J4 KP" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-ki4" aria-label="J4 KI" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-kd4" aria-label="J4 KD" type="number" min="0" max="5" step="any"></td></tr><tr><th>J5</th><td><input id="ctrl-kp5" aria-label="J5 KP" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-ki5" aria-label="J5 KI" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-kd5" aria-label="J5 KD" type="number" min="0" max="5" step="any"></td></tr><tr><th>J6</th><td><input id="ctrl-kp6" aria-label="J6 KP" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-ki6" aria-label="J6 KI" type="number" min="0" max="10" step="any"></td><td><input id="ctrl-kd6" aria-label="J6 KD" type="number" min="0" max="5" step="any"></td></tr></tbody></table><div class="wb-fields"><label>微分滤波时间 · s<input id="ctrl-derivative-filter" type="number" min="0.02" max="1" step="0.01" value="0.1"></label><label>积分速度贡献上限 · rad/s<input id="ctrl-integral-limit" type="number" min="0" max="0.2" step="0.001" value="0.03"></label></div><p class="twin-hint">v = Kp × 位置误差 + 积分 − Kd × 滤波反馈速度；积分只在新鲜反馈上累计，速度限幅时抑制继续积累。默认增益仅为起始值，未经这台实机调定。</p></div>
+            <div id="ctrl-scheduled" class="wb-fields" hidden><label>远端Kp倍率<input id="ctrl-schedule-ratio" type="number" min="1" max="3" step="0.1" value="1.5"></label><label>调度误差尺度 · rad<input id="ctrl-schedule-error" type="number" min="0.002" max="1" step="0.01" value="0.1"></label></div>
+            <div id="ctrl-ladrc" class="wb-fields" hidden><label>控制带宽 · rad/s<input id="ctrl-bandwidth" type="number" min="0.1" max="3" step="0.1" value="0.6"></label><label>观测带宽 · rad/s<input id="ctrl-observer" type="number" min="0.5" max="12" step="0.1" value="3"></label><label>名义输入增益 b₀<input id="ctrl-b0" type="number" min="0.2" max="2" step="0.1" value="1"></label><label>扰动估计上限 · rad/s<input id="ctrl-disturbance" type="number" min="0" max="0.2" step="0.001" value="0.03"></label></div>
+            <div id="ctrl-mpc" class="wb-fields" hidden><label>预测步数<input id="ctrl-horizon" type="number" min="4" max="24" step="1" value="12"></label><label>位置误差权重<input id="ctrl-position-weight" type="number" min="0.01" max="100" step="any" value="1"></label><label>速度代价<input id="ctrl-velocity-weight" type="number" min="0.001" max="10" step="any" value="0.05"></label><label>速度变化代价<input id="ctrl-delta-weight" type="number" min="0.001" max="10" step="any" value="0.1"></label></div>
+            <label>算法参数 JSON<textarea id="ctrl-params" rows="4" spellcheck="false">{}</textarea></label>
+            <div class="wb-actions"><label class="wb-file-button">导入控制器配置<input id="ctrl-import" type="file" accept=".json,application/json" hidden></label><button type="button" id="ctrl-save">保存为参数档案</button><button type="button" id="ctrl-default">恢复本算法初值</button><button type="button" id="ctrl-export">导出配置</button><button type="button" id="ctrl-contract">下载控制协议</button></div>
+            <p class="twin-hint">六种内置控制器直接在驱动进程计算，各有独立参数档案。LADRC使用一阶速度输入模型和扰动观测器；MPC使用关节积分模型，约束预测速度与位置，未辨识整臂动力学。神经网络/强化学习需训练模型，可用本机服务接入。网页导入连接与参数配置，不直接运行上传代码。模板默认只返回保持参考。</p>
+            <p class="twin-hint">输出经下方共用运动配置和所选CSP / MIT驱动执行。六种算法初值均需现场调定；它们不会自动替换所有手动/程序参考。未经训练的学习策略不作为可执行选项。</p>
+          </div>
+          <div class="wb-card">
+            <h3>2 · 目标与运行</h3>
+            <p>期望关节角 · °（接口使用rad）</p>
+            <div class="wb-fields"><label>J1<input id="ctrl-j1" type="number" step="any"></label><label>J2<input id="ctrl-j2" type="number" step="any"></label><label>J3<input id="ctrl-j3" type="number" step="any"></label><label>J4<input id="ctrl-j4" type="number" step="any"></label><label>J5<input id="ctrl-j5" type="number" step="any"></label><label>J6<input id="ctrl-j6" type="number" step="any"></label></div>
+            <div class="wb-actions"><button type="button" id="ctrl-current">填入当前关节角</button><button type="button" id="ctrl-from-preview">使用坐标预览目标</button></div>
+            <p class="twin-hint">速度上限沿用手动控制的数值。首次请在顶部选择「安全仿真」并接管；实机须先准备、接管、使能保持，再检查和启动。</p>
+            <div class="wb-actions"><button type="button" id="ctrl-check">只读检查 / 单步试算</button><button type="button" id="ctrl-start" class="primary-btn" disabled>启动闭环控制</button><button type="button" id="ctrl-stop" disabled>停止算法 / 保持</button></div>
+            <p class="twin-hint">试算不发送运动；通过不代表未来所有输出可行。启动后按新鲜反馈持续计算，每步经过原执行校验。参考250ms过期或请求200ms未完成会保持；失焦、断连沿用全局停止。</p>
+            <p id="ctrl-status" class="wb-status" role="status">填写配置，先进行只读试算。</p>
+          </div>
+        </div>
+        <div class="wb-card"><h3>运行监视</h3><div class="wb-actions"><button type="button" id="ctrl-record">导出本次调参记录</button></div><p id="ctrl-tracking">目标误差：等待反馈控制器运行</p><p id="ctrl-diagnostics" class="twin-hint">算法诊断：等待运行样本</p><p id="ctrl-target">当前目标：等待连接</p><p id="ctrl-metrics">尚未运行 · 频率为尽力调度，不是硬实时保证</p><div class="wb-two-col"><div><p>算法原始输出（rad 或 rad/s）</p><pre id="ctrl-requested">—</pre></div><div><p>执行器位置参考（rad）</p><pre id="ctrl-applied">—</pre></div></div></div>
+      </section>
+      <section class="twin-control-deck" data-workbench-panel="control" aria-label="统一运动控制">
+        <div class="twin-deck-head"><div><p class="eyebrow">MOTION CONTROL</p><h2>位置与姿态控制</h2></div><span id="twin-owner-state" class="twin-badge">仅观察</span></div>
+        <div class="twin-mode-tabs" role="group" aria-label="输入方式"><button type="button" data-twin-mode="point" aria-pressed="true">坐标到点</button><button type="button" data-twin-mode="keyboard" aria-pressed="false">键盘 / 按钮</button><button type="button" data-twin-mode="gamepad" aria-pressed="false">游戏手柄</button><button type="button" data-twin-mode="tcp" aria-pressed="false">拖拽 TCP</button></div>
+        <div class="twin-deck-body">
+          <div class="twin-input-panel">
+            <div data-twin-panel="point">
+              <div class="twin-input-head"><span>基座坐标系 · 位置 mm / 姿态 °</span><button type="button" id="twin-fill-pose">填入当前位置</button></div>
+              <div class="twin-pose-grid">
+                <label>X · 前<input type="number" id="twin-x" value="300" step="0.1" min="-700" max="700"></label>
+                <label>Y · 左<input type="number" id="twin-y" value="0" step="0.1" min="-700" max="700"></label>
+                <label>Z · 上<input type="number" id="twin-z" value="300" step="0.1" min="-200" max="800"></label>
+                <label>Roll · X<input type="number" id="twin-roll" value="0" step="0.1" min="-180" max="180"></label>
+                <label>Pitch · Y<input type="number" id="twin-pitch" value="0" step="0.1" min="-180" max="180"></label>
+                <label>Yaw · Z<input type="number" id="twin-yaw" value="0" step="0.1" min="-180" max="180"></label>
+              </div>
+              <label class="twin-inline-label">姿态约束<select id="twin-orientation"><option value="free" selected>仅位置（自动选择姿态）</option><option value="keep">保持当前姿态</option><option value="rpy">使用输入的 RPY</option></select></label>
+              <p class="twin-hint" id="twin-orientation-help">仅约束 XYZ，朝向由逆解选择；先观察目标虚影再执行。</p>
+              <div class="twin-point-actions"><button type="button" id="twin-preview">计算并预览</button><button type="button" id="twin-go" class="primary-btn" disabled>执行预览轨迹</button></div>
+              <p id="twin-preview-info" class="twin-hint">先预览再执行。虚影是目标，实色模型始终显示反馈。</p>
+              <p class="twin-hint">坐标到点使用「关节速度上限」；平移/旋转速度用于键盘、手柄及姿态微调。TCP拖动选点自动调速，加减速仍受限制。</p>
+              <button type="button" id="twin-position-only-retry" hidden>改为仅位置并重新预览</button>
+            </div>
+            <div data-twin-panel="keyboard" hidden>
+              <button type="button" id="twin-keyboard-focus">点击这里，再按住空格 + W / S 等键</button>
+              <p id="twin-keyboard-status" class="twin-hint" role="status" aria-live="polite">等待连接和接管控制</p>
+              <p class="twin-keyboard-help"><strong>按住空格 + 方向键位</strong>，短按微调、长按平滑加速。<kbd>[</kbd> 减速 / <kbd>]</kbd> 加速，每次10%；按住 <kbd>Shift</kbd> 临时使用25%精细速度，松开恢复。保持空格并松方向键会平滑减速；松开空格立即请求保持。编辑输入框时快捷键停用。</p>
+              <div class="keyboard-guide-flow"><span>① 点击上方激活按钮</span><b>→</b><span>② 按住 <kbd>空格</kbd> + 方向键</span><b>→</b><span>③ 松开空格请求保持</span></div><div class="twin-key-map"><span><kbd>W</kbd>/<kbd>S</kbd> X 前后</span><span><kbd>A</kbd>/<kbd>D</kbd> Y 左右</span><span><kbd>R</kbd>/<kbd>F</kbd> Z 上下</span><span><kbd>U</kbd>/<kbd>O</kbd> Roll</span><span><kbd>I</kbd>/<kbd>K</kbd> Pitch</span><span><kbd>J</kbd>/<kbd>L</kbd> Yaw</span><span><kbd>Q</kbd>/<kbd>E</kbd> J7 开 / 合</span></div>
+              <div class="twin-jog-grid" id="twin-jog-buttons" aria-label="按住按钮移动">
+                <div><span>X</span><button type="button" data-axis="0" data-sign="-1" aria-label="X 减小">− 后</button><button type="button" data-axis="0" data-sign="1" aria-label="X 增大">+ 前</button></div>
+                <div><span>Y</span><button type="button" data-axis="1" data-sign="-1" aria-label="Y 减小">− 右</button><button type="button" data-axis="1" data-sign="1" aria-label="Y 增大">+ 左</button></div>
+                <div><span>Z</span><button type="button" data-axis="2" data-sign="-1" aria-label="Z 减小">− 下</button><button type="button" data-axis="2" data-sign="1" aria-label="Z 增大">+ 上</button></div>
+                <div><span>Roll</span><button type="button" data-axis="3" data-sign="-1">−</button><button type="button" data-axis="3" data-sign="1">+</button></div>
+                <div><span>Pitch</span><button type="button" data-axis="4" data-sign="-1">−</button><button type="button" data-axis="4" data-sign="1">+</button></div>
+                <div><span>Yaw</span><button type="button" data-axis="5" data-sign="-1">−</button><button type="button" data-axis="5" data-sign="1">+</button></div>
+                <div><span>J7 夹爪</span><button type="button" data-axis="6" data-sign="-1">合</button><button type="button" data-axis="6" data-sign="1">开</button></div>
+              </div>
+            </div>
+            <div data-twin-panel="gamepad" hidden>
+              <div class="twin-gamepad-head"><strong id="twin-gamepad-name">等待手柄 · 按任意键唤醒</strong><span class="twin-badge" id="twin-gamepad-state">未连接</span></div>
+              <p class="twin-guide-lead">① 连接手柄、按任意键唤醒　② 松开所有摇杆和按键　③ 使能并接管后，<strong>按住 RB / R1</strong>移动</p>
+              <button type="button" id="pad-guide-zoom" class="pad-zoom-button">⛶ 放大按钮示意图</button>
+              <figure class="pad-guide" id="pad-guide">
+                <svg viewBox="0 0 820 410" role="img" aria-labelledby="pad-guide-title pad-guide-desc">
+                  <title id="pad-guide-title">标准手柄按钮与机械臂动作对照</title><desc id="pad-guide-desc">左摇杆控制X和Y，十字键上下控制Z，右摇杆控制Pitch和Yaw，LT与RT控制Roll，A打开夹爪，B闭合夹爪，按住RB允许运动，LB四分之一精细速度；X减速，Y加速，每按一次10%。Xbox和PS按钮名称同时标注。</desc>
+                  <defs><marker id="pad-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7"/></marker></defs>
+                  <path class="pad-shell" d="M285 110 Q410 90 535 110 Q575 116 595 165 L640 321 Q649 362 615 366 Q584 368 538 303 L282 303 Q236 368 205 366 Q171 362 180 321 L225 165 Q245 116 285 110Z"/>
+                  <g class="pad-control" data-pad-button="6"><rect x="270" y="74" width="62" height="30" rx="10"/><text x="301" y="95">LT</text></g>
+                  <g class="pad-control" data-pad-button="7"><rect x="488" y="74" width="62" height="30" rx="10"/><text x="519" y="95">RT</text></g>
+                  <g class="pad-control" data-pad-button="4"><rect x="250" y="112" width="88" height="24" rx="10"/><text x="294" y="130">LB / L1</text></g>
+                  <g class="pad-control pad-gate" data-pad-button="5"><rect x="482" y="112" width="88" height="24" rx="10"/><text x="526" y="130">RB / R1</text></g>
+                  <circle class="pad-ring" cx="292" cy="190" r="37"/><g class="pad-stick" data-pad-stick="0"><circle cx="292" cy="190" r="25"/><text x="292" y="196">L</text></g>
+                  <circle class="pad-ring" cx="482" cy="269" r="37"/><g class="pad-stick" data-pad-stick="1"><circle cx="482" cy="269" r="25"/><text x="482" y="275">R</text></g>
+                  <path class="pad-dpad" d="M337 231 H363 V247 H379 V273 H363 V289 H337 V273 H321 V247 H337Z"/>
+                  <g class="pad-control" data-pad-button="12"><rect x="339" y="232" width="22" height="22" rx="3"/><text x="350" y="249">↑</text></g>
+                  <g class="pad-control" data-pad-button="13"><rect x="339" y="266" width="22" height="22" rx="3"/><text x="350" y="283">↓</text></g>
+                  <g class="pad-control pad-open" data-pad-button="0"><circle cx="541" cy="214" r="17"/><text x="541" y="220">A/×</text></g>
+                  <g class="pad-control pad-close" data-pad-button="1"><circle cx="571" cy="184" r="17"/><text x="571" y="190">B/○</text></g>
+                  <g class="pad-control" data-pad-button="2"><circle cx="511" cy="184" r="17"/><text x="511" y="190">X/□</text></g>
+                  <g class="pad-control" data-pad-button="3"><circle cx="541" cy="154" r="17"/><text x="541" y="160">Y/△</text></g>
+                  <circle class="pad-center" cx="410" cy="159" r="13"/><path class="pad-center" d="M388 201 h14 m16 0 h14"/>
+                  <g class="pad-callouts">
+                    <path d="M180 186 H245"/><text x="16" y="178">左摇杆 · 平移</text><text x="16" y="201" class="pad-sub">↑ X前 / ↓ X后</text><text x="16" y="224" class="pad-sub">← Y左 / → Y右</text>
+                    <path d="M180 285 H310"/><text x="16" y="279">十字键 · 升降</text><text x="16" y="302" class="pad-sub">↑ Z上 / ↓ Z下</text>
+                    <path d="M193 38 H260 V111"/><text x="16" y="30">LB · 按住慢速25%</text>
+                    <path d="M365 46 L310 72 M455 46 L511 72"/><text x="410" y="29" text-anchor="middle">LT −Roll / RT +Roll</text>
+                    <path class="pad-gate-line" d="M629 38 H572 L545 110"/><text x="628" y="30" class="pad-gate-text">RB · 按住才运动</text><text x="628" y="53" class="pad-sub">松开请求保持</text>
+                    <path d="M638 174 H593"/><text x="653" y="166">A / ×：J7 打开</text><text x="653" y="190">B / ○：J7 闭合</text>
+                    <path d="M638 279 H526"/><text x="653" y="271">右摇杆 · 姿态</text><text x="653" y="294" class="pad-sub">↑ +Pitch / ↓ −Pitch</text><text x="653" y="317" class="pad-sub">← +Yaw / → −Yaw</text>
+                  </g>
+                  <text x="410" y="397" class="pad-foot" text-anchor="middle">X/□ 减速 · Y/△ 加速，每次10%　｜　LB 按住微调　｜　亮起表示检测到输入</text>
+                </svg>
+                <figcaption id="twin-gamepad-compat" role="status">未检测到手柄：连接后按任意键唤醒。无需连接 ROS，即可检查图中按键高亮。</figcaption>
+              </figure>
+              <dialog id="pad-guide-dialog"><button type="button" id="pad-guide-close">关闭大图</button></dialog>
+              <details class="pad-connection-guide"><summary>启明星 2 怎样连接？</summary><p>优先使用 USB 数据线或 2.4G 接收器，并选择 XInput 模式；连接模式按<a href="https://doc.xiaoji.com/zh/n2lite/" target="_blank" rel="noopener">盖世小鸡官方说明</a>操作。本机能否控制以页面显示 <strong>standard</strong> 为准，Linux / 蓝牙模式需实际检查映射。非标准映射会拒绝运动，不按品牌名猜按键。</p><p>先在未使能状态核对图中高亮与实际按键一致，再接管操作。PS 手柄可对应 R1/L1、×/○。背键如有厂商重映射，以它实际触发的标准按键为准。</p></details>
+              <p class="twin-hint">柔和摇杆曲线：轻推精细、重推加快；回中时平滑减速，松开 RB 立即请求保持。</p>
+
+              <p id="twin-gamepad-action" class="twin-hint" role="status">X/□减速、Y/△加速，每次10%；LB按住25%慢速。按住RB才运动，LT/RT滚转，A/B开合夹爪。</p>
+              <div class="twin-axis-meter" id="twin-gamepad-values">X 0 · Y 0 · Z 0 · R 0 · P 0 · Y 0</div>
+            </div>
+            <div data-twin-panel="tcp" hidden>
+              <h3>拖动选点，松手自动到位</h3><div class="tcp-guide-flow" aria-label="TCP拖拽操作步骤"><span><i class="tcp-guide-dot"></i> ① 找到末端绿点</span><b>→</b><span>✥ ② 拖到目标位置</span><b>→</b><span>◎ ③ 松手自动到点</span></div>
+              <p class="twin-hint">接管控制后，按住3D窗口中的末端绿点选择目标，松手后自动检查并执行到点轨迹：先平滑加速，接近目标时减速，停稳后保持。移动平面与屏幕平行；改变视角可以换平面。暂停按钮可中止到点。</p>
+              <label class="wb-check"><input type="checkbox" id="twin-drag-orientation">保持拖动开始时的末端朝向</label>
+              <p class="twin-hint">只拖位置时由逆解协调六轴，并非每轴都必须转动。不勾选保持朝向时允许手腕自由调整；需要改变腕部朝向可按住下方按钮。</p>
+              <div class="twin-jog-grid" id="twin-tcp-rotation" aria-label="TCP姿态微调">
+                <div><span>Roll</span><button type="button" data-axis="3" data-sign="-1">−</button><button type="button" data-axis="3" data-sign="1">+</button></div>
+                <div><span>Pitch</span><button type="button" data-axis="4" data-sign="-1">−</button><button type="button" data-axis="4" data-sign="1">+</button></div>
+                <div><span>Yaw</span><button type="button" data-axis="5" data-sign="-1">−</button><button type="button" data-axis="5" data-sign="1">+</button></div>
+              </div>
+              <p id="wb-drag-status" class="wb-status">等待接管；实色模型只显示反馈。</p>
+              <p class="twin-hint">拖动到点自动采用不超过0.3 rad/s且受当前模式、设备上限约束的速度，不需要调整平移速度滑条。限位、路径与反馈检查通过才执行；实色模型只显示反馈。</p>
+            </div>
+          </div>
+          <div class="twin-session-panel">
+            <div class="twin-quick-speed">
+              <label>键盘 / 手柄快捷调速 <output id="twin-manual-override-value">100%</output><input id="twin-manual-override" type="range" min="10" max="200" step="any" value="100" aria-describedby="twin-manual-effective"></label>
+              <p class="twin-hint">平移、旋转和夹爪按基础速度的10–200%调整，关节硬上限保持页面设定，始终受设备与本模式上限限制。键盘 [ / ]、手柄 X / Y 每次减 / 加10%；Shift / LB 按住微调。不改变坐标到点、TCP拖拽及程序速度。</p>
+              <p id="twin-manual-effective" class="twin-hint" role="status">100% · 等待速度上限</p>
+            </div>
+            <label>手动速度 <output id="twin-linear-value">20.0 mm/s</output><input type="range" id="twin-linear-speed" min="5" max="40" step="any" value="20"></label>
+            <label>旋转速度 <output id="twin-angular-value">10.0 °/s</output><input type="range" id="twin-angular-speed" min="2" max="20" step="any" value="10"></label>
+            <label for="twin-joint-speed">关节速度上限 <output id="twin-joint-degrees">8.6 °/s</output></label>
+            <input id="twin-joint-speed" type="range" min="0.005" max="0.3" step="any" value="0.15" aria-describedby="twin-speed-help">
+            <label>夹爪开合速度 <output id="twin-gripper-speed-value">1.00 rad/s</output><input id="twin-gripper-speed" type="range" min="0.005" max="1" step="any" value="1"></label>
+            <p class="twin-hint">J7使用自己的开合速度，不跟随六轴关节低速上限。RB+A打开、RB+B闭合；首次开合自动使能J7，松开保持。</p>
+            <p id="twin-gripper-time" class="twin-hint">等待J7反馈以确认实际限速。</p>
+            <label class="wb-check"><input id="twin-auto-manual-recovery" type="checkbox" checked>通信恢复后自动恢复手动就绪</label>
+            <p id="twin-recovery-state" class="twin-hint" role="status">反馈连续正常500ms且控制键松开后恢复；不自动使能、不续跑旧程序。</p>
+            <p id="twin-speed-summary" class="twin-hint">坐标到点、键盘、手柄及姿态微调共用；TCP拖动选点自动调速，程序按各步speed执行。</p>
+            <p class="twin-hint" id="twin-speed-help">六轴速度用于坐标、键盘、手柄及姿态微调；TCP拖动到点自动调速，夹爪使用自己的速度滑条。加速度与姿态也会限制实际速度。</p>
+            <p class="twin-hint" id="twin-braking-hint"></p>
+            <p class="twin-hint" id="twin-control-timing">目标更新周期：等待控制器反馈</p>
+            <button type="button" id="twin-hold">暂停 / 保持当前位置</button>
+            <p class="twin-hint" id="twin-smoothing-status">手动平滑：等待控制器确认</p>
+            <p class="twin-hint">平滑减速期间仍会移动；要立即请求保持，请松空格 / RB 或点「暂停」。TCP：gripper_end；不具备环境自动避障。</p>
+          </div>
+        </div>
+        <div class="wb-tools-grid">
+          <section class="wb-tool" aria-label="七轴参数"><h3>J1–J7 · 电机参数与反馈</h3>
+            <p class="twin-hint">J7已并入键盘 / 手柄；按住控制键开合，松开保持。位置单位rad，速度rad/s，限制由控制器按官方与设备允许值处理。</p>
+            <p class="twin-hint">使能是开关。J1–J3与J4–J6已有不同电流和力矩上限。CSP环参数仅显示本次启动读取的0x701e / 0x701f / 0x7020 / 0x702b快照，未经读取显示“—”；它们不是MIT增益。反馈年龄用于辨别通信延迟，跟随误差用于定位具体关节。</p><div class="twin-motor-table"><table><thead><tr><th>电机</th><th>位置</th><th>位置范围</th><th>速度上限</th><th>电流 / 上限 A</th><th>力矩上限 N·m</th><th>跟随误差 / 反馈年龄</th><th>CSP 环参数快照</th><th>状态</th></tr></thead><tbody><tr><th>J1</th><td id="twin-motor-q1">—</td><td id="twin-motor-limit1">—</td><td id="twin-motor-speed1">—</td><td id="twin-motor-current1">—</td><td id="twin-motor-torque1">—</td><td id="twin-motor-error1">—</td><td id="twin-motor-gains1">—</td><td id="twin-motor-status1">—</td></tr><tr><th>J2</th><td id="twin-motor-q2">—</td><td id="twin-motor-limit2">—</td><td id="twin-motor-speed2">—</td><td id="twin-motor-current2">—</td><td id="twin-motor-torque2">—</td><td id="twin-motor-error2">—</td><td id="twin-motor-gains2">—</td><td id="twin-motor-status2">—</td></tr><tr><th>J3</th><td id="twin-motor-q3">—</td><td id="twin-motor-limit3">—</td><td id="twin-motor-speed3">—</td><td id="twin-motor-current3">—</td><td id="twin-motor-torque3">—</td><td id="twin-motor-error3">—</td><td id="twin-motor-gains3">—</td><td id="twin-motor-status3">—</td></tr><tr><th>J4</th><td id="twin-motor-q4">—</td><td id="twin-motor-limit4">—</td><td id="twin-motor-speed4">—</td><td id="twin-motor-current4">—</td><td id="twin-motor-torque4">—</td><td id="twin-motor-error4">—</td><td id="twin-motor-gains4">—</td><td id="twin-motor-status4">—</td></tr><tr><th>J5</th><td id="twin-motor-q5">—</td><td id="twin-motor-limit5">—</td><td id="twin-motor-speed5">—</td><td id="twin-motor-current5">—</td><td id="twin-motor-torque5">—</td><td id="twin-motor-error5">—</td><td id="twin-motor-gains5">—</td><td id="twin-motor-status5">—</td></tr><tr><th>J6</th><td id="twin-motor-q6">—</td><td id="twin-motor-limit6">—</td><td id="twin-motor-speed6">—</td><td id="twin-motor-current6">—</td><td id="twin-motor-torque6">—</td><td id="twin-motor-error6">—</td><td id="twin-motor-gains6">—</td><td id="twin-motor-status6">—</td></tr><tr><th>J7 · 夹爪</th><td id="twin-motor-q7">—</td><td id="twin-motor-limit7">—</td><td id="twin-motor-speed7">—</td><td id="twin-motor-current7">—</td><td id="twin-motor-torque7">—</td><td id="twin-motor-error7">—</td><td id="twin-motor-gains7">—</td><td id="twin-motor-status7">—</td></tr></tbody></table></div>
+            <p id="twin-gripper-status" class="twin-hint" role="status">J7：等待反馈。打开5rad / 闭合0rad；开口宽度尚未标定。</p>
+          </section>
+        </div>
+        <p id="twin-message" class="twin-message" role="status" aria-live="polite">连接反馈后，选择手动控制或动作程序。相机可以独立连接。</p>
+      </section>
+
+      <section class="wb-panel" data-workbench-panel="support" hidden aria-label="支撑姿态">
+        <div class="wb-heading"><div><p class="eyebrow">SUPPORT POSE</p><h2>支撑姿态</h2><p>记录并核对机械臂的无电稳定支撑姿态。进入本页、切换入口和预览都不会自动运动。</p></div><span class="twin-badge">现场确认后操作</span></div>
+        <div class="wb-card wb-support-card"><h3>使用结束 · 返回支撑姿态</h3>
+          <p class="twin-hint">初始姿态：J2–J6 目标均为 0°，每轴允许 ±3° 到位偏差。J1 保持返回时的角度，J7 不参与。从已保存姿态中选择耗时较短的可行路径。</p>
+          <select id="wb-support-list" aria-label="已验证支撑姿态"><option>尚未记录支撑姿态</option></select>
+          <div class="wb-actions"><button type="button" id="wb-support-preview">预览最近支撑姿态</button><button type="button" id="wb-support-return" class="primary-btn">返回最近支撑姿态</button></div>
+          <label class="wb-check"><input type="checkbox" id="wb-support-release">确认支撑条件与记录一致，到位后撤去驱动力</label>
+          <details><summary>记录当前无电支撑姿态</summary>
+            <label>名称<input id="wb-support-name" value="收纳支撑姿态" maxlength="80"></label>
+            <label>实际支撑、工具和负载说明<textarea id="wb-support-note" rows="2" placeholder="说明实际接触支撑点、工具和负载；支撑须不受J1旋转影响"></textarea></label>
+            <label class="wb-check"><input type="checkbox" id="wb-support-verified">已确认当前位置未使能时靠结构稳定支撑，且J1旋转不影响支撑条件</label>
+            <button type="button" id="wb-support-capture">保存当前反馈为支撑姿态</button>
+          </details><p id="wb-support-status" class="wb-status" role="status">支撑姿态不能由关节零位推断。</p>
+        </div>
+      </section>
+
+      <section class="wb-panel" data-workbench-panel="programs" hidden aria-label="动作程序">
+        <details class="wb-card" id="wb-pick-form">
+          <summary><strong>指定点夹取 · J7 接触判定</strong><span>填写目标与实测标定 ▾</span></summary>
+          <p class="twin-hint">XYZ 使用基座坐标，表示模型末端 gripper_end 原点；RPY 为该末端姿态。实际夹持中心需先完成 TCP 校准。流程：张开 → 上方接近点 → 分段下降 → 闭合并验证 → 原位保持。第一版不自动抬起。</p>
+          <div class="wb-fields">
+            <label>X · mm<input id="wb-pick-x" type="number" step="0.1"></label><label>Y · mm<input id="wb-pick-y" type="number" step="0.1"></label><label>Z · mm<input id="wb-pick-z" type="number" step="0.1"></label>
+            <label>Roll · °<input id="wb-pick-roll" type="number" step="0.1"></label><label>Pitch · °<input id="wb-pick-pitch" type="number" step="0.1"></label><label>Yaw · °<input id="wb-pick-yaw" type="number" step="0.1"></label>
+            <label>上方接近高度 · mm<input id="wb-pick-approach" type="number" min="5" max="200" value="30"></label><label>张开角度 · rad<input id="wb-pick-open" type="number" min="0" max="5" step="0.01" value="1"></label><label>闭合检测速度 · rad/s<input id="wb-pick-speed" type="number" min="0.005" max="0.1" step="0.005" value="0.1"></label>
+          </div>
+          <button type="button" id="wb-pick-capture">用当前末端反馈填写目标</button>
+          <h3>J7 空夹与夹物标定</h3><p class="twin-hint">先用手动控制记录空夹、夹物两组反馈，再填写阈值。电机角度不是夹爪毫米，电流也不是夹持力。阈值不提高原设备限流。Fake 没有物体接触模型，只会空夹或超时。</p>
+          <div class="wb-fields">
+            <label>空夹闭合位置 · rad<input id="wb-grasp-empty_position" type="number" min="0" max="4.8" step="0.001" required></label>
+            <label>接触电流 · A<input id="wb-grasp-contact_current_a" type="number" min="0.01" max="15.9" step="0.01" required></label>
+            <label>中止电流 · A<input id="wb-grasp-abort_current_a" type="number" min="0.02" max="16" step="0.01" required></label>
+          </div>
+          <label class="wb-check"><input id="wb-grasp-empty-confirm" type="checkbox">当前没有工件，夹爪已空载闭合且静止</label><button type="button" id="wb-grasp-capture-empty">记录当前空夹位置（不发运动）</button>
+          <details><summary>判定时间与公差</summary><div class="wb-fields">
+            <label>空夹位置公差 · rad<input id="wb-grasp-empty_tolerance" type="number" value="0.02" step="0.005"></label>
+            <label>与空夹端点最小间隙 · rad<input id="wb-grasp-min_gap" type="number" value="0.05" step="0.01"></label>
+            <label>最低闭合行程 · rad<input id="wb-grasp-min_travel" type="number" value="0.05" step="0.01"></label>
+            <label>停滞速度阈值 · rad/s<input id="wb-grasp-stall_velocity" type="number" value="0.01" step="0.001"></label>
+            <label>持续接触时间 · s<input id="wb-grasp-dwell" type="number" value="0.4" step="0.1"></label>
+            <label>额外保持验证 · s<input id="wb-grasp-hold_time" type="number" value="0.6" step="0.1"></label>
+            <label>夹持超时 · s<input id="wb-grasp-timeout" type="number" value="120" step="1"></label>
+          </div></details>
+          <p class="twin-hint">判定依据为闭合行程、空夹间隙、低速度及持续电流。碰到夹具也可能产生这些信号，电机判定不等于已确认工件身份与牢固程度。失败时保持当前参考，不自动张开或继续搬运。</p>
+          <div class="wb-actions"><button type="button" id="wb-pick-build" class="primary-btn">生成指定点夹取程序</button></div><p id="wb-pick-status" class="wb-status" role="status">生成后可检查整套路径，再用下方程序按钮执行。</p>
+          <p id="wb-grasp-status" class="wb-status" role="status">等待 J7 位置 / 速度 / 电流反馈。</p>
+          <details id="wb-j7-tools"><summary>J7 采样与离线分析（只记录反馈）</summary>
+            <p class="twin-hint">选择空夹、夹物或自由运动，开始记录后自行用原手动控制操作，末尾静止至少一秒再结束。每类空夹/夹物至少三次。记录按钮不发运动；记录结束后及时导出。Fake 会单独标注，不用于实机标定。</p>
+            <div class="wb-fields"><label>记录类型<select id="wb-j7-label"><option value="empty">空夹</option><option value="object">夹物</option><option value="free">自由运动</option></select></label><label>工件 / 速度 / 现场备注<input id="wb-j7-note" maxlength="200" placeholder="例如：木块A，第1次"></label></div>
+            <div class="wb-actions"><button type="button" id="wb-j7-start">开始只读记录</button><button type="button" id="wb-j7-stop">结束本段</button><button type="button" id="wb-j7-export">导出原始记录</button><label class="wb-file">分析记录文件<input type="file" id="wb-j7-import" accept=".json,application/json"></label><button type="button" id="wb-j7-analyze">分析本页记录</button><button type="button" id="wb-j7-report-export">导出分析报告</button><button type="button" id="wb-j7-clear">清空已导出记录</button></div>
+            <p id="wb-j7-status" class="wb-status" role="status">尚未记录。断流、时间倒退或来源变化会结束本段，不补造样本。</p><p id="wb-j7-summary" class="twin-hint"></p>
+            <details><summary>查看分析明细 JSON</summary><pre id="wb-j7-report" class="wb-code" style="white-space:pre-wrap;max-height:320px;overflow:auto" aria-label="J7分析结果"></pre></details>
+          </details>
+        </details>
+        <div class="wb-heading"><div><p class="eyebrow">MOTION PROGRAMS</p><h2>动作程序</h2><p>导入 → 使能并执行。现场确认一次，准备、接管和程序检查自动完成。单位 m / rad / s。</p></div><span id="wb-program-state" class="twin-badge">尚未加载</span></div>
+        <div class="wb-two-col"><div>
+          <div class="wb-actions"><label class="wb-file">导入程序 JSON<input type="file" id="wb-program-import" accept=".json,application/json"></label><button type="button" id="wb-program-example">新建示例</button><button type="button" id="wb-program-writing">载入「国庆快乐」</button><button type="button" id="wb-program-export">导出程序</button></div>
+          <label>程序名称<input id="wb-program-name" value="我的动作程序"></label>
+          <label>程序编辑器<textarea id="wb-program-json" class="wb-code" rows="14" spellcheck="false" placeholder="支持本工程动作JSON，以及ROS JointTrajectory JSON"></textarea></label>
+          <div class="wb-actions"><button type="button" id="wb-program-save">保存到程序库</button><select id="wb-program-library" aria-label="本机程序库"><option value="">本机程序库</option></select><button type="button" id="wb-program-load">载入</button></div>
+        </div><div>
+          <section id="wb-writing-preview" hidden aria-label="书写规划路径">
+            <h3>书写规划路径 · 俯视</h3>
+            <svg id="wb-writing-svg" viewBox="0 0 960 240" role="img" aria-label="末端规划笔画：国庆快乐" style="width:100%;background:#0f1726;border-radius:12px"></svg>
+            <p class="twin-hint">预览显示全部规划笔画；播放时彩色为已走过的规划段，白色为当前段，灰色为后续段。抬笔段不连线。50 mm 字格 / 抬笔12 mm；实际接触书写需标定笔尖和纸面。</p>
+            <button type="button" id="wb-writing-view">在三维窗口俯视路径</button>
+          </section>
+          <h3>执行程序</h3><div class="wb-actions"><button type="button" id="wb-program-run" class="primary-btn">使能并执行程序</button></div>
+          <p class="twin-hint">实机：勾选顶部现场确认后，点击即允许网页准备、接管、使能并运行当前程序。完成后保持姿态。</p>
+          <details><summary>可选：检查与仿真</summary><div class="wb-actions"><button type="button" id="wb-program-preview">检查整套路径</button><button type="button" id="wb-program-visual">播放预览虚影</button><button type="button" id="wb-program-sim">在仿真中试运行</button></div></details>
+          <div class="wb-actions"><button type="button" id="wb-program-pause">暂停程序</button><button type="button" id="wb-program-resume">继续程序</button><button type="button" id="wb-program-cancel">取消程序</button></div>
+          <progress id="wb-program-progress" value="0" max="1" aria-label="程序执行进度"></progress><p id="wb-program-status" class="wb-status" role="status">先导入或录制程序。</p>
+          <ol id="wb-program-steps" class="wb-step-list"></ol>
+        </div></div>
+      </section>
+
+      <section class="wb-panel" data-workbench-panel="teach" hidden aria-label="示教录制">
+        <div class="wb-heading"><div><p class="eyebrow">TEACHING</p><h2>示教录制</h2><p>记录反馈关键帧；结束后在动作程序中编辑和回放。</p></div></div>
+          <h3 id="hub-teach-section" tabindex="-1">录制实际操作</h3><p class="twin-hint">记录反馈关键帧与时间，支持关节和夹爪。回放会按当前包络重新定时，逐点平滑到达。</p>
+          <div class="wb-actions"><button type="button" id="wb-teach-start">开始录制</button><button type="button" id="wb-teach-keyframe">记录当前关键帧</button><button type="button" id="wb-teach-stop">结束并生成程序</button></div>
+          <label class="wb-check"><input type="checkbox" id="wb-teach-preserve-time">回放保留录制间隔（含停顿）；默认按当前速度重新定时</label>
+          <p id="wb-teach-status" class="wb-status">等待新鲜反馈；录制不会改变使能状态。</p>
+      </section>
+
+      <section class="wb-panel" data-workbench-panel="integrations" hidden aria-label="算法接入">
+        <div class="wb-heading"><div><p class="eyebrow">PERCEPTION &amp; TASK PLANNING</p><h2>视觉、任务规划与大模型接入</h2><p>识别服务提供观测，任务规划服务生成动作程序。持续反馈控制请切换到独立的「控制算法」工作区。</p></div><button type="button" id="wb-contract-download">下载接口与示例 JSON</button></div>
+        <details class="wb-card" id="wb-vision-replay"><summary><strong>视觉坐标离线回放</strong><span>无相机也可验证 ▾</span></summary>
+          <p class="twin-hint">导入检测中心、对齐深度、相机内参和手眼变换的回放 JSON，检查深度质量与基座坐标。支持固定相机及腕部相机（使用拍摄时末端位姿）。合成示例未运行目标识别；回放结果仅供复核，不能直接用于实机运动。</p>
+          <div class="wb-actions"><button type="button" id="wb-replay-example">运行合成坐标示例</button><button type="button" id="wb-replay-template">下载回放模板</button><label class="wb-file">导入 RGB-D 回放<input type="file" id="wb-replay-import" accept=".json,application/json"></label><button type="button" id="wb-replay-export">导出坐标复核报告</button></div>
+          <p id="wb-replay-status" class="wb-status" role="status">不连接相机、ROS 或电机；不修改原图像时间戳。</p><p id="wb-replay-summary" class="twin-hint"></p>
+          <details><summary>查看坐标复核明细 JSON</summary><pre id="wb-replay-report" class="wb-code" style="white-space:pre-wrap;max-height:320px;overflow:auto" aria-label="视觉坐标复核结果"></pre></details>
+        </details>
+        <div class="wb-two-col"><section class="wb-tool"><h3>1 · 连接配置</h3>
+          <label>已保存连接<select id="wb-connector-list"><option value="">新增连接</option></select></label>
+          <div class="wb-fields"><label>名称<input id="wb-connector-name" placeholder="例如：本机识别模型"></label><label>用途<select id="wb-connector-kind"><option value="vision">视觉识别</option><option value="planner">任务 / 路径规划</option><option value="llm">大模型对话</option></select></label></div>
+          <label>协议<select id="wb-connector-protocol"><option value="http-json">自定义 HTTP JSON（下载接口示例）</option><option value="chat-completions">OpenAI兼容 Chat Completions（大模型）</option></select></label>
+          <label>完整请求 URL<input id="wb-connector-url" type="url" placeholder="http://127.0.0.1:8088/infer 或 https://服务/v1/chat/completions"></label>
+          <label>健康检查 URL（可选）<input id="wb-connector-health" type="url" placeholder="http://127.0.0.1:8088/health"></label>
+          <label>模型名称 / 标识<input id="wb-connector-model" placeholder="填写服务端支持的模型名称"></label>
+          <label>API Key（可选，仅保存于本机服务端）<input id="wb-connector-key" type="password" autocomplete="off" placeholder="留空保留同一地址的已有密钥"></label>
+          <label class="wb-check"><input id="wb-connector-clear-key" type="checkbox">清除已保存密钥</label>
+          <div class="wb-actions"><button type="button" id="wb-connector-save" class="primary-btn">保存连接</button><button type="button" id="wb-connector-test">测试连接</button><label class="wb-file">导入连接配置<input type="file" id="wb-connector-import" accept=".json,application/json"></label><button type="button" id="wb-connector-export">导出连接配置</button></div>
+          <p id="wb-connector-status" class="wb-status" role="status">导入的是服务连接配置；ONNX/PT等权重由你的推理服务加载，不在网页中执行任意脚本。</p>
+        </section><section class="wb-tool"><h3>2 · 相机标定与识别</h3>
+          <label>标定数据 JSON<textarea id="wb-calibration" class="wb-code" rows="5" spellcheck="false"></textarea></label>
+          <button type="button" id="wb-calibration-save">保存相机标定</button><p class="twin-hint">intrinsics 为9个数值；camera_to_base 为4×4刚性变换。缺少深度或三维定位时，二维框不能直接变成机械臂坐标。</p>
+          <label>识别服务<select id="wb-vision-profile"><option value="">选择已保存的视觉连接</option></select></label>
+          <label class="wb-check"><input type="checkbox" id="wb-vision-consent">允许向上面选定的服务发送当前相机帧</label>
+          <div class="wb-actions"><button type="button" id="wb-vision-run">采集一帧并识别</button><label class="wb-file">导入识别结果<input type="file" id="wb-vision-import" accept=".json,application/json"></label></div>
+          <button type="button" id="wb-vision-clear">清除当前观测</button><label class="wb-check"><input type="checkbox" id="wb-vision-refresh">请求规划 / 对话时，先用所选识别服务刷新一帧观测</label>
+          <p id="wb-vision-status" class="wb-status" role="status">先在上方连接相机，再选择识别服务。</p><div id="wb-objects" class="wb-objects"></div>
+          <h3>3 · 生成动作程序</h3><label>规划服务<select id="wb-planner-profile"><option value="">选择已保存的规划连接</option></select></label>
+          <label>任务<textarea id="wb-planner-task" rows="3" placeholder="例如：把已识别的红色方块搬到指定位置"></textarea></label>
+          <button type="button" id="wb-plan-run">请求规划并载入程序</button><p id="wb-plan-status" class="wb-status" role="status">算法生成程序后，仍须检查路径并选择仿真或实机执行。</p>
+        </section></div>
+      </section>
+
+      <section class="wb-panel" data-workbench-panel="chat" hidden aria-label="对话任务">
+        <div class="wb-heading"><div><p class="eyebrow">TASK ASSISTANT</p><h2>对话任务</h2><p>描述需求，让已连接的大模型生成动作提案，再预览和执行。</p></div><button type="button" data-open-workbench="integrations">配置模型 API</button></div>
+        <label>大模型连接<select id="wb-chat-profile"><option value="">先在算法接入中保存大模型配置</option></select></label>
+        <div id="wb-chat-messages" class="wb-chat-messages" role="log" aria-live="polite"><p class="wb-assistant">连接你的模型后，可描述搬运、码垛等任务。缺少物体坐标或标定时，先补充观测；程序会交给统一执行层检查。</p></div>
+        <label>你的任务<textarea id="wb-chat-input" rows="3" placeholder="例如：根据刚才的识别结果，生成搬运程序，先让我查看预览。"></textarea></label>
+        <label class="wb-check"><input type="checkbox" id="wb-chat-image">本次同时向选定模型发送当前相机图像（需模型支持视觉）</label>
+        <div class="wb-actions"><button type="button" id="wb-chat-send" class="primary-btn">发送任务</button><button type="button" id="wb-chat-load">载入模型生成的程序</button><button type="button" data-open-workbench="programs">查看程序 / 预览 / 执行</button></div>
+        <p id="wb-chat-status" class="wb-status" role="status">尚未发送。模型不会直接使能或控制电机。</p>
+      </section>
+      <p class="wb-global-status" id="wb-global-status" role="status" aria-live="polite"></p>
+      <section class="hub-motion-section" id="hub-motion-section" hidden><h2>本功能运动参数</h2><p class="twin-hint" id="hub-speed-scope">修改共用配置会影响其他运动功能；程序各步速度由JSON中的speed指定。</p>
+      <details class="wb-card motion-settings" id="motion-settings">
+        <summary><strong>共用运动配置</strong><span id="twin-motion-profile-status" role="status">等待控制器反馈</span><span>展开调参 ▾</span></summary>
+        <p class="twin-hint">坐标、键盘、手柄、TCP、动作程序和控制器输出共用。完整六轴默认Ruckig；小幅试机和J7使用原方案。</p>
+        <div class="wb-fields">
+          <label>轨迹生成与平滑<select id="twin-motion-profile"><option value="ruckig">Ruckig · 连续S曲线</option><option value="quintic">五次到点 / 加速度平滑</option></select></label>
+          <label>加速度预算 · %<input id="motion-acceleration" type="number" min="5" max="100" step="1" value="100"></label>
+          <label>jerk预算 · %<input id="motion-jerk" type="number" min="5" max="100" step="1" value="100"></label>
+        </div>
+        <p class="twin-hint">J3–J5 负载抖动试调：草稿将六轴加速度设为25%、jerk设为20%，保持关节路径同步；须明确点击应用才生效。这是减小启停冲击的试调起点，未做实机调定，不提高电流或力矩。CSP使用电机内部环，MIT增益仅在MIT模式生效。</p><p id="motion-effective" class="twin-hint">连接后读取已生效参数</p>
+        <div class="wb-actions"><button type="button" id="motion-apply">应用并保存参数</button><button type="button" id="motion-default">恢复本方案默认值</button><button type="button" id="motion-soft-draft">填入柔和试调草稿</button><button type="button" data-open-workbench="controller">反馈控制与调参记录 →</button></div>
+        <p class="twin-hint">每种轨迹方案独立记忆。比例只缩小现有加速度/jerk包络，速度仍由手动滑条或程序speed决定。五次方案的jerk预算用于到点定时，手动仅限加速度。停止并释放后应用，原预览作废。</p>
+        <hr><div class="wb-fields"><label>六轴驱动模式<select id="drive-backend"><option value="csp">CSP · 电机内部位置环</option><option value="mit">MIT · 位置PD（待实机验收）</option></select></label></div>
+        <div id="drive-mit-gains" hidden><table class="motion-gains"><thead><tr><th>关节</th><th>MIT Kp · N·m/rad</th><th>MIT Kd · N·m·s/rad</th></tr></thead><tbody><tr><th>J1</th><td><input id="drive-kp1" aria-label="MIT J1 Kp" type="number" min="0.001" max="50" step="any" value="50"></td><td><input id="drive-kd1" aria-label="MIT J1 Kd" type="number" min="0.001" max="3" step="any" value="3"></td></tr><tr><th>J2</th><td><input id="drive-kp2" aria-label="MIT J2 Kp" type="number" min="0.001" max="150" step="any" value="150"></td><td><input id="drive-kd2" aria-label="MIT J2 Kd" type="number" min="0.001" max="10" step="any" value="10"></td></tr><tr><th>J3</th><td><input id="drive-kp3" aria-label="MIT J3 Kp" type="number" min="0.001" max="150" step="any" value="150"></td><td><input id="drive-kd3" aria-label="MIT J3 Kd" type="number" min="0.001" max="10" step="any" value="10"></td></tr><tr><th>J4</th><td><input id="drive-kp4" aria-label="MIT J4 Kp" type="number" min="0.001" max="50" step="any" value="50"></td><td><input id="drive-kd4" aria-label="MIT J4 Kd" type="number" min="0.001" max="5" step="any" value="5"></td></tr><tr><th>J5</th><td><input id="drive-kp5" aria-label="MIT J5 Kp" type="number" min="0.001" max="50" step="any" value="50"></td><td><input id="drive-kd5" aria-label="MIT J5 Kd" type="number" min="0.001" max="4" step="any" value="4"></td></tr><tr><th>J6</th><td><input id="drive-kp6" aria-label="MIT J6 Kp" type="number" min="0.001" max="50" step="any" value="50"></td><td><input id="drive-kd6" aria-label="MIT J6 Kd" type="number" min="0.001" max="4" step="any" value="4"></td></tr></tbody></table><p class="twin-hint">τ = Kp × 位置误差 − Kd × 实测速度；速度/力矩前馈固定为0。初值来自锁定官方YAML，仅允许向下调整，不写CSP内部PID。负载变化后须重新调参。</p></div>
+        <div class="wb-actions"><button type="button" id="drive-apply">应用驱动与MIT参数</button><button type="button" id="drive-default">填入官方MIT初值</button></div>
+        <p id="drive-status" class="twin-hint">等待执行器报告驱动模式</p>
+        <p class="twin-hint">驱动切换只保存配置；准备并启动电机时才生效。切换使预览与试算作废，重连默认CSP。MIT复用当前CAN所有者、限位与故障保持，不调用官方自动使能/回零退出流程。MIT启动与通信故障后的实物保持尚待现场验收。J7仍使用原方案。<a href="https://wiki.seeedstudio.com/rebot_arm_b601_rs_mit_control/" target="_blank" rel="noopener">官方MIT说明</a></p>
+      </details>
+      </section>
+      <section class="wb-panel" id="hub-system" data-workbench-panel="system" aria-labelledby="hub-services-title" hidden>
+        <div class="wb-heading"><div><p class="eyebrow">CONNECTION & SERVICES</p><h2 id="hub-services-title">连接与服务</h2><p>查看网页、ROS 与实机反馈服务的状态；完整的后台启动流程请进入项目启动台。</p></div></div>
+          <div class="hub-service-row"><span>网页服务<strong id="hub-web-status">已打开</strong></span><span>ROS 连接<strong id="hub-ros-status">未连接</strong></span><span>实机反馈服务<strong id="hub-driver-status">尚未检查</strong></span><button type="button" id="hub-refresh-status">刷新服务状态</button></div>
+          <p id="hub-system-message" class="twin-hint" role="status">完整服务启动流程在左侧「项目启动台」。普通打开工作台不会自动连接或使能。</p>
+          <p id="twin-stop-reason" class="twin-hint" role="status"></p>
+          <div class="wb-actions"><a class="secondary-btn" href="/startup.html" target="_blank" rel="noopener">打开项目启动台 ↗</a><button type="button" data-hub-advanced>连接与显示高级设置</button></div>
+          <p class="twin-hint">高级设置在右侧展开；MotorBridge 直连及 ROSBridge 仿真控制台仍可从左侧独立进入。</p>
+          <p class="twin-hint">项目位置：<code>/home/bonvoyage/Desktop/rebot-b601-doc-replica/ReBot_Arm_DigitalTwin_RS</code></p>
+      </section>
+      <section class="wb-panel" id="hub-expert-start" data-workbench-panel="prepare" aria-labelledby="hub-prepare-title" hidden>
+        <div class="wb-heading"><div><p class="eyebrow">PREPARE & TAKE CONTROL</p><h2 id="hub-prepare-title">分步准备与接管</h2><p>需要逐项检查时，按顺序选择范围、准备控制、接管，再启动电机保持。日常操作可直接进入左侧的手动功能。</p></div></div>
+            <div class="twin-hardware-gate" id="hub-hardware-advanced" hidden>
+              <label>控制范围<select id="twin-control-range" aria-describedby="twin-range-lock"><option value="" disabled hidden>两种范围均暂停 · 待恢复核查</option><option value="small">小幅试机 · 每轴 0.5° / 15 秒</option><option value="full">完整控制 · 模型限位内 / 持续保持</option></select></label>
+              <span id="twin-range-lock" class="twin-hint" role="status" hidden></span>
+              <span id="twin-control-lock-host"></span>
+              <button type="button" id="twin-enable-hardware">准备控制（不使能）</button>
+              <span id="twin-range-help">连接后显示本模式的内部限制。</span>
+              <details class="twin-limit-sources"><summary>控制上限与官方依据</summary><p id="twin-limit-summary">连接反馈后显示本模式的限制及来源。</p><a href="https://wiki.seeedstudio.com/cn/rebot_arm_b601_rs_web_simulator_developer_guide/" target="_blank" rel="noopener">Seeed 官方 Web 控制参数</a><a href="https://github.com/tianrking/motorbridge-studio/blob/main/src/lib/robotArm.js" target="_blank" rel="noopener">MotorBridge 参数预设</a></details>
+            </div>
+            <div class="wb-actions"><button type="button" id="twin-acquire" disabled>仅接管控制</button><button type="button" id="twin-power-hold" disabled hidden>启动电机保持（使能）</button><button type="button" id="twin-release" disabled>暂停并释放控制权</button></div>
+            <p class="twin-hint">准备与接管不使能电机；点击「启动电机保持」才使能。仿真只需连接并接管。暂停使用顶部「暂停并保持」。</p>
+      </section>
+      <section class="wb-panel" id="hub-reset-section" data-workbench-panel="maintenance" aria-labelledby="hub-maintenance-title" hidden>
+        <div class="wb-heading"><div><p class="eyebrow">RESET & MAINTENANCE</p><h2 id="hub-maintenance-title">重置与维护</h2><p>用于清空控制状态并请求停止与恢复核查。先支撑机械臂，再明确发起重置；缺少原始参数快照时仍会锁定。</p></div></div>
+            <div class="twin-reset-strip"><span id="twin-reset-help">重置会请求失能；仅在原始快照完整且读回核对通过时，才能确认参数恢复。须先支撑机械臂，不会回零或自动使能。日常暂停使用顶部「暂停并保持」。</span><span id="twin-reset-status" role="status" aria-live="polite">未发起重置</span></div>
+            <button type="button" id="twin-reset-control" class="twin-reset-control" aria-describedby="twin-reset-help">↻ 重置控制状态</button>
+            <p class="twin-hint">退出整个项目请用顶部「结束项目」；悬空保持时先支撑并失能，再退出服务或断电。</p>
+            <details class="recovery-guide"><summary>暂停、重置、重启分别能修复什么？</summary><ul><li>短暂通信延迟：先暂停并保持；反馈恢复且输入松开后可恢复手动就绪，旧程序不会自动续跑。</li><li>控制状态异常、临时参数残留：先支撑并失能，再重置；只有完整原始快照且读回核对通过，才能恢复参数。</li><li>网页或后台服务卡住：先支撑并失能，结束项目后重新打开启动台。</li><li>缺少原始快照、未知参数、硬件故障：重置或重启不能保证修复。保留恢复记录，核查原因后再处理，禁止反复使能尝试。</li></ul></details>
+      </section>
+      </div>
+      <details class="hub-monitor" id="hub-monitor" open>
+        <summary><strong>模型与相机画面</strong><span>实时模型 · 路径高亮 · 实机视频 ▾</span></summary>
+      <div class="twin-view-grid">
+    <section class="viewport" id="viewport">
+      <div id="scene-host" class="scene-host"></div>
+      <div id="drag-marker" data-i18n-title="app.dragTcp" class="drag-marker" title="拖拽 TCP"></div>
+
+      <header class="hud top-hud">
+        <div>
+          <p class="eyebrow">DIGITAL TWIN</p>
+          <h1 id="twin-view-title">机械臂 · 仿真反馈</h1>
+        </div>
+        <div class="status-pill" id="load-status">
+          <span class="status-dot"></span>
+          <span data-i18n="app.loading">加载中</span>
+        </div>
+      </header>
+
+      <div class="hud pose-hud">
+        <div>
+          <span data-i18n="app.tcp">TCP</span>
+          <strong id="tcp-position" data-i18n="app.tcpDefault">X -- / Y -- / Z --</strong>
+        </div>
+        <div>
+          <span data-i18n="app.reach">可达参考</span>
+          <strong id="reach-state" data-i18n="app.reachDefault">--</strong>
+        </div>
+      </div>
+
+      <div class="hud drag-hud" id="drag-hud">
+        <span data-i18n="app.dragTarget">拖拽目标</span>
+        <strong id="drag-status" data-i18n="app.dragDisabled">未启用</strong>
+      </div>
+
+      <div class="hud legend-hud">
+        <span><i class="axis x"></i><span data-i18n="app.axisX">ROS +X 前方</span></span>
+        <span><i class="axis y"></i><span data-i18n="app.axisY">ROS +Y 左侧</span></span>
+        <span><i class="axis z"></i><span data-i18n="app.axisZ">ROS +Z 向上</span></span>
+      </div>
+      <button type="button" id="twin-reset-view" class="twin-reset-view" title="鼠标左键旋转、右键平移、滚轮缩放">重置视角</button>
+    </section>
+        <section class="twin-camera-panel" aria-labelledby="twin-camera-title">
+          <div class="twin-view-head"><div><p class="eyebrow">LIVE CAMERA</p><h2 id="twin-camera-title">实机观察画面</h2></div><span class="twin-badge" id="twin-camera-state">未连接相机</span></div>
+          <div class="twin-camera-screen">
+            <video id="twin-video" autoplay muted playsinline hidden></video>
+            <img id="twin-camera-image" alt="实机相机画面" hidden>
+            <div id="twin-camera-placeholder"><span class="twin-camera-icon">◎</span><strong>让实机与模型同屏</strong><p>连接 USB 相机、网络视频流<br>或 ROS 压缩图像话题</p></div>
+            <span class="twin-camera-caption" id="twin-camera-timing">相机与关节反馈独立采集，视频延迟尚未标定</span>
+          </div>
+          <div class="twin-camera-settings">
+            <label>画面来源<select id="twin-camera-source"><option value="usb">本机 / USB 相机</option><option value="mjpeg">HTTP MJPEG / JPEG</option><option value="video">HTTP 视频（MP4 / WebM）</option><option value="ros">ROS 压缩图像</option></select></label>
+            <label id="twin-camera-device-row">相机设备<select id="twin-camera-device"><option value="">系统默认相机</option></select></label>
+            <label id="twin-camera-url-row" hidden>画面地址<input id="twin-camera-url" type="url" placeholder="http://相机地址/stream" spellcheck="false"></label>
+            <label id="twin-camera-cors-row" hidden><input id="twin-camera-cors" type="checkbox">用于算法取帧（网络相机需支持CORS，勾选后重新连接）</label>
+            <label id="twin-camera-topic-row" hidden>图像话题<input id="twin-camera-topic" value="/camera/color/image_raw/compressed" spellcheck="false"></label>
+            <div class="twin-camera-actions"><button type="button" id="twin-camera-connect">连接画面</button><button type="button" id="twin-camera-disconnect">断开</button></div>
+            <p id="twin-camera-message" role="status">USB 相机属于打开网页的这台电脑；连接时浏览器会请求授权。</p>
+          </div>
+        </section>
+      </div>
+      <section class="twin-telemetry" aria-label="同步状态">
+        <div><span>反馈来源</span><strong id="twin-feedback-source">等待 ROS</strong></div>
+        <div><span>反馈新鲜度</span><strong id="twin-feedback-age">—</strong></div>
+        <div><span>轨迹跟踪差值</span><strong id="twin-tracking-error">—</strong></div>
+        <div><span>目标位置误差</span><strong id="twin-position-error">—</strong></div>
+        <div><span>目标姿态误差</span><strong id="twin-rotation-error">—</strong></div>
+      </section>
+      <div class="twin-display-tools"><label>模型显示 <select id="twin-display-mode"><option value="smooth">反馈插值（过渡≤300ms，增加显示延迟）</option><option value="raw">原始反馈（逐次显示，便于排查）</option></select></label><label>画面质量 <select id="twin-render-quality"><option value="smooth">流畅（关闭阴影 / 标准分辨率）</option><option value="detailed">精细（阴影 / 高清）</option></select></label><span id="twin-display-timing">状态 / CAN / 画面节奏：等待反馈</span><p>插值只改变模型及其TCP读数；反馈年龄、跟踪误差和控制指令保持原值。画面顺滑不能证明实机无颤动。</p></div>
+      </details>
+      </div>
+    </div>
+
+    <aside class="control-panel">
+      <div class="panel-title">
+        <div>
+          <p class="eyebrow" data-i18n="panel.eyebrow">控制台</p>
+          <h2 data-i18n="panel.title">仿真控制台</h2>
+        </div>
+        <div class="panel-actions">
+          <div class="lang-toggle" id="lang-toggle" role="group" aria-label="语言 / Language">
+            <button type="button" data-lang="zh" class="lang-btn active">中</button>
+            <button type="button" data-lang="en" class="lang-btn">EN</button>
+          </div>
+          <button class="icon-btn" id="ros-help-top" data-i18n-title="panel.help" title="功能帮助">?</button>
+          <button class="icon-btn" id="sidebar-collapse" data-i18n-title="panel.collapse" title="折叠侧边栏">◀</button>
+          <button class="icon-btn" id="reset-camera" data-i18n-title="panel.reset" title="重置视角">↺</button>
+        </div>
+      </div>
+
+      <div class="install-status" id="pwa-install-status" data-i18n="pwa.detecting">正在检测安装状态</div>
+
+      <div class="section">
+        <h3 data-i18n="wrist.title">腕部相机模型</h3>
+        <label class="field-row">
+          <span data-i18n="wrist.model">相机装配</span>
+          <select id="wrist-camera-model" aria-describedby="wrist-camera-model-status" disabled>
+            <option value="none" data-i18n="wrist.optionNone">无相机</option>
+            <option value="d405">RealSense D405</option>
+            <option value="d435i">RealSense D435i</option>
+            <option value="gemini2">Orbbec Gemini 2</option>
+            <option value="uvc32">32×32 UVC</option>
+          </select>
+        </label>
+        <p class="ros-message" id="wrist-camera-model-status" role="status" aria-live="polite" data-i18n="wrist.none">未安装腕部相机</p>
+      </div>
+
+      <div class="control-mode-tabs" role="tablist" aria-label="真机控制模式">
+        <button
+          type="button"
+          class="control-mode-tab"
+          id="control-mode-motorbridge"
+          data-control-mode="motorbridge"
+          role="tab"
+          aria-selected="false"
+          aria-controls="motorbridge-mode-panel"
+         data-i18n="mb.modeDirect">MotorBridge 直连</button>
+        <button
+          type="button"
+          class="control-mode-tab is-active"
+          id="control-mode-ros"
+          data-control-mode="ros"
+          role="tab"
+          aria-selected="true"
+          aria-controls="ros-mode-panel"
+          tabindex="-1"
+        >ROSBridge</button>
+      </div>
+
+      <div
+        class="control-mode-panel"
+        id="motorbridge-mode-panel"
+        data-control-mode-panel="motorbridge"
+        role="tabpanel"
+        aria-labelledby="control-mode-motorbridge"
+        hidden
+      >
+      <div class="section motorbridge-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">MotorBridge</p>
+            <h3 data-i18n="mb.title">真机直连控制</h3>
+          </div>
+          <span class="mini-pill" id="mb-status">离线</span>
+        </div>
+        <p class="ros-message" id="mb-message">MotorBridge 保留为独立直连入口。每次只向选中的轴发送一个位置/速度目标，收到该轴到位反馈后再同步 3D；不会自动连接、使能或运动。</p>
+        <label class="field-row">
+          <span data-i18n="mb.wsAddr">WS 地址</span>
+          <input id="mb-url" type="text" value="" spellcheck="false" placeholder="请输入ws://IP:port">
+        </label>
+        <label class="field-row">
+          <span data-i18n="mb.token">Token</span>
+          <input id="mb-token" type="text" value="" spellcheck="false" placeholder="MOTORBRIDGE_WS_TOKEN">
+        </label>
+        <div class="button-grid">
+          <button type="button" id="mb-connect" data-i18n="mb.connect">连接</button>
+          <button type="button" id="mb-disconnect" data-i18n="mb.disconnect">断开</button>
+        </div>
+        <div class="button-grid">
+          <button type="button" id="mb-scan" data-i18n="mb.scan">扫描电机</button>
+          <button type="button" id="mb-enable-all" data-i18n="mb.enableAll">全部使能</button>
+          <button type="button" id="mb-disable-all" data-i18n="mb.disableAll">全部失能</button>
+        </div>
+        <div class="button-grid">
+          <button type="button" id="mb-safe-home" data-i18n="mb.safeHome">安全回零</button>
+          <button type="button" id="mb-open-gripper" data-i18n="mb.openGripper">夹爪打开</button>
+          <button type="button" id="mb-close-gripper" data-i18n="mb.closeGripper">夹爪闭合</button>
+        </div>
+        <label class="field-row">
+          <span data-i18n="mb.speedLimit">速度限制</span>
+          <input id="mb-vlim" type="number" step="0.05" value="0.25" min="0.05" max="0.7">
+        </label>
+        <label class="field-row">
+          <span data-i18n="mb.posKp">位置 KP</span>
+          <input id="mb-loc-kp" type="number" step="1" value="30" min="1" max="100">
+        </label>
+        <p class="twin-hint mb-single-axis-hint">原有逐轴控制保留；开启实时跟随后，只向当前选中的单轴持续发送最新 <code>pos_vel</code> 目标。</p>
+        <label class="switch-row">
+          <input type="checkbox" id="mb-mirror" checked>
+          <span data-i18n="mb.syncAfter">到位确认后同步到 3D</span>
+        </label>
+        <label class="switch-row">
+          <input type="checkbox" id="mb-live-move" checked>
+          <span>单轴实时跟随（80 ms）</span>
+        </label>
+        <p class="twin-hint mb-single-axis-hint">开启后拖动 J1–J7 的滑条会持续提交当前这一轴的最新目标；同一时刻只发送一个轴，松开时补发最终值。反馈会更新状态和 3D，但拖动目标不会被旧反馈覆盖，最后一个目标会留出短暂收尾时间。必须先连接、扫描并明确使能，页面不会自动连接或使能。</p>
+        <div class="ros-feedback">
+          <span data-i18n="mb.arrivalConfirm">到位确认</span>
+          <strong id="mb-sync-status" data-i18n="mb.waiting">等待目标指令</strong>
+        </div>
+        <div id="mb-motor-list" class="mb-motor-list"></div>
+        <div class="mb-gripper-row">
+          <h3 data-i18n="mb.gripperTitle">夹爪</h3>
+          <div class="gripper-readout">
+            <span data-i18n="mb.gripperWidth">开合宽度</span>
+            <strong id="mb-gripper-width">0 mm</strong>
+          </div>
+          <input id="mb-gripper-slider" type="range" min="0" max="71.5" step="0.5" value="0" class="mb-gripper-slider">
+        </div>
+        <div class="section log-section">
+          <h3 data-i18n="mb.logTitle">MotorBridge 日志</h3>
+          <div class="ros-log" id="mb-log"></div>
+        </div>
+      </div>
+      </div>
+
+      <div
+        class="control-mode-panel is-active"
+        id="ros-mode-panel"
+        data-control-mode-panel="ros"
+        role="tabpanel"
+        aria-labelledby="control-mode-ros"
+      >
+            <div class="section ros-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow" data-i18n="ros.eyebrow">ROS2 桥接</p>
+            <h3 id="ros-target-title" data-i18n="ros.title">RS 控制连接</h3>
+          </div>
+         <span class="mini-pill" id="ros-status" data-i18n="st.offline">离线</span>
+       </div>
+        <div class="quick-start-box">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow" data-i18n="quickStart.eyebrow">本机安全启动</p>
+              <h3 data-i18n="quickStart.title">安全 RS 仿真</h3>
+            </div>
+            <span class="mini-pill" id="quick-start-status" data-i18n="quickStart.idle">未启动</span>
+          </div>
+          <p class="quick-start-note" data-i18n="quickStart.note">启动 Fake Driver、MuJoCo、rosbridge 和网页服务；不会启动真机控制器。</p>
+          <button type="button" class="primary-btn quick-start-button" id="quick-start-button" data-i18n="quickStart.button">启动安全仿真</button>
+        </div>
+        <label class="field-row">
+          <span data-i18n="ros.target">控制目标</span>
+          <select id="ros-target">
+            <option value="hardware" data-i18n="ros.targetHardware">RS 真机（/rebotarm）</option>
+            <option value="simulation" data-i18n="ros.targetSimulation">RS 仿真（/rebotarm_rs）</option>
+          </select>
+        </label>
+        <label class="field-row">
+          <span data-i18n="ros.ws">WebSocket</span>
+          <input id="ros-url" type="text" placeholder="ws://localhost:9090" spellcheck="false">
+        </label>
+        <div class="button-grid">
+          <button type="button" id="ros-connect" data-i18n="ros.connect">连接 ROS</button>
+          <button type="button" id="ros-disconnect" data-i18n="ros.disconnect">断开</button>
+        </div>
+        <label class="switch-row">
+          <input type="checkbox" id="ros-safe-disconnect">
+          <span data-i18n="ros.safeDisconnect">断开时自动安全回零并失能</span>
+        </label>
+        <label class="switch-row">
+          <input type="checkbox" id="ros-mirror">
+          <span id="ros-mirror-label" data-i18n="ros.mirror">镜像目标关节状态到网页</span>
+        </label>
+        <label class="switch-row">
+          <input type="checkbox" id="ros-control-enable">
+          <span id="ros-control-label" data-i18n="ros.controlEnable">允许网页向真实机械臂发控制</span>
+        </label>
+        <div class="button-grid">
+          <button type="button" id="ros-enable" data-i18n="ros.enable">使能</button>
+          <button type="button" id="ros-disable" data-i18n="ros.disable">失能</button>
+          <button type="button" id="ros-safe-home" data-i18n="ros.safeHome">安全回零</button>
+          <button type="button" id="ros-open-gripper" data-i18n="ros.openGripper">夹爪打开</button>
+          <button type="button" id="ros-close-gripper" data-i18n="ros.closeGripper">夹爪闭合</button>
+        </div>
+        <div class="ros-feedback">
+          <span data-i18n="ros.gravity">重力补偿</span>
+          <strong id="ros-gravity-status" data-i18n="ros.gravityNotQueried">未查询</strong>
+        </div>
+        <div class="ros-feedback">
+          <span data-i18n="ros.gripperMode">夹爪模式</span>
+          <strong id="ros-gripper-mode" data-i18n="ros.gripperModeWaiting">等待反馈</strong>
+        </div>
+        <div class="button-grid">
+          <button type="button" id="ros-gravity-start" data-i18n="ros.gravityStart">启动重补</button>
+          <button type="button" id="ros-gravity-stop" data-i18n="ros.gravityStop">停止重补</button>
+          <button type="button" id="ros-gravity-status-query" data-i18n="ros.gravityQuery">查询状态</button>
+        </div>
+        <div class="ros-feedback">
+          <span data-i18n="ros.feedbackError">反馈差值</span>
+          <strong id="ros-feedback-error" data-i18n="ros.feedbackWaiting">等待 /joint_states</strong>
+        </div>
+        <p class="ros-message" id="ros-message" data-i18n="ros.message">先在 Ubuntu 虚拟机启动 rosbridge，再输入地址连接。</p>
+      </div>
+
+      <div class="section" id="leader-panel">
+        <div class="section-head"><h3 data-leader-text="title">Leader 遥操作</h3><span class="mini-pill" id="leader-status">等待 ROS 主臂服务</span></div>
+        <p class="leader-tip" data-leader-text="tip">扫描 ROS 主机的串口。连接预览后解锁主臂、摆好零位，再确认校准；默认相对跟随。</p>
+        <div id="leader-model" class="leader-model" hidden>
+          <div class="leader-model-head"><strong class="leader-model-title">Arm102 Leader · 实测姿态</strong><button type="button" class="leader-model-reset">重置视角</button></div>
+          <div class="leader-model-host"></div>
+          <p class="leader-model-note" role="status">正在加载官方 LD 模型…</p>
+        </div>
+        <label class="field-row"><span data-leader-text="port">主臂串口（ROS 主机）</span><input id="leader-port" type="text" placeholder="/dev/ttyUSB0" spellcheck="false"></label>
+        <label class="field-row"><span data-leader-text="device">扫描结果</span><select id="leader-devices" aria-label="Leader devices"></select></label>
+        <div class="button-grid">
+          <button type="button" id="leader-scan" data-leader-text="scan">扫描主臂</button>
+          <button type="button" id="leader-connect" data-leader-text="connect">连接</button>
+          <button type="button" id="leader-unlock" data-leader-text="unlock">解锁主臂</button>
+          <button type="button" id="leader-disconnect" data-leader-text="disconnect">断开主臂</button>
+        </div>
+        <label class="switch-row"><input type="checkbox" id="leader-zero"><span data-leader-text="zero">已摆好主臂零位并闭合夹爪</span></label>
+        <div class="button-grid"><button type="button" id="leader-calibrate" data-leader-text="calibrate">确认并设置主臂零位</button></div>
+        <label class="field-row"><span data-leader-text="speed">目标速度（rad/s）</span><input id="leader-speed" type="number" min="0.05" max="1" step="0.05" value="1"></label>
+        <label class="switch-row"><input type="checkbox" id="leader-gripper" checked><span data-leader-text="gripper">跟随夹爪</span></label>
+        <label class="switch-row"><input type="checkbox" id="leader-absolute"><span data-leader-text="absolute">绝对跟随（需主从对齐）</span></label>
+        <div class="button-grid">
+          <button type="button" id="leader-start" data-leader-text="start">开始跟随</button>
+          <button type="button" id="leader-pause" data-leader-text="pause">暂停保持</button>
+          <button type="button" id="leader-resume" data-leader-text="resume">继续跟随</button>
+          <button type="button" id="leader-stop" data-leader-text="stop">停止并释放控制</button>
+        </div>
+        <div class="leader-readout" id="leader-angles">J1–J6 / G: —</div>
+        <div class="ros-feedback"><span>Leader</span><strong id="leader-rate">—</strong></div>
+        <p class="ros-message" id="leader-message" role="status" aria-live="polite">等待 ROS 主臂服务</p>
+      </div>
+
+      <div class="section log-section">
+        <h3 data-i18n="log.title">ROS 实时日志</h3>
+        <div class="button-grid">
+          <button type="button" id="ros-clear-log" data-i18n="log.clear">清空日志</button>
+        </div>
+        <div class="ros-log" id="ros-log"></div>
+      </div>
+
+      <div class="section llm-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow" data-i18n="llm.eyebrow">AI 助手</p>
+            <h3 data-i18n="llm.title">LLM 文本控制</h3>
+          </div>
+          <span class="mini-pill" id="llm-status" data-i18n="llm.notStarted">未启动</span>
+        </div>
+        <div class="llm-chat-container" id="llm-chat-container">
+          <div class="llm-chat-messages" id="llm-chat-messages"></div>
+          <div class="llm-chat-input-row">
+            <input id="llm-input" data-i18n-ph="llm.placeholder" type="text" placeholder="输入指令，如：打开夹爪、移动到..." spellcheck="false" disabled>
+            <button type="button" id="llm-send" data-i18n="llm.send" disabled>发送</button>
+          </div>
+        </div>
+        <div class="button-grid">
+          <button type="button" id="llm-start" data-i18n="llm.start" class="primary-btn">连接 AI 助手</button>
+          <button type="button" id="llm-stop" data-i18n="llm.stop" disabled>停止</button>
+        </div>
+        <p class="llm-message" id="llm-message" data-i18n="llm.message">首次使用请先按下方说明启动 text-agent，再点击连接。</p>
+        <details class="llm-setup-guide">
+          <summary data-i18n="llm.guideTitle">第一次使用：怎样启动 AI 助手？</summary>
+          <ol>
+            <li data-i18n="llm.guideTerminal">在运行仿真的 Ubuntu 虚拟机里打开一个新终端。</li>
+            <li>
+              <span data-i18n="llm.guideStart">进入项目目录，配置大模型 Key，然后启动服务：</span>
+              <pre><code>cd /home/robot/ReBot_Arm_DigitalTwin_RS
+export DASHSCOPE_API_KEY='替换成你的 Key'
+export REBOTARM_LLM_MODEL='qwen-plus'
+./scripts/start_rs_text_agent.sh</code></pre>
+            </li>
+            <li data-i18n="llm.guideKeepOpen">保持这个终端运行；看到“listening on http://0.0.0.0:8082”表示启动成功。</li>
+            <li>
+              <span data-i18n="llm.guideCheck">可在另一个终端检查：</span>
+              <pre><code>curl http://127.0.0.1:8082/health</code></pre>
+              <span data-i18n="llm.guideExpected">应返回包含 “ok: true” 的结果。</span>
+            </li>
+            <li data-i18n="llm.guideConnect">回到网页点击“连接 AI 助手”，连接后即可输入“查询机械臂状态”“抓取红色物块”等指令。</li>
+          </ol>
+          <p class="llm-guide-note" data-i18n="llm.guideMcp">注意：仿真与 MCP 服务也必须保持运行；通常先执行 ./scripts/start_rs_sim.sh。</p>
+        </details>
+     </div>
+
+      <div class="section camera-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow" data-i18n="camera.eyebrow">RGB Camera</p>
+            <h3 data-i18n="camera.title">桌面俯视相机</h3>
+          </div>
+          <span class="mini-pill" id="ros-camera-status" data-i18n="st.cameraOffline">离线</span>
+        </div>
+        <canvas id="ros-camera-canvas" class="camera-preview" width="320" height="240"></canvas>
+        <div class="ros-feedback camera-topic-row">
+          <span data-i18n="camera.topic">话题</span>
+          <strong id="ros-camera-topic">--</strong>
+        </div>
+        <div class="ros-feedback">
+          <span data-i18n="camera.vision">颜色识别</span>
+          <strong id="ros-vision-status" data-i18n="camera.visionWait">等待检测</strong>
+        </div>
+        <div class="ros-feedback">
+          <span data-i18n="camera.targetPose">目标 Pose</span>
+          <strong id="ros-vision-target">--</strong>
+        </div>
+        <label class="field-row">
+          <span data-i18n="camera.targetColor">目标颜色</span>
+          <select id="ros-vision-color">
+            <option value="auto" data-i18n="camera.colorAuto">自动目标</option>
+            <option value="red" data-i18n="camera.colorRed">红色</option>
+            <option value="yellow" data-i18n="camera.colorYellow">黄色</option>
+            <option value="blue" data-i18n="camera.colorBlue">蓝色</option>
+          </select>
+        </label>
+        <div class="pose-grid compact-pose-grid">
+          <label><span data-i18n="camera.approachZ">上方 Z m</span><input id="ros-vision-approach-z" type="number" min="0.08" max="0.25" step="0.005" value="0.180"></label>
+          <label><span data-i18n="camera.graspZ">下探 Z m</span><input id="ros-vision-grasp-z" type="number" min="0.06" max="0.20" step="0.0025" value="0.140"></label>
+        </div>
+        <div class="button-grid">
+          <button type="button" id="ros-vision-fill-pose" data-i18n="camera.fillPose">填入 Pose</button>
+          <button type="button" id="ros-vision-move-above" data-i18n="camera.moveAbove">移动到目标上方</button>
+          <button type="button" id="ros-vision-pick-demo" data-i18n="camera.pick">抓取入仓</button>
+          <button type="button" id="ros-vision-place-demo" data-i18n="camera.place">放置物体</button>
+        </div>
+      </div>
+
+      <div class="section safety-section">
+        <h3 data-i18n="safety.title">安全限制</h3>
+        <label class="field-row">
+          <span data-i18n="safety.vlim">关节速度上限 rad/s</span>
+          <input id="ros-vlim" type="number" min="0.05" max="1.50" step="0.05" value="1.20">
+        </label>
+        <label class="field-row">
+          <span data-i18n="safety.sliderDamping">滑块阻尼 ms</span>
+          <input id="ros-slider-damping" type="number" min="0" max="300" step="10" value="30">
+        </label>
+        <label class="field-row">
+          <span data-i18n="safety.trajDuration">单段轨迹时长 s</span>
+          <input id="ros-trajectory-duration" type="number" min="1" max="30" step="0.5" value="2">
+        </label>
+      </div>
+
+      <div class="section action-section">
+        <h3 data-i18n="action.title">Pose 运动</h3>
+        <div class="pose-grid">
+          <label><span data-i18n="action.x">X m</span><input id="ros-pose-x" type="number" step="0.005" value="0.30"></label>
+          <label><span data-i18n="action.y">Y m</span><input id="ros-pose-y" type="number" step="0.005" value="0.00"></label>
+          <label><span data-i18n="action.z">Z m</span><input id="ros-pose-z" type="number" step="0.005" value="0.30"></label>
+          <label><span data-i18n="action.duration">时长 s</span><input id="ros-pose-duration" type="number" min="0.4" max="8" step="0.2" value="2.0"></label>
+        </div>
+        <div class="button-grid">
+          <button type="button" id="ros-check-ik" data-i18n="action.ik">IK 运动</button>
+        </div>
+      </div>
+
+      <dialog id="ros-help-dialog" style="border-radius:12px;border:1px solid #444;padding:28px;max-width:620px;max-height:85vh;overflow-y:auto;color:#e0e0e0;background:#1e1e2e;">
+        <h3 style="margin-top:0;color:#7ec8e0;" data-i18n="help.title">reBot Arm B601-RS 网页控制台 — 功能说明</h3>
+
+        <h4 style="color:#d7fff4;margin-bottom:4px;" data-i18n="help.s1.title">一、连接与模式</h4>
+        <div style="line-height:1.7;font-size:13px;margin-bottom:12px;">
+          <p data-i18n-html="help.s1.connect"><b>连接 ROS</b>：输入 rosbridge 的 WebSocket 地址（如 <code>ws://localhost:9090</code>），点击连接。连接后自动订阅关节状态、夹爪状态和机械臂状态。</p>
+          <p data-i18n-html="help.s1.disconnect"><b>断开</b>：断开与 rosbridge 的连接，停止所有订阅和发布。</p>
+          <p data-i18n-html="help.s1.control"><b>控制锁</b>：勾选后允许网页向 ROS 发送控制命令。未勾选时拖滑块只动 3D 模型，不发 ROS 命令。连接到真机控制器时命令会驱动真实硬件，请谨慎操作。</p>
+        </div>
+
+        <h4 style="color:#d7fff4;margin-bottom:4px;" data-i18n="help.s2.title">二、机械臂控制</h4>
+        <div style="line-height:1.7;font-size:13px;margin-bottom:12px;">
+          <p data-i18n-html="help.s2.enable"><b>使能</b>：给所有电机通电，机械臂进入可接受命令状态。每次重启控制器后需重新使能。预期：日志显示「enabled」，状态栏显示「已使能」。</p>
+          <p data-i18n-html="help.s2.disable"><b>失能</b>：先检查六轴是否在零位附近且已停稳；否则自动安全回零，确认到位后才失能。回零失败时保持使能。</p>
+          <p data-i18n-html="help.s2.home"><b>安全回零</b>：平滑插值回到所有关节零位（0°），速度受限。建议在异常或任务结束后使用。预期：6 个关节缓慢回到 0°，3D 模型同步跟随。</p>
+        </div>
+
+        <h4 style="color:#d7fff4;margin-bottom:4px;" data-i18n="help.s3.title">三、夹爪控制</h4>
+        <div style="line-height:1.7;font-size:13px;margin-bottom:12px;">
+          <p data-i18n-html="help.s3.open"><b>夹爪打开</b>：夹爪运动到最大开口（71.5mm）。预期：夹爪张开，3D 模型夹爪同步。</p>
+          <p data-i18n-html="help.s3.close"><b>夹爪闭合</b>：夹爪运动到完全闭合（0mm），施加默认 0.3Nm 夹持力。预期：夹爪闭合并保持夹持力。</p>
+          <p data-i18n-html="help.s3.slider"><b>夹爪滑块</b>：拖动可设置任意开口（0~71.5mm），实时控制夹爪宽度。</p>
+        </div>
+
+        <h4 style="color:#d7fff4;margin-bottom:4px;" data-i18n="help.s4.title">四、重力补偿</h4>
+        <div style="line-height:1.7;font-size:13px;margin-bottom:12px;">
+          <p data-i18n-html="help.s4.start"><b>启动重补</b>：切换到 MIT 模式，使用 Pinocchio 计算重力力矩并叠加低增益位置保持。启动后手臂可悬停不掉，松手后保持当前姿态。预期：日志显示「gravity compensation started」，状态栏显示「运行中」。</p>
+          <p data-i18n-html="help.s4.stop"><b>停止重补</b>：切回 POS_VEL 位置模式，启动 hold 循环保持当前姿态。预期：日志显示「gravity compensation stopped」，状态栏显示「未运行」。</p>
+          <p data-i18n-html="help.s4.query"><b>查询状态</b>：查询重力补偿是否运行中，以及锁定目标角度（启动时记录的关节角度）。用于在不改变状态的情况下确认当前运行状态。</p>
+        </div>
+
+        <h4 style="color:#d7fff4;margin-bottom:4px;" data-i18n="help.s5.title">五、Pose 运动</h4>
+        <div style="line-height:1.7;font-size:13px;margin-bottom:12px;">
+          <p data-i18n-html="help.s5.xyz"><b>X / Y / Z</b>：输入末端目标位置（米），默认 X=0.30, Y=0.00, Z=0.30。</p>
+          <p data-i18n-html="help.s5.duration"><b>时长</b>：轨迹执行时间（秒），默认 4.0s；真机首次运行建议保持 4 秒或更长。</p>
+          <p data-i18n-html="help.s5.ik"><b>IK 运动</b>：先解算逆运动学，再按照上面的时长执行平滑轨迹。需勾选控制锁 + 使能。预期：机械臂在指定时间内运动到目标位置，日志显示执行结果。</p>
+          <p data-i18n-html="help.s5.send"><b>发送 Pose</b>：规划平滑轨迹（min-jerk）后运动到目标位姿，时长可控。需勾选控制锁 + 使能。预期：机械臂沿平滑轨迹运动到目标，3D 模型同步。</p>
+        </div>
+
+        <h4 style="color:#d7fff4;margin-bottom:4px;" data-i18n="help.s6.title">六、关节滑块</h4>
+        <div style="line-height:1.7;font-size:13px;margin-bottom:12px;">
+          <p data-i18n-html="help.s6.body">拖动 joint1~joint6 滑块控制单个关节角度（弧度）。勾选控制锁后控制真机，未勾选只动 3D 模型。滑块有节流（约 50ms），避免总线过载。建议从末端关节（joint5/joint6）开始小幅度测试。</p>
+        </div>
+
+        <h4 style="color:#d7fff4;margin-bottom:4px;" data-i18n="help.s7.title">七、诊断与日志</h4>
+        <div style="line-height:1.7;font-size:13px;margin-bottom:12px;">
+          <p data-i18n-html="help.s7.diag"><b>检测 ROS</b>：扫描当前 ROS 环境的 topic 和 service，检查关键接口是否可用。</p>
+          <p data-i18n-html="help.s7.log"><b>ROS 实时日志</b>：显示所有 ROS 操作的请求和响应，包括成功/失败/警告。排查问题时先看这里。</p>
+          <p data-i18n-html="help.s7.preset"><b>姿态预设</b>：预设的关节角度组合，按限速平滑到达常用姿态。</p>
+        </div>
+
+        <h4 style="color:#ffe0b0;margin-bottom:4px;" data-i18n="help.warn.title">⚠ 安全须知</h4>
+        <div style="line-height:1.7;font-size:13px;margin-bottom:12px;color:#ffe0b0;">
+          <p data-i18n-html="help.warn.1">1. 首次使用真机时，先用 Fake Driver 验证关节方向和限位。</p>
+          <p data-i18n-html="help.warn.2">2. 连接真机控制器时命令会驱动真实硬件，请谨慎操作。</p>
+          <p data-i18n-html="help.warn.3">3. 关节滑块建议从末端关节小幅度开始，确认方向正确后再大范围运动。</p>
+          <p data-i18n-html="help.warn.4">4. 任何异常立即点「失能」或取消控制锁。</p>
+          <p data-i18n-html="help.warn.5">5. 重力补偿启动后手臂会主动保持姿态，先测重补再测滑块更安全。</p>
+        </div>
+
+        <div style="text-align:right;margin-top:16px;">
+          <button type="button" id="ros-help-close" data-i18n="help.close" style="padding:8px 28px;border-radius:6px;border:1px solid #555;background:#333;color:#e0e0e0;cursor:pointer;font-size:14px;">关闭</button>
+        </div>
+      </dialog>
+
+      <div class="section">
+        <h3 data-i18n="preset.title">姿态预设</h3>
+        <div class="button-grid" id="preset-buttons"></div>
+      </div>
+
+      <div class="section">
+        <h3 data-i18n="joint.title">关节角度</h3>
+        <div id="joint-controls" class="joint-list"></div>
+      </div>
+
+      <div class="section">
+        <h3 data-i18n="layer.title">空间图层</h3>
+        <label class="switch-row">
+          <input type="checkbox" id="toggle-envelope" checked>
+          <span data-i18n="layer.envelope">显示估算可达包络</span>
+        </label>
+        <label class="switch-row">
+          <input type="checkbox" id="toggle-ghost" checked>
+          <span data-i18n="layer.ghost">显示目标残影</span>
+        </label>
+        <label class="switch-row">
+          <input type="checkbox" id="toggle-mujoco-scene" checked>
+          <span data-i18n="layer.mujocoScene">显示 MuJoCo 抓取场景</span>
+        </label>
+      </div>
+
+      <div class="section">
+        <h3 data-i18n="adv.title">高级控制</h3>
+        <button class="primary-btn" id="play-path" data-i18n="adv.play">循环播放取放路径</button>
+        <button class="secondary-btn" id="plan-trajectory" data-i18n="adv.plan">从零点执行当前姿态</button>
+        <button class="secondary-btn" id="toggle-drag" data-i18n="adv.drag">启用 TCP 拖拽</button>
+        <button class="secondary-btn" id="stop-path" data-i18n="adv.stop">停止播放/退出拖拽</button>
+      </div>
+
+      <div class="section teach-section">
+        <h3 data-i18n="teach.title">TCP 示教</h3>
+        <label class="field-row" id="teach-hardware-mode-row" hidden>
+          <span data-i18n="teach.hardwareMode">真机示教记录方式</span>
+          <select id="teach-hardware-mode">
+            <option value="path" data-i18n="teach.modePath">完整路径（按原时间回放）</option>
+            <option value="endpoint" data-i18n="teach.modeEndpoint">仅最终位置（3 秒到位）</option>
+          </select>
+        </label>
+        <label class="field-row" id="teach-home-gripper-row" hidden>
+          <span data-i18n="teach.homeGripper">结束示教回零后的夹爪</span>
+          <select id="teach-home-gripper-mode">
+            <option value="hold" data-i18n="teach.homeGripperHold">保持当前状态</option>
+            <option value="close" data-i18n="teach.homeGripperClose">机械臂回零后闭合</option>
+          </select>
+        </label>
+        <div class="button-grid teach-buttons">
+          <button type="button" id="teach-record" data-i18n="teach.record">开始录制</button>
+          <button type="button" id="teach-hardware-record" data-i18n="teach.hardwareRecord" hidden>推动真机示教</button>
+          <button type="button" id="teach-replay" data-i18n="teach.replay">回放</button>
+          <button type="button" id="teach-export" data-i18n="teach.export">导出 ROS waypoint</button>
+          <button type="button" id="teach-import" data-i18n="teach.import">导入 JSON</button>
+          <button type="button" id="teach-clear" data-i18n="teach.clear">清空</button>
+        </div>
+        <input type="file" id="teach-import-file" accept=".json,application/json" hidden>
+        <p class="teach-status" id="teach-status" data-i18n="teach.status">未录制</p>
+        <textarea id="teach-export-text" data-i18n-ph="teach.placeholder" class="teach-export" readonly placeholder="导出的 waypoints 会显示在这里"></textarea>
+      </div>
+
+      <div class="section metrics">
+        <h3 data-i18n="metrics.title">机械臂信息</h3>
+        <dl>
+          <div><dt data-i18n="metrics.model">模型</dt><dd data-i18n="metrics.modelVal">ReBot Arm B601-RS</dd></div>
+          <div><dt data-i18n="metrics.dof">自由度</dt><dd data-i18n="metrics.dofVal">6 DOF + 夹爪</dd></div>
+          <div><dt data-i18n="metrics.payload">建议负载</dt><dd data-i18n="metrics.payloadVal">5 kg</dd></div>
+          <div><dt data-i18n="metrics.frame">坐标</dt><dd data-i18n="metrics.frameVal">X 前 / Y 左 / Z 上</dd></div>
+        </dl>
+      </div>
+      </div>
+    </aside>
+  </main>
+  </div>
+
+  <div class="loading-mask" id="loading-mask">
+    <div class="loader"></div>
+    <p id="loading-text" data-i18n="load.text">正在加载 ReBot Arm B601-RS 机械臂模型...</p>
+  </div>
+
+  <script src="./lib/three-r128.min.js"></script>
+  <script src="./lib/STLLoader-umd.js"></script>
+  <script src="./lib/ColladaLoader.js"></script>
+  <script src="./lib/URDFLoader.js"></script>
+  <script src="./js/pwa.js?v=20260904-rs-pages01"></script>
+  <script src="./js/i18n.js?v=20261016-feedback01"></script>
+  <script src="./js/quick-start.js?v=20261015-rs-quick01"></script>
+  <script src="./js/wrist-camera.js?v=20261009-rs-camera03"></script>
+  <script src="./js/ros/rebot-ros-client.js?v=20261008-rs-grasp-fast01"></script>
+  <script src="./js/rebot-sim.js?v=20261019-tcpdrop163"></script>
+  <script src="./js/control-mode.js?v=20261018-rs-ctrl34"></script>
+  <script src="./js/ros/rebot-ros-ui.js?v=20261008-rs-grasp-fast01"></script>
+  <script src="./js/twin-input.js?v=20261018-speed159"></script>
+  <script src="./js/twin-feedback-display.js?v=20261018-recover155"></script>
+  <script src="./js/twin-guides.js?v=20261018-recover155"></script>
+  <script src="./js/twin-console.js?v=20261020-preview165"></script>
+  <script src="./js/twin-camera.js?v=20261016-workbench13"></script>
+  <script src="./js/fixed-pick.js?v=20261019-grasp160"></script>
+  <script src="./js/vision-replay.js?v=20261019-offline162"></script>
+  <script src="./js/grasp-recording.js?v=20261019-offline162"></script>
+  <script src="./js/twin-offline-tools.js?v=20261019-offline162"></script>
+  <script src="./js/twin-workbench.js?v=20261019-tcpdrop163"></script>
+  <script src="./js/twin-algorithm.js?v=20261017-mit01"></script>
+  <script src="./js/operation-hub.js?v=20261018-sections157"></script>
+  <script src="./js/ros/leader-model.js?v=20261007-leader02"></script>
+  <script src="./js/ros/rebot-leader-ui.js?v=20261007-leader02"></script>
+  <script src="./js/motorbridge/rebot-motorbridge-client.js?v=20260812-rs-ctrl32"></script>
+  <script src="./js/motorbridge/rebot-motorbridge-ui.js?v=20261018-single-axis-live04"></script>
+  <script src="./js/rebot-llm.js?v=20260904-rs-pages01"></script>
+  <dialog id="project-exit-dialog" class="project-exit-dialog" aria-labelledby="project-exit-title">
+    <h2 id="project-exit-title">结束项目并释放资源</h2>
+    <p>结束实机反馈、仿真、ROS联动接口及本工程启动的可选服务，最后退出网页服务和三维画面。</p>
+    <p>机械臂仍在运动或保持时会拒绝退出。请先让机械臂有支撑，点击工作台的「失能撤力」，等待只读状态。</p>
+    <label><input id="project-exit-confirm" type="checkbox"><span>机械臂已有支撑并已失能；确认结束本项目。仅使用仿真时也可勾选。</span></label>
+    <p id="project-exit-status" class="project-exit-status" role="status" aria-live="polite">关闭标签页不会结束后台。请使用此入口完整退出。</p>
+    <div class="project-exit-actions"><button type="button" id="project-exit-cancel">取消</button><button type="button" id="project-exit-submit" disabled>确认结束项目</button></div>
+  </dialog>
+  <script src="/js/project-shutdown.js?v=20261018-exit156" defer></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+export PATH="${ROOT}/.tools/node/bin:${PATH}"
+cd "${ROOT}"
+case "${1:-start}" in
+  start) exec bash scripts/quick_start.sh --web-only "${@:2}" ;;
+  simulation) exec bash scripts/quick_start.sh "${@:2}" ;;
+  doctor) exec bash deployment/doctor.sh ;;
+  self-test)
+    source scripts/rs_env.sh
+    export ROS_DOMAIN_ID=82
+    exec python3 scripts/verify_twin_console.py
+    ;;
+  *) echo '用法：rebotarm-app [start|simulation|doctor|self-test] [--no-browser]' >&2; exit 2 ;;
+esac

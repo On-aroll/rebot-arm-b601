@@ -1,0 +1,17 @@
+{
+  "legacy": {
+    "original_path": "/home/bonvoyage/Desktop/rebot-b601-doc-replica",
+    "base_commit": "d397d5e429265ffe49ec94b67ab6344a7a9a4634",
+    "branch": "codex/rebot-b601-doc-replica"
+  },
+  "digitaltwin": {
+    "original_path": "/home/bonvoyage/Desktop/rebot-b601-doc-replica/ReBot_Arm_DigitalTwin_RS",
+    "base_commit": "aa807cf2affe85b13b86221159871aae7742c01b",
+    "branch": "codex/twin-console-control"
+  },
+  "learning": {
+    "original_path": "/home/bonvoyage/Desktop/1seeed_Robotics",
+    "original_git_repository": false
+  },
+  "scope": "Working files imported, not only old Git HEAD; original runtime and hardware services were not modified."
+}

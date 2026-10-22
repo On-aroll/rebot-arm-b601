@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "name": "我的视觉识别服务",
+  "kind": "vision",
+  "protocol": "http-json",
+  "endpoint": "http://127.0.0.1:8088/infer",
+  "health_url": "http://127.0.0.1:8088/health",
+  "model": "replace-with-your-model"
+}

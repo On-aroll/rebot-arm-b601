@@ -1,0 +1,17 @@
+rebotarm_ros2_RS/build/
+rebotarm_ros2_RS/install/
+rebotarm_ros2_RS/log/
+rebotarm_ros2_RS/.venv/
+/build/
+/install/
+/log/
+**/__pycache__/
+**/*.pyc
+reBotArm_simulator-RS/.certs/
+reBotArm_simulator-RS/.env
+web_mujoco/node_modules/
+web_mujoco/dist/
+.vite/
+
+# Separate pinned SDK Git checkout, recreated by scripts/setup_csp_sdk.sh
+rebotarm_ros2_RS/third_party/reBotArm_control_py_csp/

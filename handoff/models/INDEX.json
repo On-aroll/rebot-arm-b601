@@ -1,0 +1,606 @@
+{
+  "component-geometry-development-01/perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "component-geometry-development-01/residual.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "feedback-development-smoke-01/frozen/perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "feedback-development-smoke-01/frozen/residual.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "feedback-development-smoke-02/frozen/perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "feedback-development-smoke-02/frozen/residual.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "feedback-development-smoke-03/frozen/perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "feedback-development-smoke-03/frozen/residual.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "feedback-development-smoke-04/frozen/perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "feedback-development-smoke-04/frozen/residual.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "feedback-gate-development-01/checkpoints/perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "feedback-gate-development-01/checkpoints/residual.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "feedback-gate-validation-02/checkpoints/perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "feedback-gate-validation-02/checkpoints/residual.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "first-training/round-01/perception.pt": {
+    "sha256": "6cbca453a126c192e4ca340318e8cca4788ec430d5b7f6edd6a4850181f7575d",
+    "size": 10297
+  },
+  "first-training/round-02/perception.pt": {
+    "sha256": "9d7d8595d62b945cdd7fb4d35fbef4a2266cb53390e8d1e934814ae17b0c5724",
+    "size": 10297
+  },
+  "fragment-home-development-01/frozen/baseline-perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "fragment-home-development-01/frozen/baseline-policy.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "fragment-home-development-01/frozen/candidate-perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "fragment-home-development-01/frozen/candidate-policy.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "fragment-known-development-01/frozen/perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "fragment-known-development-01/frozen/residual.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "fragment-regression-11100009/frozen/perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "fragment-regression-11100009/frozen/residual.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "fragment-regression-16400002/frozen/perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "fragment-regression-16400002/frozen/residual.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "fragment075-regression-11100009/frozen/perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "fragment075-regression-11100009/frozen/residual.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "geometry-fallback-development-01/frozen/baseline-perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "geometry-fallback-development-01/frozen/baseline-policy.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "geometry-fallback-development-01/frozen/candidate-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "geometry-fallback-development-01/frozen/candidate-policy.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "geometry-fallback-known-development-01/frozen/geometry050-fallback-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "geometry-fallback-known-development-01/frozen/geometry050-fallback-policy.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "geometry-known-development-01/frozen/geometry050-perception.pt": {
+    "sha256": "2fad8dd6a2580e631adec728b1974b8ebf6a3823d2b11f21bc1b7b52f97f31a9",
+    "size": 12601
+  },
+  "geometry-known-development-01/frozen/geometry050-policy.pt": {
+    "sha256": "f7c2790bdf992e1e093fab87fb5042ea08bf6adb88bf85fbedfd350fd494b708",
+    "size": 9057
+  },
+  "geometry-known-development-01/frozen/geometry055-perception.pt": {
+    "sha256": "2c5bbf5c039c84e465206cc656116c36d4468a017385f8e9000808e43cd4fa2e",
+    "size": 12601
+  },
+  "geometry-known-development-01/frozen/geometry055-policy.pt": {
+    "sha256": "c25916b53e72ce0204225fd80a0723c8753fec536df1515276b8c85857482709",
+    "size": 9057
+  },
+  "geometry-known-development-01/frozen/retained_v2-perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "geometry-known-development-01/frozen/retained_v2-policy.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "goal-egl-coverage-v2-candidate-02/frozen/baseline-perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "goal-egl-coverage-v2-candidate-02/frozen/baseline-policy.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "goal-egl-coverage-v2-candidate-02/frozen/candidate-perception.pt": {
+    "sha256": "45409a61d623c21781f6ce094a5f710ef9beb2619b0160fc58d36dfdcd3301ab",
+    "size": 11129
+  },
+  "goal-egl-coverage-v2-candidate-02/frozen/candidate-policy.pt": {
+    "sha256": "a876203d0c85e77138eb933b4daa05093a64f632683b9c5e7f226b2839968f1a",
+    "size": 9057
+  },
+  "goal-feedback-v2-candidate-01/frozen/perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "goal-feedback-v2-candidate-01/frozen/residual.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "goal-fragment-home-v2-candidate-01/frozen/baseline-perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "goal-fragment-home-v2-candidate-01/frozen/baseline-policy.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "goal-fragment-home-v2-candidate-01/frozen/candidate-perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "goal-fragment-home-v2-candidate-01/frozen/candidate-policy.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "goal-geometry-fallback-v3-candidate-01/frozen/baseline-perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "goal-geometry-fallback-v3-candidate-01/frozen/baseline-policy.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "goal-geometry-fallback-v3-candidate-01/frozen/candidate-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "goal-geometry-fallback-v3-candidate-01/frozen/candidate-policy.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "goal-image-residual-v4-candidate-01/frozen/baseline-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "goal-image-residual-v4-candidate-01/frozen/baseline-policy.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "goal-image-residual-v4-candidate-01/frozen/candidate-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "goal-image-residual-v4-candidate-01/frozen/candidate-policy.pt": {
+    "sha256": "9307762e59d1a2c82bde7add620ac815a8071dffda087413798c4fb8d7fe4ed2",
+    "size": 30165
+  },
+  "goal-image-residual-v4-candidate-01/frozen/zero-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "goal-multiview-v2-candidate-01/frozen/baseline-perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "goal-multiview-v2-candidate-01/frozen/baseline-policy.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "goal-multiview-v2-candidate-01/frozen/candidate-perception.pt": {
+    "sha256": "e334008016149d4c6ca06595fa7fef39cf22ce31135f8af1404ead9dcaf2777d",
+    "size": 11129
+  },
+  "goal-multiview-v2-candidate-01/frozen/candidate-policy.pt": {
+    "sha256": "6db80a1db95d5613bca6f4ea5e27b348dfa78f93e69eb666283a45965eb0cebb",
+    "size": 9057
+  },
+  "goal-policy-fragment-egl-01/residual.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "goal-policy-geometry050-01/residual.pt": {
+    "sha256": "f7c2790bdf992e1e093fab87fb5042ea08bf6adb88bf85fbedfd350fd494b708",
+    "size": 9057
+  },
+  "goal-policy-geometry050-fallback-01/residual.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "goal-policy-geometry055-01/residual.pt": {
+    "sha256": "c25916b53e72ce0204225fd80a0723c8753fec536df1515276b8c85857482709",
+    "size": 9057
+  },
+  "goal-policy-multiview-01/residual.pt": {
+    "sha256": "6db80a1db95d5613bca6f4ea5e27b348dfa78f93e69eb666283a45965eb0cebb",
+    "size": 9057
+  },
+  "goal-policy-multiview-egl-01/residual.pt": {
+    "sha256": "a876203d0c85e77138eb933b4daa05093a64f632683b9c5e7f226b2839968f1a",
+    "size": 9057
+  },
+  "goal-policy-v0/residual.pt": {
+    "sha256": "6e6969faad0ee9cdbb6539d67138b5d7fdc4e4a3c99194707055282de95dea5b",
+    "size": 9057
+  },
+  "goal-policy-v1/residual.pt": {
+    "sha256": "29e9c16c45224f9d3f791e32912a7237f087c08999c38dd7ec492a2824966ea6",
+    "size": 9057
+  },
+  "goal-policy-v2/residual.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "home-first-development-01/frozen/baseline-perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "home-first-development-01/frozen/baseline-policy.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "home-first-development-01/frozen/candidate-perception.pt": {
+    "sha256": "45409a61d623c21781f6ce094a5f710ef9beb2619b0160fc58d36dfdcd3301ab",
+    "size": 11129
+  },
+  "home-first-development-01/frozen/candidate-policy.pt": {
+    "sha256": "a876203d0c85e77138eb933b4daa05093a64f632683b9c5e7f226b2839968f1a",
+    "size": 9057
+  },
+  "home-first-development-02/frozen/baseline-perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "home-first-development-02/frozen/baseline-policy.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "home-first-development-02/frozen/candidate-perception.pt": {
+    "sha256": "45409a61d623c21781f6ce094a5f710ef9beb2619b0160fc58d36dfdcd3301ab",
+    "size": 11129
+  },
+  "home-first-development-02/frozen/candidate-policy.pt": {
+    "sha256": "a876203d0c85e77138eb933b4daa05093a64f632683b9c5e7f226b2839968f1a",
+    "size": 9057
+  },
+  "home-first-known-development-01/frozen/perception.pt": {
+    "sha256": "45409a61d623c21781f6ce094a5f710ef9beb2619b0160fc58d36dfdcd3301ab",
+    "size": 11129
+  },
+  "home-first-known-development-01/frozen/residual.pt": {
+    "sha256": "a876203d0c85e77138eb933b4daa05093a64f632683b9c5e7f226b2839968f1a",
+    "size": 9057
+  },
+  "home-first-regression-11100009/frozen/perception.pt": {
+    "sha256": "45409a61d623c21781f6ce094a5f710ef9beb2619b0160fc58d36dfdcd3301ab",
+    "size": 11129
+  },
+  "home-first-regression-11100009/frozen/residual.pt": {
+    "sha256": "a876203d0c85e77138eb933b4daa05093a64f632683b9c5e7f226b2839968f1a",
+    "size": 9057
+  },
+  "home-refresh-development-01/frozen/perception.pt": {
+    "sha256": "45409a61d623c21781f6ce094a5f710ef9beb2619b0160fc58d36dfdcd3301ab",
+    "size": 11129
+  },
+  "home-refresh-development-01/frozen/residual.pt": {
+    "sha256": "a876203d0c85e77138eb933b4daa05093a64f632683b9c5e7f226b2839968f1a",
+    "size": 9057
+  },
+  "home-view-development-01/frozen/perception.pt": {
+    "sha256": "e334008016149d4c6ca06595fa7fef39cf22ce31135f8af1404ead9dcaf2777d",
+    "size": 11129
+  },
+  "home-view-development-01/frozen/residual.pt": {
+    "sha256": "6db80a1db95d5613bca6f4ea5e27b348dfa78f93e69eb666283a45965eb0cebb",
+    "size": 9057
+  },
+  "image-residual-development-01/frozen/V3-residual.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "image-residual-development-01/frozen/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "image-residual-development-01/residual.pt": {
+    "sha256": "9307762e59d1a2c82bde7add620ac815a8071dffda087413798c4fb8d7fe4ed2",
+    "size": 30165
+  },
+  "image-residual-known-tasks-01/frozen/V3-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "image-residual-known-tasks-01/frozen/V3-policy.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "image-residual-known-tasks-01/frozen/image_residual-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "image-residual-known-tasks-01/frozen/image_residual-policy.pt": {
+    "sha256": "9307762e59d1a2c82bde7add620ac815a8071dffda087413798c4fb8d7fe4ed2",
+    "size": 30165
+  },
+  "image-residual-known-tasks-01/frozen/zero_residual-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "image-residual-known-view-review-01/frozen/V3-residual.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "image-residual-known-view-review-01/frozen/image-residual.pt": {
+    "sha256": "9307762e59d1a2c82bde7add620ac815a8071dffda087413798c4fb8d7fe4ed2",
+    "size": 30165
+  },
+  "image-residual-known-view-review-01/frozen/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "image-residual-task-development-01/frozen/baseline-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "image-residual-task-development-01/frozen/baseline-policy.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "image-residual-task-development-01/frozen/candidate-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "image-residual-task-development-01/frozen/candidate-policy.pt": {
+    "sha256": "9307762e59d1a2c82bde7add620ac815a8071dffda087413798c4fb8d7fe4ed2",
+    "size": 30165
+  },
+  "image-residual-task-development-01/frozen/zero-perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "initial-visibility-development-01/perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "low-coverage-development-01/frozen/perception.pt": {
+    "sha256": "e334008016149d4c6ca06595fa7fef39cf22ce31135f8af1404ead9dcaf2777d",
+    "size": 11129
+  },
+  "low-coverage-development-01/frozen/residual.pt": {
+    "sha256": "6db80a1db95d5613bca6f4ea5e27b348dfa78f93e69eb666283a45965eb0cebb",
+    "size": 9057
+  },
+  "low-coverage-egl-development-02/frozen/perception.pt": {
+    "sha256": "e334008016149d4c6ca06595fa7fef39cf22ce31135f8af1404ead9dcaf2777d",
+    "size": 11129
+  },
+  "low-coverage-egl-development-02/frozen/residual.pt": {
+    "sha256": "6db80a1db95d5613bca6f4ea5e27b348dfa78f93e69eb666283a45965eb0cebb",
+    "size": 9057
+  },
+  "low-coverage-glfw-development-02/frozen/perception.pt": {
+    "sha256": "e334008016149d4c6ca06595fa7fef39cf22ce31135f8af1404ead9dcaf2777d",
+    "size": 11129
+  },
+  "low-coverage-glfw-development-02/frozen/residual.pt": {
+    "sha256": "6db80a1db95d5613bca6f4ea5e27b348dfa78f93e69eb666283a45965eb0cebb",
+    "size": 9057
+  },
+  "multiview-development-01/frozen/baseline-perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "multiview-development-01/frozen/baseline-policy.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "multiview-development-01/frozen/candidate-perception.pt": {
+    "sha256": "e334008016149d4c6ca06595fa7fef39cf22ce31135f8af1404ead9dcaf2777d",
+    "size": 11129
+  },
+  "multiview-development-01/frozen/candidate-policy.pt": {
+    "sha256": "6db80a1db95d5613bca6f4ea5e27b348dfa78f93e69eb666283a45965eb0cebb",
+    "size": 9057
+  },
+  "multiview-egl-development-02/frozen/baseline-perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "multiview-egl-development-02/frozen/baseline-policy.pt": {
+    "sha256": "ddc80bcb40bf317ff0f04f4edf444cf67b905be4d8010cbb4369a9634ab7f2de",
+    "size": 9057
+  },
+  "multiview-egl-development-02/frozen/candidate-perception.pt": {
+    "sha256": "45409a61d623c21781f6ce094a5f710ef9beb2619b0160fc58d36dfdcd3301ab",
+    "size": 11129
+  },
+  "multiview-egl-development-02/frozen/candidate-policy.pt": {
+    "sha256": "a876203d0c85e77138eb933b4daa05093a64f632683b9c5e7f226b2839968f1a",
+    "size": 9057
+  },
+  "relative-view-development-01/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "relative-view-development-01/residual.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "resume-smoke/round-01/perception.pt": {
+    "sha256": "3f11de9abae9aaa9e4f1cc6692d6f4d667ca9da23fbbc2d2dc0004c1f7404e6a",
+    "size": 10297
+  },
+  "risk-observation-development-01/frozen/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "risk-observation-development-01/frozen/residual.pt": {
+    "sha256": "9307762e59d1a2c82bde7add620ac815a8071dffda087413798c4fb8d7fe4ed2",
+    "size": 30165
+  },
+  "risk-observation-model-review-01/frozen/V3-residual.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "risk-observation-model-review-01/frozen/image-residual.pt": {
+    "sha256": "9307762e59d1a2c82bde7add620ac815a8071dffda087413798c4fb8d7fe4ed2",
+    "size": 30165
+  },
+  "risk-observation-model-review-01/frozen/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "risk-observation-smoke-01/frozen/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "risk-observation-smoke-01/frozen/residual.pt": {
+    "sha256": "9307762e59d1a2c82bde7add620ac815a8071dffda087413798c4fb8d7fe4ed2",
+    "size": 30165
+  },
+  "self-visibility-known-development-01/frozen/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "self-visibility-known-development-01/frozen/residual.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "v2-frozen-release-B/frozen/perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "v2-frozen-release-B/frozen/residual.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "v2-verified-entry-C/frozen/perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "v2-verified-entry-C/frozen/residual.pt": {
+    "sha256": "da11e50150cf2215d1942cba8b2e11731bf9a513d30a60944194c8888a0da9ec",
+    "size": 9057
+  },
+  "v3-frozen-release-B/frozen/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "v3-frozen-release-B/frozen/residual.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "v3-verified-entry-C/frozen/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "v3-verified-entry-C/frozen/residual.pt": {
+    "sha256": "d2de74cdbe37694cae299abf4b3b90e4dee117bba0a8c74ef658a7f4be5f80b6",
+    "size": 9057
+  },
+  "vision-fragment-egl-01/perception.pt": {
+    "sha256": "71acc8fa4d5a5af40b8cb78ea7e0dade1181e505d84d514589ad30c2ee822636",
+    "size": 11641
+  },
+  "vision-geometry050-01/perception.pt": {
+    "sha256": "2fad8dd6a2580e631adec728b1974b8ebf6a3823d2b11f21bc1b7b52f97f31a9",
+    "size": 12601
+  },
+  "vision-geometry050-fallback-01/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "vision-geometry055-01/perception.pt": {
+    "sha256": "2c5bbf5c039c84e465206cc656116c36d4468a017385f8e9000808e43cd4fa2e",
+    "size": 12601
+  },
+  "vision-iteration-01/perception.pt": {
+    "sha256": "f3f9a16b3d74742983ef2b9316e4f2d0bd7b04d62cf87b26fcda664433ce0da2",
+    "size": 10553
+  },
+  "vision-iteration-02/perception.pt": {
+    "sha256": "7a59e294f7f4f2a5890faceef59c4a7713fe4b2572a7fcb83479db1c5344593f",
+    "size": 10937
+  },
+  "vision-iteration-03/perception.pt": {
+    "sha256": "18fbf99571b242980167095976c6ff45fac923b2aeabb18d3ba1da18e4a995bc",
+    "size": 10937
+  },
+  "vision-multiview-01/perception.pt": {
+    "sha256": "e334008016149d4c6ca06595fa7fef39cf22ce31135f8af1404ead9dcaf2777d",
+    "size": 11129
+  },
+  "vision-multiview-egl-01/perception.pt": {
+    "sha256": "45409a61d623c21781f6ce094a5f710ef9beb2619b0160fc58d36dfdcd3301ab",
+    "size": 11129
+  },
+  "visual-risk-development-01/frozen/image-residual.pt": {
+    "sha256": "9307762e59d1a2c82bde7add620ac815a8071dffda087413798c4fb8d7fe4ed2",
+    "size": 30165
+  },
+  "visual-risk-development-01/frozen/perception.pt": {
+    "sha256": "e911a373325072eb9525031fa57f4270a6f8b6f853a5c6d370eb5ffd5d17bd37",
+    "size": 13433
+  },
+  "visual-risk-development-01/risk.pt": {
+    "sha256": "a36b5c75d7e7b74a5ab63d9f5b68c352a460b0a271ece8d4aef58cd283310ad4",
+    "size": 22513
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "archive": "deployment-validation.tar.zst",
+  "archive_sha256": "3fe9525f95ba7351f75efa44154a6aaf1bda4f9587acf2e608cfe5d3f4b90632",
+  "archive_size": 26614,
+  "files": {
+    "build.log": {
+      "sha256": "cd93158fd1d102793d45fb9bd5348260f625f86027e7aff0da9de2d73cf203a0",
+      "size": 353
+    },
+    "collected-tests.txt": {
+      "sha256": "21fa019bf837d4c2bd4f17b56f283cc6e3da08774e29289a6623621d5e887f06",
+      "size": 30107
+    },
+    "controller-retry.log": {
+      "sha256": "30853c86012fc8f004c7768ace4dab8eaad0102b94b21d067f309c84014a3b6d",
+      "size": 113
+    },
+    "controller-tests.log": {
+      "sha256": "44a1d1b56aa2746dc7d0a28b25cef6da62f2ba080f8328ee928c09ecdb7771f7",
+      "size": 5674
+    },
+    "deployment-unit-tests-final.log": {
+      "sha256": "0410f6a60f4dad5f939672c60c276d5941cf842d760a48233d5eba7eabc68b57",
+      "size": 2330
+    },
+    "deployment-unit-tests.log": {
+      "sha256": "1d9ffba18b2c9e8a563be1fc3119a8156f561fb6f793266c9e1b2bd53de07cb0",
+      "size": 2330
+    },
+    "fake-ros-tests.log": {
+      "sha256": "832e113fadf827ad4c2e2e984ef0eda0aa6c3b6cee1c4de9d06c89e260b938c8",
+      "size": 2480
+    },
+    "install-final.log": {
+      "sha256": "35e278ab0b72e64cce424095dae06eccbc484a0999f8e25c27293d16500cff07",
+      "size": 47644
+    },
+    "install.log": {
+      "sha256": "c01524027c7c836b5ba386686482e4eb59ef379cfafc40e5d8435c1baba7e441",
+      "size": 53952
+    },
+    "live-upgrade-rejection.log": {
+      "sha256": "779217a251c75eb018bc11a18aebca3525f2e7cc5e8e36db8433bd82cfdaf962",
+      "size": 435
+    },
+    "mujoco-start-final.json": {
+      "sha256": "40856c61ebb21acd1642c5e622094ba0daaa7b77084e6d41365b6e257c5f1d01",
+      "size": 135
+    },
+    "mujoco-start-final.log": {
+      "sha256": "fdc00095f99f2ffe6db8060a65dd69c5c63b1ca2f80504a9500aa7e1effb3290",
+      "size": 3239
+    },
+    "mujoco-start.json": {
+      "sha256": "dbdef24d5f71d6a4ecd4c945bda0907ce1bfddb71ff8cd3ba44ada576b6d8cf5",
+      "size": 134
+    },
+    "mujoco-start.log": {
+      "sha256": "d5ee89fc0253b5bedf87702441e6174439d2886dab3467e6f5dc3d22340bdf02",
+      "size": 3482
+    },
+    "node-tests.log": {
+      "sha256": "ac0f2aa51cc0e9cbd156ea28cbd47920302bf001116e39a8b8b495f029ab273c",
+      "size": 22077
+    },
+    "rebotarm-unit-tests.log": {
+      "sha256": "e1dd8d34958b823e8a9c5cbc9f08560e6131022757f914e7fe44e96182e1de72",
+      "size": 989
+    },
+    "single-file-dry-run.log": {
+      "sha256": "2c36ed58048f6ac5dce38d26d399cb5e53403c9e4377eccd52db744c7ef15732",
+      "size": 888
+    },
+    "single-file-final.log": {
+      "sha256": "42097019c153130f782d25a784f8a3b87a9ca9b001943808119b708f8a2cfa16",
+      "size": 888
+    },
+    "web-smoke.json": {
+      "sha256": "603438f68e796942b82778ff698f30f1d1409a09be828d286db744a003767abf",
+      "size": 577
+    },
+    "web-smoke.log": {
+      "sha256": "0c52885beeb9a03ce7a11f394eca87d0b724f1a03bf3b7634bc5bfd88b5a219e",
+      "size": 880
+    }
+  }
+}

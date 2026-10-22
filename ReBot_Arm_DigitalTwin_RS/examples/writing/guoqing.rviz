@@ -1,0 +1,67 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Views
+    Name: Views
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Cell Size: 0.05
+      Plane Cell Count: 20
+      Alpha: 0.12
+      Color: 140; 155; 180
+      Reference Frame: <Fixed Frame>
+    - Class: rviz_default_plugins/MarkerArray
+      Name: Writing TCP strokes
+      Enabled: true
+      Namespaces: {}
+      Topic:
+        Value: /rebotarm_writing/strokes
+        Depth: 1
+        Reliability Policy: Reliable
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+    - Class: rviz_default_plugins/Path
+      Name: Full path including pen lifts
+      Enabled: false
+      Topic:
+        Value: /rebotarm_writing/tcp_path
+        Depth: 1
+        Reliability Policy: Reliable
+        Durability Policy: Transient Local
+      Line Style: Lines
+      Line Width: 0.001
+      Color: 90; 100; 120
+      Alpha: 0.3
+      Pose Style: None
+      Buffer Length: 1
+  Enabled: true
+  Global Options:
+    Background Color: 15; 23; 38
+    Fixed Frame: base_link
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Name: Writing top view
+      Distance: 0.36
+      Focal Point:
+        X: 0.20
+        Y: -0.27
+        Z: 0.25
+      Pitch: 1.5707
+      Yaw: -1.5708
+      Near Clip: 0.001
+      Target Frame: base_link
+    Saved: ~
+Window Geometry:
+  Height: 800
+  Width: 1280

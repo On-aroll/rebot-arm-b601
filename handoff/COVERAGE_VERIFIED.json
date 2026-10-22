@@ -1,0 +1,10 @@
+{
+  "main_source_exact_files": 747,
+  "main_missing_files": [],
+  "main_intentional_document_changes": [
+    "README.md"
+  ],
+  "simulation_output_files": 21032,
+  "simulation_missing_files": [],
+  "simulation_sources_covered": true
+}
