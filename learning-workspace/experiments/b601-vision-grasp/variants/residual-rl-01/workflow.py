@@ -133,12 +133,13 @@ def evaluate(args, output):
     results = []
     try:
         for i in range(args.episodes):
+            index = args.index_offset + i
             scene = {'seed': args.seed + i, 'goal': 'ABC'[i % 3],
-                'kind': ['static', 'force', 'offset'][i % 3],
-                'force_pulse': {'start_s': .5, 'duration_s': .06, 'force_world_n': [0., .8, 0.]} if i % 3 == 1 else None,
-                'first_grasp_offset_m': .065 if i % 3 == 2 else 0.}
+                'kind': ['static', 'force', 'offset'][index % 3],
+                'force_pulse': {'start_s': .5, 'duration_s': .06, 'force_world_n': [0., .8, 0.]} if index % 3 == 1 else None,
+                'first_grasp_offset_m': .065 if index % 3 == 2 else 0.}
             # Rotate goal assignments every group to balance each challenge across A/B/C.
-            scene['goal'] = 'ABC'[(i // 3 + i % 3) % 3]
+            scene['goal'] = 'ABC'[(index // 3 + index % 3) % 3]
             for controller in ('v3', 'zero', 'sac'):
                 directory = output / f'episode-{i:03d}-{controller}'
                 if controller == 'v3':
@@ -188,6 +189,7 @@ if __name__ == '__main__':
     parser.add_argument('--workers', type=int, default=4)
     parser.add_argument('--seed', type=int, default=48200000)
     parser.add_argument('--episodes', type=int, default=12)
+    parser.add_argument('--index-offset', type=int, default=0)
     parser.add_argument('--checkpoint', type=Path)
     args = parser.parse_args()
     verify_v3()
@@ -197,6 +199,7 @@ if __name__ == '__main__':
     for source in HERE.glob('*.py'):
         shutil.copy2(source, output / 'source' / source.name)
     write(output / 'config.json', {**vars(args), 'checkpoint': str(args.checkpoint),
+        'checkpoint_sha256': digest(args.checkpoint) if args.checkpoint else None,
         'source_sha256': {p.name: digest(p) for p in (output / 'source').glob('*.py')},
         'v3_manifest_sha256': digest(V3 / 'release_manifest.json'), 'hardware_executable': False})
     {'train': train, 'evaluate': evaluate, 'skill-test': skill_test}[args.mode](args, output)

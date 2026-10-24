@@ -1,0 +1,8 @@
+{
+  "training_method": "online SAC, actual physical grasp rewards, no demonstration action labels",
+  "selected_timesteps": 8192,
+  "selection": "validation mean skill reward before formal task testing",
+  "checkpoint_sha256": "1f0e7c6f11f333845445f33cd05eba4b2319123285f9bf3bb0389cbe7f65d7ff",
+  "hardware_executable": false,
+  "default": "V3"
+}
