@@ -54,3 +54,5 @@ if __name__ == '__main__':
             write(output / 'summary.json', {'source_sha256': digest(Path(__file__)),
                 'scope': 'command transport diagnostic, not autonomous policy evaluation', 'results': results})
             print(json.dumps(row), flush=True)
+    if not all(row['physical_success'] for row in results):
+        raise SystemExit('Teacher command replay failed; inspect summary before training')

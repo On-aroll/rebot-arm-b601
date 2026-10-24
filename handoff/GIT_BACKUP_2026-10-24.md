@@ -13,6 +13,6 @@ git config --local user.email On-aroll@users.noreply.github.com
 - 固定源码标签：`sim-act-2026-10-24`。
 - Release：https://github.com/On-aroll/rebot-arm-b601/releases/tag/sim-act-2026-10-24
 - Release为实验预发布，模型未采用、默认仍为V3。没有改写main或冻结版本。
-- 20.8MB交付包独立上传；10.4GB原始归档拆成10个不超过1GiB的分卷。`BACKUP_MANIFEST.json`、`SHA256SUMS`和`RESTORE.txt`说明顺序、校验和恢复。完整服务端核验结果另存`SIM_ACT_RELEASE_VERIFIED_2026-10-24.json`，该记录生成前不能宣称大附件全部完成。
+- 20.8MB交付包独立上传；1GiB分卷传输中断后，10.4GB原始归档改为155个不超过64MiB的分卷。`BACKUP_MANIFEST.json`、`SHA256SUMS`和`RESTORE.txt`说明顺序、校验和恢复。完整服务端核验结果另存`SIM_ACT_RELEASE_VERIFIED_2026-10-24.json`，该记录生成前不能宣称大附件全部完成。
 
 每阶段及时提交、推送并核对远端。大附件采用现有`handoff/upload_assets.py`的上传和服务端SHA256核验流程；保留原始失败。新设备重新配置本机认证，不复制或提交凭据。
