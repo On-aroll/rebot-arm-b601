@@ -1,0 +1,506 @@
+[
+  {
+    "success": true,
+    "controller_success": true,
+    "physical_success": true,
+    "false_success": false,
+    "retries": 0,
+    "sim_seconds": 30.52599999999396,
+    "wall_seconds": 2.125,
+    "reason": "visually_verified_placement",
+    "normal_action_calls": null,
+    "supervisor_recovery_moves": null,
+    "safety_clipped_calls": null,
+    "mode": "v3",
+    "scene": {
+      "seed": 45000010,
+      "goal": "B",
+      "kind": "force",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": {
+        "start_s": 0.5,
+        "duration_s": 0.06,
+        "force_world_n": [
+          0.0,
+          0.8,
+          0.0
+        ]
+      }
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": false,
+    "controller_success": false,
+    "physical_success": false,
+    "false_success": false,
+    "retries": 2,
+    "sim_seconds": 279.0000000006041,
+    "wall_seconds": 20.60900000000038,
+    "reason": "timeout",
+    "normal_action_calls": 1350,
+    "supervisor_recovery_moves": 4,
+    "safety_clipped_calls": 0,
+    "mode": "act",
+    "scene": {
+      "seed": 45000010,
+      "goal": "B",
+      "kind": "force",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": {
+        "start_s": 0.5,
+        "duration_s": 0.06,
+        "force_world_n": [
+          0.0,
+          0.8,
+          0.0
+        ]
+      }
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": true,
+    "controller_success": true,
+    "physical_success": true,
+    "false_success": false,
+    "retries": 1,
+    "sim_seconds": 54.98000000002123,
+    "wall_seconds": 2.7030000000013388,
+    "reason": "visually_verified_placement",
+    "normal_action_calls": null,
+    "supervisor_recovery_moves": null,
+    "safety_clipped_calls": null,
+    "mode": "v3",
+    "scene": {
+      "seed": 45000011,
+      "goal": "C",
+      "kind": "offset",
+      "first_grasp_offset_m": 0.065,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": false,
+    "controller_success": false,
+    "physical_success": false,
+    "false_success": false,
+    "retries": 2,
+    "sim_seconds": 279.0000000006041,
+    "wall_seconds": 19.82800000000134,
+    "reason": "timeout",
+    "normal_action_calls": 1350,
+    "supervisor_recovery_moves": 4,
+    "safety_clipped_calls": 0,
+    "mode": "act",
+    "scene": {
+      "seed": 45000011,
+      "goal": "C",
+      "kind": "offset",
+      "first_grasp_offset_m": 0.065,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": true,
+    "controller_success": true,
+    "physical_success": true,
+    "false_success": false,
+    "retries": 0,
+    "sim_seconds": 30.38399999999404,
+    "wall_seconds": 1.5939999999973224,
+    "reason": "visually_verified_placement",
+    "normal_action_calls": null,
+    "supervisor_recovery_moves": null,
+    "safety_clipped_calls": null,
+    "mode": "v3",
+    "scene": {
+      "seed": 45000012,
+      "goal": "B",
+      "kind": "static",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": false,
+    "controller_success": false,
+    "physical_success": false,
+    "false_success": false,
+    "retries": 2,
+    "sim_seconds": 279.0000000006041,
+    "wall_seconds": 20.0,
+    "reason": "timeout",
+    "normal_action_calls": 1350,
+    "supervisor_recovery_moves": 4,
+    "safety_clipped_calls": 0,
+    "mode": "act",
+    "scene": {
+      "seed": 45000012,
+      "goal": "B",
+      "kind": "static",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": true,
+    "controller_success": true,
+    "physical_success": true,
+    "false_success": false,
+    "retries": 0,
+    "sim_seconds": 32.43199999999367,
+    "wall_seconds": 1.7180000000007567,
+    "reason": "visually_verified_placement",
+    "normal_action_calls": null,
+    "supervisor_recovery_moves": null,
+    "safety_clipped_calls": null,
+    "mode": "v3",
+    "scene": {
+      "seed": 45000013,
+      "goal": "C",
+      "kind": "force",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": {
+        "start_s": 0.5,
+        "duration_s": 0.06,
+        "force_world_n": [
+          0.0,
+          0.8,
+          0.0
+        ]
+      }
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": false,
+    "controller_success": false,
+    "physical_success": false,
+    "false_success": false,
+    "retries": 2,
+    "sim_seconds": 279.0000000006041,
+    "wall_seconds": 19.96900000000096,
+    "reason": "timeout",
+    "normal_action_calls": 1350,
+    "supervisor_recovery_moves": 4,
+    "safety_clipped_calls": 0,
+    "mode": "act",
+    "scene": {
+      "seed": 45000013,
+      "goal": "C",
+      "kind": "force",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": {
+        "start_s": 0.5,
+        "duration_s": 0.06,
+        "force_world_n": [
+          0.0,
+          0.8,
+          0.0
+        ]
+      }
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": true,
+    "controller_success": true,
+    "physical_success": true,
+    "false_success": false,
+    "retries": 1,
+    "sim_seconds": 53.014000000018825,
+    "wall_seconds": 2.686999999998079,
+    "reason": "visually_verified_placement",
+    "normal_action_calls": null,
+    "supervisor_recovery_moves": null,
+    "safety_clipped_calls": null,
+    "mode": "v3",
+    "scene": {
+      "seed": 45000014,
+      "goal": "A",
+      "kind": "offset",
+      "first_grasp_offset_m": 0.065,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": false,
+    "controller_success": false,
+    "physical_success": false,
+    "false_success": false,
+    "retries": 2,
+    "sim_seconds": 206.5020000002579,
+    "wall_seconds": 16.15599999999904,
+    "reason": "timeout",
+    "normal_action_calls": 967,
+    "supervisor_recovery_moves": 4,
+    "safety_clipped_calls": 11,
+    "mode": "act",
+    "scene": {
+      "seed": 45000014,
+      "goal": "A",
+      "kind": "offset",
+      "first_grasp_offset_m": 0.065,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": true,
+    "controller_success": true,
+    "physical_success": true,
+    "false_success": false,
+    "retries": 0,
+    "sim_seconds": 32.92399999999427,
+    "wall_seconds": 2.1719999999986612,
+    "reason": "visually_verified_placement",
+    "normal_action_calls": null,
+    "supervisor_recovery_moves": null,
+    "safety_clipped_calls": null,
+    "mode": "v3",
+    "scene": {
+      "seed": 45000015,
+      "goal": "C",
+      "kind": "static",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": false,
+    "controller_success": false,
+    "physical_success": false,
+    "false_success": false,
+    "retries": 2,
+    "sim_seconds": 279.0000000006041,
+    "wall_seconds": 21.98400000000038,
+    "reason": "timeout",
+    "normal_action_calls": 1350,
+    "supervisor_recovery_moves": 4,
+    "safety_clipped_calls": 0,
+    "mode": "act",
+    "scene": {
+      "seed": 45000015,
+      "goal": "C",
+      "kind": "static",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": true,
+    "controller_success": true,
+    "physical_success": true,
+    "false_success": false,
+    "retries": 0,
+    "sim_seconds": 33.399999999994854,
+    "wall_seconds": 2.110000000000582,
+    "reason": "visually_verified_placement",
+    "normal_action_calls": null,
+    "supervisor_recovery_moves": null,
+    "safety_clipped_calls": null,
+    "mode": "v3",
+    "scene": {
+      "seed": 45000016,
+      "goal": "A",
+      "kind": "force",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": {
+        "start_s": 0.5,
+        "duration_s": 0.06,
+        "force_world_n": [
+          0.0,
+          0.8,
+          0.0
+        ]
+      }
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": false,
+    "controller_success": false,
+    "physical_success": false,
+    "false_success": false,
+    "retries": 2,
+    "sim_seconds": 279.0000000006041,
+    "wall_seconds": 21.875,
+    "reason": "timeout",
+    "normal_action_calls": 1350,
+    "supervisor_recovery_moves": 4,
+    "safety_clipped_calls": 0,
+    "mode": "act",
+    "scene": {
+      "seed": 45000016,
+      "goal": "A",
+      "kind": "force",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": {
+        "start_s": 0.5,
+        "duration_s": 0.06,
+        "force_world_n": [
+          0.0,
+          0.8,
+          0.0
+        ]
+      }
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": true,
+    "controller_success": true,
+    "physical_success": true,
+    "false_success": false,
+    "retries": 1,
+    "sim_seconds": 52.702000000018444,
+    "wall_seconds": 2.985000000000582,
+    "reason": "visually_verified_placement",
+    "normal_action_calls": null,
+    "supervisor_recovery_moves": null,
+    "safety_clipped_calls": null,
+    "mode": "v3",
+    "scene": {
+      "seed": 45000017,
+      "goal": "B",
+      "kind": "offset",
+      "first_grasp_offset_m": 0.065,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": false,
+    "controller_success": false,
+    "physical_success": false,
+    "false_success": false,
+    "retries": 2,
+    "sim_seconds": 279.0000000006041,
+    "wall_seconds": 21.8279999999977,
+    "reason": "timeout",
+    "normal_action_calls": 1350,
+    "supervisor_recovery_moves": 4,
+    "safety_clipped_calls": 0,
+    "mode": "act",
+    "scene": {
+      "seed": 45000017,
+      "goal": "B",
+      "kind": "offset",
+      "first_grasp_offset_m": 0.065,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": true,
+    "controller_success": true,
+    "physical_success": true,
+    "false_success": false,
+    "retries": 0,
+    "sim_seconds": 33.17799999999458,
+    "wall_seconds": 2.0,
+    "reason": "visually_verified_placement",
+    "normal_action_calls": null,
+    "supervisor_recovery_moves": null,
+    "safety_clipped_calls": null,
+    "mode": "v3",
+    "scene": {
+      "seed": 45000018,
+      "goal": "A",
+      "kind": "static",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": false,
+    "controller_success": false,
+    "physical_success": false,
+    "false_success": false,
+    "retries": 2,
+    "sim_seconds": 282.36800000062016,
+    "wall_seconds": 22.375,
+    "reason": "timeout",
+    "normal_action_calls": 1350,
+    "supervisor_recovery_moves": 4,
+    "safety_clipped_calls": 9,
+    "mode": "act",
+    "scene": {
+      "seed": 45000018,
+      "goal": "A",
+      "kind": "static",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": null
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": true,
+    "controller_success": true,
+    "physical_success": true,
+    "false_success": false,
+    "retries": 0,
+    "sim_seconds": 30.663999999993884,
+    "wall_seconds": 1.5,
+    "reason": "visually_verified_placement",
+    "normal_action_calls": null,
+    "supervisor_recovery_moves": null,
+    "safety_clipped_calls": null,
+    "mode": "v3",
+    "scene": {
+      "seed": 45000019,
+      "goal": "B",
+      "kind": "force",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": {
+        "start_s": 0.5,
+        "duration_s": 0.06,
+        "force_world_n": [
+          0.0,
+          0.8,
+          0.0
+        ]
+      }
+    },
+    "forbidden_steps": 0
+  },
+  {
+    "success": false,
+    "controller_success": false,
+    "physical_success": false,
+    "false_success": false,
+    "retries": 2,
+    "sim_seconds": 279.0000000006041,
+    "wall_seconds": 19.46900000000096,
+    "reason": "timeout",
+    "normal_action_calls": 1350,
+    "supervisor_recovery_moves": 4,
+    "safety_clipped_calls": 0,
+    "mode": "act",
+    "scene": {
+      "seed": 45000019,
+      "goal": "B",
+      "kind": "force",
+      "first_grasp_offset_m": 0.0,
+      "force_pulse": {
+        "start_s": 0.5,
+        "duration_s": 0.06,
+        "force_world_n": [
+          0.0,
+          0.8,
+          0.0
+        ]
+      }
+    },
+    "forbidden_steps": 0
+  }
+]

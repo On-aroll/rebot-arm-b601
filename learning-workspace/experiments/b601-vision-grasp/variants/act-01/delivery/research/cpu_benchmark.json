@@ -1,0 +1,18 @@
+{
+  "platform": "Windows-11-10.0.26200-SP0",
+  "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+  "device": "x86_64_CPU_2_threads",
+  "board_measured": false,
+  "samples": 200,
+  "parameters": 498591,
+  "checkpoint_bytes": 2014693,
+  "median_ms": 2.453999997669598,
+  "p95_ms": 2.931049998005619,
+  "p99_ms": 3.4427739992315747,
+  "process_rss_before_model_bytes": 409858048,
+  "process_rss_after_warmup_bytes": 428244992,
+  "rss_increment_bytes": 18386944,
+  "torch": "2.7.1+cu128",
+  "includes": "resize, visual_summary, normalization, network, denormalization",
+  "excludes": "camera, transport, hardware executor, MuJoCo, power and thermal measurement"
+}

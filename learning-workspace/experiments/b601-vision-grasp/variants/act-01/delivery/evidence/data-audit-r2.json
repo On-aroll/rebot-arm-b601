@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "checks": [
+    "V3 exact file hashes",
+    "causal future commands",
+    "no scoring fields in learning features",
+    "disjoint episode seeds",
+    "at most two retries",
+    "failures retained and excluded from positive imitation"
+  ],
+  "datasets": {
+    "train_0": {
+      "episodes": 72,
+      "frames": 14392,
+      "eligible_frames": 11083,
+      "failed_episodes_preserved": 2
+    },
+    "train_1": {
+      "episodes": 36,
+      "frames": 4870,
+      "eligible_frames": 3919,
+      "failed_episodes_preserved": 14
+    },
+    "validation": {
+      "episodes": 12,
+      "frames": 2440,
+      "eligible_frames": 1857,
+      "failed_episodes_preserved": 1
+    }
+  }
+}

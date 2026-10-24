@@ -1,4 +1,8 @@
-# 2026-10-22 用户暂停与换机封存（优先于下方历史状态）
+# 2026-10-24 纯仿真续研（当前）
+
+用户已明确在这台未连接机械臂的Windows主机恢复仿真、采集、训练和评估。成果在 `learning-workspace/experiments/b601-vision-grasp/variants/act-01/REPORT.md`。两批各30个新场景中V3均30/30，动作候选均0/30，不采用；默认入口和冻结V3保持原样。研究权重、失败、源快照与复现命令已保留。此授权只针对本轮纯仿真，不代表实机运动授权；下面的暂停与设备状态属于历史。
+
+# 2026-10-22 用户暂停与换机封存（历史）
 
 用户明确暂停持续仿真实验，要求主线和所有支线提交到其现有私有 GitHub 并完整交接。先读根目录 HANDOFF.md 和 handoff/ARTIFACTS.json。主线在 ReBot_Arm_DigitalTwin_RS；独立视觉实验在 learning-workspace/experiments/b601-vision-grasp。默认仅仿真 V3。self-visibility 的 24 次探测完成但机制门槛失败、射线审计失败；不采用。用户未要求自动恢复训练或运行硬件。
 

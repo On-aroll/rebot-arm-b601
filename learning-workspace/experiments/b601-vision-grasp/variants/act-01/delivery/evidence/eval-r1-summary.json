@@ -1,0 +1,81 @@
+{
+  "round": "r1",
+  "paired_scenes": 30,
+  "policy_sha256": "dd8cdf2ade1676f4ec19b10bced996e8a3d9da908f5545f8559a38c84c34d3cd",
+  "audit_passed": true,
+  "independent_score_rows_recomputed": 29000,
+  "goal_counts": {
+    "A": 10,
+    "B": 10,
+    "C": 10
+  },
+  "groups": {
+    "v3": {
+      "trials": 30,
+      "successes": 30,
+      "first_attempt_successes": 20,
+      "recovered_successes": 10,
+      "false_successes": 0,
+      "total_retries": 10,
+      "forbidden_contact_steps": 0,
+      "mean_sim_seconds": 39.48126666666954,
+      "mean_wall_seconds_before_saving": 2.1917666666668083,
+      "failures": {},
+      "by_goal": {
+        "A": 10,
+        "B": 10,
+        "C": 10
+      },
+      "by_challenge": {
+        "static": {
+          "n": 10,
+          "successes": 10
+        },
+        "force": {
+          "n": 10,
+          "successes": 10
+        },
+        "offset": {
+          "n": 10,
+          "successes": 10
+        }
+      }
+    },
+    "act": {
+      "trials": 30,
+      "successes": 0,
+      "first_attempt_successes": 0,
+      "recovered_successes": 0,
+      "false_successes": 0,
+      "total_retries": 56,
+      "forbidden_contact_steps": 0,
+      "mean_sim_seconds": 92.95533333332338,
+      "mean_wall_seconds_before_saving": 6.263966666666723,
+      "failures": {
+        "empty_grasp": 26,
+        "IK rejected for [0.4149236279058111, 0.20384958325177177, 0.2507871184415424]; q=[-0.5748219173058201, 2.2103269019940197, 2.6760005680051715, -1.5699999999999998, -0.2744933756565041, -0.5071227420300991]; residual=[-0.0005861990395731875, -0.0005011578886178203, -0.0010277599166096385, -0.0010231923995222187, 0.0022831989029794787, -0.0005869279728462309]": 1,
+        "IK rejected for [0.4177096545230555, 0.23909751226651807, 0.23606412451685047]; q=[-0.6454983841516286, 2.31397176546141, 2.774813656747283, -1.5699999999999998, -0.3050072644584857, -0.5690852094533932]; residual=[-0.0011836404760560693, -0.0011006132637275956, -0.0017494451930864519, -0.002044784331476669, 0.003925756196218983, -0.0011729377834282417]": 1,
+        "timeout": 2
+      },
+      "by_goal": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "by_challenge": {
+        "static": {
+          "n": 10,
+          "successes": 0
+        },
+        "force": {
+          "n": 10,
+          "successes": 0
+        },
+        "offset": {
+          "n": 10,
+          "successes": 0
+        }
+      }
+    }
+  }
+}

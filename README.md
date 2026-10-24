@@ -1,5 +1,7 @@
 # reBot Arm B601-RS 仿真工程
 
+2026-10-24已按用户要求在无机械臂的新主机恢复纯仿真；[动作学习续研报告](learning-workspace/experiments/b601-vision-grasp/variants/act-01/REPORT.md)记录了数据生成、训练和两轮独立对照。默认仍为V3，新增动作候选未采用。
+
 ## 2026-10-22 全项目封存与换机入口
 
 **先读 [HANDOFF.md](HANDOFF.md)**：已汇集 3002 主线控制工作台、部署工具、所有视觉仿真实验分支、冻结 V2/V3、151 份检查点和同臂恢复历史。持续实验已按用户要求暂停。当前主线在 `ReBot_Arm_DigitalTwin_RS/`；视觉支线在 `learning-workspace/experiments/b601-vision-grasp/`。以下旧目录、PID 和状态说明保留为历史，换机以交接文件为准。

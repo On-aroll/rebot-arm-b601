@@ -1,0 +1,15 @@
+{
+  "v3_manifest_sha256": "bb6bebf40eb2b660f66600c5be2b41b7e13bee6529bcc042e247a363bcb1342b",
+  "source_sha256": {
+    "audit.py": "dabba9d9df3a12b0d2e114192481ca2cea506bdcfe34d3496f5b20916b902bc7",
+    "chunk_policy.py": "2b818ce019a85fceb117ff2b91ed5dac9307fb3bb7a6ba987ca5677287d8387a",
+    "export.py": "5808c2f43784fc3c0f54a3fcf3da18f1e80b8482dcb2b4e4f19be7097c2bbe94",
+    "infer.py": "75bc2eda5a66708e2b185ec614bd31f844c0e96e36c5f34a07de9f1c3805c12b",
+    "runtime.py": "6880061e540fbcd6e90ae408f5ce1ce333803f65efb81e10fe2ceb4467ef991a",
+    "workflow.py": "fa2f848dbf960483efb6ee8ca7cfa48c992c1c330a45beca39e608e483e91f4d"
+  },
+  "torch": "2.7.1+cu128",
+  "mujoco": "3.16.0",
+  "render_backend": "glfw",
+  "hardware_executable": false
+}

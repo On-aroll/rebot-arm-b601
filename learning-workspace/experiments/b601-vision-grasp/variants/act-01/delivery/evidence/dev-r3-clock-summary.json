@@ -1,0 +1,18 @@
+{
+  "v3": {
+    "trials": 3,
+    "successes": 3,
+    "first_attempt_successes": 2,
+    "recovered_successes": 1,
+    "false_successes": 0,
+    "forbidden_steps": 0
+  },
+  "act": {
+    "trials": 3,
+    "successes": 0,
+    "first_attempt_successes": 0,
+    "recovered_successes": 0,
+    "false_successes": 0,
+    "forbidden_steps": 0
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "round": "r2",
+  "paired_scenes": 30,
+  "policy_sha256": "9a474899af08f495d87173e71051cb0377ec31164768ccfa9903a53000e8b071",
+  "audit_passed": true,
+  "independent_score_rows_recomputed": 30000,
+  "goal_counts": {
+    "A": 10,
+    "B": 10,
+    "C": 10
+  },
+  "groups": {
+    "v3": {
+      "trials": 30,
+      "successes": 30,
+      "first_attempt_successes": 20,
+      "recovered_successes": 10,
+      "false_successes": 0,
+      "total_retries": 10,
+      "forbidden_contact_steps": 0,
+      "mean_sim_seconds": 39.50260000000295,
+      "mean_wall_seconds_before_saving": 2.2103666666668382,
+      "failures": {},
+      "by_goal": {
+        "A": 10,
+        "B": 10,
+        "C": 10
+      },
+      "by_challenge": {
+        "static": {
+          "n": 10,
+          "successes": 10
+        },
+        "force": {
+          "n": 10,
+          "successes": 10
+        },
+        "offset": {
+          "n": 10,
+          "successes": 10
+        }
+      }
+    },
+    "act": {
+      "trials": 30,
+      "successes": 0,
+      "first_attempt_successes": 0,
+      "recovered_successes": 0,
+      "false_successes": 0,
+      "total_retries": 60,
+      "forbidden_contact_steps": 0,
+      "mean_sim_seconds": 276.8738666672606,
+      "mean_wall_seconds_before_saving": 20.714033333333525,
+      "failures": {
+        "timeout": 30
+      },
+      "by_goal": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "by_challenge": {
+        "static": {
+          "n": 10,
+          "successes": 0
+        },
+        "force": {
+          "n": 10,
+          "successes": 0
+        },
+        "offset": {
+          "n": 10,
+          "successes": 0
+        }
+      }
+    }
+  }
+}

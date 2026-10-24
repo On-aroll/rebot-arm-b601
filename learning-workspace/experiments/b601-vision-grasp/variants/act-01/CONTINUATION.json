@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-24",
+  "domain": "simulation",
+  "hardware_executable": false,
+  "default": "V3",
+  "adopt_act": false,
+  "formal_rounds": 2,
+  "new_scenes": 60,
+  "v3_successes": 60,
+  "act_successes": 0,
+  "training_scenes": 108,
+  "validation_scenes": 12,
+  "bounded_experiments_finished": true,
+  "report": "REPORT.md",
+  "next": "Fix timing ambiguity and collect teacher corrections from policy-visited states before new independent tests"
+}

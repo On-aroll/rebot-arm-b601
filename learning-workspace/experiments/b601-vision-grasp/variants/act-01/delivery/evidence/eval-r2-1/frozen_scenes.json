@@ -1,0 +1,104 @@
+[
+  {
+    "seed": 45000010,
+    "goal": "B",
+    "kind": "force",
+    "first_grasp_offset_m": 0.0,
+    "force_pulse": {
+      "start_s": 0.5,
+      "duration_s": 0.06,
+      "force_world_n": [
+        0.0,
+        0.8,
+        0.0
+      ]
+    }
+  },
+  {
+    "seed": 45000011,
+    "goal": "C",
+    "kind": "offset",
+    "first_grasp_offset_m": 0.065,
+    "force_pulse": null
+  },
+  {
+    "seed": 45000012,
+    "goal": "B",
+    "kind": "static",
+    "first_grasp_offset_m": 0.0,
+    "force_pulse": null
+  },
+  {
+    "seed": 45000013,
+    "goal": "C",
+    "kind": "force",
+    "first_grasp_offset_m": 0.0,
+    "force_pulse": {
+      "start_s": 0.5,
+      "duration_s": 0.06,
+      "force_world_n": [
+        0.0,
+        0.8,
+        0.0
+      ]
+    }
+  },
+  {
+    "seed": 45000014,
+    "goal": "A",
+    "kind": "offset",
+    "first_grasp_offset_m": 0.065,
+    "force_pulse": null
+  },
+  {
+    "seed": 45000015,
+    "goal": "C",
+    "kind": "static",
+    "first_grasp_offset_m": 0.0,
+    "force_pulse": null
+  },
+  {
+    "seed": 45000016,
+    "goal": "A",
+    "kind": "force",
+    "first_grasp_offset_m": 0.0,
+    "force_pulse": {
+      "start_s": 0.5,
+      "duration_s": 0.06,
+      "force_world_n": [
+        0.0,
+        0.8,
+        0.0
+      ]
+    }
+  },
+  {
+    "seed": 45000017,
+    "goal": "B",
+    "kind": "offset",
+    "first_grasp_offset_m": 0.065,
+    "force_pulse": null
+  },
+  {
+    "seed": 45000018,
+    "goal": "A",
+    "kind": "static",
+    "first_grasp_offset_m": 0.0,
+    "force_pulse": null
+  },
+  {
+    "seed": 45000019,
+    "goal": "B",
+    "kind": "force",
+    "first_grasp_offset_m": 0.0,
+    "force_pulse": {
+      "start_s": 0.5,
+      "duration_s": 0.06,
+      "force_world_n": [
+        0.0,
+        0.8,
+        0.0
+      ]
+    }
+  }
+]

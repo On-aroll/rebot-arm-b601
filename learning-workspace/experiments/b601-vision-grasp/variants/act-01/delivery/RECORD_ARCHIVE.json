@@ -1,0 +1,7 @@
+{
+  "filename": "b601-act-20261024-records.tar.zst",
+  "sha256": "54edd0c75be346984bb201a26bf50c9fdf6efe9161cbe564d5a2f0570d55309e",
+  "bytes": 10400929000,
+  "verified_files": 2159,
+  "restore": "Decompress and extract into variants/act-01; member paths begin with outputs/"
+}

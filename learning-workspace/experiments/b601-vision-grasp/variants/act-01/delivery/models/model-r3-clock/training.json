@@ -1,0 +1,409 @@
+{
+  "device": "cuda",
+  "parameters": 498783,
+  "steps": 8000,
+  "train_episodes": 93,
+  "validation_episodes": 12,
+  "train_frames": 15002,
+  "validation_frames": 1857,
+  "train_paths": [
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-000\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-001\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-002\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-003\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-004\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-005\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-006\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-007\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-008\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-009\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-010\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-011\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-012\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-013\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-014\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-015\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-016\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-017\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-018\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-019\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-020\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-021\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-022\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-023\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-024\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-025\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-026\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-027\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-028\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-029\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-030\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-031\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-032\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-033\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-034\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-035\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-036\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-037\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-038\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-039\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-040\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-041\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-042\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-043\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-044\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-045\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-046\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-047\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-048\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-049\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-050\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-052\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-053\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-054\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-055\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-056\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-057\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-058\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-059\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-060\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-061\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-062\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-063\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-064\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-065\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-066\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-067\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-068\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-069\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-070\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-071\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-000\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-002\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-003\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-004\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-005\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-008\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-009\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-011\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-012\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-013\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-015\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-016\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-018\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-020\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-021\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-023\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-026\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-028\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-029\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-031\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-034\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r2-recovery\\episode-035\\imitation.npz"
+  ],
+  "validation_paths": [
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-000\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-001\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-002\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-003\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-004\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-005\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-006\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-007\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-008\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-009\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-010\\imitation.npz",
+    "D:\\Desktop\\retarn-bot\\learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\validation-r1\\episode-011\\imitation.npz"
+  ],
+  "selected_step": 8000,
+  "history": [
+    {
+      "step": 1,
+      "train_l1": 1.3988502025604248,
+      "kl": 0.7359639406204224,
+      "validation_zero_latent_l1": 1.280648298561573,
+      "wall_s": 1.5780000000013388
+    },
+    {
+      "step": 200,
+      "train_l1": 0.48568254709243774,
+      "kl": 0.0217459574341774,
+      "validation_zero_latent_l1": 0.5029223300516605,
+      "wall_s": 5.375
+    },
+    {
+      "step": 400,
+      "train_l1": 0.41796156764030457,
+      "kl": 0.013768255710601807,
+      "validation_zero_latent_l1": 0.3446206673979759,
+      "wall_s": 9.062000000001717
+    },
+    {
+      "step": 600,
+      "train_l1": 0.2797505557537079,
+      "kl": 0.007417998276650906,
+      "validation_zero_latent_l1": 0.27821173518896103,
+      "wall_s": 12.718000000000757
+    },
+    {
+      "step": 800,
+      "train_l1": 0.31811967492103577,
+      "kl": 0.00604905653744936,
+      "validation_zero_latent_l1": 0.26829303335398436,
+      "wall_s": 16.25
+    },
+    {
+      "step": 1000,
+      "train_l1": 0.289762020111084,
+      "kl": 0.0037016598507761955,
+      "validation_zero_latent_l1": 0.22292691376060247,
+      "wall_s": 20.264999999999418
+    },
+    {
+      "step": 1200,
+      "train_l1": 0.21338482201099396,
+      "kl": 0.0022781984880566597,
+      "validation_zero_latent_l1": 0.2280979510396719,
+      "wall_s": 23.90599999999904
+    },
+    {
+      "step": 1400,
+      "train_l1": 0.26339417695999146,
+      "kl": 0.002552787773311138,
+      "validation_zero_latent_l1": 0.1845315434038639,
+      "wall_s": 27.57800000000134
+    },
+    {
+      "step": 1600,
+      "train_l1": 0.23267443478107452,
+      "kl": 0.001870681531727314,
+      "validation_zero_latent_l1": 0.1845433097332716,
+      "wall_s": 31.312000000001717
+    },
+    {
+      "step": 1800,
+      "train_l1": 0.17261451482772827,
+      "kl": 0.002199113368988037,
+      "validation_zero_latent_l1": 0.172517160885036,
+      "wall_s": 35.17099999999846
+    },
+    {
+      "step": 2000,
+      "train_l1": 0.19658660888671875,
+      "kl": 0.0019600363448262215,
+      "validation_zero_latent_l1": 0.14782571699470282,
+      "wall_s": 38.875
+    },
+    {
+      "step": 2200,
+      "train_l1": 0.21474775671958923,
+      "kl": 0.0021086763590574265,
+      "validation_zero_latent_l1": 0.1485018189996481,
+      "wall_s": 42.67099999999846
+    },
+    {
+      "step": 2400,
+      "train_l1": 0.20978254079818726,
+      "kl": 0.0011943448334932327,
+      "validation_zero_latent_l1": 0.14245321555063128,
+      "wall_s": 46.38999999999942
+    },
+    {
+      "step": 2600,
+      "train_l1": 0.2101116180419922,
+      "kl": 0.001010431908071041,
+      "validation_zero_latent_l1": 0.16925873793661594,
+      "wall_s": 50.13999999999942
+    },
+    {
+      "step": 2800,
+      "train_l1": 0.1929464489221573,
+      "kl": 0.001151333563029766,
+      "validation_zero_latent_l1": 0.13770677195861936,
+      "wall_s": 53.78099999999904
+    },
+    {
+      "step": 3000,
+      "train_l1": 0.17776216566562653,
+      "kl": 0.0010471027344465256,
+      "validation_zero_latent_l1": 0.12792936712503433,
+      "wall_s": 57.125
+    },
+    {
+      "step": 3200,
+      "train_l1": 0.16679194569587708,
+      "kl": 0.0011401455849409103,
+      "validation_zero_latent_l1": 0.13331704400479794,
+      "wall_s": 60.48400000000038
+    },
+    {
+      "step": 3400,
+      "train_l1": 0.15244191884994507,
+      "kl": 0.0007387483492493629,
+      "validation_zero_latent_l1": 0.12668136693537235,
+      "wall_s": 63.85900000000038
+    },
+    {
+      "step": 3600,
+      "train_l1": 0.17096103727817535,
+      "kl": 0.0007570767775177956,
+      "validation_zero_latent_l1": 0.12208295287564397,
+      "wall_s": 67.67099999999846
+    },
+    {
+      "step": 3800,
+      "train_l1": 0.17595519125461578,
+      "kl": 0.0007690107449889183,
+      "validation_zero_latent_l1": 0.12744155107066035,
+      "wall_s": 71.375
+    },
+    {
+      "step": 4000,
+      "train_l1": 0.15251396596431732,
+      "kl": 0.00046425405889749527,
+      "validation_zero_latent_l1": 0.12115650763735175,
+      "wall_s": 75.07800000000134
+    },
+    {
+      "step": 4200,
+      "train_l1": 0.17354823648929596,
+      "kl": 0.0004365593194961548,
+      "validation_zero_latent_l1": 0.12535656848922372,
+      "wall_s": 78.84300000000076
+    },
+    {
+      "step": 4400,
+      "train_l1": 0.18438784778118134,
+      "kl": 0.000515395775437355,
+      "validation_zero_latent_l1": 0.12456792872399092,
+      "wall_s": 82.38999999999942
+    },
+    {
+      "step": 4600,
+      "train_l1": 0.1743062287569046,
+      "kl": 0.0005525443702936172,
+      "validation_zero_latent_l1": 0.12269661063328385,
+      "wall_s": 86.20300000000134
+    },
+    {
+      "step": 4800,
+      "train_l1": 0.15597563982009888,
+      "kl": 0.0004047490656375885,
+      "validation_zero_latent_l1": 0.11155196512117982,
+      "wall_s": 89.73400000000038
+    },
+    {
+      "step": 5000,
+      "train_l1": 0.1554398238658905,
+      "kl": 0.0005605779588222504,
+      "validation_zero_latent_l1": 0.12267716601490974,
+      "wall_s": 92.98400000000038
+    },
+    {
+      "step": 5200,
+      "train_l1": 0.19480934739112854,
+      "kl": 0.00046558771282434464,
+      "validation_zero_latent_l1": 0.1304282732307911,
+      "wall_s": 96.26499999999942
+    },
+    {
+      "step": 5400,
+      "train_l1": 0.15018925070762634,
+      "kl": 0.00038451794534921646,
+      "validation_zero_latent_l1": 0.11691536009311676,
+      "wall_s": 99.98400000000038
+    },
+    {
+      "step": 5600,
+      "train_l1": 0.1721511334180832,
+      "kl": 0.00039351731538772583,
+      "validation_zero_latent_l1": 0.1280273199081421,
+      "wall_s": 103.56200000000172
+    },
+    {
+      "step": 5800,
+      "train_l1": 0.21485452353954315,
+      "kl": 0.0004029087722301483,
+      "validation_zero_latent_l1": 0.11672391649335623,
+      "wall_s": 107.51499999999942
+    },
+    {
+      "step": 6000,
+      "train_l1": 0.21192507445812225,
+      "kl": 0.00040590763092041016,
+      "validation_zero_latent_l1": 0.11683334736153483,
+      "wall_s": 111.46800000000076
+    },
+    {
+      "step": 6200,
+      "train_l1": 0.16816666722297668,
+      "kl": 0.00022191274911165237,
+      "validation_zero_latent_l1": 0.11204453278332949,
+      "wall_s": 115.15599999999904
+    },
+    {
+      "step": 6400,
+      "train_l1": 0.1554376780986786,
+      "kl": 0.0003308933228254318,
+      "validation_zero_latent_l1": 0.10354408621788025,
+      "wall_s": 118.67099999999846
+    },
+    {
+      "step": 6600,
+      "train_l1": 0.15693333745002747,
+      "kl": 0.00034591834992170334,
+      "validation_zero_latent_l1": 0.11239513009786606,
+      "wall_s": 122.38999999999942
+    },
+    {
+      "step": 6800,
+      "train_l1": 0.18056620657444,
+      "kl": 0.0003688288852572441,
+      "validation_zero_latent_l1": 0.11393255367875099,
+      "wall_s": 125.70300000000134
+    },
+    {
+      "step": 7000,
+      "train_l1": 0.133686825633049,
+      "kl": 0.0002331966534256935,
+      "validation_zero_latent_l1": 0.11054855212569237,
+      "wall_s": 129.04599999999846
+    },
+    {
+      "step": 7200,
+      "train_l1": 0.11971580237150192,
+      "kl": 0.0002081422135233879,
+      "validation_zero_latent_l1": 0.1002406575717032,
+      "wall_s": 132.70300000000134
+    },
+    {
+      "step": 7400,
+      "train_l1": 0.18173493444919586,
+      "kl": 0.00021804869174957275,
+      "validation_zero_latent_l1": 0.10901405289769173,
+      "wall_s": 136.53099999999904
+    },
+    {
+      "step": 7600,
+      "train_l1": 0.15565435588359833,
+      "kl": 0.00028125103563070297,
+      "validation_zero_latent_l1": 0.1013237340375781,
+      "wall_s": 140.32800000000134
+    },
+    {
+      "step": 7800,
+      "train_l1": 0.17473557591438293,
+      "kl": 0.0003817519173026085,
+      "validation_zero_latent_l1": 0.11152007803320885,
+      "wall_s": 144.40599999999904
+    },
+    {
+      "step": 8000,
+      "train_l1": 0.1353541612625122,
+      "kl": 0.000240999273955822,
+      "validation_zero_latent_l1": 0.09642865508794785,
+      "wall_s": 148.18700000000172
+    }
+  ],
+  "cuda_peak_allocated_bytes": 75874816
+}

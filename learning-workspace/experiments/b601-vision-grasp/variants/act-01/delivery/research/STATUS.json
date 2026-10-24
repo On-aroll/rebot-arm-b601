@@ -1,0 +1,9 @@
+{
+  "adopted": false,
+  "status": "rejected_research_candidate",
+  "default_controller": "V3",
+  "formal_task_successes": 0,
+  "formal_trials": 30,
+  "hardware_executable": false,
+  "policy_sha256": "9a474899af08f495d87173e71051cb0377ec31164768ccfa9903a53000e8b071"
+}
