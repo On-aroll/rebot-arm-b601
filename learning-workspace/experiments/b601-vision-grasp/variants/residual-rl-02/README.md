@@ -17,3 +17,15 @@
 `outputs/` 保留训练、验证、探测的动作/物理记录、模型及回放池。所有失败和验证另存实际演员 RGB-D；成功训练保留演员输入特征、动作、初始/复看 RGB-D，不保留每一步完整图像。新场景完整任务测试另行记录。
 
 物理范围是尚未实测标定的敏感性测试。仿真夹爪位移不能直接当作板端电机角度。结果完成后见 REPORT.md。
+
+训练完成后：
+
+```powershell
+& .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/export.py
+& .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/infer_numpy.py --directory learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/delivery --benchmark
+# 新建输出目录运行宽范围36场/边界30场；参数、原始基线及分批索引见正式输出config.json
+& .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/evaluate.py --output reproduce-broad --count 36
+& .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/evaluate.py --suite boundary --output reproduce-boundary --count 30
+```
+
+交付包含完整SAC训练权重、TorchScript以及只需NumPy的确定性演员。NumPy版本只是同一网络的矩阵运算，需用实际记录逐项核对误差；不代表整个视觉抓放系统脱离PyTorch，也不代表板端已验收。

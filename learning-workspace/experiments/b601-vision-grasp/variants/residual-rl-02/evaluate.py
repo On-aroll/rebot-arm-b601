@@ -29,6 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('--controllers', nargs='+', default=['v3', 'zero', 'previous', 'sac'])
     parser.add_argument('--start', type=int, default=0)
     parser.add_argument('--count', type=int, default=36)
+    parser.add_argument('--suite', choices=['broad', 'boundary'], default='broad')
     args = parser.parse_args()
     verify_v3()
     output = HERE / 'outputs' / args.output
@@ -36,12 +37,16 @@ if __name__ == '__main__':
     (output / 'source').mkdir()
     for source in [Path(__file__), HERE / 'curriculum.py', PREVIOUS / 'workflow.py', PREVIOUS / 'environment.py']:
         shutil.copy2(source, output / 'source' / (source.parent.name + '-' + source.name))
-    config = {'test_seed_start': 53000000, 'indices': list(range(args.start, args.start + args.count)),
+    seed_start = 53000000 if args.suite == 'broad' else 54000000
+    config = {'suite': args.suite, 'test_seed_start': seed_start, 'indices': list(range(args.start, args.start + args.count)),
         'controllers': args.controllers, 'checkpoint_sha256': digest(args.checkpoint) if 'sac' in args.controllers else None,
         'source_sha256': {str(p.relative_to(HERE.parent)): digest(p) for p in
                           [Path(__file__), HERE / 'curriculum.py', PREVIOUS / 'workflow.py', PREVIOUS / 'environment.py']},
         'kinds': ['nominal', 'force', 'bias_positive', 'bias_negative'],
-        'bias_m': .035, 'retries_max': 2,
+        'bias_m': .035 if args.suite == 'broad' else None,
+        'boundary_magnitudes_m': [.027, .028, .029] if args.suite == 'boundary' else None,
+        'boundary_magnitude_index_rule': '(i//2+i//6)%3' if args.suite == 'boundary' else None,
+        'retries_max': 2,
         'previous_controller_note': 'R1 actor with R2 five-step open alignment, not unchanged R1 system'}
     write(output / 'config.json', config)
     previous_runner.STEPS = STEPS
@@ -56,6 +61,12 @@ if __name__ == '__main__':
             scene = {'seed': 53000000 + index, 'goal': 'ABC'[index % 3], 'kind': kind,
                 'force_pulse': {'start_s': .5, 'duration_s': .06, 'force_world_n': [0., .8, 0.]} if kind == 'force' else None,
                 'first_grasp_offset_m': .035 if kind == 'bias_positive' else -.035 if kind == 'bias_negative' else 0.}
+            if args.suite == 'boundary':
+                kind = 'bias_positive' if index % 2 == 0 else 'bias_negative'
+                magnitude = [.027, .028, .029][(index // 2 + index // 6) % 3]
+                level = 0
+                scene.update(seed=seed_start + index, kind=kind, force_pulse=None,
+                             first_grasp_offset_m=magnitude * (1 if index % 2 == 0 else -1))
             for controller in args.controllers:
                 env.sim.stress_level, env.sim.profile_salt = level, 930000000
                 directory = output / f'episode-{index:03d}-{controller}'
