@@ -1,3 +1,4 @@
 # These paths carry byte-level release hashes; preserve their original bytes.
 learning-workspace/experiments/b601-vision-grasp/versions/** -text
 learning-workspace/experiments/b601-vision-grasp/variants/act-01/delivery/** -text
+learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-01/delivery/** -text
