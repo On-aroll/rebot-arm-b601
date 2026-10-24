@@ -1,0 +1,33 @@
+{
+  "normalized_action": [
+    0.23081018030643463,
+    -0.5927843451499939,
+    0.6817326545715332,
+    -0.21835888922214508
+  ],
+  "requested_residual_m": [
+    0.0027697221636772155,
+    -0.007113412141799927,
+    0.005453861236572266,
+    -0.0013101533353328705
+  ],
+  "next_residual_m": [
+    0.002,
+    -0.002,
+    0.002,
+    -0.0013101533353328705
+  ],
+  "hardware_executable": false,
+  "benchmark": {
+    "device": "host_x86_CPU_two_threads",
+    "board_measured": false,
+    "samples": 200,
+    "median_ms": 0.038300000596791506,
+    "p95_ms": 0.04351000352471601,
+    "p99_ms": 0.048110002389876165,
+    "model_bytes": 45311,
+    "process_rss_bytes": 424685568,
+    "includes": "residual actor and residual bounding; 36-dimensional features already provided",
+    "excludes": "RGB-D acquisition, frozen V3 vision, IK, transport, physical board and power"
+  }
+}

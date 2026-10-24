@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "score_rows_recomputed": 45000,
+  "actor_proposals_checked": 720,
+  "paired_resets_equal": true,
+  "complete_episode_decisions": 8148,
+  "partial_decisions_recovered": 44,
+  "train_validation_test_seeds_disjoint": true,
+  "source_sha256": "e598bd2ef8bcd7e35ed4c248547b0d577fb561c806654cb5ea998944502e7e24"
+}

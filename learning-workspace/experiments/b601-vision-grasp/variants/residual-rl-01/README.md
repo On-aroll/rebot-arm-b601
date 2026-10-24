@@ -33,3 +33,12 @@ $work = 'learning-workspace\experiments\b601-vision-grasp\variants\residual-rl-0
 - https://residualrl.github.io/
 
 阶段结果和实际作用以REPORT.md为准，不能以奖励曲线或模型导出替代任务验收。
+
+本轮已完成：三组均30/30，未证明SAC相对V3的任务收益，不升级默认版本。部署研究包在delivery，`infer.py`只输出位置/单指模型行程的米制修正建议，不能直接当作实机J7电机弧度。
+
+```powershell
+& $py "$work\infer.py" --model "$work\delivery\actor.torchscript" --config "$work\delivery\inference_config.json" --observation "$work\delivery\example_observation.npz" --output "$work\outputs\proposal-repeat.json" --benchmark
+& $py "$work\audit.py"
+```
+
+精确检查历史实现时，使用对应run的source和config.json。要用冻结训练源码复跑，将`outputs/sac-r1/source/*.py`复制到一个新的`variants/<name>/`（与act-01同级），再从根目录执行该处workflow.py的train命令；保持锁定依赖。当前源码修正了未完成回合关闭保存，训练/奖励未改，原始快照也保留。不保证跨设备渲染和库版本的训练权重逐字节相同。

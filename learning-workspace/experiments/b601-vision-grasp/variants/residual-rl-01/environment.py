@@ -162,3 +162,11 @@ class LoggedGraspEnv(GraspEnv):
         if done:
             self.save_episode(info)
         return observation, reward, done, truncated, info
+
+    def close(self):
+        if self.counter and not (self.directory / 'result.json').exists():
+            self.recorder.save()
+            write(self.directory / 'rl_steps.json', self.steps)
+            write(self.directory / 'partial_result.json', {'status': 'unfinished_at_shutdown',
+                'decisions': len(self.steps), 'counts_as_completed_episode': False})
+        super().close()

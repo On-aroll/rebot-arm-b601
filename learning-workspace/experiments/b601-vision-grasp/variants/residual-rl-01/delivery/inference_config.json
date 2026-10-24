@@ -1,0 +1,30 @@
+{
+  "schema": "b601-v3-sac-residual-skill-v1",
+  "observation_dim": 36,
+  "observation_order": [
+    "visual_features_8",
+    "visible_1",
+    "own_state_20",
+    "goal_onehot_3",
+    "previous_residual_normalized_4"
+  ],
+  "residual_bounds_m": [
+    0.012,
+    0.012,
+    0.008,
+    0.006
+  ],
+  "max_residual_change_m_per_decision": [
+    0.002,
+    0.002,
+    0.002,
+    0.0015
+  ],
+  "scope": "grasp/lift residual only; frozen V3 vision, base trajectory and supervisor required",
+  "actor_parameters": 7048,
+  "checkpoint_sha256": "1f0e7c6f11f333845445f33cd05eba4b2319123285f9bf3bb0389cbe7f65d7ff",
+  "actor_sha256": "149968c00462514cf0ed449644b288a7e2996593b2b64e0a9d00975322673daf",
+  "comparison_samples": 10,
+  "maximum_export_error": 0.0,
+  "hardware_executable": false
+}

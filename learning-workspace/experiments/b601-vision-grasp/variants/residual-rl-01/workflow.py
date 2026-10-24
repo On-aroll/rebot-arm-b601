@@ -74,9 +74,11 @@ def hybrid_task(env, model, scene, directory, zero=False):
             env.current_observation = env.begin(recorder, scene['goal'], grasp)
             while True:
                 action = np.zeros(4) if zero else model.predict(env.current_observation, deterministic=True)[0]
-                _, _, done, _, info = env.step(action)
+                _, _, _, _, info = env.step(action)
                 result['skill_decisions'] += 1
-                if done:
+                # The training environment may terminate on scorer contact truth.
+                # Deployment does not use that reward/terminal signal for control.
+                if env.index >= STEPS or env.failed is not None:
                     break
             row['skill_actions'] = env.steps
             row['scoring_only_skill_result'] = info
