@@ -31,6 +31,10 @@ py -3.12 -m venv .venv
 训练完成后：
 
 ```powershell
+# 统一完成导出、两批配对测试、独立审计和CPU测试；复用已完整结束的分批测试
+& .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/finish_tests.py
+
+# 或分别运行：
 & .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/export.py
 & .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/infer_numpy.py --directory learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/delivery --benchmark
 # 新建输出目录运行宽范围36场/边界30场；参数、原始基线及分批索引见正式输出config.json

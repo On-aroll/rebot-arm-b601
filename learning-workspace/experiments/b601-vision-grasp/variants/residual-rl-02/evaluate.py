@@ -42,7 +42,7 @@ if __name__ == '__main__':
         'controllers': args.controllers, 'checkpoint_sha256': digest(args.checkpoint) if 'sac' in args.controllers else None,
         'source_sha256': {str(p.relative_to(HERE.parent)): digest(p) for p in
                           [Path(__file__), HERE / 'curriculum.py', PREVIOUS / 'workflow.py', PREVIOUS / 'environment.py']},
-        'kinds': ['nominal', 'force', 'bias_positive', 'bias_negative'],
+        'kinds': ['nominal', 'force', 'bias_positive', 'bias_negative'] if args.suite == 'broad' else ['bias_positive', 'bias_negative'],
         'bias_m': .035 if args.suite == 'broad' else None,
         'boundary_magnitudes_m': [.027, .028, .029] if args.suite == 'boundary' else None,
         'boundary_magnitude_index_rule': '(i//2+i//6)%3' if args.suite == 'boundary' else None,
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     results = []
     try:
         for index in range(args.start, args.start + args.count):
-            kind = config['kinds'][index % 4]
+            kind = config['kinds'][index % len(config['kinds'])]
             level = 0 if kind == 'nominal' else 1 if kind == 'force' else 2
             scene = {'seed': 53000000 + index, 'goal': 'ABC'[index % 3], 'kind': kind,
                 'force_pulse': {'start_s': .5, 'duration_s': .06, 'force_world_n': [0., .8, 0.]} if kind == 'force' else None,
