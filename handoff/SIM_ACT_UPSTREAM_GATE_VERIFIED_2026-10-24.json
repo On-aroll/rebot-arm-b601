@@ -1,0 +1,60 @@
+{
+  "schema": "b601-release-verification-v1",
+  "repo": "On-aroll/rebot-arm-b601",
+  "tag": "sim-act-upstream-gate-2026-10-24",
+  "release_url": "https://github.com/On-aroll/rebot-arm-b601/releases/tag/sim-act-upstream-gate-2026-10-24",
+  "all_assets_verified": true,
+  "verified_at_utc": "2026-10-24T02:54:31.047191+00:00",
+  "asset_count": 8,
+  "total_bytes": 208322871,
+  "assets": [
+    {
+      "name": "b601-upstream-act-known-evidence.zip",
+      "size": 1852450,
+      "sha256": "a1e9db4c019f253f065a56a48dde1bed32a375b64e11f44f745776f724fd97ce",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-act-upstream-gate-2026-10-24/b601-upstream-act-known-evidence.zip"
+    },
+    {
+      "name": "b601-upstream-act-known-model.safetensors.part0001",
+      "size": 67108864,
+      "sha256": "e28c3c3690b3e23ea1f9a7e427927138374be04865e0f2da118d9e46b1fb29e6",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-act-upstream-gate-2026-10-24/b601-upstream-act-known-model.safetensors.part0001"
+    },
+    {
+      "name": "b601-upstream-act-known-model.safetensors.part0002",
+      "size": 67108864,
+      "sha256": "41c277a785a1deb20b8f76b8480a4b5a3de3a5439ab8acf1fd764e0275c8b68b",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-act-upstream-gate-2026-10-24/b601-upstream-act-known-model.safetensors.part0002"
+    },
+    {
+      "name": "b601-upstream-act-known-model.safetensors.part0003",
+      "size": 67108864,
+      "sha256": "bff520a1356d800f0419b00810d1215dc323541b274a8d01c57238dfbe082211",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-act-upstream-gate-2026-10-24/b601-upstream-act-known-model.safetensors.part0003"
+    },
+    {
+      "name": "b601-upstream-act-known-model.safetensors.part0004",
+      "size": 5140868,
+      "sha256": "cbbe5e93c16b162b94668ed62260186e326da5e0949753bd42efeca2ca87eb93",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-act-upstream-gate-2026-10-24/b601-upstream-act-known-model.safetensors.part0004"
+    },
+    {
+      "name": "BACKUP_MANIFEST.json",
+      "size": 1601,
+      "sha256": "5581f1597ccfd7f5380169e9fb82317207852138e901ccfe3a1fb4527d4467b1",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-act-upstream-gate-2026-10-24/BACKUP_MANIFEST.json"
+    },
+    {
+      "name": "RESTORE.txt",
+      "size": 617,
+      "sha256": "72d42ded6b6b575f07f87da9b4cc7f7437dcc80eb34adb4caf68e1ffef67f49b",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-act-upstream-gate-2026-10-24/RESTORE.txt"
+    },
+    {
+      "name": "SHA256SUMS",
+      "size": 743,
+      "sha256": "a322531e967ecf08e20660587aaaef92936be794a3ed3c3d748c09e3900f0936",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-act-upstream-gate-2026-10-24/SHA256SUMS"
+    }
+  ]
+}

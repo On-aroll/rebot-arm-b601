@@ -28,3 +28,8 @@ $gate = 'learning-workspace\experiments\b601-vision-grasp\variants\act-upstream-
 上游来源：
 - https://github.com/HJX-exoskeleton/lerobot-mujoco-rebot/blob/39177b3391ee090806acea3c8fc0fd0511af2547/commands.txt
 - https://github.com/huggingface/lerobot/tree/10b7b3532543b4adfb65760f02a49b4c537afde7/lerobot/common/policies/act
+
+本阶段权重和130个新记录/源码的增量备份（8附件，约208MB，服务端SHA256已逐项核验）：
+https://github.com/On-aroll/rebot-arm-b601/releases/tag/sim-act-upstream-gate-2026-10-24
+
+恢复先验证SHA256SUMS，再按RESTORE.txt解压证据ZIP、合并四个模型分卷；模型合并哈希见BACKUP_MANIFEST.json。原始输入示范继续取自上一轮Release，不重复下载本轮不存在的训练数据。

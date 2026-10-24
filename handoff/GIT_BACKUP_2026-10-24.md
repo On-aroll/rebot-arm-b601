@@ -19,3 +19,11 @@ git config --local user.email On-aroll@users.noreply.github.com
 每阶段及时提交、推送并核对远端。大附件采用现有`handoff/upload_assets.py`的上传和服务端SHA256核验流程；保留原始失败。新设备重新配置本机认证，不复制或提交凭据。
 
 本轮已遇到Windows自动换行导致冻结哈希失配，因此分支新增`.gitattributes`保护冻结版本和交付包的原始字节。获取较早的固定标签时，克隆命令使用`git -c core.autocrlf=false clone ...`；不要改写历史证据以适应换行。
+
+## 标准ACT最小闭环的增量备份
+
+后续 `variants/act-upstream-01` 在已知单场景通过模型闭环10/10；较大位置变化仍失败，未作为V4采用。固定源码提交`09a69f3`、标签`sim-act-upstream-gate-2026-10-24`，报告说明全部限制。新增Release：
+
+https://github.com/On-aroll/rebot-arm-b601/releases/tag/sim-act-upstream-gate-2026-10-24
+
+仅新增8个附件、208,322,871字节：一份206MB模型分成四个64MiB以内二进制分卷，小型证据ZIP以及三个恢复/校验文件。没有重新上传旧10.4GB归档。模型合并SHA256为`38d670fc82c8c85ead0b26d9fb927070f9201da35d19ec7ece4c7878f846b243`。ZIP的130个新记录/源码逐文件复核通过，8个远端附件服务端SHA256全部与本地一致；回执见`SIM_ACT_UPSTREAM_GATE_VERIFIED_2026-10-24.json`。
