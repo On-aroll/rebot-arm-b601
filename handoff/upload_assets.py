@@ -2,10 +2,12 @@
 """Resume private Release uploads, checking remote SHA256 digests when available."""
 import hashlib
 import json
+import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 import subprocess
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = 'On-aroll/rebot-arm-b601'
@@ -13,7 +15,16 @@ TAG = 'handoff-2026-10-22'
 
 
 def gh(*args):
-    return subprocess.check_output(['gh', *args], encoding='utf-8')
+    for attempt in range(5):
+        env = dict(os.environ)
+        if attempt % 2:
+            env['NO_PROXY'] = '' if env.get('NO_PROXY') else 'api.github.com,uploads.github.com'
+        try:
+            return subprocess.check_output(['gh', *args], encoding='utf-8', env=env)
+        except subprocess.CalledProcessError:
+            if attempt == 4:
+                raise
+            time.sleep(2 ** attempt)
 
 
 def assets(release_id):
@@ -46,9 +57,29 @@ def main():
             return
         if path.stat().st_size >= 2_000_000_000:
             raise ValueError(f'Asset exceeds conservative 2 GB upload boundary: {path.name}')
-        print(f'Uploading: {path.name}', flush=True)
-        subprocess.run(['gh', 'release', 'upload', TAG, '--repo', REPO, str(path)], check=True)
-        print(f'Uploaded: {path.name}', flush=True)
+        for attempt in range(5):
+            print(f'Uploading: {path.name}', flush=True)
+            result = subprocess.run(['gh', 'release', 'upload', TAG, '--repo', REPO, str(path)])
+            if result.returncode == 0:
+                print(f'Uploaded: {path.name}', flush=True)
+                return
+            # The request can fail after the server has already stored the asset.
+            latest = assets(release['id']).get(path.name)
+            if latest and latest['state'] == 'uploaded':
+                assert latest['size'] == path.stat().st_size and latest.get('digest') == f'sha256:{expected}'
+                print(f'Uploaded: {path.name} (server verified after lost response)', flush=True)
+                return
+            if latest:
+                # Only this invocation's failed upload may be removed. Conflicts
+                # present before the request are still refused above.
+                assert latest['state'] == 'starter' and latest.get('digest') is None
+                assert latest['name'] == path.name and latest['size'] == path.stat().st_size
+                subprocess.run(['gh', 'api', '-X', 'DELETE',
+                    f"repos/{REPO}/releases/assets/{latest['id']}"], check=True)
+            if attempt == 4:
+                raise subprocess.CalledProcessError(result.returncode, result.args)
+            print(f'Retrying: {path.name} (attempt {attempt + 2}/5)', flush=True)
+            time.sleep(2 ** attempt)
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         for _ in executor.map(upload, local):
