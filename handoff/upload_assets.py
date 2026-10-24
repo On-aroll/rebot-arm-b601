@@ -13,7 +13,7 @@ TAG = 'handoff-2026-10-22'
 
 
 def gh(*args):
-    return subprocess.check_output(['gh', *args], text=True)
+    return subprocess.check_output(['gh', *args], encoding='utf-8')
 
 
 def assets(release_id):
