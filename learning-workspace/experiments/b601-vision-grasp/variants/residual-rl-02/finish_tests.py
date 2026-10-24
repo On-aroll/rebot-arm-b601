@@ -45,6 +45,7 @@ if __name__ == '__main__':
     run('audit-boundary', 'audit.py', '--suite', 'boundary')
     run('benchmark-torch', 'infer.py', '--directory', HERE / 'delivery', '--benchmark')
     run('benchmark-numpy', 'infer_numpy.py', '--directory', HERE / 'delivery', '--benchmark')
+    run('plot-progress', 'plot_progress.py')
     for goal in 'ABC':
         run(f'demo-{goal}', 'run_sim.py', '--goal', goal, '--seed', 55000010 + 'ABC'.index(goal),
             '--output', OUTPUT / f'final-numpy-demo-{goal}')

@@ -90,6 +90,8 @@ if __name__ == '__main__':
             physical = all(successes) and result['physics_tick_audit']['forbidden_steps'] == 0
             assert physical == result['physical_success']
             assert bool(physical and result['controller_success']) == result['success']
+            assert bool(result['controller_success'] and not physical) == result['false_success']
+            assert 0 <= result['retries'] <= 2 and len(result['attempts']) <= 3
             longest, held_time = 0., 0.
             for line in (path.parent / 'trajectory.jsonl').read_text().splitlines():
                 row = json.loads(line)['truth_for_scoring_only']
