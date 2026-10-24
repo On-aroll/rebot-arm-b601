@@ -23,7 +23,7 @@ $gate = 'learning-workspace\experiments\b601-vision-grasp\variants\act-upstream-
 & $py $gate evaluate --name evaluation-repeat --repeats 10 --checkpoint 'learning-workspace\experiments\b601-vision-grasp\variants\act-upstream-01\outputs\model-repeat\checkpoint'
 ```
 
-结果以 `outputs/<name>/summary.json` 为准，不以loss判定学会任务。教师入口已10/10通过；模型结果继续记录到本目录报告。单条已知示范闭环通过后，再扩展位置、区域、相机/动力学变化和来自模型实际访问状态的教师纠正，最终锁定至少30个新的未训练场景与V3配对比较。强化学习只考虑在可靠模仿起点上优化精度/恢复，不用它跳过当前基本闭环问题。
+结果以 `outputs/<name>/summary.json` 为准，不以loss判定学会任务。教师入口和模型已知场景均10/10通过；±20mm探测4/4、±40mm探测1/4，详细限制和独立夹持/抬升审计见REPORT.md。`audit.py`重放已有命令并记录物体/接触真值，只用于评分。之后再扩展位置、区域、相机/动力学变化和来自模型实际访问状态的教师纠正，最终锁定至少30个新的未训练场景与V3配对比较。强化学习只考虑在可靠模仿起点上优化精度/恢复，不用它跳过当前基本闭环问题。
 
 上游来源：
 - https://github.com/HJX-exoskeleton/lerobot-mujoco-rebot/blob/39177b3391ee090806acea3c8fc0fd0511af2547/commands.txt

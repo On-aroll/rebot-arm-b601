@@ -1,0 +1,9 @@
+{
+  "upstream_revision": "10b7b3532543b4adfb65760f02a49b4c537afde7",
+  "steps": 2000,
+  "episode": "learning-workspace\\experiments\\b601-vision-grasp\\variants\\act-01\\outputs\\demos-r1\\episode-000",
+  "frames": 164,
+  "parameters": 51577303,
+  "peak_cuda_allocated_bytes": 1165513728,
+  "scope": "one-episode overfit diagnostic, not held-out evaluation"
+}

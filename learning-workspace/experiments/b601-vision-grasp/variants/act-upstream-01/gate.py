@@ -14,7 +14,7 @@ UPSTREAM = REPO / '.tools/lerobot-upstream'
 REVISION = '10b7b3532543b4adfb65760f02a49b4c537afde7'
 EPISODE = PREVIOUS / 'outputs/demos-r1/episode-000'
 sys.path.insert(0, str(PREVIOUS))
-from runtime import RealisticSimulation, state, verify_v3, write, digest
+from runtime import RealisticSimulation, state, verify_v3, write, digest, mj
 from task import GOALS, independent_score
 
 import numpy as np
@@ -40,11 +40,16 @@ def command(sim, proposed):
     return not np.allclose(target, proposed)
 
 
-def rollout(data, policy=None):
+def rollout(data, policy=None, offset_xy=(0., 0.), blank_image=False):
     result = json.loads((EPISODE / 'result.json').read_text())
     sim = RealisticSimulation()
     reset = sim.reset(result['reset']['seed'], force_pulse=None)
     assert reset == result['reset']
+    # Change only the initial condition, before the first physics step. The actor
+    # never receives this offset or the object's simulated coordinates.
+    if any(offset_xy):
+        sim.data.qpos[sim.oq:sim.oq + 2] += offset_xy
+        mj.mj_forward(sim.model, sim.data)
     if policy is not None:
         policy.reset()
     forbidden, clipped, rows = 0, 0, []
@@ -57,6 +62,8 @@ def rollout(data, policy=None):
                 proposed = data['action'][i].astype(float)
             else:
                 frame = sim.observe(labels=False)
+                if blank_image:
+                    frame['rgb'] = np.zeros_like(frame['rgb'])
                 batch = {
                     'observation.image': torch.from_numpy(frame['rgb'].copy()).permute(2, 0, 1)[None].float().cuda() / 255,
                     'observation.state': torch.from_numpy(np.r_[state(sim), data['goal'][i]])[None].float().cuda(),
@@ -75,6 +82,8 @@ def rollout(data, policy=None):
             forbidden += bool(sim.contacts()['forbidden'])
             scores.append(independent_score(sim, GOALS[result['task']['destination']]))
         return {'success': all(s['success'] for s in scores) and not forbidden,
+                'initial_offset_xy_m': list(offset_xy),
+                'blank_image_ablation': blank_image,
                 'forbidden_steps': forbidden, 'clipped_commands': int(clipped),
                 'final_score': scores[-1], 'sim_seconds': float(sim.data.time),
                 'wall_seconds': time.monotonic() - started, 'trajectory': rows}
@@ -158,6 +167,8 @@ def main():
     parser.add_argument('--steps', type=int, default=2000)
     parser.add_argument('--repeats', type=int, default=10)
     parser.add_argument('--checkpoint', type=Path)
+    parser.add_argument('--offset-xy', nargs=2, type=float, default=[0., 0.])
+    parser.add_argument('--blank-image', action='store_true')
     args = parser.parse_args()
     verify_v3()
     output = HERE / 'outputs' / args.name
@@ -177,14 +188,17 @@ def main():
         policy = ACTPolicy.from_pretrained(args.checkpoint, local_files_only=True).cuda().eval()
     results = []
     for i in range(args.repeats):
-        row = rollout(data, policy)
+        row = rollout(data, policy, args.offset_xy, args.blank_image)
         write(output / f'episode-{i:03d}.json', row)
         del row['trajectory']
         results.append(row)
-        write(output / 'summary.json', {'scope': 'same known initial scene repeated, not independent generalization',
+        write(output / 'summary.json', {'scope': ('development position/image ablation, not independent generalization'
+            if any(args.offset_xy) or args.blank_image else 'same known initial scene repeated, not independent generalization'),
             'controller': args.mode, 'successes': sum(r['success'] for r in results),
             'trials': len(results), 'results': results})
         print(json.dumps({'trial': i + 1, **row}), flush=True)
+    if args.mode == 'teacher' and not all(r['success'] for r in results):
+        raise SystemExit('Teacher transport gate failed; inspect evidence before training')
 
 
 if __name__ == '__main__':

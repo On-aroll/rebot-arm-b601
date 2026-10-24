@@ -1,0 +1,15 @@
+{
+  "device": "host_x86_CPU_two_threads",
+  "board_measured": false,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "samples": 200,
+  "median_ms": 25.127950004389277,
+  "p95_ms": 28.027064999696446,
+  "p99_ms": 30.40248099896416,
+  "process_rss_bytes": 1033203712,
+  "model_warmup_rss_increment_bytes": 400551936,
+  "includes": "uint8 RGB conversion, own-state/goal input, normalization, full fresh chunk, denormalization",
+  "excludes": "camera, transport, physical board, power/thermal measurement",
+  "scope": "no simulation instance created; gate/runtime modules imported",
+  "source_sha256": "86e2f002507ef1b3deb6c90167070179fd6b4c3fd66bb752c652e893b9f13e65"
+}
