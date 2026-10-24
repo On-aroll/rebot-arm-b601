@@ -21,10 +21,10 @@ class Actor(torch.nn.Module):
 if __name__ == '__main__':
     delivery = HERE / 'delivery'
     delivery.mkdir(exist_ok=True)
-    shutil.copy2(HERE / 'outputs/long-r2/best_model.zip', delivery / 'policy.zip')
+    shutil.copy2(HERE / 'outputs/long-r2-hour/best_model.zip', delivery / 'policy.zip')
     model = SAC.load(delivery / 'policy.zip', device='cpu')
     actor = Actor(model.actor.cpu().eval())
-    example = next((HERE / 'outputs/long-r2').glob('env-*/episode-*/rl_steps.json'))
+    example = next((HERE / 'outputs/long-r2-hour').glob('env-*/episode-*/rl_steps.json'))
     examples = json.loads(example.read_text())
     observations = np.asarray([row['observation'] for row in examples], dtype='float32')
     torch.set_num_threads(1)

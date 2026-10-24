@@ -24,7 +24,7 @@ class PreviousActor:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--checkpoint', type=Path, default=HERE / 'outputs/long-r2/best_model.zip')
+    parser.add_argument('--checkpoint', type=Path, default=HERE / 'outputs/long-r2-hour/best_model.zip')
     parser.add_argument('--output', default='formal-r2')
     parser.add_argument('--controllers', nargs='+', default=['v3', 'zero', 'previous', 'sac'])
     parser.add_argument('--start', type=int, default=0)

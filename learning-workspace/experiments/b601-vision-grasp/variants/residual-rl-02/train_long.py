@@ -108,6 +108,7 @@ class LongRun(BaseCallback):
             write(self.output / 'validation_history.json', self.history)
             self.next_eval = time.monotonic() - self.started + 300.
         if elapsed - self.last_print >= 60.:
+            self.model.save(self.output / 'last_model')
             progress = {'elapsed_seconds': time.monotonic() - self.started,
                 'budget_seconds': self.seconds, 'timesteps': self.num_timesteps, 'phase': phase,
                 'best_validation_successes_of_36': self.best['total_successes_of_36'],
@@ -121,7 +122,7 @@ class LongRun(BaseCallback):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--seconds', type=float, default=3600.)
-    parser.add_argument('--output', default='long-r2')
+    parser.add_argument('--output', default='long-r2-hour')
     parser.add_argument('--workers', type=int, default=4)
     args = parser.parse_args()
     verify_v3()

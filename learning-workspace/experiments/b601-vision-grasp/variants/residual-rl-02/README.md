@@ -7,7 +7,7 @@
 ```powershell
 # 仓库根目录，使用现有 Windows 环境
 & .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/probe.py --output probe-align
-& .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/train_long.py --seconds 3600 --output long-r2
+& .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/train_long.py --seconds 3600 --output long-r2-hour
 ```
 
 训练使用项目现有 MuJoCo、感知模型及 Stable-Baselines3 SAC 2.7.1。新增三维观测的初始网络权重为零，验证与上一轮演员输出完全一致；重新初始化优化器与回放池。

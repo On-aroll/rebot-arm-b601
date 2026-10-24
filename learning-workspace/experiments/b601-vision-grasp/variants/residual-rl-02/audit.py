@@ -71,14 +71,14 @@ if __name__ == '__main__':
                 'sim_seconds': result['sim_seconds'], 'bilateral_lift_seconds_20hz': longest, 'result_sha256': digest(path)})
     assert len(records) == 144 and set(paired) == set(range(53000000, 53000036))
     assert all(len(group) == 4 and all(reset == group[0] for reset in group) for group in paired.values())
-    training = json.loads((HERE / 'outputs/long-r2/training.json').read_text())
-    config = json.loads((HERE / 'outputs/long-r2/config.json').read_text())
+    training = json.loads((HERE / 'outputs/long-r2-hour/training.json').read_text())
+    config = json.loads((HERE / 'outputs/long-r2-hour/config.json').read_text())
     train, validation, test = map(set, [config['training_seeds'], config['validation_seeds'], paired])
     assert train.isdisjoint(validation) and train.isdisjoint(test) and validation.isdisjoint(test)
-    actual_train = {json.loads(p.read_text())['reset']['seed'] for p in (HERE / 'outputs/long-r2').glob('env-*/episode-*/reset.json')}
+    actual_train = {json.loads(p.read_text())['reset']['seed'] for p in (HERE / 'outputs/long-r2-hour').glob('env-*/episode-*/reset.json')}
     assert actual_train <= train
-    complete = sum(json.loads(p.read_text())['decisions'] for p in (HERE / 'outputs/long-r2').glob('env-*/episode-*/result.json'))
-    partial = sum(json.loads(p.read_text())['decisions'] for p in (HERE / 'outputs/long-r2').glob('env-*/episode-*/partial_result.json'))
+    complete = sum(json.loads(p.read_text())['decisions'] for p in (HERE / 'outputs/long-r2-hour').glob('env-*/episode-*/result.json'))
+    partial = sum(json.loads(p.read_text())['decisions'] for p in (HERE / 'outputs/long-r2-hour').glob('env-*/episode-*/partial_result.json'))
     assert complete + partial == training['timesteps']
     summary = {}
     for controller in ['v3', 'zero', 'previous', 'sac']:
