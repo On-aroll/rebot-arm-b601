@@ -1,0 +1,228 @@
+{
+  "schema": "b601-release-verification-v1",
+  "repo": "On-aroll/rebot-arm-b601",
+  "tag": "sim-sac-2026-10-24",
+  "release_url": "https://github.com/On-aroll/rebot-arm-b601/releases/tag/sim-sac-2026-10-24",
+  "all_assets_verified": true,
+  "verified_at_utc": "2026-10-24T03:46:10.159663+00:00",
+  "asset_count": 36,
+  "total_bytes": 2129391200,
+  "assets": [
+    {
+      "name": "b601-sac-r1-delivery.zip",
+      "size": 490090,
+      "sha256": "c78aaa918a0bc4e1e688760296af47fd4a7b61ac4381e2ee0e7dd2b9322a7f42",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-delivery.zip"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0001",
+      "size": 67108864,
+      "sha256": "b2846fc4be67b9f72481652182cefb15240474e597c9339a986e3b863e212452",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0001"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0002",
+      "size": 67108864,
+      "sha256": "1389f0c3b6fc32b702f940f45cd7ddcb6f6becd6da20b82c54fb988e893b35a8",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0002"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0003",
+      "size": 67108864,
+      "sha256": "9e4430f0c54c21fc9abf729d3cd5d6afcfff790029d64596a2010354bac41a30",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0003"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0004",
+      "size": 67108864,
+      "sha256": "03cea5bae9e4dd71e9883e202e7b478b69d2b9b182e70202226eafe99472a302",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0004"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0005",
+      "size": 67108864,
+      "sha256": "854d62e6feefa68d748d63d055715b2432e54c690d7dfb78c548c29461a73691",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0005"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0006",
+      "size": 67108864,
+      "sha256": "883602faecf2b3a4b6cf0f0efbcd2786e2f254cc5f72acece2013e954cec81e9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0006"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0007",
+      "size": 67108864,
+      "sha256": "d9188c7991bda937a037e38e310ded6a3ddd96c538c01ac1f0e51b8bc39dda67",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0007"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0008",
+      "size": 67108864,
+      "sha256": "fa7a3ebb010b6477743c4f4daa5185f1663de6321ce285a417695bae88106ec9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0008"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0009",
+      "size": 67108864,
+      "sha256": "0ee7c751e9bcfdcf3a452d93bac0c6e1bba0660f784461425aeb951c0e981061",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0009"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0010",
+      "size": 67108864,
+      "sha256": "10dce4bfa651f55e45d62a7746c73dd0848d9a7db6386ace05c16b6d730b0c0c",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0010"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0011",
+      "size": 67108864,
+      "sha256": "214d0d1912103eb041efe350d5102b069d510554df4746af2f49eb92ddf28074",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0011"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0012",
+      "size": 67108864,
+      "sha256": "56e8e7d860ecc851059bdea9cc6f7b242a323f7658abdd64ea5542d6b30b2a6c",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0012"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0013",
+      "size": 67108864,
+      "sha256": "27deb84c7d2c870f327cfef6a557281d5bb2937ccc4de0529262121619d4ae11",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0013"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0014",
+      "size": 67108864,
+      "sha256": "8efd2d5eb71f37030ca9e5d7a2135b0ef25159f2477cd7f582423b575738bf88",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0014"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0015",
+      "size": 67108864,
+      "sha256": "703df2df24fa349d16bfccc4469ae3cb9e45d612d9d61085603c56b248f5de83",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0015"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0016",
+      "size": 67108864,
+      "sha256": "dfce24cc29055c6e3ab03b09c440ecba1c7219e8df7b93916f51b6be0312e857",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0016"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0017",
+      "size": 67108864,
+      "sha256": "28e24ccd0f0adca700488dcf9fa9a1ba3272ad4eb57e4a10d0137ca0324b46ae",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0017"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0018",
+      "size": 67108864,
+      "sha256": "9999796431f5c9d27e503a17e6583ed8838c65516a0cb0b6b04bb946e01d0d19",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0018"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0019",
+      "size": 67108864,
+      "sha256": "60a139dcf301534b917b239ae5fef0f051096de6cd653df2370d4a5b72d88928",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0019"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0020",
+      "size": 67108864,
+      "sha256": "6f9e88cd66ce0f1765365a2526e898eb8375b4d31d09611ee622bfc666bcb9de",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0020"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0021",
+      "size": 67108864,
+      "sha256": "6f36b08d27f12aba203d0067a9a2b0c1cbf33fd12de196042e2fbc957aa51b77",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0021"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0022",
+      "size": 67108864,
+      "sha256": "93918dbd1fbd4fe2cd7082f659249827c0ea9b538dc8fb7de2aaaf6881506cf0",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0022"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0023",
+      "size": 67108864,
+      "sha256": "bb4ee4c431c8479db48bea0960490d08c2f211a7d3981f9bcb76a16adcdd675d",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0023"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0024",
+      "size": 67108864,
+      "sha256": "4647c10c948d8d3ff63cfa20dc62e12a1efb2cca7815d4dbf7e24e518be9d9ec",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0024"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0025",
+      "size": 67108864,
+      "sha256": "a1a37678329b372f09663078cf877d93d4d0c0383ea9233209c7b3e803bc6616",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0025"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0026",
+      "size": 67108864,
+      "sha256": "47dac5deb527e8c7e26228c164ac98fcafafb6097df8fe232cbfd1768fb9d0b7",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0026"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0027",
+      "size": 67108864,
+      "sha256": "c3202f43d5ab30d575e036983962be42115cdf518e66e1230bedef9c8dc226bc",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0027"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0028",
+      "size": 67108864,
+      "sha256": "b89860ca728f359845de163aa6e3a7912cadd26d514774775d1985b94d94a55e",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0028"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0029",
+      "size": 67108864,
+      "sha256": "aca793a641fe9e7d2d5996c615757f5eac978431a1c12c28b28818c6bb53d164",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0029"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0030",
+      "size": 67108864,
+      "sha256": "c98ecb7f0fa82ec54ad6bbe31face1e055aa610d1c9228342ba5297fdafad906",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0030"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0031",
+      "size": 67108864,
+      "sha256": "cc0d2fdc54cb92a2d2a19407d261fb17058325b6d050010350959ac1f5ff112a",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0031"
+    },
+    {
+      "name": "b601-sac-r1-records.tar.zst.part0032",
+      "size": 48515724,
+      "sha256": "2443b9f1bc7a3aab96f10890a01131c1f4848eb82df9add061e776e88a4c6f6d",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/b601-sac-r1-records.tar.zst.part0032"
+    },
+    {
+      "name": "BACKUP_MANIFEST.json",
+      "size": 6316,
+      "sha256": "cd27ecebc6fda0aa8b028c8113e85814c8e8b4e483d5d440635a5561ae43d4f9",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/BACKUP_MANIFEST.json"
+    },
+    {
+      "name": "RESTORE.txt",
+      "size": 699,
+      "sha256": "5b921cb3d6595b9646bc355ee0644bb0749b7e0a11b3c3ed2f3a31d20dd2c1ca",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/RESTORE.txt"
+    },
+    {
+      "name": "SHA256SUMS",
+      "size": 3587,
+      "sha256": "b8355038d2a0637a03ac984648be0df7bf02a830bd9eab25c50939384ba5d660",
+      "url": "https://github.com/On-aroll/rebot-arm-b601/releases/download/sim-sac-2026-10-24/SHA256SUMS"
+    }
+  ]
+}

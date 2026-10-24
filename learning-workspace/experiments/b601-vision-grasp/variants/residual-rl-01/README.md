@@ -42,3 +42,8 @@ $work = 'learning-workspace\experiments\b601-vision-grasp\variants\residual-rl-0
 ```
 
 精确检查历史实现时，使用对应run的source和config.json。要用冻结训练源码复跑，将`outputs/sac-r1/source/*.py`复制到一个新的`variants/<name>/`（与act-01同级），再从根目录执行该处workflow.py的train命令；保持锁定依赖。当前源码修正了未完成回合关闭保存，训练/奖励未改，原始快照也保留。不保证跨设备渲染和库版本的训练权重逐字节相同。
+
+本轮模型、配置和新增记录已增量备份并逐项核验服务端SHA256（36附件，旧ACT记录未重复上传）：
+https://github.com/On-aroll/rebot-arm-b601/releases/tag/sim-sac-2026-10-24
+
+小交付ZIP用于查看模型、推理入口和报告；完整新记录按RESTORE.txt合并32个分卷，再核对BACKUP_MANIFEST.json与RECORDS_SHA256.json。备份回执在根目录handoff/SIM_SAC_RELEASE_VERIFIED_2026-10-24.json。

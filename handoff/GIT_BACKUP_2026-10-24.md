@@ -27,3 +27,13 @@ git config --local user.email On-aroll@users.noreply.github.com
 https://github.com/On-aroll/rebot-arm-b601/releases/tag/sim-act-upstream-gate-2026-10-24
 
 仅新增8个附件、208,322,871字节：一份206MB模型分成四个64MiB以内二进制分卷，小型证据ZIP以及三个恢复/校验文件。没有重新上传旧10.4GB归档。模型合并SHA256为`38d670fc82c8c85ead0b26d9fb927070f9201da35d19ec7ece4c7878f846b243`。ZIP的130个新记录/源码逐文件复核通过，8个远端附件服务端SHA256全部与本地一致；回执见`SIM_ACT_UPSTREAM_GATE_VERIFIED_2026-10-24.json`。
+
+## 首轮残差强化学习增量备份
+
+用户后续明确授权开始强化学习。实验源码提交`927de0a`，交付记录标签`sim-sac-2026-10-24`；该标签包含后续生成的交付清单。新Release：
+
+https://github.com/On-aroll/rebot-arm-b601/releases/tag/sim-sac-2026-10-24
+
+本轮只备份`variants/residual-rl-01`新增内容。记录归档2,128,890,508字节，3754个文件已独立解压逐项核验，分为32个不超过64MiB的二进制分卷；另有490,090字节小交付ZIP和三个恢复/校验文件，共36附件。全部服务端SHA256与本地文件一致，回执`SIM_SAC_RELEASE_VERIFIED_2026-10-24.json`已保存。合并归档SHA256为`6603a6de5848b17aa19116a1614eff7c1ace90d7bb4a8715588eda74fd1d1217`。
+
+原V3与新混合控制器30新场景均30/30，未证明任务收益；默认仍V3，不是V4或实机可执行版本。全部12个已完成训练失败保留；4个未完成尾回合的44步已从原重放缓冲恢复，原始尾部物理/画面缺失的限制明确写在报告中，未补造数据。之前的10.4GB ACT归档和206MB上游ACT模型未重复上传。
