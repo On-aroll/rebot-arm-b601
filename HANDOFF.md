@@ -2,6 +2,8 @@
 
 **2026-10-24一小时SAC续研完成：** 147564交互步，1280训练seed；最佳技能验证30/36对零修正28/36。三批96个新场景354次任务显示可减少部分首次抓偏，但完整成功未提高，旧边界批还多一次失败，不采用为V4，默认仍V3。复看拒绝重试已修复并另测30新场景；旧失败保留。[R2报告](learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/REPORT.md)、[复现/推理](learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/README.md)、[实机数据回传](learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/REAL_DATA.md)。原始记录完整上传以远端SHA回执为准。
 
+一小时R2的新增记录已全部备份：[Release](https://github.com/On-aroll/rebot-arm-b601/releases/tag/sim-sac-long-2026-10-24)，固定交付标签指向`3eda8ef`。265个附件、17,471,598,414字节的服务端SHA256全部匹配本地；[核验回执](handoff/SIM_SAC_LONG_RELEASE_VERIFIED_2026-10-24.json)已保存。旧ACT/R1归档没有重复上传。
+
 **2026-10-24续研：用户明确在无机械臂的Windows主机恢复纯仿真。** 已完成新增物理变化、108个训练场景与12个验证场景、动作学习及两批各30个新场景的V3配对对照。V3为60/60，动作候选0/60，未采用；默认仍为冻结V3。本轮报告、交付和实机数据回传说明见 [ACT续研报告](learning-workspace/experiments/b601-vision-grasp/variants/act-01/REPORT.md)。未接实机；下面10月22日暂停和旧设备状态保留为历史，不再代表本轮仿真授权。
 
 封存日期：2026-10-22。仓库：`On-aroll/rebot-arm-b601`（保持私有）。

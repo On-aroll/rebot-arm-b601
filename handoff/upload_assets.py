@@ -60,8 +60,11 @@ def main():
         for attempt in range(5):
             print(f'Uploading: {path.name}', flush=True)
             command = ['gh', 'release', 'upload', TAG, '--repo', REPO, str(path)]
+            env = dict(os.environ)
+            if attempt % 2:
+                env['NO_PROXY'] = '' if env.get('NO_PROXY') else 'api.github.com,uploads.github.com'
             try:
-                result = subprocess.run(command, timeout=180)
+                result = subprocess.run(command, env=env, timeout=180)
             except subprocess.TimeoutExpired:
                 print(f'Upload timed out: {path.name}; checking server before retry.', flush=True)
                 result = subprocess.CompletedProcess(command, 124)
