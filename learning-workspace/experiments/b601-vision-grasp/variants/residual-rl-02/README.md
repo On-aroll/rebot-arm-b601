@@ -29,3 +29,11 @@
 ```
 
 交付包含完整SAC训练权重、TorchScript以及只需NumPy的确定性演员。NumPy版本只是同一网络的矩阵运算，需用实际记录逐项核对误差；不代表整个视觉抓放系统脱离PyTorch，也不代表板端已验收。
+
+让模拟机械臂观察画面和自身反馈，完成一次指定区域任务（输出目录须为新目录）：
+
+```powershell
+& .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/run_sim.py --goal B --seed 55000000 --output learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/outputs/user-demo-B
+```
+
+此入口使用新残差演员和原V3任务程序；会保存画面、实际指令、评分和失败，并最多重试两次。它不含实机驱动。
