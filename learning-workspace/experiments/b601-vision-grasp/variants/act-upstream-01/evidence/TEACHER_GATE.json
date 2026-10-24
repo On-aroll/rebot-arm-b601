@@ -1,0 +1,518 @@
+{
+  "scope": "same known initial scene repeated, not independent generalization",
+  "controller": "teacher",
+  "successes": 10,
+  "trials": 10,
+  "results": [
+    {
+      "success": true,
+      "forbidden_steps": 0,
+      "clipped_commands": 9,
+      "final_score": {
+        "t_sim_s": 34.99999999999681,
+        "object_xyz_m": [
+          0.4176752021218506,
+          -0.15985650454114458,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999977591223,
+            6.694589942045026e-05,
+            5.41132276315482e-11
+          ],
+          [
+            -6.694589942045026e-05,
+            0.9999999977591223,
+            1.2501939468891779e-12
+          ],
+          [
+            -5.41131438149289e-11,
+            -1.253816602781985e-12,
+            0.9999999999999991
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -8.174502325660753e-11,
+          -1.8886068213809214e-12,
+          2.307041739780714e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.176683721577786e-11,
+        "released": true,
+        "success": true
+      },
+      "sim_seconds": 34.99999999999681,
+      "wall_seconds": 1.3280000000013388
+    },
+    {
+      "success": true,
+      "forbidden_steps": 0,
+      "clipped_commands": 9,
+      "final_score": {
+        "t_sim_s": 34.99999999999681,
+        "object_xyz_m": [
+          0.4176752021218506,
+          -0.15985650454114458,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999977591223,
+            6.694589942045026e-05,
+            5.41132276315482e-11
+          ],
+          [
+            -6.694589942045026e-05,
+            0.9999999977591223,
+            1.2501939468891779e-12
+          ],
+          [
+            -5.41131438149289e-11,
+            -1.253816602781985e-12,
+            0.9999999999999991
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -8.174502325660753e-11,
+          -1.8886068213809214e-12,
+          2.307041739780714e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.176683721577786e-11,
+        "released": true,
+        "success": true
+      },
+      "sim_seconds": 34.99999999999681,
+      "wall_seconds": 1.2810000000026776
+    },
+    {
+      "success": true,
+      "forbidden_steps": 0,
+      "clipped_commands": 9,
+      "final_score": {
+        "t_sim_s": 34.99999999999681,
+        "object_xyz_m": [
+          0.4176752021218506,
+          -0.15985650454114458,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999977591223,
+            6.694589942045026e-05,
+            5.41132276315482e-11
+          ],
+          [
+            -6.694589942045026e-05,
+            0.9999999977591223,
+            1.2501939468891779e-12
+          ],
+          [
+            -5.41131438149289e-11,
+            -1.253816602781985e-12,
+            0.9999999999999991
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -8.174502325660753e-11,
+          -1.8886068213809214e-12,
+          2.307041739780714e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.176683721577786e-11,
+        "released": true,
+        "success": true
+      },
+      "sim_seconds": 34.99999999999681,
+      "wall_seconds": 1.375
+    },
+    {
+      "success": true,
+      "forbidden_steps": 0,
+      "clipped_commands": 9,
+      "final_score": {
+        "t_sim_s": 34.99999999999681,
+        "object_xyz_m": [
+          0.4176752021218506,
+          -0.15985650454114458,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999977591223,
+            6.694589942045026e-05,
+            5.41132276315482e-11
+          ],
+          [
+            -6.694589942045026e-05,
+            0.9999999977591223,
+            1.2501939468891779e-12
+          ],
+          [
+            -5.41131438149289e-11,
+            -1.253816602781985e-12,
+            0.9999999999999991
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -8.174502325660753e-11,
+          -1.8886068213809214e-12,
+          2.307041739780714e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.176683721577786e-11,
+        "released": true,
+        "success": true
+      },
+      "sim_seconds": 34.99999999999681,
+      "wall_seconds": 1.3440000000045984
+    },
+    {
+      "success": true,
+      "forbidden_steps": 0,
+      "clipped_commands": 9,
+      "final_score": {
+        "t_sim_s": 34.99999999999681,
+        "object_xyz_m": [
+          0.4176752021218506,
+          -0.15985650454114458,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999977591223,
+            6.694589942045026e-05,
+            5.41132276315482e-11
+          ],
+          [
+            -6.694589942045026e-05,
+            0.9999999977591223,
+            1.2501939468891779e-12
+          ],
+          [
+            -5.41131438149289e-11,
+            -1.253816602781985e-12,
+            0.9999999999999991
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -8.174502325660753e-11,
+          -1.8886068213809214e-12,
+          2.307041739780714e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.176683721577786e-11,
+        "released": true,
+        "success": true
+      },
+      "sim_seconds": 34.99999999999681,
+      "wall_seconds": 1.3439999999973224
+    },
+    {
+      "success": true,
+      "forbidden_steps": 0,
+      "clipped_commands": 9,
+      "final_score": {
+        "t_sim_s": 34.99999999999681,
+        "object_xyz_m": [
+          0.4176752021218506,
+          -0.15985650454114458,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999977591223,
+            6.694589942045026e-05,
+            5.41132276315482e-11
+          ],
+          [
+            -6.694589942045026e-05,
+            0.9999999977591223,
+            1.2501939468891779e-12
+          ],
+          [
+            -5.41131438149289e-11,
+            -1.253816602781985e-12,
+            0.9999999999999991
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -8.174502325660753e-11,
+          -1.8886068213809214e-12,
+          2.307041739780714e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.176683721577786e-11,
+        "released": true,
+        "success": true
+      },
+      "sim_seconds": 34.99999999999681,
+      "wall_seconds": 1.3280000000013388
+    },
+    {
+      "success": true,
+      "forbidden_steps": 0,
+      "clipped_commands": 9,
+      "final_score": {
+        "t_sim_s": 34.99999999999681,
+        "object_xyz_m": [
+          0.4176752021218506,
+          -0.15985650454114458,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999977591223,
+            6.694589942045026e-05,
+            5.41132276315482e-11
+          ],
+          [
+            -6.694589942045026e-05,
+            0.9999999977591223,
+            1.2501939468891779e-12
+          ],
+          [
+            -5.41131438149289e-11,
+            -1.253816602781985e-12,
+            0.9999999999999991
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -8.174502325660753e-11,
+          -1.8886068213809214e-12,
+          2.307041739780714e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.176683721577786e-11,
+        "released": true,
+        "success": true
+      },
+      "sim_seconds": 34.99999999999681,
+      "wall_seconds": 1.3280000000013388
+    },
+    {
+      "success": true,
+      "forbidden_steps": 0,
+      "clipped_commands": 9,
+      "final_score": {
+        "t_sim_s": 34.99999999999681,
+        "object_xyz_m": [
+          0.4176752021218506,
+          -0.15985650454114458,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999977591223,
+            6.694589942045026e-05,
+            5.41132276315482e-11
+          ],
+          [
+            -6.694589942045026e-05,
+            0.9999999977591223,
+            1.2501939468891779e-12
+          ],
+          [
+            -5.41131438149289e-11,
+            -1.253816602781985e-12,
+            0.9999999999999991
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -8.174502325660753e-11,
+          -1.8886068213809214e-12,
+          2.307041739780714e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.176683721577786e-11,
+        "released": true,
+        "success": true
+      },
+      "sim_seconds": 34.99999999999681,
+      "wall_seconds": 1.3280000000013388
+    },
+    {
+      "success": true,
+      "forbidden_steps": 0,
+      "clipped_commands": 9,
+      "final_score": {
+        "t_sim_s": 34.99999999999681,
+        "object_xyz_m": [
+          0.4176752021218506,
+          -0.15985650454114458,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999977591223,
+            6.694589942045026e-05,
+            5.41132276315482e-11
+          ],
+          [
+            -6.694589942045026e-05,
+            0.9999999977591223,
+            1.2501939468891779e-12
+          ],
+          [
+            -5.41131438149289e-11,
+            -1.253816602781985e-12,
+            0.9999999999999991
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -8.174502325660753e-11,
+          -1.8886068213809214e-12,
+          2.307041739780714e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.176683721577786e-11,
+        "released": true,
+        "success": true
+      },
+      "sim_seconds": 34.99999999999681,
+      "wall_seconds": 1.2960000000020955
+    },
+    {
+      "success": true,
+      "forbidden_steps": 0,
+      "clipped_commands": 9,
+      "final_score": {
+        "t_sim_s": 34.99999999999681,
+        "object_xyz_m": [
+          0.4176752021218506,
+          -0.15985650454114458,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999977591223,
+            6.694589942045026e-05,
+            5.41132276315482e-11
+          ],
+          [
+            -6.694589942045026e-05,
+            0.9999999977591223,
+            1.2501939468891779e-12
+          ],
+          [
+            -5.41131438149289e-11,
+            -1.253816602781985e-12,
+            0.9999999999999991
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -8.174502325660753e-11,
+          -1.8886068213809214e-12,
+          2.307041739780714e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.176683721577786e-11,
+        "released": true,
+        "success": true
+      },
+      "sim_seconds": 34.99999999999681,
+      "wall_seconds": 1.3130000000019209
+    }
+  ]
+}
