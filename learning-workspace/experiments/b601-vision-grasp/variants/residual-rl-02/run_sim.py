@@ -3,7 +3,7 @@ import argparse
 import json
 from pathlib import Path
 from curriculum import HERE, CurriculumEnv
-from evaluate import previous_runner, STEPS
+from task_r2 import hybrid_task
 from infer_numpy import predict
 import numpy as np
 
@@ -25,9 +25,8 @@ if __name__ == '__main__':
     parser.add_argument('--delivery', type=Path, default=HERE / 'delivery')
     args = parser.parse_args()
     env = CurriculumEnv([args.seed], args.output.parent / 'unused_resets', log_episodes=False)
-    previous_runner.STEPS = STEPS
     try:
-        result = previous_runner.hybrid_task(env, NumpyActor(args.delivery),
+        result = hybrid_task(env, NumpyActor(args.delivery),
             {'seed': args.seed, 'goal': args.goal, 'kind': 'user_requested_simulation',
              'force_pulse': None, 'first_grasp_offset_m': 0.}, args.output)
         print(json.dumps({name: result[name] for name in ['success', 'retries', 'sim_seconds', 'false_success']}))

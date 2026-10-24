@@ -1,0 +1,26 @@
+{
+  "normalized_proposal": [
+    0.8655268549919128,
+    0.7614735960960388,
+    -0.5159784555435181,
+    -0.8220142722129822
+  ],
+  "bounded_residual_m": [
+    0.002,
+    0.002,
+    -0.002,
+    -0.0015
+  ],
+  "simulation_only": true,
+  "scope": "residual actor only; frozen V3 system required",
+  "benchmark": {
+    "samples": 2000,
+    "median_ms": 0.0069,
+    "p95_ms": 0.0077,
+    "process_rss_bytes": 31952896,
+    "includes": "NumPy residual actor plus residual limiting in standalone CPU process",
+    "excludes": "vision, RGB-D, IK, executor, hardware board and power",
+    "board_measured": false,
+    "numpy_version": "2.5.4"
+  }
+}

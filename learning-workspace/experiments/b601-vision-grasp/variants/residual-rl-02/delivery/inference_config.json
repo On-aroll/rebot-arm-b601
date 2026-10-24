@@ -1,0 +1,48 @@
+{
+  "observation_dim": 39,
+  "observation_order": [
+    "visual_features_8",
+    "visible_1",
+    "own_state_20",
+    "goal_onehot_3",
+    "previous_residual_normalized_4",
+    "visual_grasp_minus_own_tcp_normalized_3"
+  ],
+  "relative_error_scale_m": [
+    0.04,
+    0.04,
+    0.16
+  ],
+  "relative_error_clip": [
+    -3.0,
+    3.0
+  ],
+  "previous_residual_slice": [
+    32,
+    36
+  ],
+  "residual_bounds_m": [
+    0.012,
+    0.012,
+    0.008,
+    0.006
+  ],
+  "max_residual_change_m_per_decision": [
+    0.002,
+    0.002,
+    0.002,
+    0.0015
+  ],
+  "open_alignment_decisions": 5,
+  "grasp_lift_decisions": 18,
+  "checkpoint_sha256": "462ca7cb4506470f9df98531ecfbf1ff4c8b801a340d2915e777330d7cd73eb0",
+  "actor_sha256": "a4bfab706d1954b19648b217468efa22caf767beccff7e143a49c097d1c82eae",
+  "actor_parameters": 7240,
+  "comparison_samples": 23,
+  "export_max_abs_error": 0.0,
+  "numpy_export_max_abs_error": 2.086162567138672e-07,
+  "numpy_actor_sha256": "2278f97fdb105894097ab907cdbc812f28942514eb05956131feee18d3278e9d",
+  "numpy_deterministic_parameters": 6980,
+  "scope": "bounded grasp/lift residual, frozen V3 system required",
+  "hardware_executable": false
+}

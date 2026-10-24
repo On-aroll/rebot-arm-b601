@@ -1,5 +1,6 @@
 """After training: export, paired tasks, independent audits and CPU inference."""
 from concurrent.futures import ThreadPoolExecutor
+import argparse
 import json
 import subprocess
 import sys
@@ -31,23 +32,35 @@ def task(job):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--recovery-only', action='store_true')
+    args = parser.parse_args()
     if not (OUTPUT / 'long-r2-hour/training.json').exists():
         raise ValueError('one-hour training has not completed')
-    run('export', 'export.py')
+    if not args.recovery_only:
+        run('export', 'export.py')
     jobs = []
-    for suite, prefix, count in [('broad', 'formal-r2', 12), ('boundary', 'boundary-r2', 10)]:
+    suites = [] if args.recovery_only else [('broad', 'formal-r2', 12), ('boundary', 'boundary-r2', 10)]
+    for suite, prefix, count in suites:
         for label, controllers in [('base', ['v3', 'zero', 'previous']), ('sac', ['sac'])]:
             for batch in range(3):
                 jobs.append((f'{prefix}-{label}-b{batch}', suite, controllers, count * batch, count))
+    for label, controllers in [('base', ['v3', 'zero']), ('sac', ['sac'])]:
+        for batch in range(3):
+            jobs.append((f'recovery-r2-{label}-b{batch}', 'recovery', controllers, 10 * batch, 10))
     with ThreadPoolExecutor(max_workers=4) as pool:
         list(pool.map(task, jobs))
-    run('audit-broad', 'audit.py')
-    run('audit-boundary', 'audit.py', '--suite', 'boundary')
-    run('benchmark-torch', 'infer.py', '--directory', HERE / 'delivery', '--benchmark')
-    run('benchmark-numpy', 'infer_numpy.py', '--directory', HERE / 'delivery', '--benchmark')
-    run('plot-progress', 'plot_progress.py')
-    for goal in 'ABC':
-        run(f'demo-{goal}', 'run_sim.py', '--goal', goal, '--seed', 55000010 + 'ABC'.index(goal),
-            '--output', OUTPUT / f'final-numpy-demo-{goal}')
+    if not args.recovery_only:
+        run('audit-broad', 'audit.py')
+        run('audit-boundary', 'audit.py', '--suite', 'boundary')
+        run('benchmark-torch', 'infer.py', '--directory', HERE / 'delivery', '--benchmark')
+        run('benchmark-numpy', 'infer_numpy.py', '--directory', HERE / 'delivery', '--benchmark')
+        run('plot-progress', 'plot_progress.py')
+        for goal in 'ABC':
+            directory = OUTPUT / f'final-numpy-demo-{goal}'
+            if not (directory / 'result.json').exists():
+                run(f'demo-{goal}', 'run_sim.py', '--goal', goal, '--seed', 55000010 + 'ABC'.index(goal), '--output', directory)
+    run('audit-recovery', 'audit.py', '--suite', 'recovery')
     (OUTPUT / 'TESTS_FINISHED.json').write_text(json.dumps({'completed': True,
-        'broad_cases': 36, 'boundary_cases': 30, 'controllers': 4, 'numpy_demos': 3}, indent=2) + '\n')
+        'broad_cases': 36, 'boundary_cases': 30, 'recovery_cases': 30,
+        'full_task_runs': 354, 'numpy_demos': 3}, indent=2) + '\n')

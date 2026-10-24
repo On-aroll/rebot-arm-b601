@@ -1,0 +1,26 @@
+{
+  "normalized_proposal": [
+    0.8655268549919128,
+    0.7614735960960388,
+    -0.5159783363342285,
+    -0.8220142126083374
+  ],
+  "bounded_residual_m": [
+    0.002,
+    0.002,
+    -0.002,
+    -0.0015
+  ],
+  "simulation_only": true,
+  "scope": "residual proposal; requires frozen V3 vision, IK, timing and supervisor",
+  "benchmark": {
+    "samples": 2000,
+    "threads": 1,
+    "median_ms": 0.0309,
+    "p95_ms": 0.0532,
+    "process_rss_bytes": 423534592,
+    "includes": "TorchScript residual actor and residual limiting in standalone CPU process",
+    "excludes": "RGB-D, vision model, IK, execution and hardware board",
+    "board_measured": false
+  }
+}

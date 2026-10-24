@@ -29,27 +29,32 @@ if __name__ == '__main__':
     parser.add_argument('--controllers', nargs='+', default=['v3', 'zero', 'previous', 'sac'])
     parser.add_argument('--start', type=int, default=0)
     parser.add_argument('--count', type=int, default=36)
-    parser.add_argument('--suite', choices=['broad', 'boundary'], default='broad')
+    parser.add_argument('--suite', choices=['broad', 'boundary', 'recovery'], default='broad')
     args = parser.parse_args()
     verify_v3()
     output = HERE / 'outputs' / args.output
     output.mkdir(parents=True, exist_ok=False)
     (output / 'source').mkdir()
-    for source in [Path(__file__), HERE / 'curriculum.py', PREVIOUS / 'workflow.py', PREVIOUS / 'environment.py']:
+    source_files = [Path(__file__), HERE / 'curriculum.py', PREVIOUS / 'workflow.py', PREVIOUS / 'environment.py']
+    if args.suite == 'recovery':
+        source_files.append(HERE / 'task_r2.py')
+    for source in source_files:
         shutil.copy2(source, output / 'source' / (source.parent.name + '-' + source.name))
-    seed_start = 53000000 if args.suite == 'broad' else 54000000
+    seed_start = {'broad': 53000000, 'boundary': 54000000, 'recovery': 57000000}[args.suite]
     config = {'suite': args.suite, 'test_seed_start': seed_start, 'indices': list(range(args.start, args.start + args.count)),
         'controllers': args.controllers, 'checkpoint_sha256': digest(args.checkpoint) if 'sac' in args.controllers else None,
-        'source_sha256': {str(p.relative_to(HERE.parent)): digest(p) for p in
-                          [Path(__file__), HERE / 'curriculum.py', PREVIOUS / 'workflow.py', PREVIOUS / 'environment.py']},
+        'source_sha256': {str(p.relative_to(HERE.parent)): digest(p) for p in source_files},
         'kinds': ['nominal', 'force', 'bias_positive', 'bias_negative'] if args.suite == 'broad' else ['bias_positive', 'bias_negative'],
         'bias_m': .035 if args.suite == 'broad' else None,
-        'boundary_magnitudes_m': [.027, .028, .029] if args.suite == 'boundary' else None,
-        'boundary_magnitude_index_rule': '(i//2+i//6)%3' if args.suite == 'boundary' else None,
+        'boundary_magnitudes_m': [.027, .028, .029] if args.suite != 'broad' else None,
+        'boundary_magnitude_index_rule': '(i//2+i//6)%3' if args.suite != 'broad' else None,
         'retries_max': 2,
         'previous_controller_note': 'R1 actor with R2 five-step open alignment, not unchanged R1 system'}
     write(output / 'config.json', config)
     previous_runner.STEPS = STEPS
+    hybrid_task = previous_runner.hybrid_task
+    if args.suite == 'recovery':
+        from task_r2 import hybrid_task
     env = CurriculumEnv([0], output / 'unused_resets', log_episodes=False)
     model = SAC.load(args.checkpoint, device='cpu') if 'sac' in args.controllers else None
     old = PreviousActor() if 'previous' in args.controllers else None
@@ -61,7 +66,7 @@ if __name__ == '__main__':
             scene = {'seed': 53000000 + index, 'goal': 'ABC'[index % 3], 'kind': kind,
                 'force_pulse': {'start_s': .5, 'duration_s': .06, 'force_world_n': [0., .8, 0.]} if kind == 'force' else None,
                 'first_grasp_offset_m': .035 if kind == 'bias_positive' else -.035 if kind == 'bias_negative' else 0.}
-            if args.suite == 'boundary':
+            if args.suite != 'broad':
                 kind = 'bias_positive' if index % 2 == 0 else 'bias_negative'
                 magnitude = [.027, .028, .029][(index // 2 + index // 6) % 3]
                 level = 0
@@ -76,7 +81,7 @@ if __name__ == '__main__':
                         max_retries=2, observation_mode='feedback',
                         feedback_config=json.loads((V3 / 'feedback_config.json').read_text()))
                 else:
-                    result = previous_runner.hybrid_task(env, old if controller == 'previous' else model,
+                    result = hybrid_task(env, old if controller == 'previous' else model,
                         scene, directory, zero=controller == 'zero')
                 row = {'controller': controller, 'seed': scene['seed'], 'goal': scene['goal'], 'kind': kind,
                     'success': result['success'], 'retries': result['retries'],

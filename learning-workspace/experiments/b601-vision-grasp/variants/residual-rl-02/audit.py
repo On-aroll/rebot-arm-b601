@@ -50,10 +50,13 @@ def audit_replay(root, training, config):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['broad', 'boundary'], default='broad')
+    parser.add_argument('--suite', choices=['broad', 'boundary', 'recovery'], default='broad')
     args = parser.parse_args()
-    boundary = args.suite == 'boundary'
+    boundary = args.suite != 'broad'
     prefix, seed_start, cases = ('boundary-r2', 54000000, 30) if boundary else ('formal-r2', 53000000, 36)
+    controllers = ['v3', 'zero', 'previous', 'sac']
+    if args.suite == 'recovery':
+        prefix, seed_start, controllers = 'recovery-r2', 57000000, ['v3', 'zero', 'sac']
     kinds = ['bias_positive', 'bias_negative'] if boundary else ['nominal', 'force', 'bias_positive', 'bias_negative']
     verify_v3()
     checkpoint = digest(HERE / 'delivery/policy.zip')
@@ -121,8 +124,8 @@ if __name__ == '__main__':
                 'first_outcome': result['attempts'][0].get('outcome'),
                 'false_success': result['false_success'], 'forbidden_steps': result['physics_tick_audit']['forbidden_steps'],
                 'sim_seconds': result['sim_seconds'], 'bilateral_lift_seconds_20hz': longest, 'result_sha256': digest(path)})
-    assert len(records) == cases * 4 and set(paired) == set(range(seed_start, seed_start + cases))
-    assert all(len(group) == 4 and all(reset == group[0] for reset in group) for group in paired.values())
+    assert len(records) == cases * len(controllers) and set(paired) == set(range(seed_start, seed_start + cases))
+    assert all(len(group) == len(controllers) and all(reset == group[0] for reset in group) for group in paired.values())
     training = json.loads((HERE / 'outputs/long-r2-hour/training.json').read_text())
     config = json.loads((HERE / 'outputs/long-r2-hour/config.json').read_text())
     train, validation, test = map(set, [config['training_seeds'], config['validation_seeds'], paired])
@@ -138,7 +141,7 @@ if __name__ == '__main__':
     else:
         replay_audit = audit_replay(HERE / 'outputs/long-r2-hour', training, config)
     summary = {}
-    for controller in ['v3', 'zero', 'previous', 'sac']:
+    for controller in controllers:
         rows = [r for r in records if r['controller'] == controller]
         assert len(rows) == cases and collections.Counter(r['goal'] for r in rows) == dict.fromkeys('ABC', cases // 3)
         assert all(n == cases // len(kinds) for n in collections.Counter(r['kind'] for r in rows).values())
@@ -152,6 +155,8 @@ if __name__ == '__main__':
                               'first_successes': sum(r['success'] and r['retries'] == 0 for r in rows if r['kind'] == kind)}
                         for kind in kinds}}
     summary_name, audit_name = ('BOUNDARY_SUMMARY.json', 'BOUNDARY_AUDIT.json') if boundary else ('FORMAL_SUMMARY.json', 'AUDIT.json')
+    if args.suite == 'recovery':
+        summary_name, audit_name = 'RECOVERY_SUMMARY.json', 'RECOVERY_AUDIT.json'
     write(HERE / 'delivery' / summary_name, {'checkpoint_sha256': checkpoint, 'summary': summary, 'scenes': records})
     write(HERE / 'delivery' / audit_name, {'passed': True, 'score_rows_recomputed': score_rows,
         'actor_proposals_checked': actor_checks, 'paired_resets_equal': True, 'source_sha256': digest(Path(__file__)),

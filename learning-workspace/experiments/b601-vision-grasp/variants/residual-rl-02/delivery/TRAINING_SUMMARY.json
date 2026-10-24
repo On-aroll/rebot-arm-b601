@@ -1,0 +1,44 @@
+{
+  "completed": {
+    "completed_episodes": 6528,
+    "successes": 5093,
+    "decisions": 147504,
+    "forbidden_steps": 0,
+    "rehearsal_episodes": 1628
+  },
+  "by_level": {
+    "0": {
+      "completed_episodes": 2486,
+      "successes": 2434,
+      "decisions": 56166,
+      "forbidden_steps": 0,
+      "rehearsal_episodes": 1628
+    },
+    "1": {
+      "completed_episodes": 1257,
+      "successes": 1145,
+      "decisions": 28361,
+      "forbidden_steps": 0,
+      "rehearsal_episodes": 0
+    },
+    "2": {
+      "completed_episodes": 2785,
+      "successes": 1514,
+      "decisions": 62977,
+      "forbidden_steps": 0,
+      "rehearsal_episodes": 0
+    }
+  },
+  "failure_reasons": {
+    "no_confident_initial_target": 49,
+    "grasp_or_lift_failed": 1315,
+    "reobservation_rejected": 71
+  },
+  "distinct_training_seeds": 1280,
+  "partial_episodes": 4,
+  "partial_decisions": 60,
+  "timesteps": 147564,
+  "learn_wall_seconds_including_final_validation": 3637.952999999994,
+  "total_wall_seconds_including_initial_validation": 3706.6719999999914,
+  "scope": "training grasp/lift skill, not complete placement"
+}

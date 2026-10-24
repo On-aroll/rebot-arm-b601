@@ -1,0 +1,9 @@
+{
+  "threads": 1,
+  "samples": 2000,
+  "median_ms": 0.025,
+  "p95_ms": 0.0981,
+  "actor_bytes": 46015,
+  "scope": "actor only; excludes image inference, IK, motion and hardware",
+  "measured_on_board": false
+}
