@@ -20,8 +20,8 @@ def gh(*args):
         if attempt % 2:
             env['NO_PROXY'] = '' if env.get('NO_PROXY') else 'api.github.com,uploads.github.com'
         try:
-            return subprocess.check_output(['gh', *args], encoding='utf-8', env=env)
-        except subprocess.CalledProcessError:
+            return subprocess.check_output(['gh', *args], encoding='utf-8', env=env, timeout=45)
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
             if attempt == 4:
                 raise
             time.sleep(2 ** attempt)
@@ -59,7 +59,12 @@ def main():
             raise ValueError(f'Asset exceeds conservative 2 GB upload boundary: {path.name}')
         for attempt in range(5):
             print(f'Uploading: {path.name}', flush=True)
-            result = subprocess.run(['gh', 'release', 'upload', TAG, '--repo', REPO, str(path)])
+            command = ['gh', 'release', 'upload', TAG, '--repo', REPO, str(path)]
+            try:
+                result = subprocess.run(command, timeout=180)
+            except subprocess.TimeoutExpired:
+                print(f'Upload timed out: {path.name}; checking server before retry.', flush=True)
+                result = subprocess.CompletedProcess(command, 124)
             if result.returncode == 0:
                 print(f'Uploaded: {path.name}', flush=True)
                 return
