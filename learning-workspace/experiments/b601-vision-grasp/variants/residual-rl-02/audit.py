@@ -2,6 +2,7 @@
 import collections
 import argparse
 import json
+import pickle
 from pathlib import Path
 from curriculum import HERE, PREVIOUS, base, write, V3
 from runtime import digest, verify_v3
@@ -9,6 +10,42 @@ from task import GOALS
 import numpy as np
 import torch
 from infer_numpy import predict as numpy_predict
+
+
+def audit_replay(root, training, config):
+    path = root / 'replay_buffer.pkl'
+    with path.open('rb') as stream:
+        replay = pickle.load(stream)
+    workers = config['workers']
+    # SB3 calls on_step before storing the just-executed vector transition.
+    # Returning False on budget expiry leaves exactly that final batch out of replay.
+    per_worker_stored = training['timesteps'] // workers - 1
+    expected = min(per_worker_stored, replay.buffer_size) * workers
+    actual = (replay.buffer_size if replay.full else replay.pos) * replay.n_envs
+    assert actual == expected and replay.n_envs == workers
+    checked, raw_rows, max_observation_error, max_action_error, max_reward_error = 0, 0, 0., 0., 0.
+    for worker in range(workers):
+        index = 0
+        for directory in sorted((root / f'env-{worker}').glob('episode-*')):
+            for row in json.loads((directory / 'rl_steps.json').read_text()):
+                if max(0, per_worker_stored - replay.buffer_size) <= index < per_worker_stored:
+                    slot = index % replay.buffer_size
+                    oe = float(np.max(np.abs(replay.observations[slot, worker] - row['observation'])))
+                    ae = float(np.max(np.abs(replay.actions[slot, worker] - row['action'])))
+                    re = abs(float(replay.rewards[slot, worker]) - row['reward'])
+                    assert oe < 1e-6 and ae < 1e-6 and re < 1e-5
+                    assert bool(replay.dones[slot, worker]) == row['done']
+                    max_observation_error, max_action_error = max(max_observation_error, oe), max(max_action_error, ae)
+                    max_reward_error = max(max_reward_error, re)
+                    checked += 1
+                index += 1
+        assert index == training['timesteps'] // workers
+        raw_rows += index
+    assert checked == expected and raw_rows == training['timesteps']
+    return {'replay_sha256': digest(path), 'stored_transitions': actual, 'raw_rows': raw_rows,
+        'rows_matched_to_replay': checked, 'final_callback_batch_not_stored_in_replay': workers,
+        'final_batch_retained_in_raw_records': True, 'max_observation_error': max_observation_error,
+        'max_action_error': max_action_error, 'max_reward_error': max_reward_error}
 
 
 if __name__ == '__main__':
@@ -93,6 +130,11 @@ if __name__ == '__main__':
     complete = sum(json.loads(p.read_text())['decisions'] for p in (HERE / 'outputs/long-r2-hour').glob('env-*/episode-*/result.json'))
     partial = sum(json.loads(p.read_text())['decisions'] for p in (HERE / 'outputs/long-r2-hour').glob('env-*/episode-*/partial_result.json'))
     assert complete + partial == training['timesteps']
+    if boundary:
+        replay_audit = json.loads((HERE / 'delivery/AUDIT.json').read_text())['replay_audit']
+        assert replay_audit['replay_sha256'] == digest(HERE / 'outputs/long-r2-hour/replay_buffer.pkl')
+    else:
+        replay_audit = audit_replay(HERE / 'outputs/long-r2-hour', training, config)
     summary = {}
     for controller in ['v3', 'zero', 'previous', 'sac']:
         rows = [r for r in records if r['controller'] == controller]
@@ -112,6 +154,7 @@ if __name__ == '__main__':
     write(HERE / 'delivery' / audit_name, {'passed': True, 'score_rows_recomputed': score_rows,
         'actor_proposals_checked': actor_checks, 'paired_resets_equal': True, 'source_sha256': digest(Path(__file__)),
         'numpy_proposals_checked': actor_checks, 'numpy_max_abs_error': numpy_max_error,
+        'replay_audit': replay_audit,
         'complete_episode_decisions': complete, 'partial_episode_decisions': partial,
         'train_validation_test_seeds_disjoint': True, 'actual_distinct_training_seeds': len(actual_train)})
     print(json.dumps({'summary': summary, 'score_rows_recomputed': score_rows, 'actor_proposals_checked': actor_checks}, indent=2))
