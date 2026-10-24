@@ -1,0 +1,318 @@
+{
+  "source_sha256": "042538b2f862ed46f73b91661e259735bb6c171e5fa253cac1b64993055efb67",
+  "scope": "command transport diagnostic, not autonomous policy evaluation",
+  "results": [
+    {
+      "seed": 41000000,
+      "rate_hz": 20,
+      "teacher_success": true,
+      "command_samples": 678,
+      "physical_success": true,
+      "forbidden_steps": 0,
+      "final_score": {
+        "t_sim_s": 34.87799999999666,
+        "object_xyz_m": [
+          0.41766438500928277,
+          -0.15985324167341766,
+          0.12266770918044838
+        ],
+        "object_rotation_base": [
+          [
+            0.999999997712607,
+            6.763715286563445e-05,
+            6.116017167046477e-11
+          ],
+          [
+            -6.763715286563445e-05,
+            0.999999997712607,
+            1.4535345863029121e-12
+          ],
+          [
+            -6.116007321762646e-11,
+            -1.457671282858672e-12,
+            0.9999999999999992
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -7.258748648553517e-11,
+          -1.7251182680780434e-12,
+          7.88914732666593e-16
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 7.26079832246358e-11,
+        "released": true,
+        "success": true
+      }
+    },
+    {
+      "seed": 41000000,
+      "rate_hz": 5,
+      "teacher_success": true,
+      "command_samples": 170,
+      "physical_success": true,
+      "forbidden_steps": 0,
+      "final_score": {
+        "t_sim_s": 34.87799999999666,
+        "object_xyz_m": [
+          0.4176754819064375,
+          -0.1598564785419098,
+          0.12266770918044834
+        ],
+        "object_rotation_base": [
+          [
+            0.999999997734235,
+            6.731662699805522e-05,
+            4.5662642378703376e-11
+          ],
+          [
+            -6.731662699805522e-05,
+            0.999999997734235,
+            1.0529533392859257e-12
+          ],
+          [
+            -4.566257139397541e-11,
+            -1.0560271919649344e-12,
+            0.9999999999999992
+          ]
+        ],
+        "object_half_size_m": [
+          0.02270698402029275,
+          0.02270698402029275,
+          0.02270698402029275
+        ],
+        "object_linear_velocity_m_s": [
+          -9.185917988349485e-11,
+          -2.1181970150602753e-12,
+          2.4450499572545993e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 9.188359860955134e-11,
+        "released": true,
+        "success": true
+      }
+    },
+    {
+      "seed": 41000001,
+      "rate_hz": 20,
+      "teacher_success": true,
+      "command_samples": 662,
+      "physical_success": true,
+      "forbidden_steps": 0,
+      "final_score": {
+        "t_sim_s": 34.071999999995676,
+        "object_xyz_m": [
+          0.42197764126610265,
+          -0.1613818954804107,
+          0.11955863068379788
+        ],
+        "object_rotation_base": [
+          [
+            0.9999986477717565,
+            -0.0016445226225233547,
+            -4.8849383291980943e-11
+          ],
+          [
+            0.0016445226225233547,
+            0.9999986477717565,
+            7.117535880089418e-12
+          ],
+          [
+            4.8837612287693805e-11,
+            -7.197860171476362e-12,
+            0.9999999999999988
+          ]
+        ],
+        "object_half_size_m": [
+          0.019597905523642302,
+          0.019597905523642302,
+          0.019597905523642302
+        ],
+        "object_linear_velocity_m_s": [
+          8.421316972849104e-11,
+          -1.2270261216762526e-11,
+          2.5314921359539104e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 8.510239287150319e-11,
+        "released": true,
+        "success": true
+      }
+    },
+    {
+      "seed": 41000001,
+      "rate_hz": 5,
+      "teacher_success": true,
+      "command_samples": 166,
+      "physical_success": true,
+      "forbidden_steps": 0,
+      "final_score": {
+        "t_sim_s": 34.071999999995676,
+        "object_xyz_m": [
+          0.42183188036396013,
+          -0.16143251418167706,
+          0.119558630683798
+        ],
+        "object_rotation_base": [
+          [
+            0.9999985146615531,
+            -0.001723564530304775,
+            -6.870533426249271e-11
+          ],
+          [
+            0.001723564530304775,
+            0.9999985146615531,
+            -6.0340086880774465e-12
+          ],
+          [
+            6.871563221516845e-11,
+            5.915581648354779e-12,
+            1.0000000000000013
+          ]
+        ],
+        "object_half_size_m": [
+          0.019597905523642302,
+          0.019597905523642302,
+          0.019597905523642302
+        ],
+        "object_linear_velocity_m_s": [
+          5.789109902211959e-11,
+          5.084255190012847e-12,
+          -3.043950432603787e-16
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 5.811393117763318e-11,
+        "released": true,
+        "success": true
+      }
+    },
+    {
+      "seed": 41000002,
+      "rate_hz": 20,
+      "teacher_success": true,
+      "command_samples": 1078,
+      "physical_success": true,
+      "forbidden_steps": 0,
+      "final_score": {
+        "t_sim_s": 54.89800000002113,
+        "object_xyz_m": [
+          0.42224752266145266,
+          -0.15993371031883075,
+          0.12143519014224727
+        ],
+        "object_rotation_base": [
+          [
+            0.9999999985220923,
+            -6.908227077407139e-11,
+            5.436744383789912e-05
+          ],
+          [
+            -5.436744383789912e-05,
+            2.2203513918543477e-13,
+            0.9999999985220923
+          ],
+          [
+            -6.908228274095287e-11,
+            -1.0000000000000018,
+            2.182793123809023e-13
+          ]
+        ],
+        "object_half_size_m": [
+          0.021474464982091622,
+          0.021474464982091622,
+          0.021474464982091622
+        ],
+        "object_linear_velocity_m_s": [
+          -6.427968335218167e-11,
+          2.06584957634771e-13,
+          2.312948510689659e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 6.428001535898381e-11,
+        "released": true,
+        "success": true
+      }
+    },
+    {
+      "seed": 41000002,
+      "rate_hz": 5,
+      "teacher_success": true,
+      "command_samples": 270,
+      "physical_success": true,
+      "forbidden_steps": 0,
+      "final_score": {
+        "t_sim_s": 54.89800000002113,
+        "object_xyz_m": [
+          0.42204319003909735,
+          -0.15993050626114283,
+          0.1214351901422472
+        ],
+        "object_rotation_base": [
+          [
+            0.999999999664256,
+            -6.339710990538642e-11,
+            2.591307531399248e-05
+          ],
+          [
+            -2.591307531399248e-05,
+            -4.276691693840461e-13,
+            0.999999999664256
+          ],
+          [
+            -6.339709880247854e-11,
+            -0.9999999999999997,
+            -4.293119833241122e-13
+          ]
+        ],
+        "object_half_size_m": [
+          0.021474464982091622,
+          0.021474464982091622,
+          0.021474464982091622
+        ],
+        "object_linear_velocity_m_s": [
+          -7.113410647354844e-11,
+          -4.798428339107411e-13,
+          3.269263928087241e-15
+        ],
+        "finger_contacts": {
+          "left": false,
+          "right": false
+        },
+        "inside_region": true,
+        "supported_by_table": true,
+        "linear_speed_m_s": 7.113572494621438e-11,
+        "released": true,
+        "success": true
+      }
+    }
+  ]
+}
