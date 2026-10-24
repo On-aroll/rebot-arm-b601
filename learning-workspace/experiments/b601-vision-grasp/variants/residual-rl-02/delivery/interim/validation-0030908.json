@@ -1,0 +1,302 @@
+{
+  "label": "validation-0030908",
+  "successes_by_level_of_12": {
+    "0": 12,
+    "1": 11,
+    "2": 6
+  },
+  "total_successes_of_36": 29,
+  "forbidden_steps": 0,
+  "mean_abs_residual_m": 0.0023872654363512997,
+  "mean_reward": 19.8785091364049,
+  "episodes": [
+    {
+      "seed": 51000000,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 20.9474452074055,
+      "mean_abs_residual_m": 0.0023335712552070616
+    },
+    {
+      "seed": 51000001,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 21.39907774375573,
+      "mean_abs_residual_m": 0.002433279991149902
+    },
+    {
+      "seed": 51000002,
+      "level": 2,
+      "success": false,
+      "forbidden_steps": 0,
+      "reward": 4.820288376212011,
+      "mean_abs_residual_m": 0.003535268247127533
+    },
+    {
+      "seed": 51000003,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 22.28756440487976,
+      "mean_abs_residual_m": 0.0005529544651508332
+    },
+    {
+      "seed": 51000004,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 23.34104287873209,
+      "mean_abs_residual_m": 0.002556080937385559
+    },
+    {
+      "seed": 51000005,
+      "level": 2,
+      "success": false,
+      "forbidden_steps": 0,
+      "reward": -1.2003968349929661,
+      "mean_abs_residual_m": 0.0040699057877063745
+    },
+    {
+      "seed": 51000006,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 26.324783084678792,
+      "mean_abs_residual_m": 0.0026584001183509827
+    },
+    {
+      "seed": 51000007,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 23.723021053891035,
+      "mean_abs_residual_m": 0.002852617204189301
+    },
+    {
+      "seed": 51000008,
+      "level": 2,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 21.65186447068481,
+      "mean_abs_residual_m": 0.0017299854159355164
+    },
+    {
+      "seed": 51000009,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 23.563727750759682,
+      "mean_abs_residual_m": 0.0013447054326534273
+    },
+    {
+      "seed": 51000010,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 20.770165868759598,
+      "mean_abs_residual_m": 0.002778986632823944
+    },
+    {
+      "seed": 51000011,
+      "level": 2,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 25.809556271235145,
+      "mean_abs_residual_m": 0.002141785502433777
+    },
+    {
+      "seed": 51000012,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 26.42848659987567,
+      "mean_abs_residual_m": 0.002310761004686355
+    },
+    {
+      "seed": 51000013,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 26.827542761058815,
+      "mean_abs_residual_m": 0.0027585446536540987
+    },
+    {
+      "seed": 51000014,
+      "level": 2,
+      "success": false,
+      "forbidden_steps": 0,
+      "reward": -0.652611049888455,
+      "mean_abs_residual_m": 0.005344928413629532
+    },
+    {
+      "seed": 51000015,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 20.054707180984643,
+      "mean_abs_residual_m": 0.0021921982169151306
+    },
+    {
+      "seed": 51000016,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 29.770379864728458,
+      "mean_abs_residual_m": 0.0031880964040756224
+    },
+    {
+      "seed": 51000017,
+      "level": 2,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 28.92699999598343,
+      "mean_abs_residual_m": 0.0007758353352546693
+    },
+    {
+      "seed": 51000018,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 21.004505462172048,
+      "mean_abs_residual_m": 0.00242967015504837
+    },
+    {
+      "seed": 51000019,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 27.265032446552436,
+      "mean_abs_residual_m": 0.003325122773647308
+    },
+    {
+      "seed": 51000020,
+      "level": 2,
+      "success": false,
+      "forbidden_steps": 0,
+      "reward": 4.819326341693269,
+      "mean_abs_residual_m": 0.0014824241995811463
+    },
+    {
+      "seed": 51000021,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 21.476815013200408,
+      "mean_abs_residual_m": 0.001401045858860016
+    },
+    {
+      "seed": 51000022,
+      "level": 1,
+      "success": false,
+      "forbidden_steps": 0,
+      "reward": -1.5239750694696288,
+      "mean_abs_residual_m": 0.0015879296064376831
+    },
+    {
+      "seed": 51000023,
+      "level": 2,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 22.040038056130264,
+      "mean_abs_residual_m": 0.0008962996900081638
+    },
+    {
+      "seed": 51000024,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 27.632228558277756,
+      "mean_abs_residual_m": 0.002413089692592621
+    },
+    {
+      "seed": 51000025,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 27.55726433786455,
+      "mean_abs_residual_m": 0.004410653978586197
+    },
+    {
+      "seed": 51000026,
+      "level": 2,
+      "success": false,
+      "forbidden_steps": 0,
+      "reward": 0.29212917044115194,
+      "mean_abs_residual_m": 0.002830453902482987
+    },
+    {
+      "seed": 51000027,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 20.029488565526112,
+      "mean_abs_residual_m": 0.001622988760471344
+    },
+    {
+      "seed": 51000028,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 29.095860916351846,
+      "mean_abs_residual_m": 0.004401697337627411
+    },
+    {
+      "seed": 51000029,
+      "level": 2,
+      "success": false,
+      "forbidden_steps": 0,
+      "reward": 6.272970597327405,
+      "mean_abs_residual_m": 0.003188712239265442
+    },
+    {
+      "seed": 51000030,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 24.470592947333458,
+      "mean_abs_residual_m": 0.0020530031323432924
+    },
+    {
+      "seed": 51000031,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 20.770322804060697,
+      "mean_abs_residual_m": 0.001694721341133118
+    },
+    {
+      "seed": 51000032,
+      "level": 2,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 25.986187476712317,
+      "mean_abs_residual_m": 0.0006847665309906005
+    },
+    {
+      "seed": 51000033,
+      "level": 0,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 24.310235217617002,
+      "mean_abs_residual_m": 0.0025679890513420106
+    },
+    {
+      "seed": 51000034,
+      "level": 1,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 28.051341515170684,
+      "mean_abs_residual_m": 0.002319054782390595
+    },
+    {
+      "seed": 51000035,
+      "level": 2,
+      "success": true,
+      "forbidden_steps": 0,
+      "reward": 21.28231892487097,
+      "mean_abs_residual_m": 0.0010740276575088503
+    }
+  ]
+}
