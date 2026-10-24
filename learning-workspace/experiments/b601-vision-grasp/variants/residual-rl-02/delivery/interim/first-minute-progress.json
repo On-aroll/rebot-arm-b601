@@ -1,0 +1,8 @@
+{
+  "elapsed_seconds": 120.8119999999908,
+  "budget_seconds": 3600.0,
+  "timesteps": 6628,
+  "phase": 0,
+  "best_validation_successes_of_36": 27,
+  "best_nominal_successes_of_12": 12
+}

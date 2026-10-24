@@ -1,0 +1,13 @@
+{
+  "status": "interim_training_checkpoint_not_adopted",
+  "policy_sha256": "3519a6055e8a24235fa49f3ae702ac99f6c5bdae623a742ceb60f1bcd738fa91",
+  "progress": {
+    "elapsed_seconds": 120.8119999999908,
+    "budget_seconds": 3600.0,
+    "timesteps": 6628,
+    "phase": 0,
+    "best_validation_successes_of_36": 27,
+    "best_nominal_successes_of_12": 12
+  },
+  "note": "One early interruption-resilient backup; final selected model will be separate. No full-task score claimed."
+}
