@@ -16,3 +16,5 @@ git config --local user.email On-aroll@users.noreply.github.com
 - 20.8MB交付包独立上传；1GiB分卷传输中断后，10.4GB原始归档改为155个不超过64MiB的分卷。`BACKUP_MANIFEST.json`、`SHA256SUMS`和`RESTORE.txt`说明顺序、校验和恢复。完整服务端核验结果另存`SIM_ACT_RELEASE_VERIFIED_2026-10-24.json`，该记录生成前不能宣称大附件全部完成。
 
 每阶段及时提交、推送并核对远端。大附件采用现有`handoff/upload_assets.py`的上传和服务端SHA256核验流程；保留原始失败。新设备重新配置本机认证，不复制或提交凭据。
+
+本轮已遇到Windows自动换行导致冻结哈希失配，因此分支新增`.gitattributes`保护冻结版本和交付包的原始字节。获取较早的固定标签时，克隆命令使用`git -c core.autocrlf=false clone ...`；不要改写历史证据以适应换行。
