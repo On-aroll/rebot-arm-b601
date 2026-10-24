@@ -31,7 +31,7 @@ py -3.12 -m venv .venv
 训练完成后：
 
 ```powershell
-# 统一完成导出、两批配对测试、独立审计和CPU测试；复用已完整结束的分批测试
+# 统一完成导出、三批配对测试、独立审计和CPU测试；复用已完整结束的分批测试
 & .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/finish_tests.py
 
 # 或分别运行：
@@ -40,6 +40,7 @@ py -3.12 -m venv .venv
 # 新建输出目录运行宽范围36场/边界30场；参数、原始基线及分批索引见正式输出config.json
 & .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/evaluate.py --output reproduce-broad --count 36
 & .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/evaluate.py --suite boundary --output reproduce-boundary --count 30
+& .\.venv\Scripts\python.exe learning-workspace/experiments/b601-vision-grasp/variants/residual-rl-02/evaluate.py --suite recovery --controllers v3 zero sac --output reproduce-recovery --count 30
 ```
 
 交付包含完整SAC训练权重、TorchScript以及只需NumPy的确定性演员。NumPy版本只是同一网络的矩阵运算，需用实际记录逐项核对误差；不代表整个视觉抓放系统脱离PyTorch，也不代表板端已验收。

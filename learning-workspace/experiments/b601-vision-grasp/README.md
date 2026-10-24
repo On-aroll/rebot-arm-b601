@@ -1,5 +1,7 @@
 # B601-RS 仿真视觉抓取支线
 
+**一小时SAC续研R2：** 147564步，96个新场景354次任务；技能验证30/36对零修正28/36，部分首次抓偏减少，完整成功未提高，不采用为V4。默认V3；[结果和失败](variants/residual-rl-02/REPORT.md)、[推理与复现](variants/residual-rl-02/README.md)、[实机数据](variants/residual-rl-02/REAL_DATA.md)。
+
 **2026-10-24 新主机续研：** 已在Windows跑通冻结V3，新增接触/相机/响应变化、108个训练场景和12个验证场景，以及小型ACT风格动作学习。两轮各30个新场景配对测试，V3均30/30、动作候选均0/30，不采用。默认V3与全部历史失败保留；[续研报告](variants/act-01/REPORT.md)、[复现与交付](variants/act-01/README.md)、[实机数据回传](variants/act-01/REAL_DATA.md)。
 
 **最新验证版本 V3（2026-10-22）：** 310次新正式对照和完整记录审计通过，静态和受扰各30/30；最新V2同场景29/30、30/30。修复一个新初始漏检，受扰首次26/30、重试4次与V2相同，共同成功耗时基本持平。仅1个配对新增成功，不声称稳定的成功率优势。直接运行`./verified_task.sh --goal B`，支持A/B/C；入口核对108个独立冻结文件。结果、限制、成功/失败回放见 [V3报告](GOAL_GEOMETRY_FALLBACK_V3_REPORT.md)。[V2](GOAL_V2_REPORT.md)、[V1](GOAL_V1_REPORT.md)及全部失败候选继续保留。持续任务状态见 [ITERATIONS.md](ITERATIONS.md)，当前下一步见 [NEXT_ITERATION.md](NEXT_ITERATION.md)。

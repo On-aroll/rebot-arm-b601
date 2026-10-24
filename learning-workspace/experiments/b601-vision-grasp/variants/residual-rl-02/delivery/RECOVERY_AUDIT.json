@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "score_rows_recomputed": 45000,
+  "actor_proposals_checked": 1012,
+  "paired_resets_equal": true,
+  "source_sha256": "21e7ae751eba271b41973c7e12fa81be5019d2128fa1721efbb60de9066e7491",
+  "numpy_proposals_checked": 1012,
+  "numpy_max_abs_error": 5.327165126800537e-07,
+  "replay_audit": {
+    "replay_sha256": "98853167dd13e8250e5962174ab1a49ef9c86bd8b778ec85403e42d53bbbfff9",
+    "stored_transitions": 147560,
+    "raw_rows": 147564,
+    "rows_matched_to_replay": 147560,
+    "final_callback_batch_not_stored_in_replay": 4,
+    "final_batch_retained_in_raw_records": true,
+    "max_observation_error": 0.0,
+    "max_action_error": 0.0,
+    "max_reward_error": 9.52868141723684e-07
+  },
+  "complete_episode_decisions": 147504,
+  "partial_episode_decisions": 60,
+  "train_validation_test_seeds_disjoint": true,
+  "actual_distinct_training_seeds": 1280
+}
