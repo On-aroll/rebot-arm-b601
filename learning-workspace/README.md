@@ -1,5 +1,9 @@
 # Seeed B601-RS / LeRobot：Linux 一键部署
 
+## 统一 GitHub 工作空间
+
+当前目录随 [On-aroll/rebot-arm-b601](https://github.com/On-aroll/rebot-arm-b601) 的 `learning-workspace/` 保存；主线位于相邻的 `ReBot_Arm_DigitalTwin_RS/`。先读仓库根 [HANDOFF.md](../HANDOFF.md)。高算力主机的后续纯仿真训练说明见 [HIGH_COMPUTE_SIM_TRAINING_PROMPT.zh-CN.md](HIGH_COMPUTE_SIM_TRAINING_PROMPT.zh-CN.md)，这是待执行的交接要求，不是已完成的训练或实机验证。下文旧发布计划和旧安装包说明保留为历史。
+
 ## ROS 控制台与仿真一键部署包
 
 已将「机械臂仿真」和「生成末端书写国庆快乐的ROS程序」两个对话的成果另外整合为 Ubuntu / Kubuntu 24.04 + ROS 2 Jazzy 安装包，包含网页工作台、MuJoCo、实机反馈、手柄/J7、算法和书写程序。拷贝 `dist/rebotarm-b601-rs-1.0.0-ubuntu24.04-x86_64.run` 到目标电脑后执行：

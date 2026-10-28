@@ -13,13 +13,13 @@
     },
     "HANDOFF.md": {
       "kind": "file",
-      "sha256": "e6c54acdbae2dc8a5eddaed592d54934c5f86100206495fb46cf9fbb7d83cc3f",
-      "size": 13458
+      "sha256": "d10a202798ddca373db7b501bae37a799f53c10bb9a28c870e8306f015fc750f",
+      "size": 13984
     },
     "README.md": {
       "kind": "file",
-      "sha256": "11b14059f7391b9741af62c7f27a20d38251efe91c1169e6c79c622f6ad315c9",
-      "size": 3767
+      "sha256": "9c963fd73700360224fdbdc816569b9089a235cb72381a4252336872b088c347",
+      "size": 4243
     },
     "ReBot_Arm_DigitalTwin_RS/.github/workflows/pages.yml": {
       "kind": "file",
@@ -5691,6 +5691,16 @@
       "sha256": "aded78af0ef9d7e408b4473a00791d4ff35466e1da644784dfebc2520dd4c1cf",
       "size": 217
     },
+    "handoff/updates/2026-10-28.json": {
+      "kind": "file",
+      "sha256": "7bffa6bf3bae8354683592f84a48983d150f3fa2f3bcf52f7a88870915666ea1",
+      "size": 1802
+    },
+    "handoff/updates/2026-10-28.md": {
+      "kind": "file",
+      "sha256": "1aa8d61be53514701dabba2f0570d9f9c3157ecee398c4da9c571ce15e74f2e4",
+      "size": 2433
+    },
     "handoff/upload_assets.py": {
       "kind": "file",
       "sha256": "debe0962e368fdf9d5238972b10976e9d341653d742f202f36fbeab44571ef9a",
@@ -5731,6 +5741,16 @@
       "sha256": "e30d04ad945d21eeb73c1ac81066443a011cdf67c0561a5bacc671bc18c9e352",
       "size": 853
     },
+    "learning-workspace/GITHUB_HANDOFF.md": {
+      "kind": "file",
+      "sha256": "9b06ee11d04edb101fc223ef3aab681a1bb3442be16c1fe7a4822f111f7b68cb",
+      "size": 1770
+    },
+    "learning-workspace/HIGH_COMPUTE_SIM_TRAINING_PROMPT.zh-CN.md": {
+      "kind": "file",
+      "sha256": "bd22b07ff5fd0e6ee59fd3d4b5b1b830702de2f6bc12e754bd9a81df67fcbbc4",
+      "size": 16840
+    },
     "learning-workspace/LICENSE": {
       "kind": "file",
       "sha256": "3e036a1abe62f4a4c6790ea4d6277264c1a15d7560e3c1880c143f3a5c0776db",
@@ -5738,8 +5758,8 @@
     },
     "learning-workspace/README.md": {
       "kind": "file",
-      "sha256": "c11569290403a27a5153aaae87a54858a1009412b193301f7c4eee55ff09377c",
-      "size": 11543
+      "sha256": "5b055334122e746e1cfb7d7b6b89ab79ec89b60d519011dc6abf483d37d0fc7b",
+      "size": 12068
     },
     "learning-workspace/THIRD_PARTY_NOTICES.md": {
       "kind": "file",

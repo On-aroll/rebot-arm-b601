@@ -1,0 +1,61 @@
+{
+  "schema": "b601-workspace-sync-v1",
+  "date": "2026-10-28",
+  "checked_at": "2026-10-28T19:26:33.986663+08:00",
+  "repository": "On-aroll/rebot-arm-b601",
+  "remote_main_before": "afc5758304400efa0ba35969bbe206d668e4f23e",
+  "remote_branch_preserved": {
+    "name": "sim-act-work",
+    "sha": "0f001efe2570d26943b947af5f65556c812dba16"
+  },
+  "main_source": {
+    "exact_files": 746,
+    "intentional_document_difference": [
+      "README.md"
+    ],
+    "missing": []
+  },
+  "learning_source": {
+    "exact_files": 603,
+    "new_documents": [
+      "GITHUB_HANDOFF.md",
+      "HIGH_COMPUTE_SIM_TRAINING_PROMPT.zh-CN.md"
+    ],
+    "changed_existing_source": []
+  },
+  "legacy_source": {
+    "exact_files": 629,
+    "missing": [],
+    "intentional_snapshot_differences": [
+      ".gitignore",
+      "AGENTS.md",
+      "README.md"
+    ]
+  },
+  "original_output_coverage": {
+    "main_files": 1267,
+    "simulation_files": 21032,
+    "missing": [],
+    "existing_git_evidence_covers_six_root_simulation_files": true,
+    "excluded_live_log": "ReBot_Arm_DigitalTwin_RS/outputs/startup/bridge.log"
+  },
+  "release": {
+    "tag": "handoff-2026-10-22",
+    "assets": 192,
+    "bytes": 13876360180,
+    "name_size_sha256_state_match": true,
+    "prior_verification_sha256": "65c27a58ea6a088f3c0085b0cd6481c44a9ec3f4a6c688130197e8b3f54f0791"
+  },
+  "baseline_verification": {
+    "source_evidence_files": 2071,
+    "V2_frozen_files": 108,
+    "V3_frozen_files": 108
+  },
+  "source_documents_sha256": {
+    "GITHUB_HANDOFF.md": "9b06ee11d04edb101fc223ef3aab681a1bb3442be16c1fe7a4822f111f7b68cb",
+    "HIGH_COMPUTE_SIM_TRAINING_PROMPT.zh-CN.md": "bd22b07ff5fd0e6ee59fd3d4b5b1b830702de2f6bc12e754bd9a81df67fcbbc4"
+  },
+  "training_started": false,
+  "hardware_accessed": false,
+  "services_restarted": false
+}

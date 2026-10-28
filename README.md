@@ -1,5 +1,9 @@
 # reBot Arm B601-RS 仿真工程
 
+## 2026-10-28 工作空间同步
+
+10 月 22 日已封存主线、所有视觉实验分支和完整原始附件。本次补充 [高算力主机训练提示词](learning-workspace/HIGH_COMPUTE_SIM_TRAINING_PROMPT.zh-CN.md) 与 [学习目录交接指引](learning-workspace/GITHUB_HANDOFF.md)，文件对比与附件核对结果见 [同步记录](handoff/updates/2026-10-28.md)。远端 `sim-act-work` 分支保留独立，不将其未经评估的训练成果混入默认 V3。
+
 ## 2026-10-22 全项目封存与换机入口
 
 **先读 [HANDOFF.md](HANDOFF.md)**：已汇集 3002 主线控制工作台、部署工具、所有视觉仿真实验分支、冻结 V2/V3、151 份检查点和同臂恢复历史。持续实验已按用户要求暂停。当前主线在 `ReBot_Arm_DigitalTwin_RS/`；视觉支线在 `learning-workspace/experiments/b601-vision-grasp/`。以下旧目录、PID 和状态说明保留为历史，换机以交接文件为准。
