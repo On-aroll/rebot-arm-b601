@@ -4,7 +4,7 @@
 
 主线与原学习目录的源码已重新核对；新增的 [高算力主机训练提示词](learning-workspace/HIGH_COMPUTE_SIM_TRAINING_PROMPT.zh-CN.md) 与 [学习目录交接指引](learning-workspace/GITHUB_HANDOFF.md) 已纳入本次版本。完整 [同步核对记录](handoff/updates/2026-10-28.md) 说明源码、原始附件、冻结模型及排除的本机运行日志。以下 10 月 22 日的成果和验证边界继续保留；本次同步不自动恢复训练或运行机械臂。
 
-封存日期：2026-10-22。仓库：`On-aroll/rebot-arm-b601`（保持私有）。
+封存日期：2026-10-22。仓库：[On-aroll/rebot-arm-b601](https://github.com/On-aroll/rebot-arm-b601)。2026-10-28 用户明确确认保持公开；此前私有状态属于历史。
 
 **用户已要求暂停持续实验。默认仿真版本为 V3；没有把实验策略接入实机。接手后先完成新设备安装、同一机械臂历史恢复与只读反馈核对。**
 
@@ -19,7 +19,7 @@
 | `handoff/evidence/` | 随 Git 提交的实机原始历史、仿真摘要/审计/源快照/模型训练记录和部署验证压缩包及逐文件哈希 |
 | `handoff/models/` | 151 份实验检查点及原输出目录映射；默认 V3 模型另在冻结版本中自包含 |
 | `handoff/ARTIFACTS.json` | 全量原始输出的压缩包索引和实际上传状态 |
-| `handoff/release-assets/` | 本机准备的完整录像、RGB-D、动作与评分原始数据、历史安装包；不直接进入 Git，使用私有 Release 交付 |
+| `handoff/release-assets/` | 本机准备的完整录像、RGB-D、动作与评分原始数据、历史安装包；不直接进入 Git，使用 GitHub Release 交付 |
 
 先读本文件、`AGENTS.md`，再读主线 `README.md`、`docs/支撑姿态越界恢复与力矩门槛_2026-10-20.md` 和 `docs/自主重复验证_2026-10-20.md`。文档中旧 PID、旧反馈角度和“进行中”是历史记录。本文件与 `ITERATION_STATE.json` 的暂停状态优先；不要据历史记录自动继续运动。
 
@@ -31,10 +31,10 @@
 
 ## 2. 在另一台设备获取
 
-这是私有仓库，需要同一有权限的账号。新机尚未配置 SSH 时，可先安装并登录 GitHub CLI，再执行 `gh repo clone On-aroll/rebot-arm-b601`；已有 SSH 权限使用下面命令。
+当前为公开仓库，源码可直接通过 HTTPS 克隆；已有 SSH 或 GitHub CLI 授权也可沿用原方式。向仓库推送仍需要写入权限。
 
 ```bash
-git clone git@github.com:On-aroll/rebot-arm-b601.git
+git clone https://github.com/On-aroll/rebot-arm-b601.git
 cd rebot-arm-b601
 git checkout main
 python3 handoff/verify_checkout.py
@@ -45,7 +45,7 @@ python3 handoff/prepare_simulation.py
 
 原始大附件以 [handoff-2026-10-22 Release](https://github.com/On-aroll/rebot-arm-b601/releases/tag/handoff-2026-10-22) 为准。`ARTIFACTS.json` 显示 `prepared_pending_upload` 或 `uploading` 时，说明附件尚未全部发布。只有状态为 `uploaded_and_verified`，且存在服务端 SHA256 对账记录 `handoff/RELEASE_VERIFIED.json`，才表示全部附件发布完成。Git clone 带走源码、默认模型、全部报告和同臂恢复历史；完整原始 RGB-D/录像须另从 Release 下载。
 
-**本次完整发布已于 2026-10-22 19:14（北京时间）核验完成：192 个附件，共 13,876,360,180 字节（约 13.88 GB），全部服务端 SHA256 与本机一致。** 核验记录在 `handoff/RELEASE_VERIFIED.json`，包含每个附件的大小、哈希和下载地址；仓库和 Release 均保持私有。
+**本次完整发布已于 2026-10-22 19:14（北京时间）核验完成：192 个附件，共 13,876,360,180 字节（约 13.88 GB），全部服务端 SHA256 与本机一致。** 核验记录在 `handoff/RELEASE_VERIFIED.json`，包含每个附件的大小、哈希和下载地址；当时仓库与 Release 为私有，目前按 2026-10-28 用户选择保持公开。
 
 ## 3. 主线新机部署（先不连接板子）
 

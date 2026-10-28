@@ -1,3 +1,9 @@
+# 2026-10-28 当前 GitHub 入口
+
+用户明确确认保持公开：[On-aroll/rebot-arm-b601](https://github.com/On-aroll/rebot-arm-b601)。本次增量在 main，新增高算力主机训练说明及同步核对记录；主线位于 `ReBot_Arm_DigitalTwin_RS/`，学习与视觉实验位于 `learning-workspace/`。先读根 `HANDOFF.md` 与 `handoff/updates/2026-10-28.md`。下方 10 月 22 日的提交、私有状态和封存说明是历史记录。
+
+---
+
 # 2026-10-22 用户暂停与 GitHub 换机交接
 
 持续仿真实验已按用户要求暂停，不自动恢复训练或硬件操作。

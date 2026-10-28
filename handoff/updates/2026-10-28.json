@@ -52,10 +52,20 @@
     "V3_frozen_files": 108
   },
   "source_documents_sha256": {
-    "GITHUB_HANDOFF.md": "9b06ee11d04edb101fc223ef3aab681a1bb3442be16c1fe7a4822f111f7b68cb",
-    "HIGH_COMPUTE_SIM_TRAINING_PROMPT.zh-CN.md": "bd22b07ff5fd0e6ee59fd3d4b5b1b830702de2f6bc12e754bd9a81df67fcbbc4"
+    "GITHUB_HANDOFF.md": "e88350dd6cc867ba49708287809abb367067cd7440b750152194df83e07d5972",
+    "HIGH_COMPUTE_SIM_TRAINING_PROMPT.zh-CN.md": "a7bd482190bd522edc8306996aea7a4565260cb653582e31f5b53517f9670a5e"
   },
   "training_started": false,
   "hardware_accessed": false,
-  "services_restarted": false
+  "services_restarted": false,
+  "visibility": {
+    "current": "public",
+    "user_confirmation": "保持现在公开，继续更新",
+    "visibility_change_requested": false
+  },
+  "updated_verification": {
+    "source_evidence_files": 2075,
+    "V2_frozen_files": 108,
+    "V3_frozen_files": 108
+  }
 }

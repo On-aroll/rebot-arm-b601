@@ -8,13 +8,13 @@
     },
     "AGENTS.md": {
       "kind": "file",
-      "sha256": "1aa4fe32697d215ec1b50327d99073a798ce8a8d80655ba7f209486dc8ede6d7",
-      "size": 93032
+      "sha256": "20fe9e9e1f6e82c2c110c7c690dc6bfa2e3d3ccb4ed173d45c70e650c4941838",
+      "size": 93563
     },
     "HANDOFF.md": {
       "kind": "file",
-      "sha256": "d10a202798ddca373db7b501bae37a799f53c10bb9a28c870e8306f015fc750f",
-      "size": 13984
+      "sha256": "01dd899bb752e08f3b63f692fec476a6bfee1223cea7f9cb1b1838cbd55f64ed",
+      "size": 14088
     },
     "README.md": {
       "kind": "file",
@@ -5693,13 +5693,13 @@
     },
     "handoff/updates/2026-10-28.json": {
       "kind": "file",
-      "sha256": "7bffa6bf3bae8354683592f84a48983d150f3fa2f3bcf52f7a88870915666ea1",
-      "size": 1802
+      "sha256": "122fca4158fc54dbfae1c1ce5c741b68702f0f4ce221e3888ca734d262eb1957",
+      "size": 2076
     },
     "handoff/updates/2026-10-28.md": {
       "kind": "file",
-      "sha256": "1aa8d61be53514701dabba2f0570d9f9c3157ecee398c4da9c571ce15e74f2e4",
-      "size": 2433
+      "sha256": "c861ed22e70fa2a0394d099c68470fc5bc32458c2b9569f5949601281ef0f183",
+      "size": 2971
     },
     "handoff/upload_assets.py": {
       "kind": "file",
@@ -5743,13 +5743,13 @@
     },
     "learning-workspace/GITHUB_HANDOFF.md": {
       "kind": "file",
-      "sha256": "9b06ee11d04edb101fc223ef3aab681a1bb3442be16c1fe7a4822f111f7b68cb",
-      "size": 1770
+      "sha256": "e88350dd6cc867ba49708287809abb367067cd7440b750152194df83e07d5972",
+      "size": 2230
     },
     "learning-workspace/HIGH_COMPUTE_SIM_TRAINING_PROMPT.zh-CN.md": {
       "kind": "file",
-      "sha256": "bd22b07ff5fd0e6ee59fd3d4b5b1b830702de2f6bc12e754bd9a81df67fcbbc4",
-      "size": 16840
+      "sha256": "a7bd482190bd522edc8306996aea7a4565260cb653582e31f5b53517f9670a5e",
+      "size": 16915
     },
     "learning-workspace/LICENSE": {
       "kind": "file",
