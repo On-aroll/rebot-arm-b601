@@ -6,6 +6,7 @@ disable/status/stationary confirmation. No upstream group lifecycle is called.
 """
 from dataclasses import asdict
 from collections import deque
+from concurrent.futures import Future
 import gc
 import json
 import math
@@ -18,8 +19,9 @@ import time
 import numpy as np
 
 from .leader_policy import finite_vector
-from .csp_runtime.rebot_mit_hardware import Envelope, OnsitePermit
-from .csp_runtime.rebot_native_xyz import AXES, MODE, LIVE_FULL_MODE, OFFICIAL_FULL_MODES, FeedbackTimeout, NativeXYZTransport, NativeXYZExecutor, proposal, gravity_limits_for_mode, runtime_for_mode
+from .csp_runtime.rebot_mit_hardware import Envelope, OnsitePermit, sdk_parameter_reply_timeout
+from .csp_runtime.rebot_native_csp import CspTransport
+from .csp_runtime.rebot_native_xyz import AXES, MODE, LIVE_FULL_MODE, PADDED_MODE, PADDED_FULL_MODE, OFFICIAL_FULL_MODES, FeedbackTimeout, NativeXYZTransport, NativeXYZExecutor, proposal, gravity_limits_for_mode, runtime_for_mode
 from .csp_runtime.support_recovery import (SupportRecovery, START_MATCH_RAD, build_support_recovery,
                                            gravity_limits_for_recovery_stage)
 from .csp_official_limits import SPEED_MAX, SOURCES
@@ -31,6 +33,7 @@ from .twin_tuning import MotionSettings
 from .twin_drive import DriveSettings
 from .twin_jog import JogRamp
 from .twin_motion import PROFILES, RuckigVelocity, point_sample
+from .joint_limits import JOINT_MARGIN_DEG, expanded_joint_limits
 
 
 class CspHardware:
@@ -45,9 +48,15 @@ class CspHardware:
     feedback_source = "RobStride mechPos / 0x7019 · CSP"
 
     def __init__(self, limits, *, transport=None, output=None, clock=time.monotonic, path_check=None,
-                 recovery_path_check=None):
+                 recovery_path_check=None, nominal_limits=None):
         self.clock = clock
         self.teleop_limits = [tuple(pair) for pair in limits]
+        self.nominal_limits = None if nominal_limits is None else [tuple(pair) for pair in nominal_limits]
+        if self.nominal_limits is not None:
+            expected = expanded_joint_limits(self.nominal_limits)
+            if not np.allclose(self.teleop_limits,expected,rtol=0,atol=1e-12):
+                raise ValueError('生效限位必须恰好是六轴名义范围上下各扩展2°')
+            self.start_tolerance = 0.
         self._configure_mode("small")
         self.bus = transport or NativeXYZTransport()
         self.output = Path(output) if output else None
@@ -57,6 +66,7 @@ class CspHardware:
         self.lock = threading.RLock()
         self.closing = threading.Event()
         self.shutdown_sealed = False
+        self.shutdown_request = None
         self.cancel_motion = threading.Event()
         self.hold_requested = threading.Event()
         self.hold_recoverable = False
@@ -171,7 +181,8 @@ class CspHardware:
     def _configure_mode(self, mode):
         if mode not in ("small", "full"):
             raise ValueError("控制模式仅支持 small / full")
-        raw, public = proposal(self.teleop_limits,mode=LIVE_FULL_MODE if mode == "full" else MODE)
+        version = (PADDED_FULL_MODE if mode == 'full' else PADDED_MODE) if self.nominal_limits is not None else (LIVE_FULL_MODE if mode == 'full' else MODE)
+        raw, public = proposal(self.teleop_limits,mode=version)
         self.config = Envelope.parse(raw)
         self.control_mode = mode
         self.max_twin_speed = min(public["speed_max_rad_s"],min(getattr(self,'device_speed_limits',{}).values(),default=SPEED_MAX))
@@ -286,7 +297,9 @@ class CspHardware:
                 feedback_schedule='ACTIVE full: oldest field first, mode/current/position every cycle; otherwise two oldest diagnostic pairs; each field <=600 ms',
                 max_speed_rad_s=self.max_twin_speed,max_axis_delta_deg=.5 if self.control_mode == "small" else None,
                 session_limit_s=self.session_seconds,remaining_s=remaining,continuous=self.session_seconds is None,
-                joint_limits_rad=self.teleop_limits,tracking_limit_deg=math.degrees(self.config.axes[0].error_max))
+                joint_limits_rad=self.teleop_limits,nominal_joint_limits_rad=self.nominal_limits,
+                joint_limit_margin_deg=JOINT_MARGIN_DEG if self.nominal_limits is not None else 0.,
+                tracking_limit_deg=math.degrees(self.config.axes[0].error_max))
 
     @property
     def enabled(self):
@@ -337,6 +350,8 @@ class CspHardware:
 
     def request_reset(self, *, _mode_review=None):
         with self.lock:
+            if self.shutdown_sealed:
+                raise RuntimeError('项目正在结束，恢复操作已停止')
             if self.reset_pending:
                 return dict(self.reset_status)
             self._cancel_register_audit('重置请求已取消只读核查')
@@ -744,8 +759,8 @@ class CspHardware:
                 start = drive.last_boundary_target
             if lo <= q <= hi:
                 continue
-            # Preserve measured first pose in the already-confirmed 1° start
-            # tolerance; no offset/limit write and no movement farther outward.
+            # Legacy envelopes retain their one-way startup recovery. New
+            # envelopes include 2° in the actual bounds and add no extra margin.
             recovered = i+1 in self.bus.boundary_recovered if drive and i+1 in self.bus.active else False
             if not recovered and lo-self.start_tolerance <= start < lo and start-1e-9 <= q < lo:
                 continue
@@ -807,16 +822,16 @@ class CspHardware:
                 self._v = np.array([self.samples[i].qd for i in AXES])
                 self._feedback_refreshed_at = min(self.samples[i].requested_at for i in AXES)
 
-    def _read(self, check=lambda:None, *, axes=AXES):
-        samples = self.bus.read(axes,self.config.policy,check,on_sample=self._cache)
+    def _read(self, check=lambda:None, *, axes=AXES, retry_timeout=False):
+        samples = self.bus.read(axes,self.config.policy,check,on_sample=self._cache,retry_timeout=retry_timeout)
         self._cache(samples)
         return samples
 
-    def _read_arm_cycle(self, check=lambda:None, *, on_io=None):
+    def _read_arm_cycle(self, check=lambda:None, *, on_io=None, retry_timeout=False):
         # Stop/reset deliberately clears the velocity window. Rebuild it with
         # the original full read before resuming interleaved read-only polling.
         if any(i not in self.bus.previous_samples for i in AXES):
-            samples = self._read(check)
+            samples = self._read(check,retry_timeout=retry_timeout)
         elif self.control_mode == 'full' and self.phase == 'ACTIVE':
             # The staggered two-pair schedule aged diagnostics over three
             # cycles. A ~300 ms SDK reply then exhausted their 600 ms window.
@@ -832,11 +847,12 @@ class CspHardware:
             # Two axes per cycle leave room for an SDK retry within the SAME
             # 600 ms limit. Choose actual oldest fields, not a fixed phase index.
             axes = sorted(AXES,key=diagnostic_time)[:2]
-            samples = self.bus.read_cycle(self.config.policy,axes,check,on_sample=self._cache,on_io=on_io)
+            samples = self.bus.read_cycle(self.config.policy,axes,check,on_sample=self._cache,on_io=on_io,
+                retry_timeout=retry_timeout)
         self._cache(samples)
         return samples
 
-    def _read_cycle(self, check=lambda:None, *, on_io=None):
+    def _read_cycle(self, check=lambda:None, *, on_io=None, retry_timeout=False):
         began = self.clock()
         stepping_gripper = False
         def gripper_check():
@@ -881,40 +897,71 @@ class CspHardware:
             # do not depend on that sweep. Nested J7 checks retain the plain
             # arm-reference callback, never recursively entering this step.
             if self.phase == 'ACTIVE':step_gripper()
-        self._read_arm_cycle(check,on_io=arm_io if on_io and self.phase=='ACTIVE' else on_io)
+        self._read_arm_cycle(check,on_io=arm_io if on_io and self.phase=='ACTIVE' else on_io,
+            retry_timeout=retry_timeout)
         if self.phase == 'HOLDING':self.gripper.observe_hold(check)
         else:step_gripper()
         self.poll_duration_s = self.clock()-began
         return dict(self.samples)
 
+    def _initialize_readonly_feedback(self):
+        self._read(retry_timeout=True)
+        self.device_speed_limits = {}
+        for i in AXES:
+            self.bus.ownership.check()
+            value=self.bus.read_parameter_f32(i,0x7017,50,lambda:None,retry_timeout=True)
+            if not math.isfinite(value) or value <= 0: raise ValueError(f'J{i} 设备限速无效')
+            self.device_speed_limits[i]=value
+        self._configure_mode(self.control_mode)
+        self._read(retry_timeout=True)
+
     def _worker(self):
         try:
             self.bus.open_readonly()
-            self._read()
-            self.device_speed_limits = {}
-            for i in AXES:
-                value=self.bus.motors[i].robstride_get_param_f32_host_id(0x7017,0xFD,50)
-                if not math.isfinite(value) or value <= 0: raise ValueError(f'J{i} 设备限速无效')
-                self.device_speed_limits[i]=value
-            self._configure_mode(self.control_mode)
-            self._read()
+            for attempt in range(1, 4):
+                try:
+                    self._initialize_readonly_feedback()
+                    break
+                except (RuntimeError, TimeoutError) as exc:
+                    if not (isinstance(exc, TimeoutError) or sdk_parameter_reply_timeout(exc)):
+                        raise
+                    if attempt == 3:
+                        raise ConnectionError(f'只读反馈连续 3 次超时，请核对本体供电及 CAN 接线：{exc}') from exc
+                    self.bus.previous_samples.clear()
+                    self.bus.latest_samples.clear()
+                    with self.lock:
+                        self.samples.clear()
+                        self._feedback_refreshed_at = 0.
+                    if self.closing.wait(.2):
+                        return
+            if self.closing.is_set():
+                return
             self._readonly_phase()
             while not self.closing.is_set():
-                if self.reset_pending:
+                shutdown = self.shutdown_request
+                if shutdown is not None:
+                    if not shutdown.done():
+                        self._stop_for_shutdown(shutdown)
+                    self.closing.wait(.05)
+                elif self.reset_pending:
                     self._reset_control()
                 elif self.start_requested and self.session:
                     self._motion_session()
                 else:
                     began = self.clock()
                     try:
-                        self._read_cycle()
+                        retry_timeout = (self.phase in ('READONLY','RECOVERY','FEEDBACK_WAIT')
+                            and not self.armed and not self.session and not self.bus.active
+                            and not (self.gripper.view and self.gripper.view.active))
+                        self._read_cycle(retry_timeout=retry_timeout)
                         self._register_audit_step()
-                    except TimeoutError as exc:
+                    except (RuntimeError, TimeoutError) as exc:
                         # A lost read while no drive is active must not kill
                         # the only CAN observer forever. Rebuild the velocity
                         # window with two fresh sweeps; revoke any preparation
                         # or lease and retain every prior recovery lock.
-                        if self.bus.active or self.gripper.view and self.gripper.view.active:
+                        if (not (isinstance(exc, TimeoutError) or sdk_parameter_reply_timeout(exc)) or self.bus.active
+                                or self.gripper.view and self.gripper.view.active):
                             raise
                         with self.lock:
                             self._cancel_register_audit('反馈中断，已取消只读核查；未自动重试')
@@ -947,10 +994,11 @@ class CspHardware:
                 self._cancel_register_audit('CAN工作线程结束，只读核查未完成')
             if self.bus.active:
                 self.bus.stop_supported()
-            try:
-                self.gripper.finish()
-            except Exception as exc:
-                self.error = f'J7恢复未完成：{exc}'
+            if self.shutdown_request is None:
+                try:
+                    self.gripper.finish()
+                except Exception as exc:
+                    self.error = f'J7恢复未完成：{exc}'
             self.bus.close()
 
     def probe_gripper(self):
@@ -1046,19 +1094,21 @@ class CspHardware:
             if path:
                 path.parent.mkdir(parents=True,exist_ok=True)
                 temporary = path.with_suffix(".tmp")
-                if review:
+                durable = review or 'fault_clear' in report
+                if durable:
                     with temporary.open('w') as stream:
                         json.dump(report,stream,ensure_ascii=False,indent=2,allow_nan=False)
                         stream.flush();os.fsync(stream.fileno())
                 else:
                     temporary.write_text(json.dumps(report,ensure_ascii=False,indent=2))
                 temporary.replace(path)
-                if review:
+                if durable:
                     directory = os.open(path.parent,os.O_RDONLY)
                     try:os.fsync(directory)
                     finally:os.close(directory)
 
         def check():
+            self._check_not_shutting_down()
             if review and self.mode_restore_cancelled.is_set():
                 raise InterruptedError('停止请求已取消模式恢复；保留锁定')
             if self.closing.is_set():
@@ -1070,12 +1120,13 @@ class CspHardware:
             # A six-axis register scan can take longer than one encoder age
             # window. Interleave feedback on the same owner, never another bus.
             if self.clock()-self._feedback_refreshed_at > .2:
-                self._read()
+                self._read(retry_timeout=True)
             check()
             if any(abs(s.qd) > .01 for s in self.samples.values()):
                 raise RuntimeError("参数核对/恢复期间位置变化，停止恢复并保留锁定")
 
         try:
+            self._check_not_shutting_down()
             if review:
                 # Review is checked again on the owner before any disable/write.
                 # J7 is outside this maintenance scope, including recovery.
@@ -1083,7 +1134,7 @@ class CspHardware:
                     if self.gripper.state()['recovery_required'] or self.gripper.view and self.gripper.view.active:
                         raise RuntimeError('J7状态改变，不能执行六轴模式恢复')
             else:
-                self.gripper.finish(recover=True)
+                self.gripper.finish(recover=True,check=self._check_not_shutting_down)
             source_error = None
             originals = None
             version = MODE
@@ -1095,7 +1146,7 @@ class CspHardware:
                     source, source_path, digest = reset_source(self)
                     report.update(source_report=source_path,source_sha256=digest)
                 if source and not review:
-                    originals,version = validate_snapshot(source,self.teleop_limits)
+                    originals,version = validate_snapshot(source,self.teleop_limits,nominal_limits=self.nominal_limits)
                     report["register_snapshot"] = source["register_snapshot"]
                     self._reset_original = source
                 report["snapshot_required"] = bool(source)
@@ -1116,14 +1167,24 @@ class CspHardware:
                 raise RuntimeError(f'模式恢复意图未持久保存；未发送失能或参数写入：{journal_error}')
             if review:check()
             report["stop"] = self.bus.disable_all_for_reset()
-            if report["stop"]["errors"]:
-                raise RuntimeError("六轴失能状态未全部确认")
+            stop_errors = report["stop"]["errors"]
+            stop_states = report["stop"]["status_by_axis"]
+            clear_axes = []
+            if stop_errors:
+                details = '，'.join(f'J{axis} {error}' for axis,error in stop_errors.items())
+                # RS06/RS00 Type 2 bit 20 (shifted to 0x10) is the stall
+                # overload flag. Mixed faults and incomplete stops stay locked.
+                if (review or not originals or not path or len(stop_states)!=len(AXES)
+                        or any(s['mode_state']!=0 or s['fault_bits'] not in (0,0x10)
+                               for s in stop_states.values())):
+                    raise RuntimeError(f"六轴停机或故障核查未通过：{details}")
+                clear_axes = [i for i in AXES if stop_states[str(i)]['fault_bits']==0x10]
             quiet = None
             began = self.clock()
             observations = report["stationary_observations"] = []
             self.bus.previous_samples.clear()
             while True:
-                self._read()
+                self._read(retry_timeout=True)
                 check()
                 now = self.clock()
                 observations.append({str(i):asdict(s) for i,s in self.samples.items()})
@@ -1142,9 +1203,27 @@ class CspHardware:
             if originals:
                 report["observed_registers"] = (read_reviewed_registers(self.bus,originals,restore_check) if review else
                                                 check_current_registers(self.bus,originals,restore_check))
+                if clear_axes:
+                    report['fault_clear'] = dict(planned_axes=clear_axes,attempted_axes=[])
+                    save()
+                    for axis in clear_axes:
+                        restore_check()
+                        self.bus.ownership.check()
+                        report['fault_clear']['attempted_axes'].append(axis)
+                        try:
+                            # SDK 0.5.6 sends the documented Type 4 clear,
+                            # without enabling or saving drive parameters.
+                            self.bus.motors[axis].clear_error()
+                        except Exception as exc:
+                            raise RuntimeError(f'J{axis} 清除堵转过载故障应答失败：{exc}') from exc
+                    report['stop_after_clear'] = self.bus.disable_all_for_reset()
+                    errors = report['stop_after_clear']['errors']
+                    if errors:
+                        details = '，'.join(f'J{axis} {error}' for axis,error in errors.items())
+                        raise RuntimeError(f"清故障后重新核对未通过：{details}")
                 # Refresh after register reads and check stability again before
                 # allowing restore-only writes. Never load an old position.
-                self._read();check()
+                self._read(retry_timeout=True);check()
                 if any(abs(s.qd) > .01 for s in self.samples.values()):
                     raise RuntimeError("参数核对期间位置变化，未恢复")
                 for axis,drive in self.bus.drives.items():
@@ -1159,7 +1238,7 @@ class CspHardware:
                     raise RuntimeError("当前模式非 0，缺少事故前完整参数快照；未覆盖默认值")
                 report["restoration"] = dict(ok=True,restored={},old_target_restored=False)
             self.bus.previous_samples.clear()
-            self._read()
+            self._read(retry_timeout=True)
             if any(s.mode != 0 for s in self.samples.values()):
                 raise RuntimeError("重置后模式读回不符，保留锁定")
             report["cleanup_ok"] = True
@@ -1171,7 +1250,7 @@ class CspHardware:
                 save()
             except OSError as exc:
                 report.update(cleanup_ok=False,cleanup_error=f"恢复报告保存失败：{exc}")
-                if review:
+                if review or 'fault_clear' in report:
                     # A directory fsync can fail AFTER the successful-looking
                     # file was replaced. Withdraw that result on disk as well
                     # as in memory so a reconnect retains the recovery lock.
@@ -1222,6 +1301,7 @@ class CspHardware:
                   "log_window":"last 3000 frames / 5000 register operations per axis" if self.control_mode == "full" else "complete"}
 
         def check():
+            self._check_not_shutting_down()
             if self.hold_requested.is_set():
                 raise (FeedbackTimeout if self.hold_recoverable else TimeoutError)(self.stop_reason or '通信异常，锁定暂停')
             if self.closing.is_set() or self.cancel_motion.is_set() or not self.session:
@@ -1403,8 +1483,9 @@ class CspHardware:
                 if self.bus.active:
                     stop = self.bus.stop_supported()
                     report["stop"] = stop
+                    self._check_not_shutting_down()
                     try:
-                        self.gripper.finish()
+                        self.gripper.finish(check=self._check_not_shutting_down)
                     finally:
                         self.bus.previous_samples.clear()
                     if stop["errors"]:
@@ -1414,7 +1495,7 @@ class CspHardware:
                     observations = []
                     report["stationary_observations"] = observations
                     while True:
-                        samples = self._read()
+                        samples = self._read(self._check_not_shutting_down)
                         observations.append({str(i):asdict(s) for i,s in samples.items()})
                         now = self.clock()
                         valid = all(0 <= now-s.requested_at <= .6 and abs(s.qd) <= .01 for s in samples.values())
@@ -1423,13 +1504,13 @@ class CspHardware:
                             break
                         if now-began > 1.5:
                             raise RuntimeError("失能后未确认连续停稳，保留低限制")
-                    report["restoration"] = self.bus.restore()
+                    report["restoration"] = self.bus.restore(self._check_not_shutting_down)
                     if not report["restoration"]["ok"]:
                         raise RuntimeError("临时参数未全部恢复")
                     # Register restoration can exceed the velocity window;
                     # require two new sweeps, as on initial read-only connect.
                     self.bus.previous_samples.clear()
-                    self._read()  # publish the restored mode, not the old CSP sample
+                    self._read(self._check_not_shutting_down)  # publish the restored mode
                 report["cleanup_ok"] = True
             except Exception as exc:
                 report["cleanup_ok"] = False
@@ -1460,6 +1541,50 @@ class CspHardware:
                 self.target = None
                 self.command_reference = None
                 self._readonly_phase()
+
+    def _check_not_shutting_down(self):
+        if self.shutdown_request is not None:
+            raise InterruptedError('结束项目已优先失能，保留参数恢复记录')
+
+    def request_shutdown_stop(self):
+        """Called by the supported project exit. The existing owner sends CAN."""
+        with self.lock:
+            previous = self.shutdown_request
+            if previous is not None and (not previous.done() or previous.result()['ok']):
+                return previous
+            if not self.worker or not self.worker.is_alive() or self.closing.is_set() or self.phase=='FAULT':
+                raise RuntimeError('CAN 执行线程不可用，无法核实失能。请在可靠支撑下断开本体电机电源。')
+            self.shutdown_sealed = True
+            self.disable()
+            self.hold_requested.clear()
+            self.target = self.point_reference = self.stream_velocity = self.command_reference = None
+            self.gripper.pause()
+            self.shutdown_request = Future()
+            return self.shutdown_request
+
+    def _stop_for_shutdown(self, request):
+        self.phase = 'STOPPING'
+        if self.reset_pending:
+            self.reset_pending = False
+            self.reset_status = {**self.reset_status,'status':'failed','message':'结束项目已取消维护'}
+        states, errors = {}, {}
+        axes = (*AXES,7) if 7 in self.bus.motors or self.gripper.recovery else AXES
+        for axis in axes:
+            try:
+                self.bus.ownership.check()
+                motor = self.gripper._motor() if axis==7 else self.bus.motors[axis]
+                motor.disable()
+                status = states[str(axis)] = CspTransport.read_stop_status(motor,axis)
+                if status['mode_state'] != 0:
+                    raise RuntimeError(f"电机仍处于状态模式 {status['mode_state']}")
+                self.bus.active.discard(axis)
+                if axis==7 and self.gripper.view:
+                    self.gripper.view.active.discard(axis)
+            except Exception as exc:
+                errors[str(axis)] = str(exc)
+        # A faulted drive can acknowledge mode 0. This proves disable for
+        # exit only and never clears a fault or certifies parameter recovery.
+        request.set_result(dict(ok=not errors, states=states, errors=errors))
 
     def seal_readonly_shutdown(self):
         """Atomic exit gate. Never disables an active/holding arm."""

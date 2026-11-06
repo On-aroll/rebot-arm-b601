@@ -6,7 +6,7 @@ const fs=require('node:fs');
 const input=require('../public/js/twin-input.js');
 const Display=require('../public/js/twin-feedback-display.js');
 const source=fs.readFileSync(require.resolve('../public/js/twin-console.js'),'utf8');
-function page({connected=true,storage=new Map(),pads=[]}={}) {
+function page({connected=true,storage=new Map(),pads=[],maintenance=null}={}) {
   const elements=new Map(), subscriptions=new Map(), windowEvents=new Map(), documentEvents=new Map();
   const commands=[],calls=[],ghosts=[];
   let now=100,animation;
@@ -47,6 +47,7 @@ function page({connected=true,storage=new Map(),pads=[]}={}) {
       return [];
     }};
   const window={reBotRos:client,reBotRosUI:{target:'hardware',canTwinControl:()=>true,prepareTwinControl(){}},
+    ReBotMaintenance:maintenance,
     localStorage:{getItem:key=>storage.get(key),setItem:(key,value)=>storage.set(key,value)},
     ReBotTwinInput:input,ReBotFeedbackDisplay:Display,reBotSim:sim,reBotControlMode:{is:()=>true},
     dispatchEvent(event){windowEvents.get(event.type)?.(event);},
@@ -626,4 +627,51 @@ test('disconnect button is unavailable while real motors are active or holding',
   assert.equal(p.el('twin-connect').disabled,true);
   p.feedback({hardware_phase:'HOLDING'});assert.equal(p.el('twin-connect').disabled,true);
   p.feedback({hardware_phase:'READONLY'});assert.equal(p.el('twin-connect').disabled,false);
+});
+test('hardware maintenance click is the onsite confirmation and delegates once without a browser reset/enable',async()=>{
+  const p=page();p.feedback({recovery_required:{report:'retained.json'}});
+  let count=0,finish;
+  p.window.ReBotMaintenance={restore:async show=>{
+    count++;show({id:'maintenance-1',state:'running',message:'正在恢复'});
+    await new Promise(resolve=>{finish=resolve;});
+    return {id:'maintenance-1',state:'done',message:'已恢复',result:{resetId:'reset-1'}};
+  }};
+  assert.equal(p.el('twin-onsite').checked,false);
+  const restoring=p.el('twin-reset-control').click();await p.el('twin-reset-control').click();
+  assert.equal(count,1);assert.equal(p.el('twin-reset-control').disabled,true);
+  p.feedback({reset_status:{id:'reset-1',status:'succeeded',message:'worker done'}});
+  assert.equal(p.el('twin-reset-control').disabled,true); // Backend still verifies the final state.
+  assert.equal(p.el('twin-reset-status').textContent,'正在恢复');
+  finish();await restoring;
+  assert.equal(p.el('twin-reset-status').textContent,'已恢复');assert.equal(p.el('twin-reset-control').disabled,false);
+  assert.deepEqual(p.calls,[]);assert.deepEqual(p.commands,[]);
+  assert.equal(p.el('twin-onsite').checked,false);assert.equal(p.el('ros-control-enable').checked,false);
+});
+test('offline page can request maintenance; API failure cannot claim recovery or strand the button',async()=>{
+  const p=page({connected:false});let count=0;
+  p.window.ReBotMaintenance={restore:async()=>{count++;throw new Error('CAN 接线未就绪');}};
+  await p.el('twin-reset-control').click();assert.equal(count,1);
+  assert.match(p.el('twin-reset-status').textContent,/结果未确认.*CAN/);
+  assert.equal(p.el('twin-reset-control').disabled,false);assert.deepEqual(p.calls,[]);assert.deepEqual(p.commands,[]);
+});
+test('a delayed idle check on page load cannot cancel a maintenance click or create a new recovery',async()=>{
+  let finishIdle,finishRestore,restoreCalls=0;
+  const maintenance={resume:async()=>new Promise(resolve=>{finishIdle=resolve;}),restore:async show=>{
+    restoreCalls++;show({id:'m1',state:'running',message:'正在恢复'});
+    return new Promise(resolve=>{finishRestore=resolve;});
+  }};
+  const p=page({maintenance});p.feedback();assert.equal(restoreCalls,0);
+  const action=p.el('twin-reset-control').click();finishIdle({state:'idle'});await Promise.resolve();await Promise.resolve();
+  assert.equal(p.el('twin-reset-control').disabled,true);assert.equal(restoreCalls,1);
+  finishRestore({id:'m1',state:'error',message:'供电未就绪'});await action;
+  assert.equal(p.el('twin-reset-control').disabled,false);assert.match(p.el('twin-reset-status').textContent,/供电未就绪/);
+});
+test('fresh verified recovery clears the old failure notice and reopens range selection without enabling',()=>{
+  const p=page();p.feedback({hardware_phase:'RECOVERY',recovery_required:{report:'fault.json'},message:'恢复未确认'});
+  assert.equal(p.el('twin-message').dataset.error,'true');
+  p.feedback({hardware_phase:'READONLY',recovery_required:null,cleanup_ok:true,control_prepared:false,
+    reset_status:{id:'another-page',status:'succeeded',message:'参数核对完成，已失能'}});
+  assert.equal(p.el('twin-message').textContent,'参数核对完成，已失能');
+  assert.equal(p.el('twin-message').dataset.error,'false');assert.equal(p.el('twin-control-range').disabled,false);
+  assert.deepEqual(p.calls,[]);assert.deepEqual(p.commands,[]);
 });

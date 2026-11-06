@@ -17,6 +17,25 @@
     render(detailKey);
   }
 
+  async function refreshStatus() {
+    try {
+      const response = await fetch('/api/startup/status', { cache: 'no-store' });
+      if (!response.ok) return;
+      const result = await response.json();
+      const simulation = result.services?.simulation;
+      if (!simulation) return;
+      if (simulation.ready) {
+        setState('reused', 'quickStart.detailReused');
+      } else if (simulation.running) {
+        setState('starting');
+      } else if (['ready', 'reused', 'starting'].includes(state)) {
+        setState('idle');
+      }
+    } catch (_) {
+      // Keep the last known status when the local API is temporarily unavailable.
+    }
+  }
+
   async function startSimulation() {
     if (button.disabled) return;
     button.disabled = true;
@@ -42,6 +61,9 @@
   }
 
   button.addEventListener('click', startSimulation);
+  void refreshStatus();
+  const statusTimer = window.setInterval(refreshStatus, 3000);
+  window.addEventListener('pagehide', () => window.clearInterval(statusTimer));
   if (window.rebotI18n && window.rebotI18n.onLangChange) {
     window.rebotI18n.onLangChange(() => {
       render();

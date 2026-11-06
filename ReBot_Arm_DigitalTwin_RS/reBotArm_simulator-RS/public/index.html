@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="/css/project-shutdown.css?v=20261018-exit156">
   <link rel="stylesheet" href="./css/rebot-sim.css?v=20260813-rs-guide43">
   <link rel="stylesheet" href="./css/leader-teleop.css?v=20261007-leader02">
-  <link rel="stylesheet" href="./css/twin-console.css?v=20261018-speed159">
+  <link rel="stylesheet" href="./css/twin-console.css?v=20261103-flow4">
 </head>
 <body>
   <header class="twin-topbar">
@@ -50,7 +50,7 @@
           <button type="button" data-hub-mode="keyboard"><span class="hub-feature-icon">⌨</span><span><strong>键盘 / 按钮</strong><small>空格 + 方向键，含夹爪</small></span><span class="hub-arrow">↗</span></button>
           <button type="button" data-hub-mode="gamepad"><span class="hub-feature-icon">RB</span><span><strong>手柄控制</strong><small>连接手柄，按住 RB 移动</small></span><span class="hub-arrow">↗</span></button>
           <button type="button" data-hub-mode="tcp"><span class="hub-feature-icon">↔</span><span><strong>拖拽末端 TCP</strong><small>打开模型，拖动末端</small></span><span class="hub-arrow">↗</span></button>
-          <button type="button" data-open-workbench="programs"><span class="hub-feature-icon">▶</span><span><strong>动作程序</strong><small>导入 / 程序库 / 国庆快乐</small></span><span class="hub-arrow">↗</span></button>
+          <button type="button" data-open-workbench="programs"><span class="hub-feature-icon">▶</span><span><strong>动作程序</strong><small>程序库 / BIT103 / 国庆快乐</small></span><span class="hub-arrow">↗</span></button>
           <button type="button" data-hub-teach><span class="hub-feature-icon">●</span><span><strong>示教录制</strong><small>记录操作，生成回放程序</small></span><span class="hub-arrow">↗</span></button>
           <button type="button" data-hub-monitor="camera" aria-controls="hub-monitor"><span class="hub-feature-icon">◎</span><span><strong>相机画面</strong><small>USB / 网络 / ROS 相机</small></span><span class="hub-arrow">↗</span></button>
           <button type="button" data-open-workbench="support"><span class="hub-feature-icon">⌂</span><span><strong>支撑姿态</strong><small>记录 / 预览 / 返回</small></span><span class="hub-arrow">↗</span></button>
@@ -306,16 +306,45 @@
           </details>
         </details>
         <div class="wb-heading"><div><p class="eyebrow">MOTION PROGRAMS</p><h2>动作程序</h2><p>导入 → 使能并执行。现场确认一次，准备、接管和程序检查自动完成。单位 m / rad / s。</p></div><span id="wb-program-state" class="twin-badge">尚未加载</span></div>
+          <details id="writing-settings" class="wb-card" open>
+            <summary><strong>书写程序 · BIT103 / 国庆快乐</strong></summary>
+            <div class="wb-actions" role="group" aria-label="书写程序模板"><button type="button" id="wb-program-bit103" aria-pressed="true">BIT103 · 设置书写平面</button><button type="button" id="wb-program-writing" aria-pressed="false">国庆快乐 · 设置书写平面</button></div>
+            <ol class="writing-flow" aria-label="书写程序使用流程"><li id="writing-step-1">1 摆位与记录</li><li id="writing-step-2">2 设置法线和平面</li><li id="writing-step-3">3 确认并生成</li><li id="writing-step-4">4 检查与预览</li><li id="writing-step-5">5 执行</li></ol>
+            <p id="writing-flow-state" class="twin-hint" role="status">下一步：手动摆到书写起点，再记录末端位姿。</p>
+            <h3>1 · 手动摆位，记录书写原点</h3>
+            <p class="twin-hint">先用手动控制把末端摆到合适位置和朝向，再点记录。记录只读取反馈，不移动机械臂；重新记录会更新平面并作废旧确认。</p>
+            <button type="button" id="writing-capture">记录当前末端位姿</button><p id="writing-capture-note" class="twin-hint">尚未记录本次书写位置。</p>
+            <h3>2 · 设置法线，查看对应平面</h3>
+            <p class="twin-hint">选腕部 link6 的参考轴并输入偏转角，偏转后的 N 就是书写平面的法线。平面经过记录时的模型 TCP（gripper_end，可调原点偏移）。调整这些角度不会旋转实机；书写时保持记录的末端姿态。</p>
+            <div class="wb-fields"><label>文字<select id="writing-text"><option value="BIT103">BIT103</option><option value="国庆快乐">国庆快乐</option></select></label><label>法线 N · 腕部轴<select id="writing-axis"><option value="" disabled selected>选择轴及正负方向…</option><option value="+X">+X</option><option value="-X">−X</option><option value="+Y">+Y</option><option value="-Y">−Y</option><option value="+Z">+Z</option><option value="-Z">−Z</option></select></label></div>
+            <div class="wb-fields"><label>绕腕部 +X 偏转 °<input id="writing-tilt-x" type="number" min="-180" max="180" step="0.5" value="0"></label><label>绕腕部 +Y 偏转 °<input id="writing-tilt-y" type="number" min="-180" max="180" step="0.5" value="0"></label><label>绕腕部 +Z 偏转 °<input id="writing-tilt-z" type="number" min="-180" max="180" step="0.5" value="0"></label></div>
+            <p class="twin-hint">偏转依次绕固定的腕部 +X → +Y → +Z，正角按右手规则。文字从 +N 一侧看为正向；R 是字的右方，U 是字的上方。翻转 N 后请核对 U 箭头。</p>
+            <div class="wb-fields"><label>文字旋转 ° · 绕 +N<input id="writing-spin" type="number" min="-180" max="180" step="1" value="0"></label><label>抬笔方向<select id="writing-retract"><option value="1">沿 +N</option><option value="-1">沿 −N</option></select></label></div>
+            <p class="twin-hint">请选择实际离开纸面的一侧。落笔方向与抬笔相反；法线正负与抬笔正负分别设置，不自动猜测纸面朝向。</p>
+            <svg id="writing-direction-svg" viewBox="0 0 600 290" role="img" aria-label="腕部正轴、书写右方上方、法线与抬笔方向示意" style="width:100%;max-height:330px;background:#0f1726;border-radius:10px"></svg>
+            <p id="writing-direction-note" class="twin-hint">先选择法线轴并记录末端位姿。</p>
+            <div class="wb-fields"><label>总字宽 mm<input id="writing-width" type="number" min="10" max="100" step="1" value="90"></label><label>字高 mm<input id="writing-height" type="number" min="5" max="100" step="1" value="20"></label><label>抬笔距离 mm<input id="writing-lift" type="number" min="1" max="30" step="1" value="5"></label></div>
+            <details><summary>平面原点偏移 · 沿腕部轴</summary><div class="wb-fields"><label>X mm<input id="writing-offset-x" type="number" min="-300" max="300" step="1" value="0"></label><label>Y mm<input id="writing-offset-y" type="number" min="-300" max="300" step="1" value="0"></label><label>Z mm<input id="writing-offset-z" type="number" min="-300" max="300" step="1" value="0"></label></div><p class="twin-hint">以记录时 gripper_end 为零点，沿腕部 XYZ 平移书写平面；这是规划原点偏移，不是已验证的笔尖标定。</p></details>
+            <h3>3 · 核对原点、字向与抬笔，确认平面</h3>
+            <p class="twin-hint">确认后固定本次平面；机械臂之后移动不会带着平面漂移。更改文字、轴、偏角、尺寸或原点，均须重新确认。按钮只生成程序，不执行运动。</p>
+            <button type="button" id="writing-generate" disabled>确认此平面并生成程序</button>
+            <h3>4 · 检查整套路径，再看预览虚影</h3>
+            <div class="wb-actions"><button type="button" id="writing-check" disabled>检查书写路径</button><button type="button" id="writing-visual" disabled>播放预览虚影</button></div>
+            <h3>5 · 执行本次已确认程序</h3>
+            <button type="button" id="writing-execute" disabled>执行已确认的书写程序</button>
+            <p id="writing-execute-note" class="twin-hint">实际笔尖、工具碰撞体与纸面尚未标定，当前实机书写仅预览；平面确认不等于工具标定。路径检查保留限位、重力和机器人自碰撞检查，执行前还会按实时起点重新检查。</p>
+            <p id="writing-status" class="twin-hint" role="status" aria-live="polite">设置按文字分别保存在本机；重新打开时需重新记录末端位姿。更改设置或生成预览不执行运动。</p>
+          </details>
         <div class="wb-two-col"><div>
-          <div class="wb-actions"><label class="wb-file">导入程序 JSON<input type="file" id="wb-program-import" accept=".json,application/json"></label><button type="button" id="wb-program-example">新建示例</button><button type="button" id="wb-program-writing">载入「国庆快乐」</button><button type="button" id="wb-program-export">导出程序</button></div>
+          <div class="wb-actions"><label class="wb-file">导入程序 JSON<input type="file" id="wb-program-import" accept=".json,application/json"></label><button type="button" id="wb-program-example">新建示例</button><button type="button" id="wb-program-export">导出程序</button></div>
           <label>程序名称<input id="wb-program-name" value="我的动作程序"></label>
           <label>程序编辑器<textarea id="wb-program-json" class="wb-code" rows="14" spellcheck="false" placeholder="支持本工程动作JSON，以及ROS JointTrajectory JSON"></textarea></label>
-          <div class="wb-actions"><button type="button" id="wb-program-save">保存到程序库</button><select id="wb-program-library" aria-label="本机程序库"><option value="">本机程序库</option></select><button type="button" id="wb-program-load">载入</button></div>
+          <div class="wb-actions"><button type="button" id="wb-program-save">保存到程序库</button><select id="wb-program-library" aria-label="本机程序库"><option value="">选择程序 / 书写模板</option><optgroup label="书写模板 · 设置平面后生成"><option value="writing:BIT103">BIT103 · 可调书写平面</option><option value="writing:国庆快乐">国庆快乐 · 可调书写平面</option></optgroup><optgroup id="wb-program-saved" label="本机保存的程序"></optgroup></select><button type="button" id="wb-program-load">载入 / 打开设置</button></div>
         </div><div>
           <section id="wb-writing-preview" hidden aria-label="书写规划路径">
-            <h3>书写规划路径 · 俯视</h3>
-            <svg id="wb-writing-svg" viewBox="0 0 960 240" role="img" aria-label="末端规划笔画：国庆快乐" style="width:100%;background:#0f1726;border-radius:12px"></svg>
-            <p class="twin-hint">预览显示全部规划笔画；播放时彩色为已走过的规划段，白色为当前段，灰色为后续段。抬笔段不连线。50 mm 字格 / 抬笔12 mm；实际接触书写需标定笔尖和纸面。</p>
+            <h3>书写规划路径 · 平面展开</h3>
+            <svg id="wb-writing-svg" viewBox="0 0 960 240" role="img" aria-label="末端规划笔画" style="width:100%;background:#0f1726;border-radius:12px"></svg>
+            <p id="wb-writing-note" class="twin-hint">预览显示全部规划笔画；播放时彩色为已走过的规划段，白色为当前段，灰色为后续段。抬笔段不连线；实际接触书写需标定笔尖和纸面。</p>
             <button type="button" id="wb-writing-view">在三维窗口俯视路径</button>
           </section>
           <h3>执行程序</h3><div class="wb-actions"><button type="button" id="wb-program-run" class="primary-btn">使能并执行程序</button></div>
@@ -420,11 +449,11 @@
             <p class="twin-hint">准备与接管不使能电机；点击「启动电机保持」才使能。仿真只需连接并接管。暂停使用顶部「暂停并保持」。</p>
       </section>
       <section class="wb-panel" id="hub-reset-section" data-workbench-panel="maintenance" aria-labelledby="hub-maintenance-title" hidden>
-        <div class="wb-heading"><div><p class="eyebrow">RESET & MAINTENANCE</p><h2 id="hub-maintenance-title">重置与维护</h2><p>用于清空控制状态并请求停止与恢复核查。先支撑机械臂，再明确发起重置；缺少原始参数快照时仍会锁定。</p></div></div>
-            <div class="twin-reset-strip"><span id="twin-reset-help">重置会请求失能；仅在原始快照完整且读回核对通过时，才能确认参数恢复。须先支撑机械臂，不会回零或自动使能。日常暂停使用顶部「暂停并保持」。</span><span id="twin-reset-status" role="status" aria-live="polite">未发起重置</span></div>
-            <button type="button" id="twin-reset-control" class="twin-reset-control" aria-describedby="twin-reset-help">↻ 重置控制状态</button>
-            <p class="twin-hint">退出整个项目请用顶部「结束项目」；悬空保持时先支撑并失能，再退出服务或断电。</p>
-            <details class="recovery-guide"><summary>暂停、重置、重启分别能修复什么？</summary><ul><li>短暂通信延迟：先暂停并保持；反馈恢复且输入松开后可恢复手动就绪，旧程序不会自动续跑。</li><li>控制状态异常、临时参数残留：先支撑并失能，再重置；只有完整原始快照且读回核对通过，才能恢复参数。</li><li>网页或后台服务卡住：先支撑并失能，结束项目后重新打开启动台。</li><li>缺少原始快照、未知参数、硬件故障：重置或重启不能保证修复。保留恢复记录，核查原因后再处理，禁止反复使能尝试。</li></ul></details>
+        <div class="wb-heading"><div><p class="eyebrow">RESET & MAINTENANCE</p><h2 id="hub-maintenance-title">重置与维护</h2><p>连接异常、反馈无响应或恢复锁定时，从这里恢复。点击下面的恢复按钮，就代表你已确认现场安全，无需再次勾选或确认。</p></div></div>
+            <div class="twin-reset-strip"><span id="twin-reset-help">点击即确认机械臂已可靠支撑，允许失能撤力及必要的服务重连。通信正常时，系统在原连接上清空旧目标、核对停稳、处理可恢复的堵转过载故障，并按原记录恢复参数。通过后回到只读，由你重新接管。</span><span id="twin-reset-status" role="status" aria-live="polite">未发起恢复</span></div>
+            <button type="button" id="twin-reset-control" class="twin-reset-control" aria-describedby="twin-reset-help">↻ 已支撑，恢复连接与状态</button>
+            <p class="twin-hint">退出整个项目请用顶部「结束项目」；退出前先确认机械臂有可靠支撑。</p>
+            <details class="recovery-guide"><summary>恢复操作会做什么？</summary><ul><li>驱动通信正常：复用当前驱动，失能、清空旧目标并核对参数。</li><li>断线或驱动故障：正常退出旧驱动，检查 ROS 联动与 USB-CAN，再连接唯一只读驱动；需要系统认证时仍会显示密码窗口。</li><li>恢复成功：核对六轴失能、参数恢复和反馈有效，解除恢复锁；随后由你重新选择范围和开启控制。</li><li>缺少原始快照、未知参数或硬件仍无响应：保留锁定和记录，并显示失败原因。恢复按钮不会用默认参数覆盖故障。</li><li>日常暂停请用顶部「暂停并保持」；退出整个项目请用「结束项目」。</li></ul></details>
       </section>
       </div>
       <details class="hub-monitor" id="hub-monitor" open>
@@ -473,17 +502,19 @@
           <div class="twin-camera-screen">
             <video id="twin-video" autoplay muted playsinline hidden></video>
             <img id="twin-camera-image" alt="实机相机画面" hidden>
+            <canvas id="twin-camera-overlay" aria-hidden="true" hidden></canvas>
             <div id="twin-camera-placeholder"><span class="twin-camera-icon">◎</span><strong>让实机与模型同屏</strong><p>连接 USB 相机、网络视频流<br>或 ROS 压缩图像话题</p></div>
             <span class="twin-camera-caption" id="twin-camera-timing">相机与关节反馈独立采集，视频延迟尚未标定</span>
           </div>
           <div class="twin-camera-settings">
-            <label>画面来源<select id="twin-camera-source"><option value="usb">本机 / USB 相机</option><option value="mjpeg">HTTP MJPEG / JPEG</option><option value="video">HTTP 视频（MP4 / WebM）</option><option value="ros">ROS 压缩图像</option></select></label>
+            <label>画面来源<select id="twin-camera-source"><option value="usb">本机 / USB 相机</option><option value="mjpeg">HTTP MJPEG / JPEG</option><option value="video">HTTP 视频（MP4 / WebM）</option><option value="ros" selected>ROS 压缩图像</option></select></label>
             <label id="twin-camera-device-row">相机设备<select id="twin-camera-device"><option value="">系统默认相机</option></select></label>
             <label id="twin-camera-url-row" hidden>画面地址<input id="twin-camera-url" type="url" placeholder="http://相机地址/stream" spellcheck="false"></label>
             <label id="twin-camera-cors-row" hidden><input id="twin-camera-cors" type="checkbox">用于算法取帧（网络相机需支持CORS，勾选后重新连接）</label>
-            <label id="twin-camera-topic-row" hidden>图像话题<input id="twin-camera-topic" value="/camera/color/image_raw/compressed" spellcheck="false"></label>
+            <label id="twin-camera-topic-row" hidden>图像话题<input id="twin-camera-topic" value="/camera/color/preview/compressed" spellcheck="false"></label>
             <div class="twin-camera-actions"><button type="button" id="twin-camera-connect">连接画面</button><button type="button" id="twin-camera-disconnect">断开</button></div>
             <p id="twin-camera-message" role="status">USB 相机属于打开网页的这台电脑；连接时浏览器会请求授权。</p>
+            <p id="twin-camera-vision-state" role="status">等待相机识别</p>
           </div>
         </section>
       </div>
@@ -667,7 +698,7 @@
         </label>
         <label class="field-row">
           <span data-i18n="ros.ws">WebSocket</span>
-          <input id="ros-url" type="text" placeholder="ws://localhost:9090" spellcheck="false">
+          <input id="ros-url" type="text" placeholder="ws://127.0.0.1:3002/rosbridge" spellcheck="false">
         </label>
         <div class="button-grid">
           <button type="button" id="ros-connect" data-i18n="ros.connect">连接 ROS</button>
@@ -871,7 +902,7 @@ export REBOTARM_LLM_MODEL='qwen-plus'
 
         <h4 style="color:#d7fff4;margin-bottom:4px;" data-i18n="help.s1.title">一、连接与模式</h4>
         <div style="line-height:1.7;font-size:13px;margin-bottom:12px;">
-          <p data-i18n-html="help.s1.connect"><b>连接 ROS</b>：输入 rosbridge 的 WebSocket 地址（如 <code>ws://localhost:9090</code>），点击连接。连接后自动订阅关节状态、夹爪状态和机械臂状态。</p>
+          <p data-i18n-html="help.s1.connect"><b>连接 ROS</b>：输入 rosbridge 的 WebSocket 地址（如 <code>ws://127.0.0.1:3002/rosbridge</code>），点击连接。连接后自动订阅关节状态、夹爪状态和机械臂状态。</p>
           <p data-i18n-html="help.s1.disconnect"><b>断开</b>：断开与 rosbridge 的连接，停止所有订阅和发布。</p>
           <p data-i18n-html="help.s1.control"><b>控制锁</b>：勾选后允许网页向 ROS 发送控制命令。未勾选时拖滑块只动 3D 模型，不发 ROS 命令。连接到真机控制器时命令会驱动真实硬件，请谨慎操作。</p>
         </div>
@@ -1021,22 +1052,26 @@ export REBOTARM_LLM_MODEL='qwen-plus'
   <script src="./js/i18n.js?v=20261016-feedback01"></script>
   <script src="./js/quick-start.js?v=20261015-rs-quick01"></script>
   <script src="./js/wrist-camera.js?v=20261009-rs-camera03"></script>
-  <script src="./js/ros/rebot-ros-client.js?v=20261008-rs-grasp-fast01"></script>
+  <script src="./js/ros/rebot-ros-client.js?v=20261030-latest-camera01"></script>
   <script src="./js/rebot-sim.js?v=20261019-tcpdrop163"></script>
   <script src="./js/control-mode.js?v=20261018-rs-ctrl34"></script>
-  <script src="./js/ros/rebot-ros-ui.js?v=20261008-rs-grasp-fast01"></script>
+  <script src="./js/vision-source-guard.js?v=20261030-camera-gate01"></script>
+  <script src="./js/ros/rebot-ros-ui.js?v=20261030-camera-gate01"></script>
   <script src="./js/twin-input.js?v=20261018-speed159"></script>
   <script src="./js/twin-feedback-display.js?v=20261018-recover155"></script>
   <script src="./js/twin-guides.js?v=20261018-recover155"></script>
-  <script src="./js/twin-console.js?v=20261020-preview165"></script>
-  <script src="./js/twin-camera.js?v=20261016-workbench13"></script>
+  <script src="./js/maintenance-recovery.js?v=20261102-1"></script>
+  <script src="./js/twin-console.js?v=20261103-margin2"></script>
+  <script src="./js/twin-camera.js?v=20261102-camera2"></script>
   <script src="./js/fixed-pick.js?v=20261019-grasp160"></script>
   <script src="./js/vision-replay.js?v=20261019-offline162"></script>
   <script src="./js/grasp-recording.js?v=20261019-offline162"></script>
   <script src="./js/twin-offline-tools.js?v=20261019-offline162"></script>
-  <script src="./js/twin-workbench.js?v=20261019-tcpdrop163"></script>
+  <script src="./js/writing-plane.js?v=20261103-plane2"></script>
+  <script src="./js/twin-workbench.js?v=20261103-flow4"></script>
+  <script src="./js/writing-controls.js?v=20261103-flow4"></script>
   <script src="./js/twin-algorithm.js?v=20261017-mit01"></script>
-  <script src="./js/operation-hub.js?v=20261018-sections157"></script>
+  <script src="./js/operation-hub.js?v=20261106-recovery-entry"></script>
   <script src="./js/ros/leader-model.js?v=20261007-leader02"></script>
   <script src="./js/ros/rebot-leader-ui.js?v=20261007-leader02"></script>
   <script src="./js/motorbridge/rebot-motorbridge-client.js?v=20260812-rs-ctrl32"></script>
@@ -1045,11 +1080,12 @@ export REBOTARM_LLM_MODEL='qwen-plus'
   <dialog id="project-exit-dialog" class="project-exit-dialog" aria-labelledby="project-exit-title">
     <h2 id="project-exit-title">结束项目并释放资源</h2>
     <p>结束实机反馈、仿真、ROS联动接口及本工程启动的可选服务，最后退出网页服务和三维画面。</p>
-    <p>机械臂仍在运动或保持时会拒绝退出。请先让机械臂有支撑，点击工作台的「失能撤力」，等待只读状态。</p>
-    <label><input id="project-exit-confirm" type="checkbox"><span>机械臂已有支撑并已失能；确认结束本项目。仅使用仿真时也可勾选。</span></label>
+    <p>请先确认机械臂有可靠支撑。结束项目会优先撤销控制并请求电机失能，核对回包后关闭后台，电脑仍能识别 USB-CAN。待恢复记录保留到下次维护。</p>
+    <label><input id="project-exit-confirm" type="checkbox"><span>机械臂已有可靠支撑，允许失能撤力并结束本项目。仅使用仿真时也可勾选。</span></label>
+    <label><input id="project-exit-power-off" type="checkbox"><span>仅用于 CAN 掉线的情况。我已实际断开本体电机电源，允许结束故障后台。</span></label>
     <p id="project-exit-status" class="project-exit-status" role="status" aria-live="polite">关闭标签页不会结束后台。请使用此入口完整退出。</p>
     <div class="project-exit-actions"><button type="button" id="project-exit-cancel">取消</button><button type="button" id="project-exit-submit" disabled>确认结束项目</button></div>
   </dialog>
-  <script src="/js/project-shutdown.js?v=20261018-exit156" defer></script>
+  <script src="/js/project-shutdown.js?v=20261106-supported-exit" defer></script>
 </body>
 </html>

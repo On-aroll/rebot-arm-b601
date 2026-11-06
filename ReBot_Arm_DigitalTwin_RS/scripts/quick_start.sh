@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# One-click entry point for the safe RS simulation and local web console.
-# It never starts the physical /rebotarm controller.
+# One-click simulation/web entry, with an explicit readonly hardware option.
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." >/dev/null 2>&1 && pwd)"
+export REBOTARM_GATEWAY_ROOT="${ROOT_DIR}"
 ENV_SCRIPT="${ROOT_DIR}/scripts/rs_env.sh"
 RUN_DIR="${XDG_RUNTIME_DIR:-/tmp}/rebotarm-rs-${UID}"
 PID_FILE="${RUN_DIR}/managed.pids"
@@ -15,11 +15,12 @@ OPEN_BROWSER=1
 
 usage() {
   cat <<'EOF'
-Usage: ./scripts/quick_start.sh [--simulation-only | --web-only] [--no-browser]
+Usage: ./scripts/quick_start.sh [--simulation-only | --web-only | --hardware] [--no-browser]
 
 Default: starts safe RS simulation, rosbridge, and the local web UI.
 --web-only: starts only the web UI and opens the project startup page.
-The physical controller is never started by this command.
+--hardware: checks ROS/bridge/CAN, starts readonly physical feedback and camera.
+The hardware option never enables motors or executes motion.
 EOF
 }
 
@@ -27,6 +28,7 @@ while (($#)); do
   case "$1" in
     --simulation-only) MODE="simulation" ;;
     --web-only) MODE="web" ;;
+    --hardware) MODE="hardware" ;;
     --no-browser) OPEN_BROWSER=0 ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
@@ -140,7 +142,10 @@ start_web() {
   fi
 
   local node_bin=""
-  if command -v node >/dev/null 2>&1; then
+  if [[ -x "${ROOT_DIR}/.tools/node/bin/node" ]]; then
+    node_bin="${ROOT_DIR}/.tools/node/bin/node"
+    export PATH="${ROOT_DIR}/.tools/node/bin:${PATH}"
+  elif command -v node >/dev/null 2>&1; then
     node_bin="$(command -v node)"
   elif [[ -x /usr/lib/chatgpt/resources/cua_node/bin/node ]]; then
     node_bin=/usr/lib/chatgpt/resources/cua_node/bin/node
@@ -159,9 +164,16 @@ start_web() {
   echo "Web simulator is ready at http://127.0.0.1:3002"
 }
 
-if [[ "${MODE}" != web ]]; then start_simulation; fi
+if [[ "${MODE}" == all || "${MODE}" == simulation ]]; then start_simulation; fi
 if [[ "${MODE}" != simulation ]]; then
   start_web
+  if [[ "${MODE}" == hardware ]]; then
+    if ! curl --fail --silent --show-error --max-time 10 \
+      -H 'Origin: http://127.0.0.1:3002' -X POST \
+      http://127.0.0.1:3002/api/startup/start/all >"${LOG_DIR}/hardware-start.json"; then
+      echo '一键启动请求未确认，请在启动台查看状态并重试。' >&2
+    fi
+  fi
   if ((OPEN_BROWSER)) && command -v xdg-open >/dev/null 2>&1; then
     xdg-open http://127.0.0.1:3002/startup.html >/dev/null 2>&1 || true
   fi

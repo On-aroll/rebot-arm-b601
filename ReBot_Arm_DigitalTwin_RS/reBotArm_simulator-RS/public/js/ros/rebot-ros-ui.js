@@ -19,6 +19,13 @@
   const URL_STORAGE_KEY = 'rebotarm.ros.url';
   function loadSavedUrl() { try { return localStorage.getItem(URL_STORAGE_KEY) || ''; } catch (_) { return ''; } }
   function saveUrl(url) { try { localStorage.setItem(URL_STORAGE_KEY, url); } catch (_) {} }
+  function defaultRosbridgeUrl() {
+    const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    return window.location.host ? `${scheme}://${window.location.host}/rosbridge` : `${scheme}://127.0.0.1:9090`;
+  }
+  function isLegacyLoopbackRosbridgeUrl(url) {
+    return /^wss?:\/\/(?:127\.0\.0\.1|localhost):9090\/?$/i.test(String(url || '').trim());
+  }
  const OPEN_GRIPPER_M = 0.0715;
   const CLOSE_GRIPPER_M = 0;
   const OPEN_GRIPPER_MOTOR_RAD = 5.0;
@@ -162,7 +169,7 @@
 
   if (els.url && !els.url.value) {
     const saved = loadSavedUrl();
-    if (saved) els.url.value = saved;
+    els.url.value = saved && !isLegacyLoopbackRosbridgeUrl(saved) ? saved : defaultRosbridgeUrl();
   }
   const client = new window.ReBotRosClient({ namespace: NS, url: els.url ? els.url.value : '' });
  window.reBotRos = client;
@@ -286,7 +293,8 @@
   }
   client.subscribe(REQUIRED_TOPICS.gripper, 'rebotarm_msgs/msg/JointMotorState', handleGripperState, { throttleRate: 80 });
   client.subscribe(REQUIRED_TOPICS.armStatus, 'rebotarm_msgs/msg/ArmStatus', handleArmStatus, { throttleRate: 200 });
-  client.subscribe(REQUIRED_TOPICS.cameraImage, 'sensor_msgs/msg/Image', handleCameraImage, { throttleRate: 120 });
+  // The uncompressed MuJoCo view is informational; keep it from crowding joint telemetry.
+  client.subscribe(REQUIRED_TOPICS.cameraImage, 'sensor_msgs/msg/Image', handleCameraImage, { throttleRate: 500 });
   client.subscribe(REQUIRED_TOPICS.visionDetections, 'std_msgs/msg/String', handleVisionDetections, { throttleRate: 180 });
   client.subscribe(REQUIRED_TOPICS.simAnimation, 'std_msgs/msg/String', handleSimAnimationEvent, { throttleRate: 0 });
   client.subscribe(REQUIRED_TOPICS.objectStates, 'std_msgs/msg/String', handleMujocoObjectStates, { throttleRate: 33 });
@@ -2456,9 +2464,12 @@
       ? selectedVisionTarget.color
       : payload.target_color;
     if (els.visionStatus) {
+      const provenance = payload.source === 'rs_mujoco_object_states'
+        ? '仿真真值（非相机识别）'
+        : (payload.source || '来源未标注');
       els.visionStatus.textContent = count
-        ? t('fb.visionCount', { count, color: displayedColor || '--' })
-        : t('st.visionNone');
+        ? `${t('fb.visionCount', { count, color: displayedColor || '--' })} · ${provenance}`
+        : `${t('st.visionNone')} · ${provenance}`;
     }
   }
 
@@ -2508,6 +2519,13 @@
     if (!els.visionTarget) return;
     if (!target) {
       els.visionTarget.textContent = '--';
+      return;
+    }
+    if (![target.x, target.y, target.z].every((value) => Number.isFinite(Number(value)))) {
+      const center = Array.isArray(target.center_px) ? target.center_px : null;
+      els.visionTarget.textContent = center && center.length === 2
+        ? `图像像素 ${Math.round(Number(center[0]))}, ${Math.round(Number(center[1]))} · 未标定`
+        : '目标缺少 base_link 三维坐标';
       return;
     }
     const approachZ = getVisionApproachZ(target);
@@ -3099,6 +3117,16 @@
     if (!target) {
       setMessage(t('msg.noVisionTarget'));
       return null;
+    }
+    if (TARGET_KEY === 'hardware') {
+      const readiness = window.ReBotVisionSourceGuard
+        ? window.ReBotVisionSourceGuard.check({ target, payload: latestVisionPayload, targetMode: TARGET_KEY })
+        : { allowed: false, reason: '真机视觉安全检查未加载' };
+      if (!readiness.allowed) {
+        setMessage(readiness.reason);
+        writeLog(readiness.reason, 'warn');
+        return null;
+      }
     }
     const x = Number(target.x);
     const y = Number(target.y);

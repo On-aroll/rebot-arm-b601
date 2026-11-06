@@ -66,11 +66,13 @@ body.twin-advanced-open .control-panel { display:block; height:calc(100vh - 78px
 .twin-view-head .eyebrow, .twin-deck-head .eyebrow { font-size:10px; letter-spacing:1.5px; color:var(--twin-accent); }
 .twin-camera-screen { position:relative; background:#0a1014; height:255px; display:grid; place-items:center; overflow:hidden; }
 .twin-camera-screen video, .twin-camera-screen img { display:block; width:100%; height:100%; object-fit:contain; position:absolute; inset:0; }
+.twin-camera-screen canvas { display:block; width:100%; height:100%; object-fit:contain; position:absolute; inset:0; z-index:2; pointer-events:none; }
+.twin-camera-screen canvas[hidden] { display:none; }
 #twin-camera-placeholder { text-align:center; color:var(--twin-muted); }
 #twin-camera-placeholder strong { display:block; font-size:14px; font-weight:500; color:#c8d7de; }
 #twin-camera-placeholder p { line-height:1.8; font-size:12px; margin:8px 0 22px; }
 .twin-camera-icon { display:block; color:#4d756e; font-size:52px; line-height:1.2; margin-bottom:10px; }
-.twin-camera-caption { position:absolute; bottom:0; left:0; right:0; background:#0b111bcc; text-align:center; font-size:10px; color:#b6c7d0; padding:6px; }
+.twin-camera-caption { position:absolute; bottom:0; left:0; right:0; z-index:3; background:#0b111bcc; text-align:center; font-size:10px; color:#b6c7d0; padding:6px; }
 .twin-camera-settings { padding:14px 16px 8px; display:grid; grid-template-columns:1fr 1.2fr; gap:10px; align-items:end; }
 .twin-workspace label { line-height:1.6; font-size:12px; color:#bfced6; }
 .twin-camera-settings label { display:grid; gap:4px; }
@@ -152,6 +154,12 @@ kbd { display:inline-block; padding:2px 5px; min-width:22px; text-align:center; 
 .wb-panel .wb-code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:12px; }
 .wb-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
 .wb-fields label { min-width:0; }
+.writing-flow { display:flex; flex-wrap:wrap; gap:8px; list-style:none; padding:0; margin:18px 0; }
+.writing-flow li { padding:8px 10px; border:1px solid var(--twin-line); border-radius:7px; color:var(--twin-muted); font-size:12px; }
+.writing-flow li[data-state="current"] { border-color:#72ddbd; color:#b9f6e3; background:#21483d; }
+.writing-flow li[data-state="done"] { color:#87cbb7; }
+#writing-settings h3 { margin-top:22px; }
+#writing-settings .wb-actions [aria-pressed="true"] { border-color:#72ddbd; color:#b9f6e3; background:#21483d; }
 .wb-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:12px 0; }
 .wb-actions select { flex:1; max-width:320px; }
 .wb-panel .wb-check,.wb-tool .wb-check { display:flex; align-items:start; gap:8px; line-height:1.8; }
@@ -211,6 +219,8 @@ html { scroll-padding-top:90px; }
 .hub-onsite { background:#27251d; border-color:#72613b; margin:0 0 12px; gap:10px 20px; }
 .hub-onsite > label:first-child { white-space:normal; min-width:0; color:#f0ddbd; font-size:13px; flex:1; }
 .hub-onsite input { width:17px; height:17px; flex-shrink:0; accent-color:var(--twin-accent); }
+/* The explicit maintenance button carries its own onsite confirmation. */
+body[data-hub-view=maintenance] #twin-hardware-gate > label { display:none; }
 .hub-onsite > p { flex-basis:100%; margin:0; }
 .hub-next { display:flex; gap:12px; align-items:center; border:1px solid #36584f; background:#152a25; border-radius:10px; padding:12px 16px; }
 .hub-status-dot { width:8px; height:8px; border-radius:50%; background:#8ca0a8; flex-shrink:0; }

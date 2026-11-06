@@ -68,6 +68,7 @@ class TwinControl:
         self.mujoco_feedback_at = 0.0
         self.last_result = None
         self.reset_status = None
+        self._seen_hardware_reset = None
         self.reset_stamp_ms = 0.
         self.extensions = TwinExtensions(self)
         self.pub = node.create_publisher(String, f"/{namespace}/twin/state", 1)
@@ -82,6 +83,8 @@ class TwinControl:
             self.register_audit_service = node.create_service(Trigger, f"/{namespace}/twin/audit_registers", self.audit_registers, callback_group=group)
         if hasattr(self.hw,'seal_readonly_shutdown'):
             self.close_readonly_service = node.create_service(Trigger, f"/{namespace}/twin/close_readonly", self.close_readonly, callback_group=group)
+        if hasattr(self.hw,'request_shutdown_stop'):
+            self.shutdown_stop_service = node.create_service(Trigger, f"/{namespace}/twin/shutdown_stop", self.shutdown_stop, callback_group=group)
         self.command_subscription = node.create_subscription(
             String, f"/{namespace}/twin/command", self.command,
             QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE), callback_group=group,
@@ -215,6 +218,21 @@ class TwinControl:
             except Exception as exc:
                 response.success,response.message = False,str(exc)
             return response
+
+    def shutdown_stop(self, _request, response):
+        try:
+            with self.lock:
+                request = self.hw.request_shutdown_stop()
+                self._release('结束项目，已撤销控制')
+            result = request.result(timeout=12)
+            response.success = result['ok']
+            response.message = (json.dumps(result,ensure_ascii=False) if response.success else
+                '失能回包未确认：'+'，'.join(f'J{axis} {error}' for axis,error in result['errors'].items()))
+        except TimeoutError:
+            response.success,response.message = False,'等待实机失能回包超时，保留后台与故障记录。'
+        except Exception as exc:
+            response.success,response.message = False,str(exc)
+        return response
 
     def audit_registers(self, _request, response):
         with self.lock:
@@ -616,6 +634,12 @@ class TwinControl:
                 hardware_error = getattr(self.hw,"error","")
                 if hardware_error and not self.session:
                     self.message = hardware_error
+                reset = getattr(self.hw, 'reset_status', None)
+                if reset and not hardware_error and not self.session:
+                    reset_key = (reset.get('id'), reset.get('status'))
+                    if reset_key != self._seen_hardware_reset:
+                        self.message = reset['message']
+                        self._seen_hardware_reset = reset_key
                 # Control/watchdogs remain 50 Hz. The browser consumes state at
                 # 20 Hz; redundant model/JSON work competes with the CAN owner.
                 now = self.clock()

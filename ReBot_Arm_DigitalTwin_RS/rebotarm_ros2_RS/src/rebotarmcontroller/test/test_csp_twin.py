@@ -64,15 +64,24 @@ class Motor:
         self.controller.calls.append(('disable',self.i))
         self.enabled=False
 
+    def clear_error(self):
+        assert not any(m.enabled for m in self.controller.motors.values())
+        self.controller.calls.append(('clear_error',self.i))
+        if self.i not in self.controller.sticky_faults:
+            self.controller.faults.pop(self.i,None)
+
     def get_state(self):
         mode=2 if self.controller.bad_stop else 0
-        return SimpleNamespace(arbitration_id=(2<<24)|(mode<<22)|(self.i<<8)|0xFD)
+        faults=self.controller.faults.get(self.i,0)
+        return SimpleNamespace(arbitration_id=(2<<24)|(mode<<22)|(faults<<16)|(self.i<<8)|0xFD)
 
     def close(self): pass
 
 
 class Controller:
-    def __init__(self): self.calls=[];self.motors={};self.bad_stop=False
+    def __init__(self):
+        self.calls=[];self.motors={};self.bad_stop=False
+        self.faults={};self.sticky_faults=set()
     def add_robstride_motor(self,i,host,model):
         motor=Motor(i,self);self.motors[i]=motor;return motor
     def close_bus(self): pass
@@ -104,12 +113,19 @@ def test_connect_prepare_acquire_are_readonly(fixture):
 
 
 @pytest.mark.parametrize('recovery_locked',[False,True])
-def test_readonly_feedback_timeout_retries_without_writes_or_reviving_permission(fixture,recovery_locked):
+@pytest.mark.parametrize('sdk_timeout',[False,True])
+def test_readonly_feedback_timeout_retries_without_writes_or_reviving_permission(fixture,recovery_locked,sdk_timeout):
     hw,sdk=fixture
     hw.prepare();hw.teleop_acquire()
     if recovery_locked:hw.recovery_required={'reason':'保留原始恢复锁定'}
     original=sdk.motors[4].robstride_get_param_f32_host_id
-    sdk.motors[4].robstride_get_param_f32_host_id=lambda index,*args:float('nan') if index==0x7019 else original(index,*args)
+    def read(index,*args):
+        if sdk_timeout and index==0x701A:
+            raise RuntimeError('robstride_get_param_f32_host_id failed: parameter 0x701A not received within 50ms for host_id 0xFD')
+        if not sdk_timeout and index==0x7019:
+            return float('nan')
+        return original(index,*args)
+    sdk.motors[4].robstride_get_param_f32_host_id=read
     wait_until(lambda:hw.phase=='FEEDBACK_WAIT')
     assert hw.worker.is_alive() and not hw.armed and not hw.session
     assert hw.target is None and hw.command_reference is None and sdk.calls==[]
@@ -120,6 +136,55 @@ def test_readonly_feedback_timeout_retries_without_writes_or_reviving_permission
     assert hw.worker.is_alive() and not hw.armed and not hw.session and sdk.calls==[]
     assert hw.clock()-hw._feedback_refreshed_at < .6
     assert bool(hw.recovery_required)==recovery_locked
+
+
+def test_idle_poll_retries_single_missing_reply_before_rebuilding_feedback(fixture):
+    hw,sdk=fixture
+    original=sdk.motors[4].robstride_get_param_f32_host_id
+    phases=[]
+    def read(index,*args):
+        if index==0x701A and len(phases)<2:
+            phases.append(hw.phase)
+            if len(phases)==1:
+                raise RuntimeError('robstride_get_param_f32_host_id failed: parameter 0x701A not received within 50ms for host_id 0xFD')
+        return original(index,*args)
+    sdk.motors[4].robstride_get_param_f32_host_id=read
+    wait_until(lambda:len(phases)==2)
+    assert phases==['READONLY','READONLY'] and sdk.calls==[]
+
+
+@pytest.mark.parametrize('failures',[1,2,6])
+def test_startup_retries_only_readonly_sdk_timeout(failures):
+    sdk=Controller()
+    bus=NativeXYZTransport(factory=lambda **kwargs:sdk,ownership=Owner())
+    hw=CspHardware([(-1,1)]*6,transport=bus)
+    add_motor=sdk.add_robstride_motor
+    failures_seen=0
+    def add(axis,host,model):
+        motor=add_motor(axis,host,model)
+        original=motor.robstride_get_param_f32_host_id
+        def read(index,host,timeout):
+            nonlocal failures_seen
+            if axis==1 and index==0x7019 and failures_seen<failures:
+                failures_seen+=1
+                assert timeout==50 and host==0xFD
+                raise RuntimeError('robstride_get_param_f32_host_id failed: parameter 0x7019 not received within 50ms for host_id 0xFD')
+            return original(index,host,timeout)
+        motor.robstride_get_param_f32_host_id=read
+        return motor
+    sdk.add_robstride_motor=add
+    try:
+        if failures==6:
+            with pytest.raises(RuntimeError,match='只读反馈连续 3 次'):
+                hw.connect()
+            assert hw.phase=='FAULT'
+        else:
+            hw.connect()
+            assert hw.phase=='READONLY' and len(hw.samples)==6
+        assert failures_seen==failures
+        assert not hw.armed and not hw.session and sdk.calls==[]
+    finally:
+        hw.close()
 
 
 def test_unclean_stop_stays_observable_and_blocks_retry_after_restart(fixture,tmp_path):
@@ -1036,6 +1101,46 @@ def test_reset_restores_snapshot_after_failed_stop_and_survives_restart(fixture,
         assert reset_and_wait(restarted)['status']=='succeeded'
         assert sdk.calls[calls:]==[('disable',i) for i in range(1,7)]
     finally: restarted.close()
+
+
+@pytest.mark.parametrize('fault,sticky,expected',[
+    (0x10,False,'succeeded'),(0x10,True,'failed'),(0x12,False,'failed')])
+def test_maintenance_clears_only_verified_stall_without_reopening_can(fixture,tmp_path,fault,sticky,expected):
+    from pathlib import Path
+    hw,sdk=fixture
+    source=Path(failed_motion(hw,sdk,tmp_path))
+    original=source.read_bytes()
+    sdk.bad_stop=False
+    sdk.faults.update({2:0x10,4:fault})
+    if sticky:sdk.sticky_faults.add(4)
+    calls=len(sdk.calls)
+    status=reset_and_wait(hw)
+    assert status['status']==expected,status
+    actions=sdk.calls[calls:]
+    assert [c for c in actions if c[0]=='clear_error']==([] if fault!=0x10 else [('clear_error',2),('clear_error',4)])
+    assert not any(c[0]=='enable' or c[:1]==('write',) and c[2]==0x7016 for c in actions)
+    assert hw.bus.controller is sdk and hw.worker.is_alive() and source.read_bytes()==original
+    assert not hw.armed and not hw.session and hw.target is None
+    if expected=='succeeded':
+        assert hw.phase=='READONLY' and not hw.recovery_required
+        assert hw.last_report['fault_clear']['attempted_axes']==[2,4]
+        assert hw.last_report['stop_after_clear']['errors']=={}
+        hw.prepare()
+        assert not any(m.enabled for m in sdk.motors.values())
+    else:
+        assert hw.phase=='RECOVERY' and hw.recovery_required
+        assert 'J4' in status['message']
+        assert not any(c[0]=='write' for c in actions)
+
+
+def test_maintenance_does_not_clear_stall_without_original_snapshot(fixture,tmp_path):
+    hw,sdk=fixture
+    hw.output=tmp_path
+    sdk.faults[2]=0x10
+    status=reset_and_wait(hw)
+    assert status['status']=='failed' and 'J2' in status['message']
+    assert hw.phase=='RECOVERY'
+    assert sdk.calls==[('disable',i) for i in range(1,7)]
 
 
 @pytest.mark.parametrize('issue',['disabled-status','protected-pid','foreign-runtime','missing-snapshot'])

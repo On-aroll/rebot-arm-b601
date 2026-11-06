@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 # Fixed local launch actions used by the project startup page.
 set -Eeuo pipefail
+# OpenCV is linked against the system NumPy ABI, outside the control venv.
+if [[ "${1:-}" == camera ]]; then
+  REBOTARM_CAMERA_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+  set +u
+  source /opt/ros/jazzy/setup.bash
+  set -u
+  export ROS_AUTOMATIC_DISCOVERY_RANGE="${REBOTARM_ROS_DISCOVERY_RANGE:-LOCALHOST}"
+  cd "${REBOTARM_CAMERA_ROOT}"
+  exec 7>"${XDG_RUNTIME_DIR:-/tmp}/rebotarm-gemini-color.lock"
+  flock -n 7 || { echo 'Gemini color bridge is already running' >&2; exit 1; }
+  exec /usr/bin/python3 scripts/orbbec_ros_camera_bridge.py --device auto --fps 8 --jpeg-quality 70
+fi
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/rs_env.sh"
 cd "${REBOTARM_RS_ROOT}"
 case "${1:-}" in

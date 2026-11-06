@@ -2,12 +2,16 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const { attachRosbridgeProxy } = require('./rosbridge-proxy');
 const localApi = require('./local-api');
 const { spawn } = require('child_process');
 const hardwareLauncher = require('./hardware-launcher');
 const workbench = require('./workbench-api').createWorkbench();
 const startup = require('./startup-manager').createStartupManager();
-const shutdown = require('./project-shutdown').createShutdownManager({starting:()=>startup.busy()||Boolean(quickStartPromise)});
+const {createShutdownManager,canStoppedWithoutReceivers}=require('./project-shutdown');
+const shutdown = createShutdownManager({starting:()=>startup.busy()||Boolean(quickStartPromise),
+  offlineCanOnly:async()=>canStoppedWithoutReceivers(await startup.status())});
+const maintenance = require('./maintenance-recovery').createMaintenanceManager({startup,blocked:()=>shutdown.blocked()||Boolean(quickStartPromise)});
 
 const { URL } = require('url');
 
@@ -172,7 +176,7 @@ async function handleQuickStart(req, res) {
     started: !reused,
     reused,
     webUrl: 'http://127.0.0.1:3002',
-    rosbridgeUrl: 'ws://127.0.0.1:9090',
+    rosbridgeUrl: `${USE_HTTPS ? 'wss' : 'ws'}://127.0.0.1:${PORT}/rosbridge`,
     rosNamespace: '/rebotarm_rs',
     message: reused ? '安全 RS 仿真已经在运行' : '安全 RS 仿真已启动',
     output: result.stdout.trim().split('\n').slice(-8),
@@ -188,6 +192,18 @@ function requestHandler(req, res) {
   if (req.method!=='GET' && urlPath.startsWith('/api/') && !urlPath.startsWith('/api/startup/shutdown') && shutdown.blocked()) {
     sendJson(res,409,{ok:false,error:'项目正在结束，暂停新的启动和控制请求'});return;
   }
+  if(req.method!=='GET' && urlPath.startsWith('/api/') && !urlPath.startsWith('/api/startup/shutdown/') && urlPath!=='/api/maintenance/restore' && maintenance.busy()) {
+    sendJson(res,409,{ok:false,error:'正在恢复连接与控制状态，请等待维护完成'});return;
+  }
+  if(urlPath.startsWith('/api/maintenance/')) {
+    (async()=>{
+      if(req.method==='GET'&&urlPath==='/api/maintenance/status')sendJson(res,200,maintenance.status());
+      else if(req.method==='POST'&&urlPath==='/api/maintenance/restore') {
+        const body=JSON.parse(await readBody(req));sendJson(res,202,maintenance.start(body.confirmed));
+      } else sendJson(res,405,{ok:false,error:'不支持的维护请求'});
+    })().catch(error=>sendJson(res,400,{ok:false,error:error.message}));
+    return;
+  }
   if (urlPath.startsWith('/api/startup/')) {
     const ownOrigin = `${USE_HTTPS ? 'https' : 'http'}://${req.headers.host}`;
     if (!isLoopbackRequest(req) || !/^(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/.test(req.headers.host || '') || (req.headers.origin && req.headers.origin !== ownOrigin) || (req.method !== 'GET' && req.headers.origin !== ownOrigin)) {
@@ -197,7 +213,7 @@ function requestHandler(req, res) {
       if (req.method === 'GET' && urlPath === '/api/startup/shutdown/status') sendJson(res,200,shutdown.status());
       else if (req.method === 'POST' && urlPath === '/api/startup/shutdown/start') {
         const body=JSON.parse(await readBody(req));
-        sendJson(res,202,shutdown.start(body.confirmed));
+        sendJson(res,202,shutdown.start(body.confirmed,body.powerOff));
       } else if (req.method === 'POST' && urlPath === '/api/startup/shutdown/finish') {
         const body=JSON.parse(await readBody(req)),receipt=shutdown.finish(body.id);
         res.once('finish',()=>setTimeout(()=>{
@@ -346,6 +362,7 @@ function createServer() {
 }
 
 const server = createServer();
+attachRosbridgeProxy(server, { serverPort: PORT, protocol: USE_HTTPS ? 'https' : 'http' });
 
 // 读取请求体
 function readBody(req) {

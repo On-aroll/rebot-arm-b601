@@ -57,13 +57,39 @@ trap cleanup EXIT INT TERM
 
 setsid ros2 launch rebotarm_bringup fake_rs_bringup.launch.py \
   arm_namespace:=rebotarm_rs \
+  joint_state_rate:="${REBOTARM_JOINT_STATE_RATE:-50.0}" \
   use_rviz:="${REBOTARM_USE_RVIZ:-false}" 9>&- &
 REBOTARM_CHILD_PIDS+=("$!")
+
+if [[ "${REBOTARM_START_ORBBEC_BRIDGE:-false}" == "true" ]]; then
+  setsid /usr/bin/python3 "${REBOTARM_RS_ROOT}/scripts/orbbec_ros_camera_bridge.py" \
+    --device "${REBOTARM_ORBBEC_DEVICE:-auto}" \
+    --topic "${REBOTARM_ORBBEC_TOPIC:-/camera/color/image_raw/compressed}" \
+    --info-topic "${REBOTARM_ORBBEC_INFO_TOPIC:-/camera/color/camera_info}" \
+    --fps "${REBOTARM_ORBBEC_FPS:-15}" \
+    --jpeg-quality "${REBOTARM_ORBBEC_JPEG_QUALITY:-80}" 9>&- &
+  REBOTARM_CHILD_PIDS+=("$!")
+
+  if [[ "${REBOTARM_START_ORBBEC_DETECTOR:-true}" == "true" ]]; then
+    setsid /usr/bin/python3 "${REBOTARM_RS_ROOT}/scripts/orbbec_color_detector.py" \
+      --image-topic "${REBOTARM_ORBBEC_TOPIC:-/camera/color/image_raw/compressed}" \
+      --detections-topic "${REBOTARM_ORBBEC_DETECTIONS_TOPIC:-/camera/color/detections}" \
+      --preview-topic "${REBOTARM_ORBBEC_PREVIEW_TOPIC:-/camera/color/preview/compressed}" \
+      --max-fps "${REBOTARM_ORBBEC_DETECTOR_FPS:-10}" \
+      --preview-fps "${REBOTARM_ORBBEC_PREVIEW_FPS:-4}" \
+      --preview-quality "${REBOTARM_ORBBEC_PREVIEW_QUALITY:-60}" 9>&- &
+    REBOTARM_CHILD_PIDS+=("$!")
+  fi
+fi
 
 setsid ros2 launch rebotarm_mujoco_rs mujoco_rs.launch.py \
   arm_namespace:=rebotarm_rs \
   simulation_mode:="${REBOTARM_MUJOCO_MODE:-physics}" \
+  update_rate:="${REBOTARM_MUJOCO_UPDATE_RATE:-250.0}" \
   wrist_camera_model:="${REBOTARM_WRIST_CAMERA_MODEL:-d405}" \
+  scene_camera_hz:="${REBOTARM_SCENE_CAMERA_HZ:-4.0}" \
+  wrist_camera_hz:="${REBOTARM_WRIST_CAMERA_HZ:-4.0}" \
+  enable_wrist_camera:="${REBOTARM_MUJOCO_WRIST_CAMERA:-false}" \
   enable_camera_selector:="${REBOTARM_CAMERA_SELECTOR:-${REBOTARM_MUJOCO_VIEWER:-true}}" \
   use_viewer:="${REBOTARM_MUJOCO_VIEWER:-true}" 9>&- &
 REBOTARM_CHILD_PIDS+=("$!")
@@ -94,12 +120,23 @@ fi
 echo "RS simulation: /rebotarm_rs"
 echo "MuJoCo mode: ${REBOTARM_MUJOCO_MODE:-physics}"
 echo "MuJoCo viewer: ${REBOTARM_MUJOCO_VIEWER:-true}"
-echo "Wrist camera: ${REBOTARM_WRIST_CAMERA_MODEL:-d405} (press C in MuJoCo to switch)"
+echo "Joint state publish rate: ${REBOTARM_JOINT_STATE_RATE:-50.0} Hz"
+echo "MuJoCo physics update rate: ${REBOTARM_MUJOCO_UPDATE_RATE:-250.0} Hz"
+echo "Scene camera rate: ${REBOTARM_SCENE_CAMERA_HZ:-4.0} Hz"
+echo "Wrist camera publisher: ${REBOTARM_MUJOCO_WRIST_CAMERA:-false}"
+echo "Wrist camera model: ${REBOTARM_WRIST_CAMERA_MODEL:-d405}"
 echo "MuJoCo state: /rebotarm_rs/mujoco/joint_states"
 echo "Object states: /rebotarm_rs/mujoco/object_states"
 echo "Color detections: /rebotarm_rs/vision/color_blocks/detections"
 if [[ "${REBOTARM_START_AGENT:-true}" == "true" ]]; then
   echo "MCP grasp agent: http://127.0.0.1:8081/mcp"
 fi
-echo "rosbridge: ws://0.0.0.0:9090"
+echo "rosbridge: ws://127.0.0.1:9090"
+if [[ "${REBOTARM_START_ORBBEC_BRIDGE:-false}" == "true" ]]; then
+  echo "Gemini color: ${REBOTARM_ORBBEC_TOPIC:-/camera/color/image_raw/compressed}"
+  echo "Gemini console preview: ${REBOTARM_ORBBEC_PREVIEW_TOPIC:-/camera/color/preview/compressed}"
+  if [[ "${REBOTARM_START_ORBBEC_DETECTOR:-true}" == "true" ]]; then
+    echo "Gemini 2D candidates: ${REBOTARM_ORBBEC_DETECTIONS_TOPIC:-/camera/color/detections} (uncalibrated; preview only)"
+  fi
+fi
 wait

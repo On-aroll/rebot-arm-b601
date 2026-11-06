@@ -31,11 +31,12 @@ test('isolated actual server gates config, quick-start and LLM before dispatch, 
   // Inert replacement managers: a dispatched control request fails this test.
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'rebot-api-')),web=path.join(root,'web');fs.mkdirSync(web);
   t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
-  for(const name of ['server.js','local-api.js'])fs.copyFileSync(path.join(__dirname,'..',name),path.join(web,name));
+  for(const name of ['server.js','local-api.js','rosbridge-proxy.js'])fs.copyFileSync(path.join(__dirname,'..',name),path.join(web,name));
   fs.writeFileSync(path.join(web,'hardware-launcher.js'),'module.exports={};');
   fs.writeFileSync(path.join(web,'startup-manager.js'),'exports.createStartupManager=()=>({busy:()=>false});');
   fs.writeFileSync(path.join(web,'workbench-api.js'),'exports.createWorkbench=()=>({handle:()=>{throw Error("dispatch forbidden")}});');
   fs.writeFileSync(path.join(web,'project-shutdown.js'),'exports.createShutdownManager=()=>({blocked:()=>false});');
+  fs.writeFileSync(path.join(web,'maintenance-recovery.js'),'exports.createMaintenanceManager=()=>({busy:()=>false,status:()=>({ok:true,job:{state:"idle"}}),start:confirmed=>{if(confirmed!==true)throw Error("confirmation required");return {ok:true,job:{state:"running",id:"inert-maintenance"}};}});');
   fs.mkdirSync(path.join(web,'public'));fs.writeFileSync(path.join(web,'public/index.html'),'local workbench');
   fs.mkdirSync(path.join(web,'public-private'));fs.writeFileSync(path.join(web,'public-private/secret'),'hidden');
   const child=spawn(process.execPath,['server.js'],{cwd:web,env:{...process.env,HTTPS:'0',PORT:'0',MOTORBRIDGE_WS_TOKEN:'test-secret'},stdio:['ignore','pipe','pipe']});
@@ -49,10 +50,16 @@ test('isolated actual server gates config, quick-start and LLM before dispatch, 
     const denied=await get(port,url,{origin:'https://attacker.example'});assert.equal(denied.status,403);assert.ok(!denied.body.includes('test-secret'));
     assert.equal((await get(port,url,{host:'attacker.example'})).status,403);
   }
-  for(const url of ['/api/quick-start','/api/llm/chat','/api/hardware/connect','/api/startup/start/hardware','/api/workbench/profiles']){
+  for(const url of ['/api/quick-start','/api/llm/chat','/api/hardware/connect','/api/startup/start/hardware','/api/workbench/profiles','/api/maintenance/restore']){
     assert.equal((await get(port,url,{},'POST')).status,403);
     assert.equal((await get(port,url,{origin:'null'},'POST')).status,403);
   }
+  assert.equal(JSON.parse((await get(port,'/api/maintenance/status')).body).job.state,'idle');
+  const origin=`http://127.0.0.1:${port}`;
+  const unconfirmed=await fetch(origin+'/api/maintenance/restore',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:'{"confirmed":false}'});
+  assert.equal(unconfirmed.status,400);
+  const confirmed=await fetch(origin+'/api/maintenance/restore',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:'{"confirmed":true}'});
+  assert.equal(confirmed.status,202);assert.equal((await confirmed.json()).job.id,'inert-maintenance');
   const config=await get(port,'/api/config');assert.equal(config.status,200);assert.equal(JSON.parse(config.body).motorbridge.token,'test-secret');
   assert.equal((await get(port,'/')).body,'local workbench');
   assert.equal((await get(port,'/../public-private/secret')).status,403);

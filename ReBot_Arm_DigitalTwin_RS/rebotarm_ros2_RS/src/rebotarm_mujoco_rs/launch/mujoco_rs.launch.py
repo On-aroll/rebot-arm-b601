@@ -25,7 +25,9 @@ def generate_launch_description():
             DeclareLaunchArgument("gripper_kd", default_value="18.0"),
             DeclareLaunchArgument("gripper_tau_limit", default_value="64.0"),
             DeclareLaunchArgument("enable_task_tools", default_value="true"),
-            DeclareLaunchArgument("enable_wrist_camera", default_value="true"),
+            DeclareLaunchArgument("scene_camera_hz", default_value="4.0"),
+            DeclareLaunchArgument("wrist_camera_hz", default_value="4.0"),
+            DeclareLaunchArgument("enable_wrist_camera", default_value="false"),
             Node(
                 package="rebotarm_mujoco_rs",
                 executable="mujoco_rs_sync",
@@ -98,6 +100,9 @@ def generate_launch_description():
                         "arm_namespace": LaunchConfiguration("arm_namespace"),
                         "model_path": LaunchConfiguration("model_path"),
                         "wrist_camera_model": LaunchConfiguration("wrist_camera_model"),
+                        "publish_hz": ParameterValue(
+                            LaunchConfiguration("scene_camera_hz"), value_type=float
+                        ),
                     }
                 ],
             ),
@@ -114,7 +119,9 @@ def generate_launch_description():
                         "camera_name": "wrist_rgb",
                         "wrist_camera_model": LaunchConfiguration("wrist_camera_model"),
                         "frame_id": "wrist_rgb_frame",
-                        "publish_hz": 12.0,
+                        "publish_hz": ParameterValue(
+                            LaunchConfiguration("wrist_camera_hz"), value_type=float
+                        ),
                     }
                 ],
             ),

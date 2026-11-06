@@ -3,6 +3,7 @@
   const dialog=document.getElementById('project-exit-dialog');
   if(!dialog)return;
   const confirm=document.getElementById('project-exit-confirm'),submit=document.getElementById('project-exit-submit');
+  const powerOff=document.getElementById('project-exit-power-off');
   const cancel=document.getElementById('project-exit-cancel'),status=document.getElementById('project-exit-status');
   const labels={hardware:'实机只读驱动',text:'文本代理',mcp:'MCP接口',simulation:'仿真与模型进程',bridge:'ROS联动接口'};
   let busy=false,polling=false;
@@ -22,7 +23,8 @@
   }
   function show(job){
     status.dataset.error=String(job.state==='error');
-    status.textContent=(job.steps||[]).map(s=>'✓ '+labels[s.kind]+'已结束').concat(job.message||'').join('\n');
+    const note=job.disable?.canAcknowledged===false?job.disable.source:'';
+    status.textContent=(job.steps||[]).map(s=>'✓ '+labels[s.kind]+'已结束').concat(note,job.message||'').filter(Boolean).join('\n');
   }
   async function follow(){
     if(polling)return;polling=true;
@@ -42,7 +44,8 @@
   document.querySelectorAll('[data-project-exit]').forEach(button=>button.addEventListener('click',async()=>{
     if(!dialog.open)dialog.showModal();
     if(busy)return;
-    confirm.checked=false;submit.disabled=true;status.textContent='先让机械臂有支撑并失能，再确认结束项目。关闭标签页不会执行此操作。';
+    confirm.checked=false;if(powerOff)powerOff.checked=false;
+    submit.disabled=true;status.textContent='确认机械臂有可靠支撑后，结束项目会先请求失能。关闭标签页不会执行此操作。';
     status.dataset.error='false';
     try{const {job}=await api('status');if(['running','ready','exiting'].includes(job.state)){busy=true;cancel.disabled=true;void follow();}else if(job.state==='error')show(job);}
     catch(error){status.dataset.error='true';status.textContent='无法读取退出状态：'+error.message;}
@@ -53,7 +56,7 @@
   submit.addEventListener('click',async()=>{
     if(busy||!confirm.checked)return;
     busy=true;submit.disabled=cancel.disabled=true;status.dataset.error='false';status.textContent='正在检查退出条件…';
-    try{const {job}=await api('start',{confirmed:true});show(job);void follow();}
+    try{const {job}=await api('start',{confirmed:true,powerOff:powerOff?.checked===true});show(job);void follow();}
     catch(error){busy=false;cancel.disabled=false;submit.disabled=!confirm.checked;status.dataset.error='true';status.textContent=error.message;}
   });
 })();

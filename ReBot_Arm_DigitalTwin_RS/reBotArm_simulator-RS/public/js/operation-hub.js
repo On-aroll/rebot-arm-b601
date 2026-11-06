@@ -205,7 +205,14 @@
   });
   document.querySelectorAll('[data-twin-mode]').forEach(button=>button.addEventListener('click',()=>selectView(button.dataset.twinMode,document.querySelector(`[data-hub-mode="${button.dataset.twinMode}"]`))));
   const initialProject = window.reBotControlMode?.get() || 'ros';
-  activateProject(initialProject, document.querySelector(`[data-project-mode="${initialProject}"]`));
+  const maintenanceEntry = window.location.hash === '#hub-reset-section';
+  if (maintenanceEntry) {
+    const entry = document.querySelector('[data-hub-system-section="hub-reset-section"]');
+    selectView('maintenance', entry);
+    scroll('hub-reset-section');
+  } else {
+    activateProject(initialProject, document.querySelector(`[data-project-mode="${initialProject}"]`));
+  }
   $('hub-hardware-advanced').hidden = !twin.hardware;
   $('twin-power-hold').hidden = !twin.hardware;
   text('hub-manual-help', twin.hardware
@@ -264,6 +271,6 @@
   try {
     const connectTarget=sessionStorage.getItem('rebotarm.startup.connect');
     sessionStorage.removeItem('rebotarm.startup.connect');
-    if(connectTarget===(twin.hardware?'hardware':'simulation') && !window.reBotRos.connected) $('twin-connect').click();
+    if(!maintenanceEntry && connectTarget===(twin.hardware?'hardware':'simulation') && !window.reBotRos.connected) $('twin-connect').click();
   } catch (_) {}
 })();

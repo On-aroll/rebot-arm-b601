@@ -21,6 +21,7 @@
   let lastControllerMessage = '', lastControllerPhase = '', stopping = false;
   let controlRange = 'small', changingRange = false, renderedRange = '', powerBusy = false;
   let resetting = false, resetJob = '', seenReset = '', resetAwaitingPose = false;
+  let maintenanceJob = '';
   let controlEpoch = 0;
   let manualError = '', gripperProbeRequested = false;
   let shownGripperSpeedMax = null;
@@ -126,6 +127,7 @@
     $('twin-limit-summary').textContent = settings.official_speed_max_rad_s
       ? `官方网页关节速度上限 ${settings.official_speed_max_rad_s} rad/s；结合电机内限速，当前生效上限 ${settings.max_speed_rad_s} rad/s。\n官方轨迹加速度 ${settings.acceleration_rad_s2} rad/s²，坐标轨迹 jerk 上限 ${settings.jerk_rad_s3} rad/s³。\nJ1–J3 / J4–J6：驱动峰值力矩 ${settings.torque_limits_nm[0]} / ${settings.torque_limits_nm[3]} N·m，电流运行上限 ${settings.current_limits_a[0]} / ${settings.current_limits_a[3]} A；普通动作持续重力按官方额定 ${settings.gravity_limits_nm[0]} / ${settings.gravity_limits_nm[3]} N·m 检查。峰值不表示可持续输出。${settings.support_recovery ? `\n支撑恢复第 ${settings.support_recovery.stage}/${settings.support_recovery.stages} 段：${settings.support_recovery.exception}；当前阶段模型预检包络 ${settings.support_recovery.gravity_limits_nm.join('/')} N·m。` : ''}\n关节范围沿用官方 RS 模型及 J1 ±150°。通信超时、跟踪误差和现场确认是本工程保护，官方没有为本 CSP 链路提供替代值。`
       : '小幅试机保留原试验范围。使用官方运行参数请选择完整控制；完整控制无需先进行小幅试机。';
+    if(settings.joint_limit_margin_deg) $('twin-limit-summary').textContent += `\n六轴软件生效限位：各自原始范围上下各扩展 ${settings.joint_limit_margin_deg}°；预览、手动、程序与最终驱动检查使用同一范围。扩展带内允许双向控制，新边界外仍拒绝；不再额外叠加起点容差。`;
     $('twin-control-timing').textContent = settings.command_period_ms == null
       ? settings.poll_duration_ms == null ? '目标更新周期：运动启动后显示；单一 CAN 控制器交错轮询'
         : `只读反馈查询：${settings.poll_duration_ms.toFixed(0)} ms / 轮 · 运动参考目标周期 ${settings.reference_period_target_ms ?? 90} ms，运动后显示实测值`
@@ -210,6 +212,7 @@
     resetAwaitingPose = true;
   }
   function showReset(status) {
+    if(maintenanceJob)return;
     const key = `${status.id}:${status.status}`;
     if (key === seenReset) return;
     seenReset = key;
@@ -219,8 +222,38 @@
     $('twin-reset-status').dataset.error = String(status.status === 'failed');
     tell(status.message,status.status === 'failed');
   }
+  function showMaintenance(job) {
+    maintenanceJob=job.state==='running'?job.id:'';
+    resetting=job.state==='running';
+    $('twin-reset-status').textContent=job.message;
+    $('twin-reset-status').dataset.error=String(job.state==='error');
+    tell(job.message,job.state==='error');
+    if(job.state==='done') {
+      resetJob=job.result?.resetId||'';resetAwaitingPose=true;
+      if(!client.connected&&client.socket?.readyState!==0) {
+        window.reBotControlMode?.set('ros');
+        if(!$('ros-url').value.trim())$('ros-url').value=`${location.protocol==='https:'?'wss':'ws'}://${location.host}/rosbridge`;
+        $('ros-connect').click();
+      }
+    }
+    updateControls();
+  }
+  async function restoreHardware() {
+    resetting=true;maintenanceJob='requesting';resetJob='';seenReset='';
+    resetLocalControls();updateControls();
+    try {
+      const result=await window.ReBotMaintenance.restore(showMaintenance);
+      if(result.state==='idle') {maintenanceJob='';resetting=false;updateControls();return;}
+      showMaintenance(result);
+    } catch(error) {
+      maintenanceJob='';resetting=false;
+      $('twin-reset-status').textContent=`恢复结果未确认：${error.message}。可刷新页面查看维护进度；不会自动重复恢复。`;
+      $('twin-reset-status').dataset.error='true';tell($('twin-reset-status').textContent,true);updateControls();
+    }
+  }
   $('twin-reset-control').addEventListener('click',async () => {
     if (resetting) return;
+    if(hardware&&window.ReBotMaintenance) {await restoreHardware();return;}
     resetting = true; resetJob = ''; seenReset = '';
     resetLocalControls(); updateControls();
     if (!client.connected) {
@@ -245,6 +278,22 @@
     }
     updateControls();
   });
+  if(hardware&&window.ReBotMaintenance) {
+    let resumedJob='';
+    void window.ReBotMaintenance.resume(job=>{
+      resumedJob=job.id;
+      if(!maintenanceJob||maintenanceJob===job.id) {
+        if(!maintenanceJob)resetLocalControls();
+        showMaintenance(job);
+      }
+    }).then(job=>{if(resumedJob&&maintenanceJob===resumedJob)showMaintenance(job);}).catch(()=>{
+      if(resumedJob&&maintenanceJob===resumedJob) {
+        maintenanceJob='';resetting=false;
+        $('twin-reset-status').textContent='维护进度连接中断，结果未确认；刷新页面可重新查看。';
+        $('twin-reset-status').dataset.error='true';updateControls();
+      }
+    });
+  }
 
   $('twin-target').value = rosUI.target;
   $('twin-target').addEventListener('change', () => {
@@ -298,7 +347,10 @@
         if (!response.ok || !result.ok) throw new Error(result.error || '实机反馈服务启动失败');
       }
       const url = $('ros-url');
-      if (!url.value.trim()) url.value = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.hostname || '127.0.0.1'}:9090`;
+      if (!url.value.trim()) {
+        const scheme = location.protocol === 'https:' ? 'wss' : 'ws';
+        url.value = location.host ? `${scheme}://${location.host}/rosbridge` : `${scheme}://127.0.0.1:9090`;
+      }
       $('ros-connect').click();
       tell('正在连接；等待统一控制器与关节反馈…');
     } catch (error) { tell(error.message,true); }
@@ -606,6 +658,7 @@
       const state = JSON.parse(message.data);
       if (!validJoints(state.actual) || !Array.isArray(state.pose) || !state.pose.every(Number.isFinite)) return;
       const firstFeedback = !receivedAt;
+      const wasRecovering=Boolean(feedback?.recovery_required)||feedback?.hardware_phase==='RECOVERY';
       feedback = state; receivedAt = performance.now();
       if(hardware && !gripperProbeRequested && !state.extensions?.gripper?.available && state.hardware_phase==='READONLY' && !state.owned) {
         gripperProbeRequested=true;void request('gripper_probe').catch(error=>tell(error.message,true));
@@ -618,7 +671,7 @@
       if (jogActive && neutralSequence !== null && state.mode === 'HOLD' && state.input_seq >= neutralSequence) {
         jogActive = false; neutralSequence = null;
       }
-      if (state.reset_status && (state.reset_status.id === resetJob || ['queued','running'].includes(state.reset_status.status))) {
+      if (!maintenanceJob && state.reset_status && (state.reset_status.id === resetJob || ['queued','running'].includes(state.reset_status.status))) {
         if (!resetJob || state.reset_status.id !== resetJob) { resetJob = state.reset_status.id; resetLocalControls(); }
         showReset(state.reset_status);
       }
@@ -640,6 +693,8 @@
       // A 20 Hz status must not immediately erase preview/validation results.
       if (session && !jogActive && state.message !== lastControllerMessage) tell(state.message);
       if (!resetting && state.recovery_required && state.message !== lastControllerMessage) tell(state.message,true);
+      if(wasRecovering&&!state.recovery_required&&state.hardware_phase==='READONLY'&&state.feedback_valid===true&&state.cleanup_ok===true&&!maintenanceJob)
+        tell(state.reset_status?.status==='succeeded'?state.reset_status.message:'停止与恢复核对已完成，当前只读；可以重新选择范围和准备控制。');
       if (state.hardware_phase === 'HOLDING' && state.message !== lastControllerMessage) {
         const reason=state.communication_hold?.reason;
         tell(reason && !state.message.includes(reason) ? `${state.message}（触发原因：${reason}）` : state.message,true);
@@ -672,7 +727,7 @@
   },{throttleRate:1});
   client.addEventListener('status',(event) => {
     if (event.detail.state === 'closed' || event.detail.state === 'error') {
-      if (resetting) {
+      if (resetting && !maintenanceJob) {
         resetting = false;
         $('twin-reset-status').textContent = '重置期间连接中断，实机结果未确认；重新连接反馈后查看重置结果。';
         $('twin-reset-status').dataset.error = 'true';
@@ -688,7 +743,7 @@
     const fresh = client.connected && receivedAt && performance.now()-receivedAt < 500 && feedback?.feedback_valid !== false;
     showControlRange(feedback?.control_settings);
     for(const id of ['twin-joint-speed','twin-linear-speed','twin-angular-speed']) $(id).disabled = resetting || acquiring || Boolean(session && ['GOAL','JOG'].includes(feedback?.mode));
-    $('twin-reset-control').textContent = resetting ? '↻ 正在重置…' : '↻ 重置控制状态';
+    $('twin-reset-control').textContent = resetting ? '↻ 正在恢复…' : hardware ? '↻ 已支撑，恢复连接与状态' : '↻ 重置仿真控制状态';
     $('twin-reset-control').disabled = resetting;
     $('twin-connection').textContent = fresh ? (hardware ? '实机反馈已连接' : '仿真反馈已连接') : (client.connected ? '等待统一控制器反馈' : 'ROS 未连接');
     $('twin-connection').dataset.ok = String(Boolean(fresh));

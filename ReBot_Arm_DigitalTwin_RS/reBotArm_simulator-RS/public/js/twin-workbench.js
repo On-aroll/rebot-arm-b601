@@ -8,21 +8,24 @@
   let writingSegments = [], programBusy = false, submittedRun = '';
   const writingColors = ['#ffc857','#50e3c2','#70b7ff','#ff8fbd'];
   function writingPath(program) {
-    writingSegments=[];let previous=null;
+    writingSegments=[];let previous=null;const colors=new Map();
     program.steps.forEach((s,index)=>{
-      const match=/^([国庆快乐])·\d+·书写$/.exec(s.label||'');
+      const match=/^([A-Za-z0-9国庆快乐])·\d+·书写$/.exec(s.label||'');
       if(match&&s.type==='pose'&&previous&&finiteVector(s.pose,6)&&finiteVector(previous,6)){
-        writingSegments.push({a:previous.slice(0,3),b:s.pose.slice(0,3),index,color:writingColors['国庆快乐'.indexOf(match[1])]});
+        if(!colors.has(match[1]))colors.set(match[1],writingColors[colors.size%writingColors.length]);
+        writingSegments.push({a:previous.slice(0,3),b:s.pose.slice(0,3),index,color:colors.get(match[1])});
       }
       previous=s.type==='pose'?s.pose:null;
     });
     $('wb-writing-preview').hidden=!writingSegments.length;
     $('wb-writing-svg').replaceChildren();
     if(writingSegments.length){
-      const points=writingSegments.flatMap(s=>[s.a,s.b]),xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
+      const project=window.ReBotWritingPlane.projector(program.writing_plane);
+      const points=writingSegments.flatMap(s=>[project(s.a),project(s.b)]),xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
       const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+      $('wb-writing-note').textContent=`${program.writing_plane?'末端法向平面展开：字宽':'XY 平面：X'} ${((maxX-minX)*1000).toFixed(1)} mm / ${program.writing_plane?'字高':'Y'} ${((maxY-minY)*1000).toFixed(1)} mm；退笔段不连线。显示系统TCP规划，实际接触书写需标定笔尖和纸面。`;
       const scale=Math.min(880/Math.max(.001,maxX-minX),160/Math.max(.001,maxY-minY));
-      const x=p=>480+(p[0]-(minX+maxX)/2)*scale,y=p=>120-(p[1]-(minY+maxY)/2)*scale;
+      const x=p=>480+(project(p)[0]-(minX+maxX)/2)*scale,y=p=>120-(project(p)[1]-(minY+maxY)/2)*scale;
       writingSegments.forEach(s=>{
         const line=document.createElementNS('http://www.w3.org/2000/svg','line');
         for(const [key,value] of Object.entries({x1:x(s.a),y1:y(s.a),x2:x(s.b),y2:y(s.b),stroke:s.color,'stroke-width':6,'stroke-linecap':'round'}))line.setAttribute(key,String(value));
@@ -91,17 +94,20 @@
     if(programBusy){requestEpoch++;if(twin.owned())void twin.stop('程序已更换，取消上次执行准备');}
     plan=null;watchedRun='';ghostEpoch++;$('wb-program-json').value=json(program);$('wb-program-name').value=program.name||'导入程序';
     status('wb-program-status',message);$('wb-program-state').textContent=`${program.steps.length}步 · 已载入`;
-    $('wb-program-steps').replaceChildren();writingPath(program);return program;
+    $('wb-program-steps').replaceChildren();writingPath(program);
+    window.dispatchEvent(new CustomEvent('rebot-program-loaded',{detail:{program}}));return program;
   }
+  window.ReBotWritingEditor={load:loadProgram,preview:previewProgram,visual:visualizeProgram,execute:executeProgram,invalidate(){requestEpoch++;plan=null;ghostEpoch++;writingPath({steps:[]});status('wb-program-status','书写设置已修改，请重新确认平面；旧检查已作废。');}};
   function editorProgram() {const p=convertTrajectory(JSON.parse($('wb-program-json').value));p.name=$('wb-program-name').value;return p;}
-  $('wb-program-json').addEventListener('input',()=>{if(programBusy){requestEpoch++;if(twin.owned())void twin.stop('程序已修改，取消执行准备');}plan=null;ghostEpoch++;writingPath({steps:[]});status('wb-program-status','程序已修改，下次执行时自动检查');});
+  $('wb-program-json').addEventListener('input',()=>{if(programBusy){requestEpoch++;if(twin.owned())void twin.stop('程序已修改，取消执行准备');}window.ReBotWritingWorkflow?.invalidate();plan=null;ghostEpoch++;writingPath({steps:[]});status('wb-program-status','程序已修改，书写程序须重新确认平面，其余程序下次执行时自动检查');});
   $('wb-program-import').addEventListener('change',async e=>{try{loadProgram(await readFile(e.target));}catch(err){status('wb-program-status',err.message,true);}finally{e.target.value='';}});
   action('wb-program-example','wb-program-status',()=>loadProgram(contracts?.program||sample([{type:'wait',seconds:1,label:'等待一秒（不移动）'}])));
-  action('wb-program-writing','wb-program-status',async()=>{
-    const response=await fetch('/programs/guoqing_kuaile.json',{cache:'no-store'});
-    if(!response.ok)throw new Error('书写示例未生成，请运行 scripts/generate_guoqing_program.py');
-    loadProgram(await response.json(),'已载入26笔「国庆快乐」；点击「使能并执行程序」开始空中书写。');
-  });
+  function selectWriting(text) {
+    window.dispatchEvent(new CustomEvent('rebot-writing-select',{detail:{text}}));
+    status('wb-program-status',`已打开 ${text} 的书写平面设置；记录末端位姿、核对法线方向后生成预览。`);
+  }
+  action('wb-program-writing','wb-program-status',()=>selectWriting('国庆快乐'));
+  action('wb-program-bit103','wb-program-status',()=>selectWriting('BIT103'));
   action('wb-writing-view','wb-program-status',()=>{$('hub-monitor').open=true;window.reBotSim?.focusWritingPath();$('viewport').scrollIntoView({behavior:'smooth',block:'center'});});
   action('wb-program-export','wb-program-status',()=>download(editorProgram(),'b601-motion-program.json'));
   function pickValue(id){
@@ -132,18 +138,37 @@
     loadProgram(program,'已生成指定点夹取程序；执行前检查路径、TCP与现场空间。夹持判定后原位保持。');
     status('wb-pick-status',`已生成 ${program.steps.length} 步，未发送运动；使用下方检查/执行按钮。`);
   });
-  async function programs() {library=(await api('programs')).programs;$('wb-program-library').replaceChildren(new Option('选择本机程序',''),...library.map(p=>new Option(`${p.program.name||'程序'} · ${new Date(p.saved_at).toLocaleString()}`,p.id)));}
+  async function programs() {library=(await api('programs')).programs;$('wb-program-saved').replaceChildren(...library.map(p=>new Option(`${p.program.name||'程序'} · ${new Date(p.saved_at).toLocaleString()}`,p.id)));}
   action('wb-program-save','wb-program-status',async()=>{await api('programs',editorProgram());await programs();status('wb-program-status','已保存到本机程序库');});
-  action('wb-program-load','wb-program-status',()=>{const p=library.find(p=>p.id===$('wb-program-library').value);if(!p)throw new Error('请选择程序');loadProgram(p.program);});
+  action('wb-program-load','wb-program-status',()=>{
+    const value=$('wb-program-library').value,text=value.startsWith('writing:')?value.slice(8):'';
+    if(['BIT103','国庆快乐'].includes(text)){selectWriting(text);return;}
+    const p=library.find(p=>p.id===value);if(!p)throw new Error('请选择程序或书写模板');loadProgram(p.program);
+  });
   function showPlan(p) {
-    writingPath(p.program);
+    // Older drivers normalize motion data and omit inert display metadata.
+    // Keep the editor's frozen plane for its matching checked program only.
+    const edited=editorProgram();
+    const plane=edited.name===p.program.name&&edited.steps.length===p.program.steps.length?edited.writing_plane:null;
+    writingPath({...p.program,writing_plane:plane});
     plan=p;watchedRun='';ghostEpoch++;$('wb-program-steps').replaceChildren(...p.steps.map((s,i)=>{
       const li=document.createElement('li');li.textContent=`${i+1} · ${s.label} / ${s.type} · ${s.duration.toFixed(2)}秒${s.retimed?'（已按限速延长）':''}`;return li;
     }));
     $('wb-program-state').textContent=`${p.steps.length}步 · 预计${p.duration.toFixed(1)}秒`;
     status('wb-program-status','整套路径检查通过；预览60秒有效，起点变化须重算。');
   }
-  action('wb-program-preview','wb-program-status',async()=>{status('wb-program-status','正在检查每一步逆解、路径和时长…');showPlan((await twin.request('program_preview',{program:editorProgram()})).program_plan);});
+  async function previewProgram(){
+    const program=editorProgram(),epoch=requestEpoch;
+    if(program.writing_setup||window.ReBotWritingWorkflow?.active?.()){if(!window.ReBotWritingWorkflow)throw new Error('书写设置尚未就绪');window.ReBotWritingWorkflow.assertCurrent(program);}
+    window.ReBotWritingWorkflow?.uncheck?.(program);plan=null;ghostEpoch++;
+    status('wb-program-status','正在检查每一步逆解、路径和时长…');
+    const result=await twin.request('program_preview',{program});
+    if(epoch!==requestEpoch)throw new Error('设置已修改，本次路径检查已作废');
+    if(program.writing_setup||window.ReBotWritingWorkflow?.active?.())window.ReBotWritingWorkflow.assertCurrent(program);
+    showPlan(result.program_plan);
+    window.dispatchEvent(new CustomEvent('rebot-program-checked',{detail:{program}}));
+  }
+  action('wb-program-preview','wb-program-status',previewProgram);
   function playGhost(p) {
     const epoch=++ghostEpoch,started=performance.now();let offset=0;
     const timeline=p.steps.map(s=>{const row={...s,offset};offset+=s.duration;return row;});
@@ -157,12 +182,15 @@
       requestAnimationFrame(frame);
     };requestAnimationFrame(frame);status('wb-program-status','正在播放目标虚影；实色模型保持真实反馈，本操作不发送运动。');
   }
-  action('wb-program-visual','wb-program-status',()=>{if(!plan)throw new Error('先检查整套路径');$('hub-monitor').open=true;playGhost(plan);$('viewport').scrollIntoView({behavior:'smooth',block:'center'});});
+  function visualizeProgram(){if(!plan)throw new Error('先检查整套路径');const program=editorProgram();if(program.writing_setup||window.ReBotWritingWorkflow?.active?.())window.ReBotWritingWorkflow.assertCurrent(program,true);$('hub-monitor').open=true;playGhost(plan);$('viewport').scrollIntoView({behavior:'smooth',block:'center'});}
+  action('wb-program-visual','wb-program-status',visualizeProgram);
   async function executeProgram() {
     if(programBusy||submittedRun||['running','paused'].includes(twin.state()?.extensions?.program?.status))throw new Error('已有程序正在执行或暂停，请先取消');
     if(simTrial)throw new Error('请先结束当前仿真试运行');
     const program=editorProgram(),epoch=++requestEpoch;
-    const check=()=>{if(epoch!==requestEpoch||document.hidden)throw new Error('执行准备已取消');};
+    if(twin.hardware&&program.writing_plane?.preview_only)throw new Error('此书写程序是几何预览；须完成实际笔尖、工具碰撞体与纸面标定后才能实机执行。');
+    if(program.writing_setup||window.ReBotWritingWorkflow?.active?.()){if(!window.ReBotWritingWorkflow)throw new Error('书写设置尚未就绪');window.ReBotWritingWorkflow.assertCurrent(program,true);}
+    const check=()=>{if(epoch!==requestEpoch||document.hidden)throw new Error('执行准备已取消');if(program.writing_setup||window.ReBotWritingWorkflow?.active?.())window.ReBotWritingWorkflow.assertCurrent(program,true);};
     programBusy=true;
     try {
       status('wb-program-status','正在自动准备控制…');
@@ -186,6 +214,7 @@
   // A separate rosbridge client is hard-wired to the Fake namespace. It cannot
   // address /rebotarm, acquire a real lease, or overwrite the solid model.
   async function simulationTrial(program) {
+    if(program.writing_setup||window.ReBotWritingWorkflow?.active?.()){if(!window.ReBotWritingWorkflow)throw new Error('书写设置尚未就绪');window.ReBotWritingWorkflow.assertCurrent(program);}
     if(twin.owned())throw new Error('请先停止并释放当前控制，再试运行仿真');
     if(simTrial)throw new Error('已有仿真试运行');
     const epoch=++requestEpoch;

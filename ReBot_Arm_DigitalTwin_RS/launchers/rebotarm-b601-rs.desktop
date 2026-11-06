@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Application
 Name=ReBot Arm B601-RS 项目启动台
-Comment=打开项目启动页面，按顺序启动 ROS 联动、仿真和实机反馈
+Comment=一键检查并启动只读实机反馈与相机，不使能电机
 Path=/home/bonvoyage/Desktop/rebot-b601-doc-replica/ReBot_Arm_DigitalTwin_RS
-Exec=/home/bonvoyage/Desktop/rebot-b601-doc-replica/ReBot_Arm_DigitalTwin_RS/scripts/quick_start.sh --web-only
+Exec=/home/bonvoyage/Desktop/rebot-b601-doc-replica/ReBot_Arm_DigitalTwin_RS/scripts/quick_start.sh --hardware
 Icon=/home/bonvoyage/Desktop/rebot-b601-doc-replica/ReBot_Arm_DigitalTwin_RS/reBotArm_simulator-RS/public/favicon.png
 Terminal=false
 Categories=Development;Science;

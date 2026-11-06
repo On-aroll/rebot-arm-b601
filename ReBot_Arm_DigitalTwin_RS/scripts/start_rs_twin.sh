@@ -6,4 +6,6 @@ source scripts/rs_env.sh
 # supplies a motion input. It never calls the legacy auto-hold/home launch.
 exec 8>"${XDG_RUNTIME_DIR:-/tmp}/rebotarm-csp-twin.lock"
 flock -n 8 || { echo 'CSP twin is already running' >&2; exit 1; }
+# Recheck the current USB enumeration immediately before opening the driver.
+/usr/bin/python3 scripts/can_interface.py --require-ready
 exec python3 -m rebotarmcontroller.csp_twin_driver

@@ -71,8 +71,12 @@
 
     subscribe(topic, type, callback, options) {
       const throttleRate = options && options.throttleRate ? options.throttleRate : 80;
-      this._subscriptions.set(topic, { topic, type, callback, throttleRate });
-      if (this.connected) this._sendSubscribe(topic, type, throttleRate);
+      const requestedQueueLength = Number(options && options.queueLength);
+      const queueLength = Number.isInteger(requestedQueueLength) && requestedQueueLength > 0
+        ? requestedQueueLength
+        : 0;
+      this._subscriptions.set(topic, { topic, type, callback, throttleRate, queueLength });
+      if (this.connected) this._sendSubscribe(topic, type, throttleRate, queueLength);
     }
 
     unsubscribe(topic) {
@@ -354,18 +358,20 @@
 
     _resubscribe() {
       this._subscriptions.forEach((sub) => {
-        this._sendSubscribe(sub.topic, sub.type, sub.throttleRate);
+        this._sendSubscribe(sub.topic, sub.type, sub.throttleRate, sub.queueLength);
       });
     }
 
-    _sendSubscribe(topic, type, throttleRate) {
-      this._send({
+    _sendSubscribe(topic, type, throttleRate, queueLength = 0) {
+      const message = {
         op: 'subscribe',
         id: this._id('sub'),
         topic,
         type,
         throttle_rate: throttleRate
-      });
+      };
+      if (queueLength > 0) message.queue_length = queueLength;
+      this._send(message);
     }
 
     _handleMessage(event) {

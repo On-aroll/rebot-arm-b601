@@ -360,10 +360,11 @@ class CspGripper:
             if self.view and self.view.active:
                 raise  # arm worker's existing finally stops both scopes
 
-    def finish(self, *, recover=False):
+    def finish(self, *, recover=False, check=lambda:None):
         self.authorized = False;self.pause()
         if self.grasp:self.grasp.cancel()
         if not self.view and recover and self.recovery:
+            check()
             row = self.recovery
             if row.get('version') != 'native-csp-twin-j7-v2-official':raise ValueError('J7恢复记录版本不符')
             original = {int(k, 16): v for k, v in row.get('original', {}).items()}
@@ -381,20 +382,22 @@ class CspGripper:
             self._motor().disable();v.disabled_status();v.active.clear()
             deadline = self.clock()+2;quiet = None
             while self.clock() < deadline:
+                check()
                 s = self._read();now = self.clock()
                 quiet = (quiet if quiet is not None else now) if abs(s.qd) <= .01 else None
                 if quiet is not None and now-quiet >= .3:break
                 time.sleep(.02)
             else:raise RuntimeError('J7失能后未连续确认停稳')
             for index in (*v.runtime, *PROTECTED):
+                check()
                 current = v.read_register(index)
                 allowed = [v.original[index]] + ([v.runtime[index]] if index in v.runtime else [])
                 if not any(math.isclose(current, value, rel_tol=1e-6, abs_tol=1e-6) for value in allowed):
                     raise ValueError('J7当前参数不属于原始/本次临时值，禁止恢复')
             v.restoration_authorized = True
-            if 0x7016 in v.changed:v.write_register(0x7016, s.q, lambda: None, phase='disabled-current')
+            if 0x7016 in v.changed:v.write_register(0x7016, s.q, check, phase='disabled-current')
             for index in (0x7005, 0x7017, 0x7018, 0x700B):
-                if index in v.changed:v.write_register(index, v.original[index], lambda: None, phase='restore')
+                if index in v.changed:v.write_register(index, v.original[index], check, phase='restore')
             self._read();self._save(False);self.view = None;self.error = ''
             self.reference = None;self.history = []
         except Exception as exc:

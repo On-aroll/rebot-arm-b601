@@ -174,18 +174,30 @@ class CspTransport(SeeedTransport):
         except Exception as e:
             entry.update(status='unknown-may-have-reached-drive',error=str(e)); raise
 
-    def disabled_status(self):
+    def stop_status(self):
+        return self.read_stop_status(self.motors[self.axis], self.axis)
+
+    @staticmethod
+    def read_stop_status(motor, axis):
         """Called only immediately after SDK disable's new-status wait."""
-        state=self.motors[self.axis].get_state()
+        state=motor.get_state()
         if state is None: raise ValueError('失能后的状态帧缺失')
         arbitration=int(state.arbitration_id)
-        if (arbitration>>24)&0x1F != 2 or (arbitration>>8)&0xFF != self.axis:
+        if (arbitration>>24)&0x1F != 2 or (arbitration>>8)&0xFF != axis:
             raise ValueError('失能后的状态帧类型或电机 ID 不符')
         mode=(arbitration>>22)&3; faults=(arbitration>>16)&0x3F
-        if mode!=0 or faults:
-            raise ValueError(f'失能状态未确认：模式位 {mode}，故障位 {faults:#x}')
         return dict(arbitration_id=arbitration,mode_state=mode,fault_bits=faults,
                     source='SDK status after disable; no independent drive timestamp')
+
+    @staticmethod
+    def require_disabled_status(status):
+        mode, faults = status['mode_state'], status['fault_bits']
+        if mode!=0 or faults:
+            raise ValueError(f'失能状态未确认：模式位 {mode}，故障位 {faults:#x}')
+        return status
+
+    def disabled_status(self):
+        return self.require_disabled_status(self.stop_status())
 
     def quiesce(self):
         scope=self.permit and (self.permit.axes==(self.axis,) or self.coordinated and self.permit.axes==tuple(MODELS) and self.permit.coordinated_start_checked)

@@ -59,7 +59,7 @@ def validate_review(hw, request):
     source, reference_path = pinned_json(hw.output,request['reference_report'],request['reference_sha256'],'csp-session-')
     if not source.get('cleanup_ok') or not (source.get('restoration') or {}).get('ok'):
         raise ValueError('所选历史基准必须有已完成恢复的记录')
-    originals, version = validate_snapshot(source,hw.teleop_limits)
+    originals, version = validate_snapshot(source,hw.teleop_limits,nominal_limits=getattr(hw,'nominal_limits',None))
     recovery, recovery_path = pinned_json(hw.output,request['recovery_report'],request['recovery_sha256'],'csp-session-')
     if (recovery_path != str(Path(hw.recovery_required.get('report','')).resolve())
             or recovery.get('cleanup_ok')):

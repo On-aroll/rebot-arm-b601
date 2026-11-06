@@ -12,6 +12,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import secrets
 import socket
 import threading
@@ -22,6 +23,15 @@ _PERMIT_LOCK=threading.RLock()
 _CONSUMED_PERMITS=set()
 
 MODELS={i:'rs-06' if i<=3 else 'rs-00' for i in range(1,7)}
+
+
+def sdk_parameter_reply_timeout(error):
+    # motorbridge 0.5.6 exposes this receive deadline as CallError(RuntimeError).
+    return isinstance(error, RuntimeError) and re.fullmatch(
+        r'robstride_get_param_f32_host_id failed: parameter 0x[0-9A-Fa-f]{4} not received within \d+ms for host_id 0xFD',
+        str(error),
+    ) is not None
+
 
 @dataclass(frozen=True)
 class Sample:
@@ -249,13 +259,25 @@ class SdkTransport:
         except Exception:
             self.close(); raise
 
-    def read(self, axes, policy, check=lambda:None):
+    def read_parameter_f32(self, axis, index, timeout_ms, check, *, retry_timeout=False):
+        read = self.motors[axis].robstride_get_param_f32_host_id
+        try:
+            return read(index,0xFD,timeout_ms)
+        except RuntimeError as exc:
+            if not retry_timeout or not sdk_parameter_reply_timeout(exc):
+                raise
+            check()
+            self.ownership.check()
+            return read(index,0xFD,timeout_ms)
+
+    def read(self, axes, policy, check=lambda:None, *, retry_timeout=False):
         samples={}
         for i in axes:
             check(); self.ownership.check(); requested=self.clock(); motor=self.motors[i]
-            q=motor.robstride_get_param_f32_host_id(0x7019,0xFD,max(1,int(policy.io_timeout*1000)))
+            timeout_ms=max(1,int(policy.io_timeout*1000))
+            q=self.read_parameter_f32(i,0x7019,timeout_ms,check,retry_timeout=retry_timeout)
             check()
-            v=motor.robstride_get_param_f32_host_id(0x701B,0xFD,max(1,int(policy.io_timeout*1000)))
+            v=self.read_parameter_f32(i,0x701B,timeout_ms,check,retry_timeout=retry_timeout)
             check()
             # SDK i8 path may retry for >=150 ms; checked afterward, never hidden.
             mode=motor.robstride_get_param_i8(0x7005,max(1,int(policy.io_timeout*1000)))

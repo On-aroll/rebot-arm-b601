@@ -29,7 +29,8 @@ def test_fixed_orientation_is_not_silently_relaxed(kin):
         kin.solve(pose,SEED,orientation=True)
     info=exc.value.diagnostic
     assert info['position_only_possible'] and info['orientation_constrained']
-    assert 'J2' in info['near_limit_joints'] and '仅位置' in str(exc.value)
+    # The old zero is now 2° inside the effective range, not near its edge.
+    assert 'J2' not in info['near_limit_joints'] and '仅位置' in str(exc.value)
     assert info['position_error_mm']>kin.position_tolerance*1000
 
 

@@ -22,8 +22,11 @@ FULL_MODE='native-csp-twin-full-v1'
 SMOOTH_FULL_MODE='native-csp-twin-full-v2'
 OFFICIAL_FULL_MODE='native-csp-twin-full-v3-official'
 LIVE_FULL_MODE='native-csp-twin-full-v4-command500'
-OFFICIAL_FULL_MODES=(OFFICIAL_FULL_MODE,LIVE_FULL_MODE)
+PADDED_MODE='native-csp-xyz-v2-margin2'
+PADDED_FULL_MODE='native-csp-twin-full-v5-margin2'
+OFFICIAL_FULL_MODES=(OFFICIAL_FULL_MODE,LIVE_FULL_MODE,PADDED_FULL_MODE)
 PROFILES={MODE:(.5,15.),PATH_MODE:(5.,30.),FULL_MODE:(360.,1800.),SMOOTH_FULL_MODE:(360.,1800.),OFFICIAL_FULL_MODE:(360.,1800.),LIVE_FULL_MODE:(360.,1800.)}
+PROFILES.update({PADDED_MODE:(.5,15.),PADDED_FULL_MODE:(360.,1800.)})
 CURRENT=(10.,)*6
 TORQUE=(1.,3.,9.,3.,1.,1.)
 RUNTIME={i:{0x7005:5,0x7017:.02,0x7018:CURRENT[i-1],0x700B:TORQUE[i-1]} for i in AXES}
@@ -54,8 +57,12 @@ def proposal(limits, *, mode=MODE):
     raw['version']=mode
     raw['policy']['task_timeout']=seconds
     # User-requested host command watchdog; preserve historical fingerprints.
-    if mode == LIVE_FULL_MODE:
+    if mode in (LIVE_FULL_MODE,PADDED_FULL_MODE):
         raw['policy']['command_age']=.5
+    if mode in (PADDED_MODE,PADDED_FULL_MODE):
+        # q_min/q_max already include the requested 2°. Never add another
+        # legacy startup/recovery margin beyond those effective bounds.
+        raw['start_boundary_tolerance']=0.
     speed=runtime_for_mode(mode)[1][0x7017]
     if mode in (FULL_MODE, SMOOTH_FULL_MODE):
         # Version v1 remains immutable for old recovery fingerprints. v2 is
@@ -139,18 +146,19 @@ class NativeXYZTransport(SeeedTransport):
         self.mit_parameters=None
         self.poll_io=deque(maxlen=64)
 
-    def read(self,axes,policy,check=lambda:None,*,on_sample=None):
+    def read(self,axes,policy,check=lambda:None,*,on_sample=None,retry_timeout=False):
         axes = tuple(axes)
         # Bootstrap the encoder velocity window with two complete sweeps.
         # Once warm, publish each fully checked axis immediately, so a later
         # axis's retry cannot hide an already received fresh J1 sample.
         cold = any(i not in self.previous_samples for i in axes)
-        initial = super().read(axes,policy,check) if cold else None
+        initial = super().read(axes,policy,check,retry_timeout=retry_timeout) if cold else None
         samples = {}
         for i in axes:
-            s = initial[i] if cold else super().read((i,),policy,check)[i]
+            s = initial[i] if cold else super().read((i,),policy,check,retry_timeout=retry_timeout)[i]
             check();self.ownership.check();requested=self.clock()
-            value=self.motors[i].robstride_get_param_f32_host_id(0x701A,0xFD,max(1,int(policy.io_timeout*1000)))
+            value=self.read_parameter_f32(i,0x701A,max(1,int(policy.io_timeout*1000)),check,
+                retry_timeout=retry_timeout)
             check()
             if not finite(value): raise TimeoutError(f'J{i} 电流反馈无效')
             samples[i]=replace(s,iq_raw_a=value,diagnostics_requested_at=requested,diagnostics_received_at=self.clock())
@@ -160,7 +168,7 @@ class NativeXYZTransport(SeeedTransport):
         self.latest_samples.update(samples)
         return samples
 
-    def read_cycle(self, policy, diagnostic_axis, check=lambda:None, *, on_sample=None,on_io=None,interleaved=False,max_fields=None):
+    def read_cycle(self, policy, diagnostic_axis, check=lambda:None, *, on_sample=None,on_io=None,interleaved=False,max_fields=None,retry_timeout=False):
         """One owner: all encoders every cycle, mode/current round-robin.
 
         Positions plus the supplied mode/current pairs replace a 24-query sweep.
@@ -192,7 +200,8 @@ class NativeXYZTransport(SeeedTransport):
             if on_io:on_io()
         def read_current(i):
             check(); self.ownership.check(); requested = self.clock()
-            current = self.motors[i].robstride_get_param_f32_host_id(0x701A,0xFD,max(1,int(policy.io_timeout*1000)))
+            current = self.read_parameter_f32(i,0x701A,max(1,int(policy.io_timeout*1000)),check,
+                retry_timeout=retry_timeout)
             received=record(i,0x701A,requested);check()
             if not finite(current):raise FeedbackTimeout(f'J{i} 电流反馈无效')
             self.latest_samples[i] = replace(self.latest_samples[i],iq_raw_a=current,
@@ -202,7 +211,8 @@ class NativeXYZTransport(SeeedTransport):
         samples = {}
         def read_position(i):
             check(); self.ownership.check(); requested = self.clock()
-            q = self.motors[i].robstride_get_param_f32_host_id(0x7019,0xFD,max(1,int(policy.io_timeout*1000)))
+            q = self.read_parameter_f32(i,0x7019,max(1,int(policy.io_timeout*1000)),check,
+                retry_timeout=retry_timeout)
             record(i,0x7019,requested)
             check(); received = self.clock()
             previous = self.previous_samples[i]
@@ -292,13 +302,14 @@ class NativeXYZTransport(SeeedTransport):
     def disable_all_for_reset(self):
         # On a restarted worker active is empty even if a previous process
         # exited badly. A reset therefore explicitly disables J1–J6, not J7.
-        result = dict(attempted_axes=[], disabled_status_by_axis={}, errors={})
+        result = dict(attempted_axes=[], status_by_axis={}, disabled_status_by_axis={}, errors={})
         for i,drive in self.drives.items():
             result['attempted_axes'].append(i)
             try:
                 self.ownership.check()
                 self.motors[i].disable()
-                result['disabled_status_by_axis'][str(i)] = drive.disabled_status()
+                status = result['status_by_axis'][str(i)] = drive.stop_status()
+                result['disabled_status_by_axis'][str(i)] = drive.require_disabled_status(status)
             except Exception as exc:
                 result['errors'][str(i)] = str(exc)
         return result

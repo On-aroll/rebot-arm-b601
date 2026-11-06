@@ -12,6 +12,8 @@ test('only exact project entry points are selected, unrelated processes are excl
   assert.equal(classify(['python3','rosbridge_websocket'],'/tmp/other',root),null);
   assert.equal(classify(['node','-e','console.log("FakeRsDriver")'],root,root),null);
   assert.equal(classify(['python3','unrelated.py'],root,root),null);
+  assert.equal(classify(['python3','scripts/orbbec_ros_camera_bridge.py'],root,root),'camera');
+  assert.equal(classify(['python3','scripts/orbbec_ros_camera_bridge.py'],'/tmp/other',root),null);
 });
 test('confirmation and startup-in-progress gates cannot send any signal',()=>{
   let calls=0;const m=createShutdownManager({root:temp(),inventory:()=>[],stopProcesses:async()=>calls++,starting:()=>true});
@@ -22,6 +24,20 @@ test('unconfirmed or active real hardware blocks the entire shutdown before any 
     sealHardware:async()=>{calls.push('seal');throw new Error('HOLDING：请先支撑并失能');},stopProcesses:async()=>calls.push('stop')});
   m.start(true);assert.equal((await settled(m)).state,'error');assert.deepEqual(calls,['seal']);
   assert.equal(m.blocked(),false);assert.throws(()=>m.finish('wrong'));
+});
+test('offline exit needs both physical power confirmation and a stopped CAN link',async()=>{
+  for(const [powerOff,offline] of [[false,true],[true,false],[true,true]]) {
+    let rows=[{kind:'hardware',pid:42,birth:'one'}],ack=0;
+    const m=createShutdownManager({root:temp(),inventory:()=>rows,offlineCanOnly:()=>offline,
+      sealHardware:async()=>{ack++;throw new Error('没有失能回包');},
+      stopProcesses:async targets=>{rows=rows.filter(p=>!targets.includes(p));}});
+    m.start(true,powerOff);
+    const job=await settled(m);
+    assert.equal(job.state,powerOff&&offline?'ready':'error');
+    assert.equal(ack,powerOff&&offline?0:1);
+    if(powerOff&&offline)assert.equal(job.disable.canAcknowledged,false);
+    else assert.equal(rows.length,1);
+  }
 });
 test('driver acknowledgement precedes termination; finish requires all components gone',async()=>{
   let rows=['hardware','text','mcp','simulation','bridge'].map((kind,i)=>({kind,pid:i+10}));const order=[];
@@ -50,7 +66,7 @@ test('physical driver is never SIGKILLed; recycled pids are not signalled',async
 });
 test('actual HTTP server exits after receipt; sandbox services and descendants stop, outsiders survive',async(t)=>{
   const root=temp(),web=path.join(root,'reBotArm_simulator-RS');fs.mkdirSync(web);
-  for(const name of ['server.js','local-api.js','project-shutdown.js','startup-manager.js','hardware-launcher.js','workbench-api.js'])
+  for(const name of ['server.js','local-api.js','rosbridge-proxy.js','maintenance-recovery.js','project-shutdown.js','startup-manager.js','hardware-launcher.js','workbench-api.js'])
     fs.copyFileSync(path.join(__dirname,'..',name),path.join(web,name));
   const workers=[];
   function worker(name,cwd){const file=path.join(cwd,name);fs.writeFileSync(file,'setInterval(()=>{},1000)');const p=spawn(process.execPath,[file],{cwd,stdio:'ignore'});workers.push(p);return p;}

@@ -20,13 +20,31 @@ function connect() {
   if (pid) return { ok:true, reused:true, pid };
   const directory = path.join(root,'outputs/twin-console');
   fs.mkdirSync(directory,{recursive:true});
-  const log = fs.openSync(path.join(directory,'csp-driver.log'),'a');
+  const logfile = path.join(directory,'csp-driver.log');
+  const log = fs.openSync(logfile,'a'), logStart = fs.fstatSync(log).size;
   const child = spawn('/bin/bash',[script],{cwd:root,detached:true,stdio:['ignore',log,log]});
-  child.on('error',()=>{});
+  const completion = new Promise((resolve,reject)=>{
+    child.once('error',reject);
+    child.once('exit',(code,signal)=>{
+      if(code===0){resolve();return;}
+      let detail='';
+      try {
+        const fd=fs.openSync(logfile,'r');
+        try {
+          const size=fs.fstatSync(fd).size,start=Math.max(logStart,size-2000);
+          const buffer=Buffer.alloc(Math.max(0,size-start));
+          fs.readSync(fd,buffer,0,buffer.length,start);
+          detail=buffer.toString('utf8').trim().split('\n').slice(-2).join(' ');
+        } finally {fs.closeSync(fd);}
+      } catch (_) {}
+      reject(new Error(`实机反馈服务已退出（${signal||code}）：${detail||'请查看实机反馈日志'}`));
+    });
+  });
+  completion.catch(()=>{});
   child.unref(); fs.closeSync(log);
   if (!child.pid) throw new Error('无法启动实机反馈服务');
   fs.writeFileSync(pidFile,String(child.pid),{mode:0o600});
-  return {ok:true,reused:false,pid:child.pid,message:'正在启动 CSP 只读反馈；连接不会使能电机'};
+  return {ok:true,reused:false,pid:child.pid,completion,message:'正在启动 CSP 只读反馈；连接不会使能电机'};
 }
 function disconnect() {
   const pid = runningPid();

@@ -4,7 +4,7 @@ import json
 import math
 from pathlib import Path
 
-from .csp_runtime.rebot_native_xyz import AXES, MODE, FULL_MODE, SMOOTH_FULL_MODE, OFFICIAL_FULL_MODE, LIVE_FULL_MODE, runtime_for_mode, proposal
+from .csp_runtime.rebot_native_xyz import AXES, MODE, FULL_MODE, SMOOTH_FULL_MODE, OFFICIAL_FULL_MODE, LIVE_FULL_MODE, PADDED_MODE, PADDED_FULL_MODE, runtime_for_mode, proposal
 from .csp_runtime.rebot_native_csp import PROTECTED
 from .csp_runtime.rebot_mit_hardware import Envelope
 
@@ -34,7 +34,7 @@ def reset_source(hw):
     return source, None, None
 
 
-def validate_snapshot(source, limits):
+def validate_snapshot(source, limits, *, nominal_limits=None):
     if not source or source.get('backend') != 'csp-twin-v1':
         raise ValueError('缺少事故前完整参数快照；不能用默认值覆盖')
     mode = (source.get('control_settings') or {}).get('mode')
@@ -42,9 +42,15 @@ def validate_snapshot(source, limits):
         raise ValueError('原控制方案不可识别')
     # Match the exact historical envelope. A v2 speed extension must never
     # reinterpret a v1 accident snapshot or widen its allowed restore values.
-    versions = (FULL_MODE,SMOOTH_FULL_MODE,OFFICIAL_FULL_MODE,LIVE_FULL_MODE) if mode == 'full' else (MODE,)
-    version = next((v for v in versions if source.get('config_fingerprint') ==
-        Envelope.parse(proposal(limits,mode=v)[0]).fingerprint),None)
+    versions = (FULL_MODE,SMOOTH_FULL_MODE,OFFICIAL_FULL_MODE,LIVE_FULL_MODE,PADDED_FULL_MODE) if mode == 'full' else (MODE,PADDED_MODE)
+    version = None
+    for candidate in versions:
+        padded = candidate in (PADDED_MODE, PADDED_FULL_MODE)
+        historical_limits = limits if padded or nominal_limits is None else nominal_limits
+        expected = Envelope.parse(proposal(historical_limits,mode=candidate)[0]).fingerprint
+        if source.get('config_fingerprint') == expected:
+            version = candidate
+            break
     if version is None:
         raise ValueError('原参数快照与当前机械臂控制方案不符')
     snapshot = source.get('register_snapshot') or {}

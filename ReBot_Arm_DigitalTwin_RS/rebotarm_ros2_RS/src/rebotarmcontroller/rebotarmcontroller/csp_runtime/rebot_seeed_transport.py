@@ -101,12 +101,12 @@ class SeeedTransport(SdkTransport):
             self.close()
             raise
 
-    def read(self, axes, policy, check=lambda:None):
+    def read(self, axes, policy, check=lambda:None, *, retry_timeout=False):
         axes=tuple(axes)
-        samples=super().read(axes,policy,check)
+        samples=super().read(axes,policy,check,retry_timeout=retry_timeout)
         if self.position_window and any(i not in self.previous_samples for i in axes):
             self.previous_samples.update(samples)
-            samples=super().read(axes,policy,check)
+            samples=super().read(axes,policy,check,retry_timeout=retry_timeout)
         for i in self.diagnostic_axes:
             if i not in samples: continue
             # Raw drive reports for identification, not a calibrated torque

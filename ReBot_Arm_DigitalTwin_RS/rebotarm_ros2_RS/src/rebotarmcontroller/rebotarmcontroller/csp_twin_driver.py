@@ -20,14 +20,18 @@ from ament_index_python.packages import get_package_share_directory
 from .csp_hardware import CspHardware
 from .twin_control import TwinControl
 from .twin_kinematics import TwinKinematics
+from .joint_limits import expanded_joint_limits
 from .csp_runtime.gateway_lease import GatewayLease
 from .csp_runtime.rebot_native_xyz import TORQUE, gravity_limits_for_mode
 
 
 class CheckedKinematics(TwinKinematics):
     def __init__(self):
-        super().__init__(position_tolerance=.00015,rotation_tolerance=.001,start_tolerance=np.deg2rad(1))
+        super().__init__(position_tolerance=.00015,rotation_tolerance=.001,start_tolerance=0.)
         self.lower[0], self.upper[0] = -np.deg2rad(150),np.deg2rad(150)
+        self.nominal_limits = list(zip(self.lower.copy(), self.upper.copy()))
+        expanded = np.asarray(expanded_joint_limits(self.nominal_limits))
+        self.lower, self.upper = expanded[:,0], expanded[:,1]
         # Preview and CAN references must not wait for each other's model data.
         # Models are immutable; Pinocchio/MuJoCo scratch data belongs to a thread.
         self.path_data = threading.local()
@@ -39,6 +43,7 @@ class CheckedKinematics(TwinKinematics):
         for body in range(base+1,self.collision_model.nbody):
             if self.collision_model.body_parentid[body] in self.robot_bodies:
                 self.robot_bodies.add(body)
+        self.robot_geoms = np.isin(self.collision_model.geom_bodyid,tuple(self.robot_bodies))
 
     def check_path(self, start, goal, *, gravity_limits=TORQUE):
         if not hasattr(self.path_data, 'gravity'):
@@ -67,10 +72,11 @@ class CheckedKinematics(TwinKinematics):
                     f'允许 {gravity_limits[axis]:.2f} N·m（路径约 {blend*100:.0f}%）。请收拢姿态或调整目标。')
             self.path_data.collision.qpos[self.qadr] = q
             mujoco.mj_forward(self.collision_model,self.path_data.collision)
-            for contact in self.path_data.collision.contact:
-                bodies = self.collision_model.geom_bodyid[[contact.geom1,contact.geom2]]
-                if contact.dist < -1e-5 and all(int(b) in self.robot_bodies for b in bodies):
-                    raise ValueError("模型检测到机械臂自身碰撞，未发送该目标")
+            # Read MuJoCo's contact arrays together, avoiding Python wrappers
+            # and body-index allocations for every contact at every sample.
+            contacts = self.path_data.collision.contact
+            if np.any((contacts.dist < -1e-5) & self.robot_geoms[contacts.geom1] & self.robot_geoms[contacts.geom2]):
+                raise ValueError("模型检测到机械臂自身碰撞，未发送该目标")
 
 
 class CspTwinDriver(Node):
@@ -83,6 +89,7 @@ class CspTwinDriver(Node):
         try:
             output = Path(os.environ.get("REBOTARM_CSP_OUTPUT",str(Path.cwd()/"outputs/twin-console/hardware")))
             self.hardware = CspHardware(list(zip(self.kinematics.lower,self.kinematics.upper)),output=output,
+                nominal_limits=self.kinematics.nominal_limits,
                 path_check=lambda start,goal:self.kinematics.check_path(start,goal,
                     gravity_limits=gravity_limits_for_mode(self.hardware.config.version)),
                 recovery_path_check=self.kinematics.check_support_recovery_path)
